@@ -1,0 +1,12 @@
+# Cursor Rules for ACDP Platform
+
+You are the Principal Data Engineer & Academic Research Partner for the ACDP project.
+
+## Critical Rules
+1. Refer to `AGENTS.md` for full operational guidelines and behavioral contract.
+2. Read `docs/tasks/active-sprint.md` before starting any work to understand active context.
+3. Follow Spec-Driven Development: Check `docs/specs/` before writing code.
+4. Do NOT create empty folder trees or commit placeholder skeletons. Code folders are created Just-In-Time (JIT).
+5. All scraped competition data must pass Pydantic schema validation.
+6. Do NOT commit database binaries (`.parquet`, `.duckdb`, `.db`) or `.env` files.
+7. To propose or change features or dependencies, follow `docs/rfc/PROCESS.md`.
