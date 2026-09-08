@@ -4,23 +4,27 @@ This file is automatically discovered and loaded by Google Antigravity and Gemin
 
 ---
 
-## 1. Master Agent Contract
+## 1. Master Agent Contract & Prompt Framework
 
-All agents operating in this workspace must strictly abide by the rules, operational modes, and procedures documented in:
-👉 **[`AGENTS.md`](./AGENTS.md)**
+All agents operating in this workspace must strictly abide by the rules and adaptive execution pathways documented in:
+👉 **[`AGENTS.md`](./AGENTS.md)**  
+👉 **[`docs/frameworks/PROMPT_EXECUTION_FRAMEWORK.md`](./docs/frameworks/PROMPT_EXECUTION_FRAMEWORK.md)**
 
 ---
 
 ## 2. Antigravity-Specific Operational Directives
 
-1. **Direction & Prompting**: Read [`docs/HOW_TO_USE.md`](./docs/HOW_TO_USE.md) to understand project context, user workflows, and prompting templates.
-2. **Specialized Skills Activation**: When prompted for academic research, thesis drafting, slides, competitor benchmarking, or experiments, inspect and activate the modular skills located in:
-   - `.agents/skills/academic-researcher/SKILL.md`
-   - `.agents/skills/thesis-writer/SKILL.md`
-   - `.agents/skills/defense-pitch-builder/SKILL.md`
-   - `.agents/skills/competitor-benchmark/SKILL.md`
-   - `.agents/skills/experiment-evaluator/SKILL.md`
-3. **Notion Deliverables**: When completing research or technical spikes corresponding to Notion tasks, log deliverables under `docs/deliverables/` and update [`docs/tasks/notion-task-mapping.md`](./docs/tasks/notion-task-mapping.md).
-4. **Spec-Driven Implementation**: Before generating pipeline or application code, verify the corresponding specification in [`docs/specs/`](./docs/specs/).
-5. **No Empty Directory Trees**: Do not create placeholder skeletons. Code folders are created Just-In-Time (JIT) during active coding.
-6. **No Git Commands**: Do NOT run `git add`, `git commit`, or `git push`. Leave all git operations to the user.
+1. **Adaptive Pathways**:
+   - For research/thesis/core code $\rightarrow$ Run standard full cycle.
+   - For UI mockups / visual previews $\rightarrow$ Run **Pathway B (Fast-Track)** using mock data stubs.
+   - For quick queries $\rightarrow$ Answer directly in 2–3 paragraphs.
+   - For ambiguous prompts $\rightarrow$ Propose 2–3 concrete options; never guess.
+2. **Specialized Skills Activation**:
+   - Academic Research: `.agents/skills/academic-researcher/SKILL.md`
+   - Thesis Writing (FIT-HCMUTE): `.agents/skills/thesis-writer/SKILL.md`
+   - Presentation & Defense: `.agents/skills/defense-pitch-builder/SKILL.md`
+   - Competitor Analysis: `.agents/skills/competitor-benchmark/SKILL.md`
+   - Experiment Evaluation: `.agents/skills/experiment-evaluator/SKILL.md`
+   - Frontend UI/UX: `.agents/skills/frontend-designer/SKILL.md`
+3. **Notion Synchronization**: Record deliverables in `docs/deliverables/` and maintain `docs/tasks/notion-task-mapping.md`.
+4. **No Git Execution**: Do NOT execute any `git` commands (`git add`, `git commit`, `git push`).

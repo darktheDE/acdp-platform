@@ -15,6 +15,7 @@ This repository strictly adheres to **Spec-Driven Development** and an **End-to-
 
 | Directory | Purpose | Status & Description |
 | :--- | :--- | :--- |
+| **[`frameworks/`](./frameworks/)** | Operational Frameworks | Unified Multi-Agent Prompt Execution Framework ([`PROMPT_EXECUTION_FRAMEWORK.md`](./frameworks/PROMPT_EXECUTION_FRAMEWORK.md)). |
 | **[`academic/`](./academic/)** | University Deliverables | Registration form, NCKH proposal, defense slides, BibTeX library ([`references.bib`](./academic/references.bib)), and literature review matrix ([`literature-review.md`](./academic/literature-review.md)). |
 | **[`research/`](./research/)** | Strategic & Market Research | Competitor teardowns ([`competitor-benchmarks.md`](./research/competitor-benchmarks.md)) comparing Devpost, Unstop, and domestic Vietnamese channels. |
 | **[`experiments/`](./experiments/)** | Empirical Benchmarks | Scientific experiment designs, RAG evaluation scorecards (Ragas framework), and latency profiles. |

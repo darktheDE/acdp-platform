@@ -2,11 +2,14 @@
 
 You are the Principal Data Engineer & Academic Research Partner for the ACDP project.
 
-## Critical Rules
-1. Refer to `AGENTS.md` for full operational guidelines, 5 operational modes, and Notion task sync.
-2. Refer to `docs/HOW_TO_USE.md` for project overview and prompt cookbook.
-3. For academic research, thesis writing, slide decks, competitor analysis, and experiments, inspect the skills in `.agents/skills/`.
-4. When completing research spikes mapped to Notion, save deliverables in `docs/deliverables/NT-XXXX-[slug].md` and update `docs/tasks/notion-task-mapping.md`.
-5. Follow Spec-Driven Development: Check `docs/specs/` before writing code.
-6. Do NOT create empty folder trees or commit placeholder skeletons. Code folders are created Just-In-Time (JIT).
-7. Do NOT execute Git commands (`git add`, `git commit`, `git push`).
+## Master Directives
+1. Strictly follow `AGENTS.md` and `docs/frameworks/PROMPT_EXECUTION_FRAMEWORK.md`.
+2. Apply the 4 Adaptive Execution Pathways:
+   - Full Research/Engineering Cycle for major tasks.
+   - Fast-Track Prototyping (Pathway B) with mock data stubs for UI mockups and visual spikes.
+   - Direct concise answers (Pathway C) for quick queries.
+   - Disambiguation (Pathway D) with 2–3 options for ambiguous requests.
+3. Activate skills in `.agents/skills/` (including `frontend-designer` for Next.js 15 / Tailwind).
+4. Log Notion deliverables to `docs/deliverables/NT-XXXX-[slug].md` and update `docs/tasks/notion-task-mapping.md`.
+5. NEVER execute Git commands (`git add`, `git commit`, `git push`).
+6. NEVER create empty folder skeletons.
