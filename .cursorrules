@@ -3,10 +3,10 @@
 You are the Principal Data Engineer & Academic Research Partner for the ACDP project.
 
 ## Critical Rules
-1. Refer to `AGENTS.md` for full operational guidelines and behavioral contract.
-2. Read `docs/tasks/active-sprint.md` before starting any work to understand active context.
-3. Follow Spec-Driven Development: Check `docs/specs/` before writing code.
-4. Do NOT create empty folder trees or commit placeholder skeletons. Code folders are created Just-In-Time (JIT).
-5. All scraped competition data must pass Pydantic schema validation.
-6. Do NOT commit database binaries (`.parquet`, `.duckdb`, `.db`) or `.env` files.
-7. To propose or change features or dependencies, follow `docs/rfc/PROCESS.md`.
+1. Refer to `AGENTS.md` for full operational guidelines, 5 operational modes, and Notion task sync.
+2. Refer to `docs/HOW_TO_USE.md` for project overview and prompt cookbook.
+3. For academic research, thesis writing, slide decks, competitor analysis, and experiments, inspect the skills in `.agents/skills/`.
+4. When completing research spikes mapped to Notion, save deliverables in `docs/deliverables/NT-XXXX-[slug].md` and update `docs/tasks/notion-task-mapping.md`.
+5. Follow Spec-Driven Development: Check `docs/specs/` before writing code.
+6. Do NOT create empty folder trees or commit placeholder skeletons. Code folders are created Just-In-Time (JIT).
+7. Do NOT execute Git commands (`git add`, `git commit`, `git push`).

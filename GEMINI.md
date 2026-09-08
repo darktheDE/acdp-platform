@@ -1,20 +1,26 @@
 # GEMINI.md: Antigravity & Gemini CLI Workspace Rules
 
-This file is automatically loaded by Google Antigravity and Gemini CLI agents working in the `acdp-platform` workspace.
+This file is automatically discovered and loaded by Google Antigravity and Gemini CLI agents working in the `acdp-platform` workspace.
 
 ---
 
 ## 1. Master Agent Contract
 
-All agents operating in this workspace must strictly abide by the rules, architectural tenets, and operating procedures documented in:
+All agents operating in this workspace must strictly abide by the rules, operational modes, and procedures documented in:
 👉 **[`AGENTS.md`](./AGENTS.md)**
 
 ---
 
 ## 2. Antigravity-Specific Operational Directives
 
-1. **Active Context Memory**: Always inspect [`docs/tasks/active-sprint.md`](./docs/tasks/active-sprint.md) before starting any task to review current sprint status and priorities.
-2. **Spec-Driven Implementation**: Before generating or modifying pipeline or application code, verify the corresponding specification in [`docs/specs/`](./docs/specs/). If a new feature is requested, draft a spec first.
-3. **No Empty Directory Trees**: Do not create empty placeholder skeletons (`apps/`, `pipelines/`). Create directory structures only when actively populating them with tested implementation code (JIT inception).
-4. **Change Management**: Any modification to technology choices, storage layers, or core features must follow the 4-step RFC process outlined in [`docs/rfc/PROCESS.md`](./docs/rfc/PROCESS.md).
-5. **Clean Workspace Verification**: Always run linting (`ruff check`), type checks, and unit tests before declaring any task complete.
+1. **Direction & Prompting**: Read [`docs/HOW_TO_USE.md`](./docs/HOW_TO_USE.md) to understand project context, user workflows, and prompting templates.
+2. **Specialized Skills Activation**: When prompted for academic research, thesis drafting, slides, competitor benchmarking, or experiments, inspect and activate the modular skills located in:
+   - `.agents/skills/academic-researcher/SKILL.md`
+   - `.agents/skills/thesis-writer/SKILL.md`
+   - `.agents/skills/defense-pitch-builder/SKILL.md`
+   - `.agents/skills/competitor-benchmark/SKILL.md`
+   - `.agents/skills/experiment-evaluator/SKILL.md`
+3. **Notion Deliverables**: When completing research or technical spikes corresponding to Notion tasks, log deliverables under `docs/deliverables/` and update [`docs/tasks/notion-task-mapping.md`](./docs/tasks/notion-task-mapping.md).
+4. **Spec-Driven Implementation**: Before generating pipeline or application code, verify the corresponding specification in [`docs/specs/`](./docs/specs/).
+5. **No Empty Directory Trees**: Do not create placeholder skeletons. Code folders are created Just-In-Time (JIT) during active coding.
+6. **No Git Commands**: Do NOT run `git add`, `git commit`, or `git push`. Leave all git operations to the user.

@@ -14,7 +14,7 @@ An end-to-end data platform that automates academic competition ingestion, provi
 
 ---
 
-[Overview](#overview) • [Key Features](#key-features) • [Architecture](#system-architecture) • [Tech Stack](#tech-stack) • [Documentation](docs/README.md) • [Getting Started](#getting-started) • [Contributors & Advisor](#contributors--advisor)
+[Overview](#overview) • [Key Features](#key-features) • [Architecture](#system-architecture) • [Tech Stack](#tech-stack) • [Documentation](docs/README.md) • [User & AI Guide](docs/HOW_TO_USE.md) • [Getting Started](#getting-started) • [Contributors & Advisor](#contributors--advisor)
 
 ---
 
