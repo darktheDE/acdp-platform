@@ -2,7 +2,7 @@
 > **Repository**: `acdp-platform` (Academic Competition Discovery Platform)  
 > **Authors**: Do Kien Hung (`darktheDE`) & Nguyen Van Quang Duy (`QuangDuyReal`)  
 > **Scientific Advisor**: M.Sc. Tran Quang Khai  
-> **Institution**: Faculty of Information Technology, Ho Chi Minh City University of Technology and Engineering (HCMUTE)
+> **Institution**: Faculty of Information Technology, Ho Chi Minh City University of Technology and Engineering (HCM-UTE) / Trường Đại học Công nghệ Kỹ thuật TP.HCM (HCM-UTE)
 
 ---
 
@@ -32,7 +32,7 @@ Detect user intent and activate the corresponding modular skill playbook:
 | **Mode 5: Thesis & Presentation** | [`.agents/skills/thesis-writer/SKILL.md`](./.agents/skills/thesis-writer/SKILL.md)<br>[`.agents/skills/defense-pitch-builder/SKILL.md`](./.agents/skills/defense-pitch-builder/SKILL.md) | HCMUTE thesis chapters, defense slides |
 | **Mode 6: Frontend & UI/UX** | [`.agents/skills/frontend-designer/SKILL.md`](./.agents/skills/frontend-designer/SKILL.md) | Visual UI mockups, Next.js 15 components |
 
-*JIT Skill Inception*: If a recurring domain lacks a skill, complete the task using core capabilities, then instantiate a new `.agents/skills/<skill-name>/SKILL.md`.
+*JIT Skill Inception*: If a recurring domain lacks a skill, complete the task using core capabilities, then instantiate a new specialized skill following the strict engineering specification in [`docs/frameworks/AGENT_SKILL_ENGINEERING_SPEC.md`](./docs/frameworks/AGENT_SKILL_ENGINEERING_SPEC.md). Skills must never be mere conversational prompts; they require structured frontmatter with negative triggers, deterministic scripts in `scripts/`, reference manuals in `references/`, and verification tests.
 
 ---
 
@@ -47,7 +47,9 @@ The team coordinates daily work on **Notion**.
 
 ## 4. Universal Guardrails (Non-Negotiable)
 
-1. ❌ **NO Git Execution**: Never execute `git add`, `git commit`, `git push`, or branch commands. All Git operations are strictly handled by the human developers.
+1. ⚠️ **Git Operations Policy (Read-Only Inspection Allowed)**:
+   - ❌ **Prohibited (Mutating)**: Never execute `git add`, `git commit`, `git push`, or create/delete branches.
+   - ✅ **Permitted (Read-Only)**: Inspecting repository state via `git status`, `git log`, `git diff`, `git show` is fully allowed.
 2. ❌ **NO Empty Directory Skeletons**: Folders (`apps/`, `pipelines/`) are created strictly Just-In-Time (JIT) when implementing active specifications.
 3. ❌ **NO Database Dumps or Secrets in Git**: Never commit `.parquet`, `.duckdb`, `.db`, or `.env` files.
 4. ❌ **NO RAG Hallucinations**: Contest regulation responses must strictly cite official source clauses and URLs.
@@ -64,3 +66,22 @@ The team coordinates daily work on **Notion**.
 - **Vector DB**: Qdrant `v1.19+` (Hybrid search: BM25 + dense vectors, Cross-Encoder re-ranking)
 - **Ingestion**: Crawl4AI `v0.9+`, Playwright `v1.48+`, Scrapy `v2.12+`
 - **Containers**: Docker Compose `v2.30+`
+
+---
+
+## 6. Team Standing Directives & Continuous Memory Protocol
+
+All agents operating in this repository must strictly adhere to the continuous directives established by **Đỗ Kiến Hưng** and **Nguyễn Văn Quang Duy** in:
+👉 **[`docs/frameworks/TEAM_DIRECTIVES.md`](./docs/frameworks/TEAM_DIRECTIVES.md)**
+
+### Non-Negotiable Directives:
+1. 🔍 **Zero Blind Trust & Verification-First Protocol**:
+   - **Never trust model pre-trained weights blindly**: Pre-trained knowledge may be outdated, inaccurate, or hallucinated regarding Vietnamese university regulations, contest rules, and modern library APIs.
+   - **MANDATORY FIRST ACTION**: Whenever handling user queries, verifying claims, checking library features, or extracting contest info, the agent **MUST FIRST search Google, the internet, or Google Scholar** via tools (`search_web`, `read_url_content`) to verify and ground facts before responding.
+2. 🏛️ **Institutional Entity Standards**:
+   - Official University Name: **Trường Đại học Công nghệ Kỹ thuật TP.HCM (HCM-UTE)**.
+   - Faculty: Khoa Công nghệ Thông tin (FIT).
+   - Major: Kỹ thuật Dữ liệu (Data Engineering).
+3. 🧠 **Dynamic Rule Ingestion & Memory Persistence**:
+   - Whenever the user specifies a new operational rule or working constraint during conversation, the agent must immediately apply it AND permanently record it in [`docs/frameworks/TEAM_DIRECTIVES.md`](./docs/frameworks/TEAM_DIRECTIVES.md) (and update `AGENTS.md` / `GEMINI.md` if universally applicable).
+

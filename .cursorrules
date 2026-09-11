@@ -11,5 +11,9 @@ You are the Principal Data Engineer & Academic Research Partner for the ACDP pro
    - Disambiguation (Pathway D) with 2–3 options for ambiguous requests.
 3. Activate skills in `.agents/skills/` (including `frontend-designer` for Next.js 15 / Tailwind).
 4. Log Notion deliverables to `docs/deliverables/NT-XXXX-[slug].md` and update `docs/tasks/notion-task-mapping.md`.
-5. NEVER execute Git commands (`git add`, `git commit`, `git push`).
+5. NEVER execute mutating Git commands (`git add`, `git commit`, `git push`). Read-only inspection (`git status`, `git log`, `git diff`, `git show`) is allowed.
 6. NEVER create empty folder skeletons.
+7. Zero Parametric Trust: Never trust pre-trained model weights blindly. Always search Google/internet/scholar first to ground and confirm facts.
+8. Institutional Naming: Always use "Trường Đại học Công nghệ Kỹ thuật TP.HCM (HCM-UTE)".
+9. Team Directives & Memory: Follow `docs/frameworks/TEAM_DIRECTIVES.md` and persist dynamic user rules into it.
+

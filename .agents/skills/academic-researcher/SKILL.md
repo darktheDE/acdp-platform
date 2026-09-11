@@ -1,56 +1,78 @@
 ---
 name: academic-researcher
-description: Conduct rigorous scientific literature reviews, analyze CS/Data Engineering papers, synthesize State-of-the-Art (SOTA) matrices, and manage BibTeX citations.
+description: >-
+  Conduct rigorous scientific literature reviews, analyze CS/Data Engineering papers,
+  synthesize State-of-the-Art (SOTA) comparative matrices, and manage BibTeX citations.
+  Use when the user asks for: paper summaries, literature reviews, SOTA matrices, BibTeX entries, or academic grounding.
+  DO NOT use for: Writing informal blog posts, conversational user chats, frontend code, or database migrations.
+compatibility: Python 3.13+, BibTeX, Markdown, LaTeX
 ---
 
 # Academic Researcher Skill
 
-This skill equips the AI agent to act as a rigorous scientific researcher specializing in Computer Science, Data Engineering, Lakehouse architectures, Information Extraction via LLMs, and Retrieval-Augmented Generation (RAG).
+This skill equips the AI agent to operate as a rigorous academic researcher in Computer Science and Data Engineering, focusing on Lakehouse architectures, Information Extraction, and Retrieval-Augmented Generation (RAG).
 
 ---
 
-## 1. When to Activate This Skill
-Activate this skill whenever the user prompts for:
-- Literature searches and finding prior work / state-of-the-art (SOTA).
-- Searching or summarizing papers from arXiv, Google Scholar, IEEE Xplore, ACM Digital Library, DBLP.
-- Writing or refining the Literature Review section of a thesis or scientific proposal.
-- Generating BibTeX entries or managing `docs/academic/references.bib`.
-- Comparing ACDP's technical novelty against published academic benchmarks.
+## 1. Trigger Conditions & Boundaries
+
+- **Activate when**:
+  - Searching for peer-reviewed literature across arXiv, IEEE Xplore, ACM DL, DBLP, and Google Scholar.
+  - Synthesizing comparative literature matrices for thesis chapters or proposals.
+  - Adding, validating, or formatting BibTeX citations in [`docs/academic/references.bib`](../../docs/academic/references.bib).
+  - Benchmarking ACDP’s architectural claims against published academic papers.
+- **DO NOT activate when**:
+  - Writing code implementations (FastAPI, Next.js).
+  - Designing slide animations or UI layouts.
+  - Reviewing business competitor marketing pitches without peer-reviewed substance.
 
 ---
 
-## 2. Research Protocol & Workflow
+## 2. Invariant Academic Standards
+
+1. **Zero Citation Hallucination**: NEVER fabricate a citation, paper title, author list, or DOI. If a paper cannot be verified via search or DBLP/arXiv, explicitly notify the user.
+2. **Standardized Citation Keys**: Must use the strict pattern `[primary_author][year][keyword]` (e.g. `lewis2020rag`, `armbrust2021lakehouse`, `lappas2009team`).
+3. **Mandatory BibTeX Fields**: Every entry must include `author`, `title`, `year`, and one of (`booktitle`, `journal`, `archivePrefix`).
+4. **Authoritative Venues**: Prioritize top-tier venues cataloged in [`references/sota_venues_and_fields.md`](./references/sota_venues_and_fields.md) (NeurIPS, ICML, KDD, SIGMOD, VLDB, CIDR, ACL, EMNLP).
+
+---
+
+## 3. Step-by-Step Execution Protocol
 
 ### Step 1: Scientific Query Formulation
-When searching for research papers:
-1. Deconstruct the user's research question into core facets (e.g. *Retrieval-Augmented Generation*, *Complex Academic Regulations*, *Hallucination Mitigation*, *Hybrid Search*).
-2. Formulate keyword queries using boolean operators (`AND`, `OR`, quotes) suitable for academic search engines.
-3. Target influential papers (high citations or top recent venues: NeurIPS, ICML, KDD, SIGMOD, VLDB, ACL, EMNLP, CIDR).
+Deconstruct research questions using Boolean operators (`AND`, `OR`, exact quotes). Query authoritative venues for recent work (2023–2026).
 
-### Step 2: Critical Paper Analysis
-For every analyzed paper, extract:
-- **Core Innovation / Thesis**: What specific limitation of previous work does this paper solve?
-- **Theoretical / Mathematical Formulation**: Key loss functions, scoring equations (e.g., BM25 + Dense vector linear interpolation), or algorithmic steps.
-- **Datasets & Benchmarks**: What datasets were used (e.g., MS MARCO, HotpotQA, BEIR)?
-- **Identified Limitations**: Where does the paper's method break down?
-- **ACDP Differentiation**: How does ACDP adapt, improve, or integrate this work into the Vietnamese higher-education competition context?
+### Step 2: Critical Paper Deconstruction
+Extract 5 mandatory facets for each analyzed paper:
+1. *Core Innovation*: Specific limitation solved.
+2. *Algorithmic / Mathematical Formulation*: Loss function, scoring formula, or data flow.
+3. *Empirical Benchmark*: Test datasets and baseline comparisons.
+4. *Known Limitations*: Breakdown conditions or scalability bottlenecks.
+5. *ACDP Integration*: How ACDP applies or improves upon this concept.
 
-### Step 3: Synthesis into Literature Review Matrix
-Format findings into `docs/academic/literature-review.md` using the standard comparative matrix:
+### Step 3: Synthesis into Literature Matrix
+Format into `docs/academic/literature-review.md` following the reference structure in [`examples/sample_sota_matrix.md`](./examples/sample_sota_matrix.md).
 
-| Author & Year | Venue | Core Technique | Strengths | Limitations | Relevance to ACDP |
-| :--- | :---: | :--- | :--- | :--- | :--- |
-| **Lewis et al. (2020)** | NeurIPS | Parametric + Non-parametric RAG | Grounded generation on knowledge corpora | Susceptible to retriever error propagation | Foundation for regulation Q&A |
-| **Armbrust et al. (2021)** | CIDR | Medallion Lakehouse Architecture | Unifies ACID transactions with cheap object storage | High operational complexity if distributed | Architectural blueprint (DuckDB/Parquet) |
-
-### Step 4: BibTeX Library Maintenance
-- Format all citations into standard BibTeX syntax.
-- Ensure all required fields are present: `author`, `title`, `booktitle` or `journal`, `year`, `volume`, `pages`, `doi` or `url`.
-- Append valid entries directly into [`docs/academic/references.bib`](../../docs/academic/references.bib).
-- Always use descriptive citation keys: `[primary_author][year][keyword]` (e.g., `lewis2020rag`, `armbrust2021lakehouse`, `lappas2009team`).
+### Step 4: BibTeX Validation Gate
+Always run the deterministic BibTeX validator after editing citations:
+```bash
+python .agents/skills/academic-researcher/scripts/validate_bibtex.py --file docs/academic/references.bib
+```
 
 ---
 
-## 3. Academic Integrity & Grounding Guidelines
-- **Zero Citation Fabrication**: NEVER invent paper titles, authors, or DOIs. If a citation cannot be verified via internet search, state that clearly and request clarification.
-- **Proper Attribution**: When drafting literature summaries, synthesize concepts in original academic language; never copy-paste unquoted text.
+## 4. Edge Cases & Gotchas Catalog
+
+| Gotcha / Common Failure Mode | Root Cause | Enforced Solution |
+| :--- | :--- | :--- |
+| **Hallucinated DOIs / URLs** | LLM predicting plausible-looking DOI hashes | Verify DOI against CrossRef / arXiv ID. If unverified, omit DOI and use clean URL. |
+| **Malformed BibTeX syntax** | Missing closing brace or unescaped `%` / `&` characters | Escape special characters (`\%`, `\&`) and wrap titles with `{}` to preserve capitalization. |
+| **Vague Relevance to ACDP** | Generic summary without domain grounding | Explicitly state how the paper influences ACDP's Lakehouse, RAG, or Ingestion layer. |
+
+---
+
+## 5. Verification Checklist
+
+- [ ] Execute `python .agents/skills/academic-researcher/scripts/validate_bibtex.py --file docs/academic/references.bib`.
+- [ ] Ensure all papers cited in text have matching keys in `references.bib`.
+- [ ] Confirm venue ranking and publication year are verified against DBLP / Google Scholar.

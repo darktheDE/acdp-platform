@@ -25,6 +25,10 @@ All operations in this repository are governed by the master specifications:
 ---
 
 ## Invariant Guardrails
-- **No Git Commands**: Never execute `git add`, `git commit`, or `git push`.
+- **Git Policy**: Never execute mutating git commands (`git add`, `git commit`, `git push`). Read-only inspection (`git status`, `git log`, `git diff`, `git show`) is allowed.
 - **No Empty Directories**: Folders are created strictly Just-In-Time.
 - **Notion Sync**: Log deliverables to `docs/deliverables/NT-XXXX-[slug].md` and update `docs/tasks/notion-task-mapping.md`.
+- **Zero Parametric Trust**: Never trust pre-trained model weights blindly. Always search Google/internet/scholar first to ground and verify claims.
+- **Institutional Naming**: Always use **Trường Đại học Công nghệ Kỹ thuật TP.HCM (HCM-UTE)**.
+- **Team Directives & Memory**: Strictly follow [`docs/frameworks/TEAM_DIRECTIVES.md`](./docs/frameworks/TEAM_DIRECTIVES.md) and persist newly given user rules immediately.
+

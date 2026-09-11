@@ -1,50 +1,74 @@
 ---
 name: experiment-evaluator
-description: Design empirical experiments, measure quantitative metrics (Ragas for RAG evaluation, query latency, crawler throughput), and track scientific benchmarks.
+description: >-
+  Design empirical experiments, measure quantitative evaluation metrics (Ragas for RAG evaluation,
+  query latency benchmarks, crawler throughput, schema extraction accuracy), and generate scientific scorecards.
+  Use when the user asks for: Ragas evaluation, latency benchmarks, experiment scorecards, ablation studies, or empirical testing.
+  DO NOT use for: Writing frontend CSS styling, drafting general thesis introduction prose, or configuring docker containers.
+compatibility: Python 3.13+, Ragas, DuckDB, Qdrant, Markdown
 ---
 
 # Experiment Evaluator Skill
 
-This skill guides the AI agent in designing, executing, and analyzing empirical experiments for the ACDP project, ensuring rigorous scientific evaluation for the thesis report and defense committee.
+This skill guides the AI agent in designing, executing, and analyzing empirical experiments for the ACDP project, ensuring rigorous scientific evaluation for the thesis report and defense committee under FIT-HCMUTE standards.
 
 ---
 
-## 1. When to Activate This Skill
-Activate this skill whenever the user prompts for:
-- Designing evaluation frameworks for the RAG regulation assistant.
-- Measuring and comparing query latency across storage layers (DuckDB vs. PostgreSQL).
-- Benchmarking crawler extraction resilience and schema parsing error rates.
-- Generating evaluation scorecards and ablation study logs in `docs/experiments/`.
+## 1. Trigger Conditions & Boundaries
+
+- **Activate when**:
+  - Designing evaluation frameworks for the RAG competition regulation assistant.
+  - Benchmarking query throughput and latency across DuckDB (Silver tier) vs. PostgreSQL (Gold tier).
+  - Measuring crawler extraction resilience and schema parsing error rates across different LLM backends.
+  - Generating evaluation scorecards and ablation study logs in [`docs/experiments/`](../../docs/experiments/).
+- **DO NOT activate when**:
+  - Building Next.js 15 frontend components (`apps/web/`).
+  - Writing thesis narrative chapters without numerical data.
+  - Designing presentation slide animations.
 
 ---
 
-## 2. Core Evaluation Frameworks
+## 2. Invariant Empirical Standards
 
-### 2.1. RAG Intelligence Evaluation (Ragas Framework Methodology)
-Evaluate the competition rulebook question-answering assistant across four standard metrics:
-
-| Metric | Scientific Question | Target Threshold |
-| :--- | :--- | :---: |
-| **Faithfulness** | Is the answer grounded exclusively in the retrieved rulebook context, with zero hallucinations? | $> 0.90$ |
-| **Answer Relevance** | Does the answer directly address the student's question without extraneous filler? | $> 0.85$ |
-| **Context Precision** | Are the top-ranked retrieved chunks truly relevant to the query? | $> 0.85$ |
-| **Context Recall** | Did the retriever fetch all clauses necessary to form the complete answer? | $> 0.80$ |
-
-### 2.2. Ingestion & Extraction Performance
-Measure the robustness and efficiency of the Crawl4AI + Playwright + LLM Parser pipeline:
-- **Crawl Success Rate**: Percentage of target URLs successfully rendered without timeouts (`Target: > 95%`).
-- **Schema Extraction Accuracy**: Ratio of JSON outputs strictly passing Pydantic validation on first attempt (`Target: > 90%`).
-- **Extraction Latency**: Mean time (seconds) to crawl, parse, and store one competition event (`Target: < 5s / event`).
-- **Deduplication Precision / Recall**: Accuracy of fuzzy string matching in identifying duplicate cross-posted events (`Target: > 95%`).
-
-### 2.3. Lakehouse Storage & Query Latency
-Benchmark analytical query throughput comparing DuckDB (Silver tier) vs. PostgreSQL (Gold tier):
-- Aggregation query speed (e.g. counting competitions by domain, calculating participant metrics).
-- Vector indexing and retrieval latency in Qdrant (P50, P95, P99 query latency in milliseconds).
+1. **Ragas Metrics Quad**: Every RAG assessment must measure and report all 4 standard Ragas metrics:
+   - *Faithfulness* ($> 0.90$ target).
+   - *Answer Relevance* ($> 0.85$ target).
+   - *Context Precision* ($> 0.85$ target).
+   - *Context Recall* ($> 0.80$ target).
+   Detailed formulas are defined in [`references/ragas_metric_definitions.md`](./references/ragas_metric_definitions.md).
+2. **Deterministic Metric Computation**: Never ask the LLM to invent summary numbers. Calculate mean, P95, and standard deviation using the deterministic scorecard script.
+3. **Statistical Soundness**: Latency benchmarks must run a minimum of 5 warm-up iterations and report P50, P95, and P99 latency percentiles rather than simple arithmetic averages.
 
 ---
 
-## 3. Experiment Documentation Protocol
-All benchmark designs, synthetic test sets, and quantitative scorecards must be recorded under [`docs/experiments/`](../../docs/experiments/) using the format:
-- `docs/experiments/XXXX-<experiment-name>.md`
-- Documenting: *Hypothesis, Test Environment, Benchmark Dataset, Results Table, Visual Chart, Conclusion*.
+## 3. Step-by-Step Execution Protocol
+
+### Step 1: Benchmark Dataset & Ground Truth Preparation
+Prepare a synthetic or curated evaluation set containing at least 20 question-context-ground_truth triples covering diverse contest rule types (eligibility, dates, prizes, team constraints).
+
+### Step 2: Metric Computation via Script
+Execute the deterministic scorecard generator script:
+```bash
+python .agents/skills/experiment-evaluator/scripts/compute_ragas_scorecard.py --input <path-to-json-results>
+```
+
+### Step 3: Synthesis into Experiment Deliverable
+Record findings under `docs/experiments/XXXX-[experiment-name].md` adhering to the reference format in [`examples/sample_evaluation_scorecard.md`](./examples/sample_evaluation_scorecard.md).
+
+---
+
+## 4. Edge Cases & Gotchas Catalog
+
+| Gotcha / Common Failure Mode | Root Cause | Enforced Solution |
+| :--- | :--- | :--- |
+| **Evaluating RAG without Ground Truth** | Relying purely on LLM subjective impressions | Always curate a verified ground-truth answer set from official PDF rulebooks before scoring. |
+| **Cold-Start Bias in Latency Tests** | Measuring initial database connection or model loading time | Execute 5 unmeasured "warm-up" queries before beginning latency metric capture. |
+| **Data Leakage in Ablation Tests** | Exposing evaluation test queries to the retrieval index during chunking | Keep the test query bank completely isolated from index creation. |
+
+---
+
+## 5. Verification Checklist
+
+- [ ] Execute `python .agents/skills/experiment-evaluator/scripts/compute_ragas_scorecard.py --input <data.json>`.
+- [ ] Verify that Faithfulness, Answer Relevance, Context Precision, and Context Recall all exceed their target thresholds.
+- [ ] Confirm P50, P95, P99 latency percentiles are documented in milliseconds.

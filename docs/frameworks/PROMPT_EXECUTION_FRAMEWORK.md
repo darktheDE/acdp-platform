@@ -92,19 +92,14 @@ Every AI agent must strictly enforce these invariants across all interactions:
 ## 4. JIT Skill Inception Protocol
 
 When an AI agent identifies that a requested domain lacks a specialized skill:
-1. Verify if the task falls outside the existing 5 skills (`academic-researcher`, `thesis-writer`, `defense-pitch-builder`, `competitor-benchmark`, `experiment-evaluator`).
+1. Verify if the task falls outside the existing skills suite in `.agents/skills/`.
 2. Complete the immediate user prompt first using general engineering expertise.
-3. Once the output is delivered, formalize the workflow into a new file:
-   `.agents/skills/<domain-name>/SKILL.md`
-   conforming to the standard YAML frontmatter specification:
-   ```markdown
-   ---
-   name: [skill-name]
-   description: [Concise 1-sentence description of capabilities]
-   ---
-   # [Skill Title]
-   ## 1. When to Activate This Skill
-   ## 2. Standard Operational Protocol
-   ## 3. Best Practices & Output Templates
-   ```
-4. Register the new skill in `AGENTS.md` and `docs/HOW_TO_USE.md`.
+3. Once the output is delivered, formalize the workflow into a new modular skill package under `.agents/skills/<domain-name>/` strictly adhering to:
+   👉 **[`docs/frameworks/AGENT_SKILL_ENGINEERING_SPEC.md`](./AGENT_SKILL_ENGINEERING_SPEC.md)**
+4. **Mandatory Artifacts for Any New Skill**:
+   - `SKILL.md`: Frontmatter with exact positive triggers, negative exclusion triggers, and step-by-step procedures (< 500 lines / 5,000 tokens).
+   - `scripts/`: Deterministic code for linting, schema validation, or smoke testing.
+   - `references/`: Domain parameters, API contracts, and gotchas/troubleshooting guides.
+   - `examples/`: Gold standard sample payloads or component implementations.
+5. Register the new skill in `AGENTS.md`, `GEMINI.md`, and `.agents/skills/README.md`.
+

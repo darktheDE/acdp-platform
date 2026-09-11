@@ -25,6 +25,8 @@ This document maintains the immediate context, active tasks, and session state f
 - [x] **TASK-0002**: Relocate thesis proposal and registration documents into `docs/academic/`.
 - [x] **TASK-0003**: Formulate ADR-0001 (Architecture, Medallion Lakehouse, Hybrid RAG).
 - [x] **TASK-0004**: Formulate SPEC-0001 (System Foundation and Configuration Standards).
+- [x] **TASK-0105**: Resolve business dilemmas & technical feasibility review for [`docs/rd-tasks/T01.md`](../rd-tasks/T01.md) (Deliverable NT-013).
+- [x] **TASK-0106**: Complete academic competition survey and phased ingestion scaling roadmap for [`docs/rd-tasks/T02.md`](../rd-tasks/T02.md) (Deliverable NT-014).
 
 ---
 

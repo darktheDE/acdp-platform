@@ -15,7 +15,7 @@ This repository strictly adheres to **Spec-Driven Development** and an **End-to-
 
 | Directory | Purpose | Status & Description |
 | :--- | :--- | :--- |
-| **[`frameworks/`](./frameworks/)** | Operational Frameworks | Unified Multi-Agent Prompt Execution Framework ([`PROMPT_EXECUTION_FRAMEWORK.md`](./frameworks/PROMPT_EXECUTION_FRAMEWORK.md)). |
+| **[`frameworks/`](./frameworks/)** | Operational Frameworks | Unified Multi-Agent Framework ([`PROMPT_EXECUTION_FRAMEWORK.md`](./frameworks/PROMPT_EXECUTION_FRAMEWORK.md)), Standing Directives ([`TEAM_DIRECTIVES.md`](./frameworks/TEAM_DIRECTIVES.md)), Skill Engineering Spec ([`AGENT_SKILL_ENGINEERING_SPEC.md`](./frameworks/AGENT_SKILL_ENGINEERING_SPEC.md)). |
 | **[`academic/`](./academic/)** | University Deliverables | Registration form, NCKH proposal, defense slides, BibTeX library ([`references.bib`](./academic/references.bib)), and literature review matrix ([`literature-review.md`](./academic/literature-review.md)). |
 | **[`research/`](./research/)** | Strategic & Market Research | Competitor teardowns ([`competitor-benchmarks.md`](./research/competitor-benchmarks.md)) comparing Devpost, Unstop, and domestic Vietnamese channels. |
 | **[`experiments/`](./experiments/)** | Empirical Benchmarks | Scientific experiment designs, RAG evaluation scorecards (Ragas framework), and latency profiles. |
@@ -23,6 +23,7 @@ This repository strictly adheres to **Spec-Driven Development** and an **End-to-
 | **[`adr/`](./adr/)** | Architecture Decision Records | Immutable log of major architectural, database, and infrastructure choices. |
 | **[`specs/`](./specs/)** | Feature & Schema Specifications | Formal data schemas (Pydantic), API contracts, crawler definitions, and acceptance criteria. |
 | **[`tasks/`](./tasks/)** | Task State & Notion Mapping | Notion task mapping ledger ([`notion-task-mapping.md`](./tasks/notion-task-mapping.md)), 15-week roadmap, and active sprint context. |
+| **[`rd-tasks/`](./rd-tasks/)** | R&D Research Spikes | Exploratory R&D tasks authored by Duy (@QuangDuyReal) for problem formulation, scientific grounding, and cross-review ([`README.md`](./rd-tasks/README.md)). |
 | **[`rfc/`](./rfc/)** | Change Management & Proposals | Formal Request for Comments (RFC) protocol for adding, modifying, or deprecating features or tech stack dependencies. |
 
 ---
