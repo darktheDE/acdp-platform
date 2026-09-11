@@ -21,6 +21,8 @@ Thư mục `.agents/skills/` chứa các gói kỹ năng chuyên biệt (Modular
 | **`experiment-evaluator`** | [`experiment-evaluator/`](./experiment-evaluator/)<br>• `scripts/compute_ragas_scorecard.py`<br>• `references/ragas_metric_definitions.md`<br>• `examples/sample_evaluation_scorecard.md` | Thiết kế khung thực nghiệm đo lường định lượng, đánh giá RAG theo chuẩn Ragas (Faithfulness, Context Precision), đo latency. | ✅ **ĐẠT CHUẨN (10/10)**<br>Script test PASS |
 | **`frontend-designer`** | [`frontend-designer/`](./frontend-designer/)<br>• `scripts/validate_ui_component.py`<br>• `references/design_tokens.md`<br>• `examples/competition_card.tsx` | Thiết kế và xây dựng giao diện người dùng Next.js 15, mockup HTML/Tailwind xem trước nhanh, widget biểu đồ phân tích Recharts. | ✅ **ĐẠT CHUẨN (10/10)**<br>Script test PASS |
 | **`thesis-writer`** | [`thesis-writer/`](./thesis-writer/)<br>• `scripts/check_thesis_formatting.py`<br>• `references/fit_hcmute_thesis_guideline.md`<br>• `examples/sample_chapter_section.md` | Soạn thảo các chương báo cáo Tiểu luận chuyên ngành và Khóa luận tốt nghiệp theo chuẩn văn phong học thuật Khoa CNTT - HCMUTE. | ✅ **ĐẠT CHUẨN (10/10)**<br>Script test PASS |
+| **`url-link-verifier`** | [`url-link-verifier/`](./url-link-verifier/)<br>• `scripts/verify_links.py`<br>• `references/http_status_and_antibot_guide.md`<br>• `examples/sample_link_audit_report.json` | Tự động quét và kiểm chứng tính sống còn, khả dụng của toàn bộ URL, link bài báo khoa học và domain trên toàn repo. | ✅ **ĐẠT CHUẨN (10/10)**<br>Script test PASS |
+
 
 ---
 

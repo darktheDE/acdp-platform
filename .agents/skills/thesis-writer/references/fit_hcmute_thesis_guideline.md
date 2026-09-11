@@ -1,6 +1,6 @@
-# Quy Định Định Dạng Luận Văn Khoa CNTT - ĐH Sư Phạm Kỹ Thuật TP.HCM
+# Quy Định Định Dạng Luận Văn Khoa CNTT - Trường Đại học Công nghệ Kỹ thuật TP.HCM (HCM-UTE)
 
-Tài liệu này tổng hợp các quy định bắt buộc về hình thức trình bày và văn phong học thuật của Khoa CNTT, Trường ĐH Sư phạm Kỹ thuật TP.HCM (HCMUTE).
+Tài liệu này tổng hợp các quy định bắt buộc về hình thức trình bày và văn phong học thuật của Khoa CNTT, Trường Đại học Công nghệ Kỹ thuật TP.HCM (HCM-UTE).
 
 ---
 

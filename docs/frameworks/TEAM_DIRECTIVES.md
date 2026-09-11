@@ -95,4 +95,6 @@ Bảng này được Agent tự động cập nhật liên tục mỗi khi Hưng
 | **DIR-003** | 2026-09-11 | Hưng & Duy | **Dynamic Memory Persistence**: Mọi quy tắc mới phát sinh trong chat phải được Agent tự động ghi vào `docs/frameworks/TEAM_DIRECTIVES.md` và đồng bộ vào `AGENTS.md` / `GEMINI.md`. | Quy trình Agent |
 | **DIR-004** | 2026-09-11 | Hưng & Duy | **Tổ chức R&D Tasks**: Mọi task nghiên cứu do Duy tạo ra (`T01`, `T02`,...) phải nằm trong `docs/rd-tasks/` kèm hướng dẫn và cross-review checklist. | R&D Inception |
 | **DIR-005** | 2026-09-11 | Hưng & Duy | **Chính sách Git (Chỉ cấm lệnh nhạy cảm ghi)**: Cấm tuyệt đối `git add`, `git commit`, `git push`. Cho phép chạy các lệnh chỉ đọc như `git status`, `git log`, `git diff`, `git show`. | Mọi Agent & Terminal |
+| **DIR-006** | 2026-09-11 | Hưng & Duy | **Zero Broken Links & URL Verification**: Mọi URL, link bài báo khoa học, cổng thông tin và domain viết ra trong repo (hiện tại và sau này) bắt buộc phải được kiểm tra khả năng truy cập qua skill `url-link-verifier` (`verify_links.py`), cam kết 100% link sống. | Toàn bộ tài liệu & Specs |
+
 

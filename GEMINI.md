@@ -26,6 +26,7 @@ All agents operating in this workspace must strictly abide by the rules and adap
    - Competitor Analysis: `.agents/skills/competitor-benchmark/SKILL.md`
    - Experiment Evaluation: `.agents/skills/experiment-evaluator/SKILL.md`
    - Frontend UI/UX: `.agents/skills/frontend-designer/SKILL.md`
+   - URL & Link Verifier: `.agents/skills/url-link-verifier/SKILL.md`
 3. **Notion Synchronization**: Record deliverables in `docs/deliverables/` and maintain `docs/tasks/notion-task-mapping.md`.
 4. **Skill Engineering Specification**: When creating or upgrading any skill, strictly adhere to [`docs/frameworks/AGENT_SKILL_ENGINEERING_SPEC.md`](./docs/frameworks/AGENT_SKILL_ENGINEERING_SPEC.md). Never create cosmetic or prompt-only skills; always provide structured frontmatter with negative triggers, deterministic scripts (`scripts/`), deep references (`references/`), and verification suites.
 5. **Git Policy (Read-Only Inspection Allowed)**:

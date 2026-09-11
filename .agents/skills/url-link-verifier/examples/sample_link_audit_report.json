@@ -1,0 +1,62 @@
+[
+  {
+    "url": "https://doi.org/10.1145/945721.945723",
+    "domain": "doi.org",
+    "status": "HEALTHY",
+    "http_code": 302,
+    "message": "HTTP HEAD success (302)",
+    "response_time_ms": 285,
+    "occurrences": [
+      {
+        "file": "D:/Code/final/acdp-platform/docs/academic/references.bib",
+        "line": 42
+      },
+      {
+        "file": "D:/Code/final/acdp-platform/docs/rd-tasks/T02.md",
+        "line": 41
+      }
+    ]
+  },
+  {
+    "url": "https://www.vldb.org",
+    "domain": "www.vldb.org",
+    "status": "HEALTHY",
+    "http_code": 200,
+    "message": "HTTP HEAD success (200)",
+    "response_time_ms": 410,
+    "occurrences": [
+      {
+        "file": "D:/Code/final/acdp-platform/docs/rd-tasks/T02.md",
+        "line": 49
+      }
+    ]
+  },
+  {
+    "url": "https://ybox.vn/cuoc-thi",
+    "domain": "ybox.vn",
+    "status": "HEALTHY",
+    "http_code": 200,
+    "message": "HTTP GET success (200)",
+    "response_time_ms": 520,
+    "occurrences": [
+      {
+        "file": "D:/Code/final/acdp-platform/docs/rd-tasks/T02.md",
+        "line": 105
+      }
+    ]
+  },
+  {
+    "url": "https://nonexistent-broken-competition-portal.edu.vn",
+    "domain": "nonexistent-broken-competition-portal.edu.vn",
+    "status": "DNS_FAILED",
+    "http_code": null,
+    "message": "Domain DNS resolution failed (NXDOMAIN / host not found).",
+    "response_time_ms": 85,
+    "occurrences": [
+      {
+        "file": "D:/Code/final/acdp-platform/docs/specs/0002-data-ingestion-and-schema-spec.md",
+        "line": 88
+      }
+    ]
+  }
+]

@@ -31,6 +31,7 @@ Detect user intent and activate the corresponding modular skill playbook:
 | **Mode 4: Experiments & Metrics** | [`.agents/skills/experiment-evaluator/SKILL.md`](./.agents/skills/experiment-evaluator/SKILL.md) | Ragas scorecards, latency benchmarks |
 | **Mode 5: Thesis & Presentation** | [`.agents/skills/thesis-writer/SKILL.md`](./.agents/skills/thesis-writer/SKILL.md)<br>[`.agents/skills/defense-pitch-builder/SKILL.md`](./.agents/skills/defense-pitch-builder/SKILL.md) | HCMUTE thesis chapters, defense slides |
 | **Mode 6: Frontend & UI/UX** | [`.agents/skills/frontend-designer/SKILL.md`](./.agents/skills/frontend-designer/SKILL.md) | Visual UI mockups, Next.js 15 components |
+| **Mode 7: Quality & Link Verification** | [`.agents/skills/url-link-verifier/SKILL.md`](./.agents/skills/url-link-verifier/SKILL.md) | Reachability audit, dead link detection |
 
 *JIT Skill Inception*: If a recurring domain lacks a skill, complete the task using core capabilities, then instantiate a new specialized skill following the strict engineering specification in [`docs/frameworks/AGENT_SKILL_ENGINEERING_SPEC.md`](./docs/frameworks/AGENT_SKILL_ENGINEERING_SPEC.md). Skills must never be mere conversational prompts; they require structured frontmatter with negative triggers, deterministic scripts in `scripts/`, reference manuals in `references/`, and verification tests.
 

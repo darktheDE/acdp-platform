@@ -21,6 +21,7 @@ All operations in this repository are governed by the master specifications:
 - Competitor Benchmarks: `.agents/skills/competitor-benchmark/SKILL.md`
 - Experiment Evaluation: `.agents/skills/experiment-evaluator/SKILL.md`
 - Frontend UI/UX: `.agents/skills/frontend-designer/SKILL.md`
+- URL & Domain Verifier: `.agents/skills/url-link-verifier/SKILL.md`
 
 ---
 

@@ -22,7 +22,7 @@ Quy chuẩn này được tổng hợp và chuẩn hóa trực tiếp từ 4 ngu
 
 1. **The Agent Skills Open Standard (`agentskills.io`)**:
    - Tiêu chuẩn mở về cấu trúc thư mục skill, đặc tả YAML frontmatter (`name`, `description`, `compatibility`, `metadata`), nguyên lý phân tầng tải ngữ cảnh.
-   - *Tài liệu tham khảo*: [Agent Skills Specification (agentskills.io)](https://agentskills.io) & [Agent Skills Best Practices](https://agentskills.io/docs/best-practices).
+   - *Tài liệu tham khảo*: [Agent Skills Specification](https://agentskills.io).
 2. **Anthropic Engineering Research: "Building Effective Agents" & Context Engineering**:
    - Nguyên lý: *"Tool and skill descriptions act as prompts"* – Mỗi token trong phần mô tả là một chỉ dẫn kích hoạt.
    - Nguyên tắc phân định: **Tính Tất định (Determinism)** của Scripts vs. **Khả năng Suy luận (Reasoning)** của LLM.

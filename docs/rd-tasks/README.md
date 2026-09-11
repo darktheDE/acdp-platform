@@ -3,7 +3,7 @@
 > **Phụ trách chính (Initiator / Author)**: Nguyễn Văn Quang Duy (@QuangDuyReal)  
 > **Đồng phụ trách & Kỹ thuật (Co-author & Tech Lead)**: Đỗ Kiến Hưng (@darktheDE)  
 > **Cán bộ hướng dẫn khoa học**: ThS. Trần Quang Khải  
-> **Đơn vị**: Khoa Công nghệ Thông tin - Trường ĐH Sư phạm Kỹ thuật TP.HCM (HCMUTE)  
+> **Đơn vị**: Khoa Công nghệ Thông tin - Trường Đại học Công nghệ Kỹ thuật TP.HCM (HCM-UTE)  
 > **Chuyên ngành**: Kỹ thuật Dữ liệu (Data Engineering)
 
 ---
@@ -77,7 +77,7 @@ Khi Duy muốn đặt ra một bài toán nghiên cứu mới, hãy tạo file `
 
 > **Người thực hiện**: Đỗ Kiến Hưng (@darktheDE) & Nguyễn Văn Quang Duy (@QuangDuyReal)  
 > **Cán bộ hướng dẫn khoa học**: ThS. Trần Quang Khải  
-> **Đơn vị**: Khoa Công nghệ Thông tin - Trường ĐH Sư phạm Kỹ thuật TP.HCM (HCMUTE)  
+> **Đơn vị**: Khoa Công nghệ Thông tin - Trường Đại học Công nghệ Kỹ thuật TP.HCM (HCM-UTE)  
 > **Chuyên ngành**: Kỹ thuật Dữ liệu (Data Engineering)  
 > **Hồ sơ nghiệm thu liên quan**: [Link tới docs/deliverables/ nếu có]
 
