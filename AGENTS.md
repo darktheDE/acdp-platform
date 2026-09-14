@@ -32,8 +32,10 @@ Detect user intent and activate the corresponding modular skill playbook:
 | **Mode 5: Thesis & Presentation** | [`.agents/skills/thesis-writer/SKILL.md`](./.agents/skills/thesis-writer/SKILL.md)<br>[`.agents/skills/defense-pitch-builder/SKILL.md`](./.agents/skills/defense-pitch-builder/SKILL.md) | HCMUTE thesis chapters, defense slides |
 | **Mode 6: Frontend & UI/UX** | [`.agents/skills/frontend-designer/SKILL.md`](./.agents/skills/frontend-designer/SKILL.md) | Visual UI mockups, Next.js 15 components |
 | **Mode 7: Quality & Link Verification** | [`.agents/skills/url-link-verifier/SKILL.md`](./.agents/skills/url-link-verifier/SKILL.md) | Reachability audit, dead link detection |
+| **Mode 8: Scientific Prose & Anti-Slop** | [`.agents/skills/anti-slop-scientific-writer/SKILL.md`](./.agents/skills/anti-slop-scientific-writer/SKILL.md) | Concise responses, zero AI slop/tropes, doc audit |
 
-*JIT Skill Inception*: If a recurring domain lacks a skill, complete the task using core capabilities, then instantiate a new specialized skill following the strict engineering specification in [`docs/frameworks/AGENT_SKILL_ENGINEERING_SPEC.md`](./docs/frameworks/AGENT_SKILL_ENGINEERING_SPEC.md). Skills must never be mere conversational prompts; they require structured frontmatter with negative triggers, deterministic scripts in `scripts/`, reference manuals in `references/`, and verification tests.
+*Implicit Intent & Auto-Activation*: Every skill in this repository must automatically activate based on the user's intent and prompt context. Never demand or expect the user to explicitly call skills by name.
+
 
 ---
 
@@ -85,4 +87,9 @@ All agents operating in this repository must strictly adhere to the continuous d
    - Major: Kỹ thuật Dữ liệu (Data Engineering).
 3. 🧠 **Dynamic Rule Ingestion & Memory Persistence**:
    - Whenever the user specifies a new operational rule or working constraint during conversation, the agent must immediately apply it AND permanently record it in [`docs/frameworks/TEAM_DIRECTIVES.md`](./docs/frameworks/TEAM_DIRECTIVES.md) (and update `AGENTS.md` / `GEMINI.md` if universally applicable).
+4. 🎯 **Concise Scientific Communication & Anti-Slop (DIR-007)**:
+   - **Answer-First**: Lead immediately with the direct technical solution; never open with conversational throat-clearing, prompt restatements, or sycophancy.
+   - **Zero AI Slop & Tropes**: Banished across all replies and documents (.md, .html) using `.agents/skills/anti-slop-scientific-writer/`.
+5. ⚡ **Implicit Intent & Automatic Skill Activation (DIR-008)**:
+   - All modular skills in `.agents/skills/` must automatically trigger based on user intent analysis; never wait for the user to explicitly call a skill by name.
 

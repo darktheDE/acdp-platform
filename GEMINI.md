@@ -27,6 +27,7 @@ All agents operating in this workspace must strictly abide by the rules and adap
    - Experiment Evaluation: `.agents/skills/experiment-evaluator/SKILL.md`
    - Frontend UI/UX: `.agents/skills/frontend-designer/SKILL.md`
    - URL & Link Verifier: `.agents/skills/url-link-verifier/SKILL.md`
+   - Scientific Prose & Anti-Slop: `.agents/skills/anti-slop-scientific-writer/SKILL.md`
 3. **Notion Synchronization**: Record deliverables in `docs/deliverables/` and maintain `docs/tasks/notion-task-mapping.md`.
 4. **Skill Engineering Specification**: When creating or upgrading any skill, strictly adhere to [`docs/frameworks/AGENT_SKILL_ENGINEERING_SPEC.md`](./docs/frameworks/AGENT_SKILL_ENGINEERING_SPEC.md). Never create cosmetic or prompt-only skills; always provide structured frontmatter with negative triggers, deterministic scripts (`scripts/`), deep references (`references/`), and verification suites.
 5. **Git Policy (Read-Only Inspection Allowed)**:
@@ -42,4 +43,9 @@ All agents operating in this workspace must strictly abide by the rules and adap
 8. **Continuous Directives & Active Memory**:
    - Consult and respect all standing directives in [`docs/frameworks/TEAM_DIRECTIVES.md`](./docs/frameworks/TEAM_DIRECTIVES.md).
    - When the user issues any new constraint or preference during chat, immediately apply it AND persist it to [`docs/frameworks/TEAM_DIRECTIVES.md`](./docs/frameworks/TEAM_DIRECTIVES.md).
+9. **Concise Scientific Communication & Anti-Slop (DIR-007)**:
+   - Always lead with the direct technical answer (Answer-First). Never use throat-clearing, preambles, reasoning leaks, or sycophancy.
+   - Author `.md` and `.html` documentation strictly adhering to `.agents/skills/anti-slop-scientific-writer/`.
+10. **Implicit Intent & Auto-Activation (DIR-008)**:
+    - Never demand or wait for the user to explicitly call skills by name. Automatically infer user intent and activate the relevant skill playbooks immediately.
 

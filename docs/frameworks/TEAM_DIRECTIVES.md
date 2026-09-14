@@ -96,5 +96,8 @@ Bảng này được Agent tự động cập nhật liên tục mỗi khi Hưng
 | **DIR-004** | 2026-09-11 | Hưng & Duy | **Tổ chức R&D Tasks**: Mọi task nghiên cứu do Duy tạo ra (`T01`, `T02`,...) phải nằm trong `docs/rd-tasks/` kèm hướng dẫn và cross-review checklist. | R&D Inception |
 | **DIR-005** | 2026-09-11 | Hưng & Duy | **Chính sách Git (Chỉ cấm lệnh nhạy cảm ghi)**: Cấm tuyệt đối `git add`, `git commit`, `git push`. Cho phép chạy các lệnh chỉ đọc như `git status`, `git log`, `git diff`, `git show`. | Mọi Agent & Terminal |
 | **DIR-006** | 2026-09-11 | Hưng & Duy | **Zero Broken Links & URL Verification**: Mọi URL, link bài báo khoa học, cổng thông tin và domain viết ra trong repo (hiện tại và sau này) bắt buộc phải được kiểm tra khả năng truy cập qua skill `url-link-verifier` (`verify_links.py`), cam kết 100% link sống. | Toàn bộ tài liệu & Specs |
+| **DIR-007** | 2026-09-14 | Hưng & Duy | **Giao tiếp ngắn gọn, chuẩn khoa học, cấm AI Slop**: Phản hồi hội thoại phải vào thẳng kết quả (Answer-First), không chào hỏi rào đón, không lộ suy nghĩ nội bộ (Zero Reasoning Leak), không tóm tắt luẩn quẩn (No Tie-Back), không nịnh bợ. Soạn thảo tài liệu (.md, .html) phải súc tích, định lượng, loại bỏ triệt để từ ngữ và cấu trúc sáo rỗng AI theo skill `anti-slop-scientific-writer`. | Toàn bộ tương tác AI & Tài liệu |
+| **DIR-008** | 2026-09-14 | Hưng & Duy | **Cơ chế tự động kích hoạt kỹ năng (Implicit Intent Activation)**: Toàn bộ các skill trong repo phải tự động kích hoạt dựa trên việc phân tích ý định (intent matching) trong câu hỏi/yêu cầu của người dùng; tuyệt đối không đòi hỏi hay bắt buộc người dùng phải gõ đúng tên skill mới sử dụng. | Mọi Agent & Kỹ năng |
+
 
 
