@@ -4,6 +4,9 @@
 .env.*.local
 *.pem
 *.key
+*mcp_config.json
+.agents/mcp_config.json
+.agents/plugins/
 
 # Python
 __pycache__/
