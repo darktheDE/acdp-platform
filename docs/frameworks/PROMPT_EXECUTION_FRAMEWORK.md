@@ -38,8 +38,8 @@ Full Academic & Spec     Rapid Prototyping        Direct Knowledge
 *Used for*: Literature reviews, thesis chapter drafting, production crawler development, Lakehouse dbt pipelines, RAG API endpoints, and scientific experiments.
 
 1. **Classify**: Identify the active Mode (1 to 5) and associated Notion Task ID (`NT-XXXX`).
-2. **Ground**: Read `docs/tasks/active-sprint.md`, `docs/adr/0001-medallion-lakehouse-and-rag-stack.md`, and relevant specs in `docs/specs/`.
-3. **Safety Gate (RFC Check)**: If the prompt alters the tech stack or storage architecture, pause and initiate `docs/rfc/PROCESS.md`.
+2. **Ground**: Read `docs/tasks/active-sprint.md`, specs in `docs/specs/`, and background context. *(Exception for Tech Research tasks: enforce DIR-011 Tabula Rasa — treat initial ADR/README templates as unverified placeholders; do not anchor or bias research to them)*.
+3. **Safety Gate (RFC & ADR Check)**: If the prompt alters the tech stack or storage architecture, pause and initiate `docs/rfc/PROCESS.md`. For tech selection research, structure outputs as defense dossiers for internal peer debate between Hưng and Duy; formal ADRs are drafted strictly after peer defense and mutual approval (DIR-011).
 4. **Execute**: Activate the specialized skill from `.agents/skills/` (e.g. `thesis-writer`, `academic-researcher`, `experiment-evaluator`).
 5. **Verify**: Run tests (`pytest`), linter (`ruff check`), citation checks, and anti-hallucination validation.
 6. **Deliver & Sync**: Log outcomes in `docs/deliverables/NT-XXXX-[slug].md` and update `docs/tasks/notion-task-mapping.md`.
@@ -51,7 +51,7 @@ Full Academic & Spec     Rapid Prototyping        Direct Knowledge
 
 1. **Zero-Blocker Inception (Mock Contract)**: If downstream layers (backend, database) do not exist yet, **do not wait**. Generate mock data stubs matching the expected Pydantic schema.
 2. **Direct Visual Deliverable**: Produce immediately verifiable artifacts (e.g., self-contained HTML/Tailwind preview files under `docs/deliverables/ui-mockups/` or isolated script spikes under `docs/research/spikes/`).
-3. **Adherence to Core Baseline**: Even in fast-track prototypes, respect the baseline tech stack from `ADR-0001` (Next.js 15, Tailwind CSS v4, React 19).
+3. **Adherence to Core Baseline**: In fast-track UI prototypes, utilize standard modern web interfaces (HTML, Tailwind CSS, modern TypeScript) with mock contracts until formal ADR adoption.
 4. **JIT Skill Synthesis**: If the task revealed a recurring domain gap, propose or instantiate a new `.agents/skills/<skill-name>/SKILL.md`.
 
 ---

@@ -3,12 +3,8 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.13+-3776AB?logo=python&logoColor=white)](https://www.python.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
-[![Next.js](https://img.shields.io/badge/Next.js-15+-black?logo=next.js&logoColor=white)](https://nextjs.org/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17+-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
-[![DuckDB](https://img.shields.io/badge/DuckDB-1.2+-FFF000?logo=duckdb&logoColor=black)](https://duckdb.org/)
-[![Qdrant](https://img.shields.io/badge/Qdrant-1.19+-DC2626?logo=qdrant&logoColor=white)](https://qdrant.tech/)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
+[![R&D Phase](https://img.shields.io/badge/Phase-Active%20R%26D-orange.svg)](docs/rd-tasks/)
 
 An end-to-end data platform that automates academic competition ingestion, provides RAG-powered regulation query assistants, enables intelligent teammate matchmaking, and delivers faculty-level analytical dashboards.
 
@@ -33,11 +29,11 @@ Academic competitions, hackathons, and high-impact talent programs (e.g., ICPC, 
 
 ## Key Features
 
-- **Automated Multi-Source Data Ingestion**: Headless dynamic crawlers (Playwright, Crawl4AI) collect announcements across academic portals and social media; LLMs enforce structured JSON schemas via Pydantic.
-- **Medallion Lakehouse Architecture**: Tiered data processing (`Bronze` raw payload $\rightarrow$ `Silver` cleaned & deduplicated $\rightarrow$ `Gold` curated data marts) using DuckDB, Parquet, and dbt.
-- **AI-Powered Regulation Copilot**: Hybrid Search (BM25 lexical + dense vector retrieval in Qdrant) with Cross-Encoder re-ranking, strictly grounded in official contest regulations.
-- **Intelligent Teammate & Advisor Matchmaking**: Vector similarity and heuristic constraints match students with complementary skills and align student teams with faculty research interests.
-- **Interactive Student Portal & BI Dashboard**: Fast web application built with Next.js 15, asynchronous REST APIs with FastAPI, and administrative dashboards tracking competition trends.
+- **Automated Multi-Source Data Ingestion**: Dynamic crawlers collect competition announcements across academic portals and social media; LLMs enforce structured JSON schemas via Pydantic.
+- **Medallion Lakehouse Architecture**: Tiered data processing (`Bronze` raw payload $\rightarrow$ `Silver` cleaned & deduplicated $\rightarrow$ `Gold` curated data marts) ensuring data integrity, auditability, and time-travel capability.
+- **AI-Powered Regulation Copilot**: Hybrid Search (lexical BM25 + dense vector retrieval) with re-ranking, strictly grounded in official contest regulations.
+- **Intelligent Teammate & Advisor Matchmaking**: Semantic similarity and heuristic constraints match students with complementary skills and align student teams with faculty research interests.
+- **Interactive Student Portal & BI Dashboard**: Modern responsive web application and administrative dashboards tracking competition trends.
 
 ---
 
@@ -46,47 +42,48 @@ Academic competitions, hackathons, and high-impact talent programs (e.g., ICPC, 
 ```mermaid
 flowchart TD
     subgraph Ingestion["1. Data Ingestion Layer"]
-        A1["Social Fanpages & Academic Portals"] --> B1["Playwright / Crawl4AI Crawlers"]
+        A1["Social Fanpages & Academic Portals"] --> B1["Multi-Source Dynamic Crawlers"]
         B1 --> B2["LLM Schema Parser (Pydantic Structured Output)"]
     end
 
     subgraph Lakehouse["2. Storage & Lakehouse Layer (Medallion)"]
-        B2 --> C1["Bronze Layer: Raw Payloads"]
-        C1 --> C2["Silver Layer: Cleaned & Deduplicated (DuckDB / dbt)"]
-        C2 --> C3["Gold Layer: Curated Data Marts & PostgreSQL"]
+        B2 --> C1["Bronze Layer: Raw Payloads & Audit Trail"]
+        C1 --> C2["Silver Layer: Cleaned, Deduplicated & Standardized"]
+        C2 --> C3["Gold Layer: Analytical Data Marts & Serving Store"]
     end
 
     subgraph Intelligence["3. Semantic & Intelligence Layer"]
         C2 --> D1["Document Chunking & Vector Embeddings"]
-        D1 --> D2["Vector Store: Qdrant / pgvector"]
+        D1 --> D2["Vector Storage & Semantic Index"]
         D2 --> D3["Hybrid Search (BM25 + Dense Vectors) & Re-ranking"]
         D3 --> D4["Regulation RAG Copilot & Teammate Matchmaker"]
     end
 
     subgraph Serving["4. Serving & Presentation Layer"]
-        C3 --> E1["FastAPI Backend REST Services"]
+        C3 --> E1["Backend REST Services"]
         D4 --> E1
-        E1 --> F1["Next.js Web Portal (Student Experience)"]
+        E1 --> F1["Student Experience Web Portal"]
         E1 --> F2["Faculty Analytics & BI Dashboard"]
     end
 ```
 
 ---
 
-## Tech Stack
+## Technology Governance & Active R&D Phase
 
-All components use current production-ready stable releases:
+> [!NOTE]
+> **Active R&D Inception Phase (Tabula Rasa - DIR-011)**:  
+> All technology choices across storage layers, table formats, ingestion frameworks, vector retrieval, and web serving are currently undergoing rigorous, first-principles academic research and empirical benchmarking under [`docs/rd-tasks/`](docs/rd-tasks/).
+> 
+> In accordance with the team's research charter, **no tech stack is pre-decided or locked in**. Technologies are selected only after comprehensive feasibility analysis, quantitative benchmarking, and formal cross-defense between the co-authors before issuing final Architecture Decision Records (ADRs).
 
-| Domain | Technology & Version | Purpose |
-| :--- | :--- | :--- |
-| **Ingestion & Crawling** | Python 3.13+, Crawl4AI (v0.9+), Playwright (v1.48+), Scrapy (v2.12+), Pydantic (v2.10+) | Web extraction & structured schema validation |
-| **Data Lakehouse & Storage** | PostgreSQL (v17+), DuckDB (v1.2+), Apache Parquet, dbt-core (v1.9+) | Medallion storage, deduplication & transformation |
-| **Workflow Orchestration** | Apache Airflow (v2.10+) / Prefect (v3.0+) | Scheduled pipelines and ingestion monitoring |
-| **Vector DB & Retrieval** | Qdrant (v1.19+) / pgvector (v0.8+), Sentence-Transformers (v3.1+), BM25, Cross-Encoder | Semantic search, vector embeddings & re-ranking |
-| **LLM & Semantic AI** | Gemini API / OpenAI API, LangChain (v0.3+) / LlamaIndex (v0.12+) | RAG pipeline, parsing & question answering |
-| **Backend REST API** | FastAPI (v0.115+), SQLAlchemy (v2.0+) / SQLModel, Uvicorn | High-performance asynchronous API endpoints |
-| **Frontend & Analytics** | Next.js 15+ (App Router), React 19, TypeScript 5.6+, Tailwind CSS v4.0, Recharts | Responsive web portal & analytics dashboard |
-| **DevOps & Infrastructure** | Docker, Docker Compose (v2.30+), GitHub Actions | Containerization & continuous integration |
+| Architecture Layer | R&D Research Scope | Evaluation Status | Active Task / Deliverable |
+| :--- | :--- | :---: | :--- |
+| **Bronze Layer Storage & Format** | Object Storage (Local POSIX, SeaweedFS, Cloudflare R2) & Open Table Formats (Delta Lake `delta-rs`, Apache Iceberg, Lance) | 🔄 Ready for Peer Debate | [`T13.md`](docs/rd-tasks/T13.md) / [`NT-018`](docs/deliverables/NT-018-bronze-storage-and-table-format-evaluation.md) |
+| **Ingestion & Crawling** | Multi-source dynamic scrapers (Playwright, Crawl4AI) & Pydantic extraction | 🔄 Ready for Peer Debate | [`T02.md`](docs/rd-tasks/T02.md) / [`NT-014`](docs/deliverables/NT-014-competition-landscape-survey.md) |
+| **System Architecture & Data Flow** | Overall Lakehouse architecture, serving layer, and pipeline orchestration | 🔄 Ready for Peer Debate | [`T08_v2.md`](docs/rd-tasks/T08_v2.md) / `NT-017` |
+| **Business & Technical Feasibility** | Core business requirements, constraints, and lean engineering validation | ✅ Complete & Approved | [`T01.md`](docs/rd-tasks/T01.md) / [`NT-013`](docs/deliverables/NT-013-business-technical-feasibility-review.md) |
+| **Semantic Intelligence & Vector Search** | Hybrid retrieval (BM25 + Dense Vectors), Cross-Encoder re-ranking | ⏳ Scheduled | Phase 1 Backlog (`NT-012`) |
 
 ---
 
@@ -146,9 +143,8 @@ Start all database, vector store, backend, and frontend services:
 ```bash
 docker-compose up -d --build
 ```
-- **Web Application**: `http://localhost:3000`
-- **FastAPI OpenAPI Documentation**: `http://localhost:8000/docs`
-- **Qdrant Dashboard**: `http://localhost:6333/dashboard`
+- **Web Application Portal**: `http://localhost:3000`
+- **Backend API Documentation**: `http://localhost:8000/docs`
 
 ---
 

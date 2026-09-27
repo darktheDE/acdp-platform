@@ -1,77 +1,57 @@
-# ADR-0001: Core Architecture, Medallion Lakehouse, and Hybrid RAG Stack
+# ADR-0001: Core Architecture, Medallion Lakehouse, and Hybrid RAG Stack (Archived Inception Proposal)
 
-- **Status**: Accepted
+- **Status**: Superseded / Archived Inception Proposal (Subject to Active R&D Tasks & DIR-011)
 - **Date**: 2026-09-08
-- **Deciders**: Do Kien Hung, Nguyen Van Quang Duy, M.Sc. Tran Quang Khai
+- **Authors**: Do Kien Hung, Nguyen Van Quang Duy
+- **Scientific Advisor**: M.Sc. Tran Quang Khai
 - **Consulted**: Faculty of Information Technology, HCMUTE
+
+> [!WARNING]
+> **Archived Inception Proposal (Tabula Rasa - DIR-011)**:  
+> This initial document served as an early proposal draft. In accordance with **DIR-011 (Tabula Rasa in Tech Research)**, all technology selections mentioned herein are unverified starter placeholders.
+> 
+> Each layer of the architecture is currently being evaluated, benchmarked, and finalized from first principles under [`docs/rd-tasks/`](../rd-tasks/):
+> - **Bronze Storage & Open Table Formats**: Under active research in [`T13.md`](../rd-tasks/T13.md) and [`NT-018`](../deliverables/NT-018-bronze-storage-and-table-format-evaluation.md).
+> - **Data Ingestion & Discovery**: Under active research in [`T02.md`](../rd-tasks/T02.md) and [`NT-014`](../deliverables/NT-014-competition-landscape-survey.md).
+> - **Overall System Architecture**: Under active research in [`T08_v2.md`](../rd-tasks/T08_v2.md).
+> 
+> Official replacement ADRs will be formally authored and approved only after empirical peer defense between Hưng and Duy is completed.
 
 ---
 
-## Context and Problem Statement
+## 1. Architectural Concept & Problem Statement
 
-The Academic Competition Discovery Platform (ACDP) must solve three disparate technical challenges:
+The Academic Competition Discovery Platform (ACDP) addresses core engineering challenges:
 1. Ingesting volatile, semi-structured event announcements from disparate web portals and social media channels.
 2. Providing analytical aggregations for university administrators (OLAP) while supporting fast, low-latency relational queries for the student application (OLTP).
 3. Answering intricate natural language queries about contest regulations with zero hallucination.
 
-We need to establish the foundational tech stack, storage architecture, and intelligence retrieval strategy for the Special Topic Project (15-week MVP) with seamless extensibility into the Graduation Thesis.
-
 ---
 
-## Decision Drivers
+## 2. High-Level Architectural Drivers
 
-- **Domain Relevance**: The project is under the Major in Data Engineering; modern data architecture (Lakehouse, dbt, Parquet) must be central.
-- **Resilience Against DOM Drift**: Traditional CSS/XPath scraping breaks frequently. The ingestion mechanism must be anti-fragile.
+- **Domain Relevance**: The project is under the Major in Data Engineering; modern data architecture (Medallion Lakehouse, metadata management, structured data extraction) is central.
+- **Resilience Against Web Layout Drift**: The ingestion mechanism must be anti-fragile.
 - **Accuracy & Grounding**: In academic rules, hallucinating an eligibility requirement or submission deadline is unacceptable.
-- **Resource Efficiency**: Must run cost-effectively on local workstations (Docker/WSL2) or lightweight cloud VMs without requiring multi-node Spark clusters.
+- **Resource Efficiency**: Must run cost-effectively on local workstations (16GB RAM) or lightweight cloud VMs without requiring multi-node Spark clusters.
 
 ---
 
-## Considered Options
+## 3. High-Level Architectural Pillars (Under Active R&D)
 
-### Storage & Lakehouse
-1. **Option A (Traditional Warehouse)**: Store everything directly in a monolithic PostgreSQL database.
-2. **Option B (Heavyweight Big Data)**: Deploy Apache Spark + Delta Lake on a multi-node cluster.
-3. **Option C (Embedded Medallion Lakehouse - Chosen)**: Tiered storage using Parquet files and DuckDB for in-process OLAP, paired with PostgreSQL for operational serving and dbt for transformations.
-
-### Ingestion & Information Extraction
-1. **Option A (Static Regex/BeautifulSoup)**: Traditional static HTML parsers.
-2. **Option B (Headless Browser + LLM Schema Parser - Chosen)**: Crawl4AI and Playwright for dynamic SPA rendering, followed by LLM-guided extraction constrained by Pydantic schemas.
-
-### AI & Retrieval Engine
-1. **Option A (Pure Dense Vector Search)**: Embed rulebooks and query vector similarity directly.
-2. **Option B (Hybrid Search with Re-ranking - Chosen)**: Combine BM25 lexical keyword search and dense vector retrieval in Qdrant, followed by Cross-Encoder re-ranking.
+1. **Tiered Medallion Storage Pattern**:
+   - `Bronze`: Raw, immutable web payloads and crawl metadata ensuring auditability and replayability.
+   - `Silver`: Cleaned, validated, and deduplicated records.
+   - `Gold`: Curated dimensional data marts for reporting and application serving.
+2. **Anti-Fragile Ingestion**:
+   - Dynamic web crawlers combined with LLM Schema Parsers constrained by strict schemas.
+3. **Hybrid Search & Grounded Retrieval**:
+   - Combining lexical keyword matching with dense vector similarity and re-ranking.
+4. **Decoupled Serving & Presentation**:
+   - High-throughput asynchronous REST APIs powering interactive student web portals and faculty analytics dashboards.
 
 ---
 
-## Decision Outcome
+## 4. Current Status
 
-**Chosen Architecture**:
-1. **Lakehouse Tiering**:
-   - `Bronze`: Raw, immutable web payloads, HTML dumps, and crawl metadata stored as JSON/Parquet.
-   - `Silver`: Cleaned, validated, and deduplicated records managed via DuckDB and transformed with dbt-core.
-   - `Gold`: Curated dimensional data marts, loaded into PostgreSQL for consumption by web consumers and faculty analytics.
-2. **Anti-fragile Ingestion**:
-   - Playwright & Crawl4AI for headless dynamic rendering.
-   - Pydantic models enforcing strict typing on competition entities.
-3. **Hybrid RAG Engine**:
-   - Qdrant for vector embeddings, BM25 for precise keyword/date matching, and a Cross-Encoder for context re-ranking before LLM synthesis.
-4. **Decoupled Serving**:
-   - FastAPI for high-throughput asynchronous REST APIs.
-   - Next.js 15 (React 19) for student and administrative web interfaces.
-5. **Just-In-Time Codebase Growth**:
-   - The repository will not contain empty placeholder directories. Directories (`apps/`, `pipelines/`) are instantiated only upon executing an approved feature specification.
-
----
-
-## Consequences
-
-### Positive
-- High analytical performance using DuckDB without cluster overhead.
-- Ingestion pipelines remain operational even when source websites alter HTML classes or layouts.
-- Regulation queries achieve high precision by combining exact keyword matching (BM25) with semantic embeddings.
-- Clean separation of concerns between data engineering (Python/dbt) and web presentation (Next.js).
-
-### Negative / Trade-offs
-- Multiple storage formats (Parquet, DuckDB, PostgreSQL) require clear sync pipelines and orchestration (Airflow/Prefect).
-- LLM schema extraction incurs API latency and token cost, mitigated by caching raw payloads in the Bronze tier.
+The specific technologies for each pillar are actively being benchmarked under [`docs/rd-tasks/`](../rd-tasks/). Formal Architecture Decision Records (ADRs) will be issued following peer defense dossiers and mutual consensus.

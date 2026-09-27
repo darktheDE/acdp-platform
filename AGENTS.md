@@ -27,7 +27,7 @@ Detect user intent and activate the corresponding modular skill playbook:
 | :--- | :--- | :--- |
 | **Mode 1: Academic Research** | [`.agents/skills/academic-researcher/SKILL.md`](./.agents/skills/academic-researcher/SKILL.md) | Literature matrix, BibTeX library |
 | **Mode 2: Strategy & Competitors**| [`.agents/skills/competitor-benchmark/SKILL.md`](./.agents/skills/competitor-benchmark/SKILL.md) | Competitor teardowns, SWOT matrix |
-| **Mode 3: Engineering & Code** | **Spec-Driven Protocol** (`docs/specs/`) | Production data pipelines, FastAPI |
+| **Mode 3: Engineering & Code** | **Spec-Driven Protocol** (`docs/specs/`) | Production data pipelines, REST APIs |
 | **Mode 4: Experiments & Metrics** | [`.agents/skills/experiment-evaluator/SKILL.md`](./.agents/skills/experiment-evaluator/SKILL.md) | Ragas scorecards, latency benchmarks |
 | **Mode 5: Thesis & Presentation** | [`.agents/skills/thesis-writer/SKILL.md`](./.agents/skills/thesis-writer/SKILL.md)<br>[`.agents/skills/defense-pitch-builder/SKILL.md`](./.agents/skills/defense-pitch-builder/SKILL.md) | HCMUTE thesis chapters, defense slides |
 | **Mode 6: Frontend & UI/UX** | [`.agents/skills/frontend-designer/SKILL.md`](./.agents/skills/frontend-designer/SKILL.md) | Visual UI mockups, Next.js 15 components |
@@ -60,15 +60,11 @@ The team coordinates daily work on **Notion**.
 
 ---
 
-## 5. Technology Stack Standards
+## 5. Technology Governance & Active R&D Phase
 
-- **Python**: `3.13+` (Typed, Pydantic v2.10+, Ruff)
-- **FastAPI**: `v0.115+` (Async REST endpoints)
-- **Next.js**: `v15+` (App Router, React 19, TypeScript 5.6+, Tailwind CSS v4.0)
-- **Lakehouse**: DuckDB `v1.2+`, Apache Parquet, dbt-core `v1.9+`, PostgreSQL `v17+`
-- **Vector DB**: Qdrant `v1.19+` (Hybrid search: BM25 + dense vectors, Cross-Encoder re-ranking)
-- **Ingestion**: Crawl4AI `v0.9+`, Playwright `v1.48+`, Scrapy `v2.12+`
-- **Containers**: Docker Compose `v2.30+`
+In accordance with **DIR-011 (Tabula Rasa in Tech Research)**, the project is currently in the active R&D evaluation phase. Specific technologies across storage, ingestion, table formats, vector search, and serving are being benchmarked objectively under [`docs/rd-tasks/`](./docs/rd-tasks/).
+- **Core Languages & Tooling Baseline**: Python `3.13+` (Typed, Pydantic v2.10+, Ruff), Docker Compose `v2.30+`.
+- **No Premature Lock-in**: All layer-specific technologies are adopted only after empirical benchmark dossiers and formal mutual peer defense between Hưng and Duy, finalized via approved ADRs in `docs/adr/` and specifications in `docs/specs/`.
 
 ---
 
@@ -92,4 +88,11 @@ All agents operating in this repository must strictly adhere to the continuous d
    - **Zero AI Slop & Tropes**: Banished across all replies and documents (.md, .html) using `.agents/skills/anti-slop-scientific-writer/`.
 5. ⚡ **Implicit Intent & Automatic Skill Activation (DIR-008)**:
    - All modular skills in `.agents/skills/` must automatically trigger based on user intent analysis; never wait for the user to explicitly call a skill by name.
+6. 🛡️ **Tabula Rasa in Tech Research & Peer Defense Before ADR (DIR-011)**:
+   - **Clean Slate for Research**: When executing technology research tasks (storage, table formats, ingestion, architecture), disregard pre-existing tech mentions in READMEs or starter templates. Treat prior setup as unverified draft placeholders; research objectively from first principles without bias toward boilerplate.
+   - **Peer Defense Before ADR**: Research outputs serve as defense and debate dossiers for internal cross-examination between co-authors (Hưng & Duy). Never prematurely draft or enforce formal ADRs; ADRs are written strictly after peer defense and explicit mutual approval.
+7. 📅 **Temporal Grounding (Project Anchor: September 2026 - DIR-012)**:
+   - **Active Timeline**: The active project execution timestamp is permanently anchored to **September 2026 (Tháng 9/2026)**.
+   - **Modern SOTA Search & Research**: When conducting technical research, verifying library APIs, assessing software licensing, or finding scientific literature, agents **MUST** anchor all internet queries and knowledge lookups to the **September 2026** reality (covering 2024–2026 advances, releases, and papers), strictly avoiding outdated, legacy information.
+
 

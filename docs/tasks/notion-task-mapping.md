@@ -22,6 +22,7 @@ This document establishes the bidirectional mapping between tasks managed on the
 | **NT-012** | Hybrid Search (BM25 + Qdrant) RAG Prototype & Ragas Scorecard | Duy | Phase 1 (W8–W10) | `docs/experiments/0001-rag-baseline-evaluation.md` | ⏳ Planned |
 | **NT-013** | Business Requirements, Technical Feasibility & Architectural Review ([`T01`](../rd-tasks/T01.md)) | Hung & Duy | Phase 1 (W1–W3) | [`docs/deliverables/NT-013-business-technical-feasibility-review.md`](../deliverables/NT-013-business-technical-feasibility-review.md) | ✅ Complete |
 | **NT-014** | Academic Competition Landscape Survey & Ingestion Scaling Roadmap ([`T02`](../rd-tasks/T02.md)) | Hung & Duy | Phase 1 (W1–W3) | [`docs/deliverables/NT-014-competition-landscape-survey.md`](../deliverables/NT-014-competition-landscape-survey.md) | ✅ Complete |
+| **NT-018** | Bronze Layer Storage & Open Table Format Tech Stack Evaluation ([`T13`](../rd-tasks/T13.md)) | Duy & Hung | Phase 1 (W1–W3) | [`docs/deliverables/NT-018-bronze-storage-and-table-format-evaluation.md`](../deliverables/NT-018-bronze-storage-and-table-format-evaluation.md) | ✅ Complete |
 
 ---
 

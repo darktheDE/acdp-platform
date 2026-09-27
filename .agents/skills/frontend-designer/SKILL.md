@@ -31,7 +31,7 @@ This skill equips the AI agent to operate as a Senior Frontend Engineer & UI/UX 
 ## 2. Invariant Project Standards
 
 All frontend code must adhere to:
-1. **Tech Stack Baseline**: Next.js 15+ (App Router), React 19, TypeScript 5.6+ (Strict mode), Tailwind CSS v4.0.
+1. **Frontend Prototyping Baseline**: Modern TypeScript (Strict mode), Modern Web / React Components, Tailwind CSS (Design Tokens).
 2. **Design Tokens**: Follow the official palette defined in [`references/design_tokens.md`](./references/design_tokens.md):
    - Primary: Slate dark mode (`#0F172A`) or Paper white (`#FAF8F5`).
    - Authority Navy: `#1E3A8A` | Accent Coral: `#C2410C` | Success Olive: `#15803D`.

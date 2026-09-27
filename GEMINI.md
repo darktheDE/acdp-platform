@@ -48,4 +48,11 @@ All agents operating in this workspace must strictly abide by the rules and adap
    - Author `.md` and `.html` documentation strictly adhering to `.agents/skills/anti-slop-scientific-writer/`.
 10. **Implicit Intent & Auto-Activation (DIR-008)**:
     - Never demand or wait for the user to explicitly call skills by name. Automatically infer user intent and activate the relevant skill playbooks immediately.
+11. **Tabula Rasa in Tech Research & Peer Defense Before ADR (DIR-011)**:
+    - Treat all existing tech mentions in READMEs and starter templates as unverified placeholders during research tasks; research candidates objectively from first principles.
+    - Research findings must be structured as defense dossiers for internal debate between Hưng and Duy; never draft or adopt formal ADRs until both partners review and reach explicit consensus.
+12. **Temporal Grounding (Project Anchor: September 2026 - DIR-012)**:
+    - Active project execution timestamp is permanently anchored to **September 2026 (Tháng 9/2026)**.
+    - When conducting technical research, verifying library APIs, assessing software licensing, or finding scientific literature, agents MUST anchor all internet queries and knowledge lookups to the **September 2026** reality (covering 2024–2026 advances, releases, and papers), strictly avoiding outdated, legacy information.
+
 

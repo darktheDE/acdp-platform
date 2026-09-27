@@ -32,4 +32,4 @@ This document maintains the immediate context, active tasks, and session state f
 
 ## Session Memory & Context Notes
 - **Codebase Rule**: Do not create empty folder skeletons. Follow the Just-in-Time (JIT) inception rule specified in `SPEC-0001`.
-- **Tech Stack Baseline**: Python 3.13+, Next.js 15+, FastAPI 0.115+, DuckDB 1.2+, PostgreSQL 17+, Qdrant 1.19+, Crawl4AI 0.9+, Playwright 1.48+, dbt-core 1.9+.
+- **Tech Stack Status**: Under active R&D evaluation and benchmark (DIR-011). Specific layers (Bronze storage, Table Formats, Ingestion engines, Vector DB) are decided through R&D tasks and peer defense.
