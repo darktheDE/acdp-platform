@@ -1,0 +1,25 @@
+[project]
+name = "acdp"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Duy Nguyễn", email = "fansjaki@gmail.com" }
+]
+requires-python = ">=3.11"
+dependencies = [
+    "crawl4ai>=0.9.4",
+    "ddgs>=9.16.0",
+    "instructor>=1.17.0",
+    "litellm>=1.104.2",
+    "pydantic>=2.14.0",
+    "pypdf>=6.20.0",
+    "ruff>=0.17.0",
+]
+
+[project.scripts]
+acdp = "acdp:main"
+
+[build-system]
+requires = ["uv_build>=0.12.7,<0.13.0"]
+build-backend = "uv_build"
