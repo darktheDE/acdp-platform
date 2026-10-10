@@ -53,8 +53,8 @@ The team coordinates daily work on **Notion**.
 1. ⚠️ **Git Operations Policy (Read-Only Inspection Allowed)**:
    - ❌ **Prohibited (Mutating)**: Never execute `git add`, `git commit`, `git push`, or create/delete branches.
    - ✅ **Permitted (Read-Only)**: Inspecting repository state via `git status`, `git log`, `git diff`, `git show` is fully allowed.
-2. ❌ **NO Empty Directory Skeletons**: Folders (`apps/`, `pipelines/`) are created strictly Just-In-Time (JIT) when implementing active specifications.
-3. ❌ **NO Database Dumps or Secrets in Git**: Never commit `.parquet`, `.duckdb`, `.db`, or `.env` files.
+2. ❌ **NO Empty Directory Skeletons**: Folders (`apps/`, `pipelines/`) are created strictly Just-In-Time (JIT) when implementing active specifications. Preserved storage hierarchies must maintain `.gitkeep` as documented in [`data/README.md`](data/README.md).
+3. ❌ **NO Database Dumps or Secrets in Git**: Never commit runtime `.parquet`, `.duckdb`, `.db`, or `.env` files. Local Lakehouse tiers under [`data/lakehouse/`](data/README.md) are strictly uncommitted. Only test fixtures under [`data/raw/`](data/README.md) and `.gitkeep` files are tracked.
 4. ❌ **NO RAG Hallucinations**: Contest regulation responses must strictly cite official source clauses and URLs.
 5. ❌ **NO Silent Architectural Drift**: Altering foundational tech stack choices requires an approved RFC in `docs/rfc/`.
 

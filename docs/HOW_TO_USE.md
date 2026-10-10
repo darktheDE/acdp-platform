@@ -26,6 +26,8 @@ acdp-platform/
 ├── GEMINI.md / CLAUDE.md   <-- Tool-specific configuration loaders
 ├── .cursorrules            <-- Cursor IDE & Windsurf directives
 ├── .agents/skills/         <-- On-demand skills (Research, Writing, Slides, Benchmark, Experiments)
+├── data/                   <-- Data & Lakehouse storage (README.md, data/raw/ fixtures, data/lakehouse/)
+├── src/acdp/               <-- Core application codebase (Lakehouse, crawlers, APIs)
 └── docs/
     ├── README.md           <-- Central documentation index
     ├── HOW_TO_USE.md       <-- THIS FILE: Direction & prompt cookbook

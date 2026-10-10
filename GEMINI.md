@@ -54,5 +54,9 @@ All agents operating in this workspace must strictly abide by the rules and adap
 12. **Temporal Grounding (Project Anchor: September 2026 - DIR-012)**:
     - Active project execution timestamp is permanently anchored to **September 2026 (Tháng 9/2026)**.
     - When conducting technical research, verifying library APIs, assessing software licensing, or finding scientific literature, agents MUST anchor all internet queries and knowledge lookups to the **September 2026** reality (covering 2024–2026 advances, releases, and papers), strictly avoiding outdated, legacy information.
+13. **Data & Lakehouse Storage Governance**:
+    - Refer to [`data/README.md`](data/README.md) for directory conventions and storage abstraction.
+    - Runtime Lakehouse tiers in `data/lakehouse/` (`.parquet`, `.duckdb`, `_delta_log/`) must never be committed to Git.
+    - Test fixtures in `data/raw/` and `.gitkeep` files are tracked for reproducible crawler evaluation.
 
 
