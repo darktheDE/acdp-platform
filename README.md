@@ -10,7 +10,7 @@ An end-to-end data platform that automates academic competition ingestion, provi
 
 ---
 
-[Overview](#overview) • [Key Features](#key-features) • [Architecture](#system-architecture) • [Tech Stack](#tech-stack) • [Documentation](docs/README.md) • [User & AI Guide](docs/HOW_TO_USE.md) • [Getting Started](#getting-started) • [Contributors & Advisor](#contributors--advisor)
+[Overview](#overview) • [Key Features](#key-features) • [Architecture](#system-architecture) • [Data Storage](data/README.md) • [Tech Stack](#tech-stack) • [Documentation](docs/README.md) • [User & AI Guide](docs/HOW_TO_USE.md) • [Getting Started](#getting-started) • [Contributors & Advisor](#contributors--advisor)
 
 ---
 
@@ -30,7 +30,7 @@ Academic competitions, hackathons, and high-impact talent programs (e.g., ICPC, 
 ## Key Features
 
 - **Automated Multi-Source Data Ingestion**: Dynamic crawlers collect competition announcements across academic portals and social media; LLMs enforce structured JSON schemas via Pydantic.
-- **Medallion Lakehouse Architecture**: Tiered data processing (`Bronze` raw payload $\rightarrow$ `Silver` cleaned & deduplicated $\rightarrow$ `Gold` curated data marts) ensuring data integrity, auditability, and time-travel capability.
+- **Medallion Lakehouse Architecture**: Tiered data processing ([`data/`](data/README.md): `Bronze` raw payload $\rightarrow$ `Silver` cleaned & deduplicated $\rightarrow$ `Gold` curated data marts) ensuring data integrity, auditability, and time-travel capability.
 - **AI-Powered Regulation Copilot**: Hybrid Search (lexical BM25 + dense vector retrieval) with re-ranking, strictly grounded in official contest regulations.
 - **Intelligent Teammate & Advisor Matchmaking**: Semantic similarity and heuristic constraints match students with complementary skills and align student teams with faculty research interests.
 - **Interactive Student Portal & BI Dashboard**: Modern responsive web application and administrative dashboards tracking competition trends.
@@ -46,10 +46,10 @@ flowchart TD
         B1 --> B2["LLM Schema Parser (Pydantic Structured Output)"]
     end
 
-    subgraph Lakehouse["2. Storage & Lakehouse Layer (Medallion)"]
-        B2 --> C1["Bronze Layer: Raw Payloads & Audit Trail"]
-        C1 --> C2["Silver Layer: Cleaned, Deduplicated & Standardized"]
-        C2 --> C3["Gold Layer: Analytical Data Marts & Serving Store"]
+    subgraph Lakehouse["2. Storage & Lakehouse Layer (Medallion) - data/"]
+        B2 --> C1["Bronze Layer: Raw Payloads (data/lakehouse/bronze)"]
+        C1 --> C2["Silver Layer: Cleaned & Validated (data/lakehouse/silver)"]
+        C2 --> C3["Gold Layer: Analytical Marts (data/lakehouse/gold)"]
     end
 
     subgraph Intelligence["3. Semantic & Intelligence Layer"]
@@ -66,6 +66,9 @@ flowchart TD
         E1 --> F2["Faculty Analytics & BI Dashboard"]
     end
 ```
+
+> 📖 **Data Architecture Reference**: For detailed physical layout, seed test data (`data/raw/`), and Delta Lake storage abstraction (Local POSIX vs. Cloudflare R2 / SeaweedFS), see [`data/README.md`](data/README.md).
+
 
 ---
 

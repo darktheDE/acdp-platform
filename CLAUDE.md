@@ -32,4 +32,5 @@ All operations in this repository are governed by the master specifications:
 - **Zero Parametric Trust**: Never trust pre-trained model weights blindly. Always search Google/internet/scholar first to ground and verify claims.
 - **Institutional Naming**: Always use **Trường Đại học Công nghệ Kỹ thuật TP.HCM (HCM-UTE)**.
 - **Team Directives & Memory**: Strictly follow [`docs/frameworks/TEAM_DIRECTIVES.md`](./docs/frameworks/TEAM_DIRECTIVES.md) and persist newly given user rules immediately.
+- **Data Storage Policy**: Consult [`data/README.md`](data/README.md). Track `.gitkeep` and test fixtures in `data/raw/`; runtime lakehouse tiers in `data/lakehouse/` are never committed.
 
