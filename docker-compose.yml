@@ -1,0 +1,21 @@
+services:
+  # ============================================================================
+  # SeaweedFS: Lightweight S3-Compatible Object Store (OSDI 2010 Haystack)
+  # RAM: < 150MB | Port 8333 (S3 API), Port 9333 (Master)
+  # ============================================================================
+  seaweedfs:
+    image: chrislusf/seaweedfs:latest
+    container_name: acdp_seaweedfs
+    restart: unless-stopped
+    ports:
+      - "9333:9333" # Master HTTP
+      - "8333:8333" # S3 API endpoint
+    command: "server -s3 -s3.port=8333 -dir=/data"
+    volumes:
+      - seaweedfs_data:/data
+    environment:
+      - WEED_S3_ENABLE=true
+
+volumes:
+  seaweedfs_data:
+    driver: local
