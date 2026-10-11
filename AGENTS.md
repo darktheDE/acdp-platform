@@ -33,6 +33,8 @@ Detect user intent and activate the corresponding modular skill playbook:
 | **Mode 6: Frontend & UI/UX** | [`.agents/skills/frontend-designer/SKILL.md`](./.agents/skills/frontend-designer/SKILL.md) | Visual UI mockups, Next.js 15 components |
 | **Mode 7: Quality & Link Verification** | [`.agents/skills/url-link-verifier/SKILL.md`](./.agents/skills/url-link-verifier/SKILL.md) | Reachability audit, dead link detection |
 | **Mode 8: Scientific Prose & Anti-Slop** | [`.agents/skills/anti-slop-scientific-writer/SKILL.md`](./.agents/skills/anti-slop-scientific-writer/SKILL.md) | Concise responses, zero AI slop/tropes, doc audit |
+| **Mode 9: Visual Dossiers & HTML Reports** | [`.agents/skills/visual-dossier-reporter/SKILL.md`](./.agents/skills/visual-dossier-reporter/SKILL.md) | Single-File HTML reports, Tailwind/Mermaid/Chart dashboards |
+
 
 *Implicit Intent & Auto-Activation*: Every skill in this repository must automatically activate based on the user's intent and prompt context. Never demand or expect the user to explicitly call skills by name.
 
@@ -94,5 +96,13 @@ All agents operating in this repository must strictly adhere to the continuous d
 7. 📅 **Temporal Grounding (Project Anchor: September 2026 - DIR-012)**:
    - **Active Timeline**: The active project execution timestamp is permanently anchored to **September 2026 (Tháng 9/2026)**.
    - **Modern SOTA Search & Research**: When conducting technical research, verifying library APIs, assessing software licensing, or finding scientific literature, agents **MUST** anchor all internet queries and knowledge lookups to the **September 2026** reality (covering 2024–2026 advances, releases, and papers), strictly avoiding outdated, legacy information.
+8. 📝 **Personal Scratchpad Governance (`.scratchpad/` - DIR-013)**:
+   - `.scratchpad/` is git-ignored and strictly reserved for author drafts, long prompts, and on-demand visual reports.
+   - Agents **NEVER** write to `.scratchpad/` autonomously; write operations occur strictly when explicitly instructed by the author.
+9. 📊 **Living Visual Dossier & Interactive HTML Reporting (DIR-014)**:
+   - Whenever the user requests research reports, deliverables, architecture deep-dives, or benchmarks, PROACTIVELY PROPOSE or GENERATE a **Single-File Interactive HTML Dossier** (Tailwind CSS CDN + Mermaid.js CDN + Chart.js CDN) alongside markdown to avoid text-heavy visual fatigue.
+   - Structure in 3 tiers: (1) 1-Minute Executive Summary KPI cards, (2) Interactive Mermaid Architecture Diagrams & Chart.js Benchmark Charts, (3) Collapsible deep technical specs & code diffs.
+   - Route output to `.scratchpad/<name>.html` (on-demand personal analysis) or `docs/deliverables/<name>.html` (formal project deliverable).
+
 
 
