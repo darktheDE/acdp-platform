@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ACDP Visual Dossier Template</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              900: '#312e81',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Mermaid.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    .mermaid svg { max-width: 100%; height: auto; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen antialiased">
+
+  <!-- Header & Navigation -->
+  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center space-x-3">
+        <span class="px-2.5 py-1 text-xs font-semibold uppercase tracking-wider rounded-md bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
+          Notion Task: NT-XXXX
+        </span>
+        <h1 class="text-lg font-bold text-white tracking-tight">ACDP Living Visual Dossier</h1>
+      </div>
+      <div class="flex items-center space-x-3 text-xs text-slate-400">
+        <span>Tác giả: Đỗ Kiến Hưng & Nguyễn Văn Quang Duy</span>
+        <span class="text-slate-600">|</span>
+        <span>Khoa CNTT - HCMUTE</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+    <!-- TIER 1: Executive KPI Cards -->
+    <section>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- KPI Card 1 -->
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm">
+          <div class="text-xs font-medium text-slate-400 uppercase tracking-wider">Tiết Kiệm Dung Lượng</div>
+          <div class="mt-2 flex items-baseline gap-2">
+            <span class="text-3xl font-extrabold text-emerald-400">79.8%</span>
+            <span class="text-xs text-slate-400">Zstandard L3</span>
+          </div>
+          <p class="mt-1 text-xs text-slate-500">Giảm từ 971 KB xuống 195 KB</p>
+        </div>
+
+        <!-- KPI Card 2 -->
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm">
+          <div class="text-xs font-medium text-slate-400 uppercase tracking-wider">Mức RAM Tiêu Thụ</div>
+          <div class="mt-2 flex items-baseline gap-2">
+            <span class="text-3xl font-extrabold text-indigo-400">&lt; 150 MB</span>
+            <span class="text-xs text-slate-400">SeaweedFS S3</span>
+          </div>
+          <p class="mt-1 text-xs text-slate-500">Nhẹ hơn MinIO (1.5 GB RAM)</p>
+        </div>
+
+        <!-- KPI Card 3 -->
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm">
+          <div class="text-xs font-medium text-slate-400 uppercase tracking-wider">Chi Phí Băng Thông</div>
+          <div class="mt-2 flex items-baseline gap-2">
+            <span class="text-3xl font-extrabold text-sky-400">0 VNĐ</span>
+            <span class="text-xs text-slate-400">Cloudflare R2</span>
+          </div>
+          <p class="mt-1 text-xs text-slate-500">Zero Egress Fees trọn đời</p>
+        </div>
+
+        <!-- KPI Card 4 -->
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm">
+          <div class="text-xs font-medium text-slate-400 uppercase tracking-wider">Kiểm Thử Tự Động</div>
+          <div class="mt-2 flex items-baseline gap-2">
+            <span class="text-3xl font-extrabold text-teal-400">100%</span>
+            <span class="text-xs text-slate-400">5/5 passed</span>
+          </div>
+          <p class="mt-1 text-xs text-slate-500">Unit & Integration pytest</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Navigation Tabs -->
+    <div class="border-b border-slate-800 flex space-x-6 text-sm font-medium">
+      <button onclick="switchTab('tab-architecture')" id="btn-architecture" class="tab-btn pb-3 text-indigo-400 border-b-2 border-indigo-500 transition">
+        Sơ Đồ Kiến Trúc & Pipeline
+      </button>
+      <button onclick="switchTab('tab-benchmarks')" id="btn-benchmarks" class="tab-btn pb-3 text-slate-400 hover:text-slate-200 transition">
+        So Sánh & Đánh Đổi (Trade-Offs)
+      </button>
+      <button onclick="switchTab('tab-specs')" id="btn-specs" class="tab-btn pb-3 text-slate-400 hover:text-slate-200 transition">
+        Mã Nguồn & Data Contracts
+      </button>
+    </div>
+
+    <!-- TIER 2A: Architecture Tab -->
+    <div id="tab-architecture" class="tab-content space-y-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+        <h3 class="text-base font-semibold text-white mb-4">Luồng Dữ Liệu Lớp Bronze (Tri-Storage Engine)</h3>
+        <div class="mermaid text-center">
+flowchart LR
+    Crawler[Crawler Engine] --> Compress[Zstandard Level 3]
+    Compress --> Model[BronzeRecord & Arrow Table]
+    Model --> DeltaRS[delta-rs Rust Engine]
+    
+    DeltaRS -->|local| LocalFS[(Local POSIX SSD)]
+    DeltaRS -->|seaweedfs| Seaweed[(SeaweedFS Docker S3)]
+    DeltaRS -->|cloudflare_r2| Cloudflare[(Cloudflare R2 Cloud S3)]
+    
+    LocalFS --> DuckDB[DuckDB delta_scan Engine]
+    Seaweed --> DuckDB
+    Cloudflare --> DuckDB
+        </div>
+      </div>
+    </div>
+
+    <!-- TIER 2B: Benchmarks Tab -->
+    <div id="tab-benchmarks" class="tab-content hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- RAM Chart -->
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+          <h3 class="text-base font-semibold text-white mb-4">Mức Tiêu Thụ RAM Giữa Các Giải Pháp (MB)</h3>
+          <div class="h-64">
+            <canvas id="ramChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Compression Chart -->
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+          <h3 class="text-base font-semibold text-white mb-4">Hiệu Quả Nén Dữ Liệu HTML Cào (KB)</h3>
+          <div class="h-64">
+            <canvas id="compressionChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TIER 3: Deep Technical Specs Tab -->
+    <div id="tab-specs" class="tab-content hidden space-y-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 space-y-4">
+        <h3 class="text-base font-semibold text-white">Data Contract Schema (BronzeRecord)</h3>
+        <p class="text-sm text-slate-400">Được triển khai bằng Pydantic v2 và PyArrow trong <code class="text-indigo-400">src/acdp/lakehouse/schema.py</code>.</p>
+        <div class="bg-slate-950 p-4 rounded-lg font-mono text-xs text-slate-300 overflow-x-auto border border-slate-800">
+          <pre>class BronzeRecord(BaseModel):
+    raw_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    source_url: str
+    source_domain: str
+    crawled_at: datetime
+    http_status: int = 200
+    content_hash: str # SHA-256
+    raw_html_bytes: bytes # Zstandard level 3 compressed
+    metadata_json: str</pre>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Interactive Scripts -->
+  <script>
+    // Initialize Mermaid
+    mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+
+    // Tab Switching Function
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('text-indigo-400', 'border-b-2', 'border-indigo-500');
+        btn.classList.add('text-slate-400');
+      });
+      document.getElementById(tabId).classList.remove('hidden');
+      const activeBtn = document.getElementById(tabId.replace('tab-', 'btn-'));
+      if (activeBtn) {
+        activeBtn.classList.remove('text-slate-400');
+        activeBtn.classList.add('text-indigo-400', 'border-b-2', 'border-indigo-500');
+      }
+    }
+
+    // Chart.js Setup
+    window.addEventListener('DOMContentLoaded', () => {
+      // RAM Chart
+      const ctxRam = document.getElementById('ramChart');
+      if (ctxRam) {
+        new Chart(ctxRam, {
+          type: 'bar',
+          data: {
+            labels: ['Local POSIX', 'SeaweedFS (Haystack)', 'MinIO (Standard S3)'],
+            datasets: [{
+              label: 'Mức tiêu thụ RAM (MB)',
+              data: [0, 120, 1400],
+              backgroundColor: ['#10b981', '#6366f1', '#ef4444']
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              y: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } },
+              x: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } }
+            }
+          }
+        });
+      }
+
+      // Compression Chart
+      const ctxComp = document.getElementById('compressionChart');
+      if (ctxComp) {
+        new Chart(ctxComp, {
+          type: 'doughnut',
+          data: {
+            labels: ['Dữ liệu nén (195 KB)', 'Tiết kiệm được (776 KB)'],
+            datasets: [{
+              data: [195, 776],
+              backgroundColor: ['#6366f1', '#10b981']
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { position: 'bottom', labels: { color: '#94a3b8' } }
+            }
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

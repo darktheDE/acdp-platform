@@ -28,6 +28,8 @@ All agents operating in this workspace must strictly abide by the rules and adap
    - Frontend UI/UX: `.agents/skills/frontend-designer/SKILL.md`
    - URL & Link Verifier: `.agents/skills/url-link-verifier/SKILL.md`
    - Scientific Prose & Anti-Slop: `.agents/skills/anti-slop-scientific-writer/SKILL.md`
+   - Visual Dossiers & HTML Reports: `.agents/skills/visual-dossier-reporter/SKILL.md`
+
 3. **Notion Synchronization**: Record deliverables in `docs/deliverables/` and maintain `docs/tasks/notion-task-mapping.md`.
 4. **Skill Engineering Specification**: When creating or upgrading any skill, strictly adhere to [`docs/frameworks/AGENT_SKILL_ENGINEERING_SPEC.md`](./docs/frameworks/AGENT_SKILL_ENGINEERING_SPEC.md). Never create cosmetic or prompt-only skills; always provide structured frontmatter with negative triggers, deterministic scripts (`scripts/`), deep references (`references/`), and verification suites.
 5. **Git Policy (Read-Only Inspection Allowed)**:
@@ -58,5 +60,14 @@ All agents operating in this workspace must strictly abide by the rules and adap
     - Refer to [`data/README.md`](data/README.md) for directory conventions and storage abstraction.
     - Runtime Lakehouse tiers in `data/lakehouse/` (`.parquet`, `.duckdb`, `_delta_log/`) must never be committed to Git.
     - Test fixtures in `data/raw/` and `.gitkeep` files are tracked for reproducible crawler evaluation.
+14. **Personal Scratchpad Governance (`.scratchpad/` - DIR-013)**:
+    - `.scratchpad/` is git-ignored and strictly reserved for author drafts, long prompts, and on-demand visual reports.
+    - Agents NEVER write to `.scratchpad/` autonomously; write operations occur strictly when explicitly instructed by the author.
+15. **Living Visual Dossier & Interactive HTML Reporting (DIR-014)**:
+    - Whenever the user requests research reports, deliverables, architecture deep-dives, or benchmarks, PROACTIVELY PROPOSE or GENERATE a **Single-File Interactive HTML Dossier** (Tailwind CSS CDN + Mermaid.js CDN + Chart.js CDN) alongside markdown to avoid text-heavy visual fatigue.
+    - Structure in 3 tiers: (1) 1-Minute Executive Summary KPI cards, (2) Interactive Mermaid Architecture Diagrams & Chart.js Benchmark Charts, (3) Collapsible deep technical specs & code diffs.
+    - Route output to `.scratchpad/<name>.html` (on-demand personal analysis) or `docs/deliverables/<name>.html` (formal project deliverable).
+
+
 
 
