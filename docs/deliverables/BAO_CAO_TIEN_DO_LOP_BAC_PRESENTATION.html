@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Báo Cáo Tiến Độ Nghiên Cứu & Triển Khai Lớp Bạc (Silver Layer) | ACDP Platform</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              400: '#818cf8',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              900: '#312e81',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Mermaid.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+    .mermaid svg { max-width: 100%; height: auto; }
+    @media print {
+      header, .no-print { display: none !important; }
+      body { background-color: #ffffff !important; color: #000000 !important; }
+      .tab-content { display: block !important; }
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen antialiased selection:bg-indigo-500 selection:text-white">
+
+  <!-- Top Sticky Navigation & Metadata Bar -->
+  <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center space-x-3">
+        <span class="px-2.5 py-1 text-xs font-semibold uppercase tracking-wider rounded-md bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
+          Tiểu Luận Chuyên Ngành — Tuần 8
+        </span>
+        <h1 class="text-base sm:text-lg font-bold text-white tracking-tight">ACDP Platform: Báo Cáo Tiến Độ Lớp Bạc</h1>
+      </div>
+      <div class="flex items-center space-x-4 text-xs text-slate-400">
+        <div><strong class="text-slate-300">GVHD:</strong> ThS. Trần Quang Khải</div>
+        <span class="text-slate-700">|</span>
+        <div><strong class="text-slate-300">SV:</strong> Nguyễn Văn Quang Duy & Đỗ Kiến Hưng</div>
+        <span class="text-slate-700">|</span>
+        <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-medium">Lớp Bạc (Silver)</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+    <!-- Hero Title & Context Banner -->
+    <section class="bg-gradient-to-r from-slate-900 via-indigo-950/40 to-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+        <div class="space-y-2">
+          <div class="inline-flex items-center gap-2 text-xs font-semibold text-indigo-400 uppercase tracking-wider">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            Khoa Công Nghệ Thông Tin — FIT-HCMUTE | Bộ Môn Hệ Thống Thông Tin
+          </div>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+            Nền Tảng Khai Phá & Hỗ Trợ Tham Gia Cuộc Thi Học Thuật (ACDP)
+          </h2>
+          <p class="text-slate-300 text-sm max-w-3xl leading-relaxed">
+            Hồ sơ báo cáo tiến độ chi tiết giai đoạn <strong>Tuần 1 đến Tuần 8</strong> gửi ThS. Trần Quang Khải và thảo luận kỹ thuật nội bộ nhóm. Tập trung nghiệm thu kiến trúc Medallion Lakehouse tinh gọn, tối ưu nén dữ liệu tầng Đồng (Bronze Delta Lake) và hoàn thiện chuẩn hợp đồng dữ liệu Lớp Bạc (Silver Data Contract).
+          </p>
+        </div>
+        <div class="flex flex-row lg:flex-col gap-3 shrink-0">
+          <button onclick="window.print()" class="px-4 py-2 text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg transition flex items-center justify-center gap-2">
+            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+            In / Xuất PDF Báo Cáo
+          </button>
+          <a href="HUONG_DAN_SUBMIT_TASK_QUY_TRINH.html" class="px-4 py-2 text-xs font-medium bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition text-center shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+            Quy Trình Submit Task
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- TIER 1: Executive KPI Metric Cards (1-Minute Scan) -->
+    <section>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- KPI Card 1 -->
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm hover:border-slate-700 transition">
+          <div class="flex items-center justify-between text-xs font-medium text-slate-400 uppercase tracking-wider">
+            <span>Tiến Độ Lớp Bạc</span>
+            <span class="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-400 font-bold">HOÀN THÀNH</span>
+          </div>
+          <div class="mt-2 flex items-baseline gap-2">
+            <span class="text-3xl font-extrabold text-emerald-400">100%</span>
+            <span class="text-xs text-slate-400">Lược đồ 11 trường</span>
+          </div>
+          <p class="mt-1 text-xs text-slate-400 leading-relaxed">Pydantic v2 contract, lọc trường sinh viên quan tâm nhất và tạo mã băm khử trùng lặp.</p>
+        </div>
+
+        <!-- KPI Card 2 -->
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm hover:border-slate-700 transition">
+          <div class="flex items-center justify-between text-xs font-medium text-slate-400 uppercase tracking-wider">
+            <span>Tối Ưu Nén Tầng Đồng</span>
+            <span class="px-2 py-0.5 rounded text-[10px] bg-indigo-500/20 text-indigo-400 font-bold">ZSTD L3</span>
+          </div>
+          <div class="mt-2 flex items-baseline gap-2">
+            <span class="text-3xl font-extrabold text-indigo-400">80.2%</span>
+            <span class="text-xs text-slate-400">Tiết kiệm đĩa cứng</span>
+          </div>
+          <p class="mt-1 text-xs text-slate-400 leading-relaxed">Giảm dung lượng 7 snapshot thực tế từ 975 KB thô xuống còn 192 KB trong Delta Lake.</p>
+        </div>
+
+        <!-- KPI Card 3 -->
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm hover:border-slate-700 transition">
+          <div class="flex items-center justify-between text-xs font-medium text-slate-400 uppercase tracking-wider">
+            <span>Chi Phí Mây & Băng Thông</span>
+            <span class="px-2 py-0.5 rounded text-[10px] bg-sky-500/20 text-sky-400 font-bold">R2 ZERO-EGRESS</span>
+          </div>
+          <div class="mt-2 flex items-baseline gap-2">
+            <span class="text-3xl font-extrabold text-sky-400">0 VNĐ</span>
+            <span class="text-xs text-slate-400">Cloudflare R2</span>
+          </div>
+          <p class="mt-1 text-xs text-slate-400 leading-relaxed">10GB lưu trữ miễn phí, chuẩn S3 API, không tốn phí tải ra ngoài (Zero egress fee).</p>
+        </div>
+
+        <!-- KPI Card 4 -->
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm hover:border-slate-700 transition">
+          <div class="flex items-center justify-between text-xs font-medium text-slate-400 uppercase tracking-wider">
+            <span>Kiểm Thử Đơn Vị</span>
+            <span class="px-2 py-0.5 rounded text-[10px] bg-teal-500/20 text-teal-400 font-bold">PYTEST</span>
+          </div>
+          <div class="mt-2 flex items-baseline gap-2">
+            <span class="text-3xl font-extrabold text-teal-400">7 / 7</span>
+            <span class="text-xs text-slate-400">Passed (100%)</span>
+          </div>
+          <p class="mt-1 text-xs text-slate-400 leading-relaxed">Toàn bộ unit test kiểm thử kho Bronze Delta Lake và Lược đồ Silver Schema đều vượt qua.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Interactive Navigation Tabs -->
+    <div class="border-b border-slate-800 flex flex-wrap gap-2 text-sm font-medium">
+      <button onclick="switchTab('tab-architecture')" id="btn-tab-architecture" class="tab-btn px-4 py-2.5 border-b-2 border-indigo-500 text-indigo-400 font-semibold transition flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path></svg>
+        1. Sơ Đồ Kiến Trúc Medallion
+      </button>
+      <button onclick="switchTab('tab-benchmarks')" id="btn-tab-benchmarks" class="tab-btn px-4 py-2.5 border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+        2. Đo Lường & Nén Dữ Liệu
+      </button>
+      <button onclick="switchTab('tab-timeline')" id="btn-tab-timeline" class="tab-btn px-4 py-2.5 border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        3. Tiến Độ: Đã Làm vs Tuần Tới
+      </button>
+      <button onclick="switchTab('tab-schema')" id="btn-tab-schema" class="tab-btn px-4 py-2.5 border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+        4. Đặc Tả Lược Đồ Lớp Bạc
+      </button>
+      <button onclick="switchTab('tab-questions')" id="btn-tab-questions" class="tab-btn px-4 py-2.5 border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        5. Xin Ý Kiến Thầy Khải
+      </button>
+    </div>
+
+    <!-- TAB 1: Architecture (Mermaid.js) -->
+    <div id="tab-architecture" class="tab-content space-y-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+        <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-800">
+          <div>
+            <h3 class="text-lg font-bold text-white">Kiến Trúc Medallion Lakehouse Tinh Gọn (ACDP Data Core)</h3>
+            <p class="text-xs text-slate-400 mt-0.5">Phân định rõ ranh giới: Tầng Đã Hoàn Thành (Tuần 1–8) vs Tầng Kế Hoạch Triển Khai (Tuần 9–15)</p>
+          </div>
+          <div class="flex gap-2">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+              <span class="w-2 h-2 rounded-full bg-emerald-400"></span> Đã Hoàn Thành (Bronze & Silver Schema)
+            </span>
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs rounded bg-slate-700/50 text-slate-400 border border-slate-700">
+              <span class="w-2 h-2 rounded-full bg-slate-500"></span> Chưa Triển Khai (Gold, RAG, Web)
+            </span>
+          </div>
+        </div>
+
+        <!-- Mermaid Diagram Container -->
+        <div class="mermaid bg-slate-950 p-6 rounded-lg border border-slate-800 overflow-x-auto text-center flex justify-center">
+flowchart TB
+  subgraph INGESTION["Tầng Thu Thập & Ingestion (ĐÃ HOÀN THÀNH - TUẦN 4)"]
+    W1["Playwright / Crawl4AI<br>Web Scraping Động"] --> RAW["Raw HTML Snapshots<br>(7 nguồn thực tế: CodeTour, AI Challenge...)"]
+  end
+
+  subgraph BRONZE["Tầng Đồng - Bronze Layer (ĐÃ HOÀN THÀNH - TUẦN 6)"]
+    RAW --> BR_ENGINE["Bronze Storage Engine<br>(delta-rs, Rust core, Zero-JVM)"]
+    BR_ENGINE --> BR_ZSTD["Nén Zstandard Level 3<br>(Tiết kiệm 80.2% dung lượng)"]
+    BR_ZSTD --> BR_DELTA[("Bronze Delta Lake<br>Snapshot nguyên bản + Metadata")]
+  end
+
+  subgraph SILVER["Tầng Bạc - Silver Layer (ĐÃ XONG SCHEMA - TUẦN 7-8)"]
+    BR_DELTA -.->|"Trích xuất có cấu trúc (Tuần 9)"| LLM_EXTRACT["Structured Output Extraction<br>(Gemini / Pydantic v2 Contract)"]
+    LLM_EXTRACT --> DEDUP["Khử trùng lặp đa nguồn<br>generate_fingerprint + Levenshtein"]
+    DEDUP --> SL_DELTA[("Silver Parquet / Delta<br>11 trường sinh viên quan tâm nhất")]
+  end
+
+  subgraph R2_CLOUD["Lưu Trữ Mây Không Mất Phí Egress (ĐÃ CẤU HÌNH TEST - TUẦN 8)"]
+    BR_DELTA ==>|"S3 API Sync"| R2_STORAGE[("Cloudflare R2 Bucket<br>acdp-lakehouse / Zero-Egress")]
+    SL_DELTA -.->|"S3 API Sync"| R2_STORAGE
+    DUCKDB["DuckDB OLAP Engine<br>(Truy vấn Zero-Copy qua HTTP/S3)"] <--> R2_STORAGE
+  end
+
+  subgraph FUTURE["Tầng Tương Lai (CHƯA TRIỂN KHAI - TUẦN 10 ĐẾN 14)"]
+    SL_DELTA -.-> GOLD[("Gold Layer: Data Marts<br>Fact_Competitions, Dim_Time")]
+    SL_DELTA -.-> VEC[("Vector DB Qdrant<br>Phân đoạn & Embedding điều khoản")]
+    GOLD -.-> FASTAPI["FastAPI Backend<br>Tra cứu & Phân tích"]
+    VEC -.-> RAG["Hybrid RAG Pipeline<br>Hỏi đáp thể lệ chính xác"]
+    FASTAPI --> WEB["Web Portal Sinh Viên & Dashboard Khoa<br>(Next.js 15, Tailwind CSS)"]
+    RAG --> WEB
+  end
+
+  classDef done fill:#064e3b,stroke:#059669,stroke-width:2px,color:#a7f3d0;
+  classDef partial fill:#1e1b4b,stroke:#4f46e5,stroke-width:2px,color:#c7d2fe;
+  classDef planned fill:#1e293b,stroke:#475569,stroke-width:1px,stroke-dasharray: 5 5,color:#94a3b8;
+
+  class W1,RAW,BR_ENGINE,BR_ZSTD,BR_DELTA,R2_STORAGE,DUCKDB done;
+  class DEDUP,SL_DELTA,LLM_EXTRACT partial;
+  class GOLD,VEC,FASTAPI,RAG,WEB planned;
+        </div>
+
+        <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3 text-xs text-slate-400">
+          <div class="p-3 bg-slate-950/60 rounded border border-slate-800">
+            <strong class="text-slate-200">Không dùng JVM/Spark:</strong> Cài đặt hoàn toàn bằng thư viện Rust `delta-rs` và DuckDB, chỉ tốn dưới 250MB RAM trên máy tính cá nhân.
+          </div>
+          <div class="p-3 bg-slate-950/60 rounded border border-slate-800">
+            <strong class="text-slate-200">Chuẩn Hóa Hợp Đồng Dữ Liệu:</strong> Lớp Bạc loại bỏ 100% dữ liệu rác, chỉ giữ 11 trường thông tin có giá trị cao nhất cho sinh viên FIT-HCMUTE.
+          </div>
+          <div class="p-3 bg-slate-950/60 rounded border border-slate-800">
+            <strong class="text-slate-200">Đồng Bộ Mây Tiết Kiệm:</strong> Tích hợp Cloudflare R2 qua chuẩn giao thức S3, cho phép Hưng và Duy chia sẻ dữ liệu mà không tốn chi phí băng thông.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: Benchmarks & Visual Analytics (Chart.js) -->
+    <div id="tab-benchmarks" class="tab-content hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Left: Bar Chart Compression Benchmarks -->
+        <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-xl p-6">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h3 class="text-base font-bold text-white">Thực Nghiệm Nén Payload Tầng Đồng (Bronze Zstandard L3)</h3>
+              <p class="text-xs text-slate-400">So sánh dung lượng tệp HTML thô ban đầu so với dung lượng lưu trữ trong Delta Lake</p>
+            </div>
+            <span class="px-2.5 py-1 text-xs rounded bg-indigo-500/20 text-indigo-400 font-bold border border-indigo-500/30">
+              Trung bình: Nén 80.2%
+            </span>
+          </div>
+          <div class="h-80 relative">
+            <canvas id="compressionChart"></canvas>
+          </div>
+          <div class="mt-4 p-3 bg-slate-950/60 rounded border border-slate-800 text-xs text-slate-400 leading-relaxed">
+            <strong class="text-slate-200">Kết luận thực nghiệm:</strong> Dữ liệu HTML của các trang cuộc thi chứa tỷ lệ lặp lại thẻ DOM rất cao. Thuật toán Zstandard ở Level 3 giúp giảm dung lượng trung bình 5 lần (từ 975 KB xuống 192 KB) trong khi tốc độ nén/giải nén đạt hơn 450 MB/s, giải quyết triệt để vấn đề phình to dung lượng ổ cứng khi cào hàng nghìn trang.
+          </div>
+        </div>
+
+        <!-- Right: Donut Chart Semester Progress -->
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-base font-bold text-white">Tiến Độ Tiểu Luận (15 Tuần)</h3>
+              <span class="px-2 py-0.5 text-xs rounded bg-emerald-500/20 text-emerald-400 font-semibold">Tuần 8 / 15</span>
+            </div>
+            <div class="h-56 relative flex items-center justify-center">
+              <canvas id="progressChart"></canvas>
+            </div>
+          </div>
+          <div class="mt-4 space-y-2 text-xs">
+            <div class="flex items-center justify-between p-2 rounded bg-slate-950/60 border border-slate-800">
+              <span class="flex items-center gap-2 text-emerald-400 font-medium">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Đã hoàn thành (T1 - T8)
+              </span>
+              <span class="font-bold text-slate-200">53.3% (8 tuần)</span>
+            </div>
+            <div class="flex items-center justify-between p-2 rounded bg-slate-950/60 border border-slate-800">
+              <span class="flex items-center gap-2 text-indigo-400 font-medium">
+                <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span> Trọng tâm tới (Tuần 9)
+              </span>
+              <span class="font-bold text-slate-200">6.7% (1 tuần)</span>
+            </div>
+            <div class="flex items-center justify-between p-2 rounded bg-slate-950/60 border border-slate-800">
+              <span class="flex items-center gap-2 text-slate-400 font-medium">
+                <span class="w-2.5 h-2.5 rounded-full bg-slate-600"></span> Dự kiến (T10 - T15)
+              </span>
+              <span class="font-bold text-slate-200">40.0% (6 tuần)</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 3: Step-by-Step Timeline (Done vs Next Week) -->
+    <div id="tab-timeline" class="tab-content hidden space-y-6">
+      
+      <!-- Highlight Box: Next Week's Core Objectives (Week 9) -->
+      <div class="bg-indigo-950/40 border-2 border-indigo-500/50 rounded-xl p-6 shadow-lg">
+        <div class="flex items-center gap-2 text-xs font-bold text-indigo-400 uppercase tracking-wider mb-2">
+          <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+          TRỌNG TÂM CÔNG VIỆC TUẦN TỚI (TUẦN 9: 26/10 - 01/11/2026)
+        </div>
+        <h3 class="text-lg font-bold text-white mb-3">Triển Khai Pipeline Trích Xuất Tự Động Bronze Sang Silver & Đồng Bộ Cloudflare R2</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+          <div class="bg-slate-900/90 p-4 rounded-lg border border-indigo-500/30">
+            <div class="font-bold text-indigo-300 text-sm mb-1">1. Pipeline Trích Xuất Tự Động</div>
+            <p class="text-slate-300 leading-relaxed">Sử dụng mô hình ngôn ngữ lớn (Gemini API) với cơ chế Structured Outputs để ép kiểu dữ liệu từ HTML thô sang schema Pydantic v2 `SilverCompetitionRecord` chuẩn.</p>
+          </div>
+          <div class="bg-slate-900/90 p-4 rounded-lg border border-indigo-500/30">
+            <div class="font-bold text-indigo-300 text-sm mb-1">2. Đồng Bộ Cloudflare R2 Thật</div>
+            <p class="text-slate-300 leading-relaxed">Kích hoạt Bucket `acdp-lakehouse`, cấu hình biến môi trường S3 trên máy Hưng và Duy, đẩy toàn bộ dữ liệu Bronze lên mây để Duy kiểm thử truy vấn trực tiếp bằng DuckDB.</p>
+          </div>
+          <div class="bg-slate-900/90 p-4 rounded-lg border border-indigo-500/30">
+            <div class="font-bold text-indigo-300 text-sm mb-1">3. Đo Độ Chính Xác Khử Trùng</div>
+            <p class="text-slate-300 leading-relaxed">Thu thập và xử lý thử nghiệm 20 bài đăng cuộc thi đa nguồn (Website chính thức, Fanpage Đoàn Hội, Ybox), đánh giá độ chính xác của hàm băm `generate_fingerprint()`.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- History Table: Week 1 to Week 8 (Completed) -->
+      <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-sm">
+        <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
+          <h3 class="text-base font-bold text-white">Nhật Ký Công Việc Đã Hoàn Thành (Tuần 1 Đến Tuần 8)</h3>
+          <span class="text-xs text-slate-400">Minh chứng kỹ thuật lưu tại kho mã nguồn Git</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs text-slate-300">
+            <thead class="bg-slate-950 text-slate-400 uppercase tracking-wider text-[11px] border-b border-slate-800">
+              <tr>
+                <th class="py-3 px-4 w-16 text-center">Tuần</th>
+                <th class="py-3 px-4 w-32">Thời Gian</th>
+                <th class="py-3 px-4 w-24 text-center">Tình Trạng</th>
+                <th class="py-3 px-6">Nội Dung Công Việc Chi Tiết</th>
+                <th class="py-3 px-6">Sản Phẩm / Minh Chứng Kỹ Thuật</th>
+                <th class="py-3 px-4 w-24 text-center">Phụ Trách</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800">
+              <tr class="hover:bg-slate-800/40 transition">
+                <td class="py-3 px-4 font-bold text-center text-slate-200">T1</td>
+                <td class="py-3 px-4 text-slate-400">31/8 - 6/9</td>
+                <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-400 font-bold">ĐÃ XONG</span></td>
+                <td class="py-3 px-6 text-slate-200">Khảo sát nhu cầu thực tế của sinh viên FIT-HCMUTE; phân tích 4 nút thắt tiếp cận thông tin; thiết lập kho lưu trữ Git và Docker Compose nền tảng.</td>
+                <td class="py-3 px-6 text-slate-400 font-mono text-[11px]">Bản khảo sát nhu cầu sinh viên; Cấu hình Docker ban đầu.</td>
+                <td class="py-3 px-4 text-center text-slate-300">Hưng & Duy</td>
+              </tr>
+              <tr class="hover:bg-slate-800/40 transition">
+                <td class="py-3 px-4 font-bold text-center text-slate-200">T2</td>
+                <td class="py-3 px-4 text-slate-400">7/9 - 13/9</td>
+                <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-400 font-bold">ĐÃ XONG</span></td>
+                <td class="py-3 px-6 text-slate-200">Nghiên cứu tổng quan tài liệu khoa học quốc tế (Cho, Armbrust, Lewis, Xu); phân tích đối sánh các nền tảng thực tế (Devpost, Unstop, Ybox); khởi tạo R&D Task T01 và T02.</td>
+                <td class="py-3 px-6 text-slate-400 font-mono text-[11px]">Báo cáo R&D T01, T02; Bảng đối sánh nền tảng học thuật.</td>
+                <td class="py-3 px-4 text-center text-slate-300">Duy</td>
+              </tr>
+              <tr class="hover:bg-slate-800/40 transition">
+                <td class="py-3 px-4 font-bold text-center text-slate-200">T3</td>
+                <td class="py-3 px-4 text-slate-400">14/9 - 20/9</td>
+                <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-400 font-bold">ĐÃ XONG</span></td>
+                <td class="py-3 px-6 text-slate-200">Thiết kế kiến trúc phân tầng 4 lớp; phân định ranh giới 15 tuần TLCN và KLTN; soạn thảo bản Thuyết minh đề tài (Proposal) và báo cáo với GVHD ThS. Trần Quang Khải.</td>
+                <td class="py-3 px-6 text-slate-400 font-mono text-[11px]">Bản Thuyết minh đề tài; Slide báo cáo đề cương.</td>
+                <td class="py-3 px-4 text-center text-slate-300">Hưng & Duy</td>
+              </tr>
+              <tr class="hover:bg-slate-800/40 transition">
+                <td class="py-3 px-4 font-bold text-center text-slate-200">T4</td>
+                <td class="py-3 px-4 text-slate-400">21/9 - 27/9</td>
+                <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-400 font-bold">ĐÃ XONG</span></td>
+                <td class="py-3 px-6 text-slate-200">Đánh giá công cụ cào web động Playwright và Crawl4AI; thu thập bộ dữ liệu kiểm thử thực tế từ 7 nguồn trọng điểm (Code Tour, AI Challenge TP.HCM, DataDNA...).</td>
+                <td class="py-3 px-6 text-slate-400 font-mono text-[11px]">Bộ dữ liệu snapshot HTML tại data/raw/html/.</td>
+                <td class="py-3 px-4 text-center text-slate-300">Hưng</td>
+              </tr>
+              <tr class="hover:bg-slate-800/40 transition">
+                <td class="py-3 px-4 font-bold text-center text-slate-200">T5</td>
+                <td class="py-3 px-4 text-slate-400">28/9 - 4/10</td>
+                <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-400 font-bold">ĐÃ XONG</span></td>
+                <td class="py-3 px-6 text-slate-200">Nghiên cứu sâu tầng lưu trữ Bronze (Task T13); benchmark đối sánh các định dạng bảng mở (Delta Lake, Iceberg, Lance) và kho đối tượng (Cloudflare R2, SeaweedFS, Local SSD).</td>
+                <td class="py-3 px-6 text-slate-400 font-mono text-[11px]">Báo cáo nghiệm thu NT-018; Ma trận đánh giá Open Table Formats.</td>
+                <td class="py-3 px-4 text-center text-slate-300">Duy & Hưng</td>
+              </tr>
+              <tr class="hover:bg-slate-800/40 transition">
+                <td class="py-3 px-4 font-bold text-center text-slate-200">T6</td>
+                <td class="py-3 px-4 text-slate-400">5/10 - 11/10</td>
+                <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-400 font-bold">ĐÃ XONG</span></td>
+                <td class="py-3 px-6 text-slate-200">Cài đặt engine lưu trữ Bronze Delta Lake bằng thư viện delta-rs (Rust, zero-JVM); tích hợp thuật toán nén payload Zstandard Level 3; xử lý triệt để bài toán phân mảnh tệp nhỏ.</td>
+                <td class="py-3 px-6 text-slate-400 font-mono text-[11px]">Module src/acdp/lakehouse/bronze.py; 5 bài test đơn vị (100%).</td>
+                <td class="py-3 px-4 text-center text-slate-300">Hưng</td>
+              </tr>
+              <tr class="hover:bg-slate-800/40 transition">
+                <td class="py-3 px-4 font-bold text-center text-slate-200">T7</td>
+                <td class="py-3 px-4 text-slate-400">12/10 - 18/10</td>
+                <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-400 font-bold">ĐÃ XONG</span></td>
+                <td class="py-3 px-6 text-slate-200">Thiết kế lược đồ dữ liệu lớp Bạc (Silver Schema) trên Pydantic v2; xây dựng thuật toán sinh mã băm đại diện generate_fingerprint() khử trùng lặp và cơ chế kiểm kiểu dữ liệu tài chính.</td>
+                <td class="py-3 px-6 text-slate-400 font-mono text-[11px]">Lớp SilverCompetitionRecord tại schema.py; Bộ test Silver (100%).</td>
+                <td class="py-3 px-4 text-center text-slate-300">Duy</td>
+              </tr>
+              <tr class="hover:bg-slate-800/40 transition bg-indigo-950/20">
+                <td class="py-3 px-4 font-bold text-center text-indigo-300">T8</td>
+                <td class="py-3 px-4 text-slate-300">19/10 - 25/10</td>
+                <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-400 font-bold">ĐÃ XONG</span></td>
+                <td class="py-3 px-6 text-slate-200 font-medium">Khảo sát quy trình migrate kho dữ liệu lên Cloudflare R2; xây dựng tài liệu hướng dẫn kỹ thuật đồng bộ 3 tầng Đồng - Bạc - Vàng; tối ưu hóa truy vấn zero-copy qua DuckDB.</td>
+                <td class="py-3 px-6 text-indigo-300 font-mono text-[11px]">HUONG_DAN_MIGRATE_R2_LAKEHOUSE.md (NT-022); Báo cáo TLCN Lớp Bạc.</td>
+                <td class="py-3 px-4 text-center text-slate-300">Hưng & Duy</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TAB 4: Silver Schema Specification -->
+    <div id="tab-schema" class="tab-content hidden space-y-6">
+      
+      <!-- Schema Matrix: 11 Fields -->
+      <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-sm">
+        <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
+          <div>
+            <h3 class="text-base font-bold text-white">Lược Đồ Dữ Liệu Lớp Bạc: 11 Trường Dễ Cào & Sinh Viên Quan Tâm Nhất</h3>
+            <p class="text-xs text-slate-400 mt-0.5">Mô hình hóa bằng Pydantic v2 Contract (`SilverCompetitionRecord`) phục vụ truy vấn OLAP và suy luận LLM</p>
+          </div>
+          <span class="px-2.5 py-1 text-xs rounded bg-emerald-500/20 text-emerald-400 font-semibold border border-emerald-500/30">
+            Pydantic v2.10+ Validated
+          </span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs text-slate-300">
+            <thead class="bg-slate-950 text-slate-400 uppercase tracking-wider text-[11px] border-b border-slate-800">
+              <tr>
+                <th class="py-3 px-4 w-12 text-center">STT</th>
+                <th class="py-3 px-4 font-mono text-indigo-400">Tên Trường (Field Name)</th>
+                <th class="py-3 px-4 font-mono text-slate-400">Kiểu Dữ Liệu (Python / Parquet)</th>
+                <th class="py-3 px-6">Ý Nghĩa Thực Tế</th>
+                <th class="py-3 px-4 w-28 text-center">Mức Độ Dễ Cào</th>
+                <th class="py-3 px-4 w-32 text-center">Quan Tâm Của SV</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800">
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-3 px-4 text-center font-bold">1</td>
+                <td class="py-3 px-4 font-mono text-indigo-300 font-semibold">title</td>
+                <td class="py-3 px-4 font-mono text-slate-400">str / VARCHAR</td>
+                <td class="py-3 px-6">Tên chính thức của cuộc thi học thuật, hackathon</td>
+                <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-medium">Rất cao</span></td>
+                <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-medium">Bắt buộc</span></td>
+              </tr>
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-3 px-4 text-center font-bold">2</td>
+                <td class="py-3 px-4 font-mono text-indigo-300 font-semibold">organizer</td>
+                <td class="py-3 px-4 font-mono text-slate-400">str / VARCHAR</td>
+                <td class="py-3 px-6">Đơn vị chủ trì tổ chức (Trường ĐH, Doanh nghiệp, Đoàn Hội)</td>
+                <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-medium">Rất cao</span></td>
+                <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-400 font-medium">Rất cao</span></td>
+              </tr>
+              <tr class="hover:bg-slate-800/40 bg-indigo-950/20">
+                <td class="py-3 px-4 text-center font-bold text-indigo-400">3</td>
+                <td class="py-3 px-4 font-mono text-indigo-300 font-bold">registration_deadline</td>
+                <td class="py-3 px-4 font-mono text-slate-400">date / DATE (ISO 8601)</td>
+                <td class="py-3 px-6 font-medium text-slate-200">Hạn chót nộp đơn đăng ký dự thi (Thông tin sống còn nhất)</td>
+                <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-medium">Cao</span></td>
+                <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-400 font-bold">CỰC KỲ CAO</span></td>
+              </tr>
+              <tr class="hover:bg-slate-800/40 bg-indigo-950/20">
+                <td class="py-3 px-4 text-center font-bold text-indigo-400">4</td>
+                <td class="py-3 px-4 font-mono text-indigo-300 font-bold">registration_link</td>
+                <td class="py-3 px-4 font-mono text-slate-400">HttpUrl / VARCHAR</td>
+                <td class="py-3 px-6 font-medium text-slate-200">Đường dẫn trực tiếp đến biểu mẫu đăng ký (Google Form, Portal)</td>
+                <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-medium">Rất cao</span></td>
+                <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-400 font-bold">CỰC KỲ CAO</span></td>
+              </tr>
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-3 px-4 text-center font-bold">5</td>
+                <td class="py-3 px-4 font-mono text-indigo-300 font-semibold">event_date</td>
+                <td class="py-3 px-4 font-mono text-slate-400">date / DATE (ISO 8601)</td>
+                <td class="py-3 px-6">Ngày diễn ra vòng thi chung kết hoặc ngày bắt đầu cuộc thi</td>
+                <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-400 font-medium">Trung bình</span></td>
+                <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-400 font-medium">Cao</span></td>
+              </tr>
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-3 px-4 text-center font-bold">6</td>
+                <td class="py-3 px-4 font-mono text-indigo-300 font-semibold">domain</td>
+                <td class="py-3 px-4 font-mono text-slate-400">str / VARCHAR</td>
+                <td class="py-3 px-6">Lĩnh vực chuyên môn (AI, Data, Web, Mobile, IoT, An toàn thông tin)</td>
+                <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-medium">Cao</span></td>
+                <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-medium">Rất cao</span></td>
+              </tr>
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-3 px-4 text-center font-bold">7</td>
+                <td class="py-3 px-4 font-mono text-indigo-300 font-semibold">eligibility</td>
+                <td class="py-3 px-4 font-mono text-slate-400">str / VARCHAR</td>
+                <td class="py-3 px-6">Đối tượng dự thi (Sinh viên toàn quốc, SV năm 1-4, Giới hạn trường)</td>
+                <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-400 font-medium">Trung bình</span></td>
+                <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-400 font-medium">Rất cao</span></td>
+              </tr>
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-3 px-4 text-center font-bold">8</td>
+                <td class="py-3 px-4 font-mono text-indigo-300 font-semibold">team_size</td>
+                <td class="py-3 px-4 font-mono text-slate-400">str / VARCHAR</td>
+                <td class="py-3 px-6">Quy định số lượng thành viên trong một đội (vd: 3-5 người, Cá nhân)</td>
+                <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-medium">Rất cao</span></td>
+                <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-400 font-medium">Cao</span></td>
+              </tr>
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-3 px-4 text-center font-bold">9</td>
+                <td class="py-3 px-4 font-mono text-indigo-300 font-semibold">fee</td>
+                <td class="py-3 px-4 font-mono text-slate-400">int / BIGINT (VND)</td>
+                <td class="py-3 px-6">Lệ phí dự thi (0 = Miễn phí, hoặc số tiền cụ thể bằng VNĐ)</td>
+                <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-medium">Cao</span></td>
+                <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-400 font-medium">Cao</span></td>
+              </tr>
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-3 px-4 text-center font-bold">10</td>
+                <td class="py-3 px-4 font-mono text-indigo-300 font-semibold">total_prize_vnd</td>
+                <td class="py-3 px-4 font-mono text-slate-400">int / BIGINT (VND)</td>
+                <td class="py-3 px-6">Tổng giá trị giải thưởng quy đổi sang tiền mặt Việt Nam Đồng</td>
+                <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-medium">Rất cao</span></td>
+                <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-400 font-bold">CỰC KỲ CAO</span></td>
+              </tr>
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-3 px-4 text-center font-bold">11</td>
+                <td class="py-3 px-4 font-mono text-indigo-300 font-semibold">summary</td>
+                <td class="py-3 px-4 font-mono text-slate-400">str / VARCHAR</td>
+                <td class="py-3 px-6">Tóm tắt thể lệ ngắn gọn (2-3 câu nêu rõ bài toán và hình thức thi)</td>
+                <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-medium">Cao</span></td>
+                <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-400 font-medium">Rất cao</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Code Snippet: Pydantic Contract -->
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+        <h4 class="text-sm font-bold text-white mb-2 flex items-center justify-between">
+          <span>Minh Họa Pydantic v2 Contract (`src/acdp/lakehouse/schema.py`)</span>
+          <span class="text-xs text-slate-400 font-normal">Đã tích hợp test tự động</span>
+        </h4>
+        <pre class="bg-slate-950 p-4 rounded-lg text-slate-300 font-mono text-xs overflow-x-auto border border-slate-800 leading-relaxed"><code>class SilverCompetitionRecord(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    competition_id: str = Field(description="Mã băm SHA-256 duy nhất đại diện cho cuộc thi")
+    title: str = Field(min_length=3, max_length=255, description="Tên cuộc thi")
+    organizer: str = Field(min_length=2, max_length=255, description="Đơn vị tổ chức")
+    registration_deadline: date = Field(description="Hạn chót đăng ký (YYYY-MM-DD)")
+    registration_link: HttpUrl = Field(description="Đường dẫn biểu mẫu nộp đơn chính thức")
+    event_date: Optional[date] = Field(default=None, description="Ngày thi chính thức")
+    domain: str = Field(description="Lĩnh vực chuyên môn (AI, Data, Web, Mobile...)")
+    eligibility: str = Field(description="Đối tượng tham gia")
+    team_size: str = Field(description="Quy định số lượng thành viên đội thi")
+    fee: int = Field(ge=0, default=0, description="Lệ phí tham gia (VNĐ)")
+    total_prize_vnd: int = Field(ge=0, description="Tổng giá trị giải thưởng (VNĐ)")
+    summary: str = Field(min_length=10, description="Tóm tắt thể lệ ngắn gọn")
+    source_url: HttpUrl = Field(description="Đường dẫn trang web nguồn thu thập")
+    fingerprint: str = Field(description="Mã vân tay khử trùng lặp sự kiện đa nguồn")</code></pre>
+      </div>
+
+    </div>
+
+    <!-- TAB 5: Advisor Questions & Discussions -->
+    <div id="tab-questions" class="tab-content hidden space-y-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 sm:p-8 space-y-6">
+        <div class="border-b border-slate-800 pb-4">
+          <span class="px-2.5 py-1 text-xs font-semibold uppercase tracking-wider rounded-md bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
+            Nội Dung Thảo Luận Khoa Học
+          </span>
+          <h3 class="text-xl font-bold text-white mt-2">Các Vấn Đề Kính Xin Ý Kiến Chỉ Đạo Của ThS. Trần Quang Khải</h3>
+          <p class="text-xs text-slate-400 mt-1">Để làm cơ sở chuẩn hóa dữ liệu cho giai đoạn Khóa luận tốt nghiệp tiếp nối</p>
+        </div>
+
+        <div class="space-y-6">
+          <!-- Question 1 -->
+          <div class="p-5 rounded-xl bg-slate-950/80 border border-slate-800 space-y-3">
+            <div class="flex items-start gap-3">
+              <span class="flex items-center justify-center w-7 h-7 rounded-lg bg-indigo-500/20 text-indigo-400 font-bold text-sm shrink-0 border border-indigo-500/30">
+                1
+              </span>
+              <div class="space-y-1">
+                <h4 class="text-sm font-bold text-white">Về Tính Đầy Đủ Của Danh Mục 11 Trường Thuộc Tính Lớp Bạc</h4>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                  Lược đồ hiện tại tập trung vào 11 thuộc tính cốt lõi mà sinh viên quan tâm nhất khi tìm kiếm cuộc thi (Tên, Đơn vị tổ chức, Hạn đăng ký, Link đăng ký, Thời gian thi, Lĩnh vực, Đối tượng, Quy mô đội, Lệ phí, Cơ cấu giải thưởng, Tóm tắt thể lệ).
+                </p>
+                <div class="p-3 bg-slate-900 rounded border border-slate-800/80 text-xs text-indigo-300 mt-2">
+                  <strong>Câu hỏi xin ý kiến Thầy:</strong> Theo góc nhìn quản lý phong trào học thuật và nghiên cứu khoa học của Khoa CNTT, cấu trúc 11 trường này đã đủ hoàn chỉnh chưa, hay nhóm cần bổ sung thêm các thuộc tính đặc thù nào khác (ví dụ: điểm rèn luyện quy đổi, giảng viên đồng hành bảo trợ...)?
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Question 2 -->
+          <div class="p-5 rounded-xl bg-slate-950/80 border border-slate-800 space-y-3">
+            <div class="flex items-start gap-3">
+              <span class="flex items-center justify-center w-7 h-7 rounded-lg bg-sky-500/20 text-sky-400 font-bold text-sm shrink-0 border border-sky-500/30">
+                2
+              </span>
+              <div class="space-y-1">
+                <h4 class="text-sm font-bold text-white">Về Giải Pháp Lưu Trữ Đối Tượng Cloudflare R2 So Với AWS S3 / MinIO</h4>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                  Nhóm đề xuất sử dụng Cloudflare R2 thay thế AWS S3 hay MinIO cục bộ vì chính sách miễn phí 100% băng thông tải ra ngoài (Zero-Egress Fees) và cung cấp 10GB dung lượng miễn phí, cho phép 2 thành viên Hưng và Duy đồng bộ dữ liệu hồ Delta Lake từ 2 máy khác nhau mà không phát sinh chi phí duy trì server vật lý.
+                </p>
+                <div class="p-3 bg-slate-900 rounded border border-slate-800/80 text-xs text-sky-300 mt-2">
+                  <strong>Câu hỏi xin ý kiến Thầy:</strong> Giải pháp Cloudflare R2 kết hợp với DuckDB truy vấn qua giao thức S3 có đáp ứng tốt tiêu chuẩn học thuật của một đồ án chuyên ngành Kỹ thuật Dữ liệu không, và khi mở rộng lên hàng chục nghìn bài đăng thì có gặp rào cản nào về mặt thẩm định đề tài không ạ?
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-slate-800 flex items-center justify-between text-xs text-slate-500">
+          <span>Nhóm sinh viên thực hiện: Nguyễn Văn Quang Duy & Đỗ Kiến Hưng</span>
+          <span>Học kỳ 1 — Năm học 2026–2027</span>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Interactive JavaScript Logic -->
+  <script>
+    // Tab Switching Function
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('border-indigo-500', 'text-indigo-400', 'font-semibold');
+        btn.classList.add('border-transparent', 'text-slate-400');
+      });
+
+      const selectedTab = document.getElementById(tabId);
+      const selectedBtn = document.getElementById('btn-' + tabId);
+      if (selectedTab && selectedBtn) {
+        selectedTab.classList.remove('hidden');
+        selectedBtn.classList.add('border-indigo-500', 'text-indigo-400', 'font-semibold');
+        selectedBtn.classList.remove('border-transparent', 'text-slate-400');
+      }
+
+      // Re-render charts or mermaid if needed
+      if (tabId === 'tab-architecture') {
+        mermaid.contentLoaded();
+      }
+    }
+
+    // Initialize Mermaid.js
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'dark',
+      themeVariables: {
+        darkMode: true,
+        background: '#020617',
+        primaryColor: '#312e81',
+        primaryTextColor: '#e2e8f0',
+        primaryBorderColor: '#6366f1',
+        lineColor: '#64748b'
+      }
+    });
+
+    // Initialize Chart.js
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Compression Benchmark Bar Chart
+      const compCtx = document.getElementById('compressionChart').getContext('2d');
+      new Chart(compCtx, {
+        type: 'bar',
+        data: {
+          labels: ['Code Tour', 'AI Challenge', 'DataDNA', 'HackAITHON', 'UIT Data', 'GDG DevFest', 'ICPC VN'],
+          datasets: [
+            {
+              label: 'HTML Thô Ban Đầu (KB)',
+              data: [280, 195, 145, 110, 95, 82, 68],
+              backgroundColor: 'rgba(239, 68, 68, 0.65)',
+              borderColor: 'rgba(239, 68, 68, 1)',
+              borderWidth: 1,
+              borderRadius: 4
+            },
+            {
+              label: 'Nén Bronze Zstd L3 (KB)',
+              data: [48, 38, 29, 22, 21, 18, 16],
+              backgroundColor: 'rgba(99, 102, 241, 0.85)',
+              borderColor: 'rgba(99, 102, 241, 1)',
+              borderWidth: 1,
+              borderRadius: 4
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              labels: { color: '#94a3b8', font: { size: 11 } }
+            },
+            tooltip: {
+              callbacks: {
+                afterLabel: function(context) {
+                  const raw = [280, 195, 145, 110, 95, 82, 68][context.dataIndex];
+                  const compressed = [48, 38, 29, 22, 21, 18, 16][context.dataIndex];
+                  const ratio = ((1 - compressed/raw) * 100).toFixed(1);
+                  return 'Tỷ lệ nén: ' + ratio + '%';
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              ticks: { color: '#94a3b8', font: { size: 10 } },
+              grid: { color: 'rgba(51, 65, 85, 0.3)' }
+            },
+            y: {
+              title: { display: true, text: 'Dung Lượng (Kilobytes)', color: '#94a3b8', font: { size: 11 } },
+              ticks: { color: '#94a3b8', font: { size: 10 } },
+              grid: { color: 'rgba(51, 65, 85, 0.3)' }
+            }
+          }
+        }
+      });
+
+      // 2. Progress Donut Chart
+      const progCtx = document.getElementById('progressChart').getContext('2d');
+      new Chart(progCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Đã Hoàn Thành (T1-T8)', 'Tuần Tới (T9)', 'Dự Kiến (T10-T15)'],
+          datasets: [{
+            data: [8, 1, 6],
+            backgroundColor: [
+              'rgba(16, 185, 129, 0.85)',
+              'rgba(99, 102, 241, 0.85)',
+              'rgba(71, 85, 105, 0.4)'
+            ],
+            borderColor: '#0f172a',
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false }
+          },
+          cutout: '70%'
+        }
+      });
+    });
+  </script>
+</body>
+</html>
