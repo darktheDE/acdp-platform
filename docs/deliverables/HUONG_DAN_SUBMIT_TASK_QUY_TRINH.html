@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quy Trình Submit Task & Bàn Giao Kỹ Thuật (Scope Lớp Bạc) - ACDP</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              900: '#312e81',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Mermaid.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    .step-card { transition: all 0.2s ease-in-out; }
+    .step-card:hover { transform: translateY(-2px); border-color: #6366f1; }
+    .code-block { background: #0f172a; border: 1px solid #1e293b; border-radius: 0.5rem; }
+    .mermaid svg { max-width: 100%; height: auto; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen antialiased flex flex-col justify-between">
+
+  <!-- Header -->
+  <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center space-x-3">
+        <span class="px-2.5 py-1 text-xs font-bold uppercase tracking-wider rounded-md bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
+          Checklist Hành Động
+        </span>
+        <h1 class="text-lg font-bold text-white tracking-tight">Quy Trình Submit Task & Bàn Giao Nội Bộ</h1>
+      </div>
+      <div class="flex items-center space-x-3 text-xs text-slate-400">
+        <span>Người thực hiện: <strong class="text-slate-200">Đỗ Kiến Hưng</strong></span>
+        <span class="text-slate-600">|</span>
+        <span>Phối hợp: <strong class="text-slate-200">Nguyễn Văn Quang Duy</strong></span>
+        <span class="text-slate-600">|</span>
+        <span>FIT-HCMUTE</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 flex-grow">
+
+    <!-- Overview Banner -->
+    <section class="bg-gradient-to-r from-indigo-950/60 via-slate-900 to-slate-900 border border-indigo-800/40 rounded-2xl p-6 shadow-lg">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <span class="text-xs font-semibold uppercase tracking-wider text-indigo-400">Trạng thái công việc</span>
+          <h2 class="text-xl font-extrabold text-white mt-1">Đã Hoàn Thành Toàn Bộ Scope Lớp Bạc</h2>
+          <p class="text-sm text-slate-400 mt-1 max-w-2xl">
+            Tất cả các tài liệu, mã nguồn Pydantic v2, unit tests (7/7 passed), hướng dẫn R2 cho Duy và báo cáo tiến độ nộp Thầy Khải đã sẵn sàng. Dưới đây là 5 bước tuần tự bạn chỉ cần thực hiện theo để submit task hoàn tất.
+          </p>
+        </div>
+        <div class="flex items-center gap-3 bg-slate-950/60 border border-slate-800 rounded-xl p-4">
+          <div class="text-center">
+            <div id="progress-percent" class="text-2xl font-black text-emerald-400">0%</div>
+            <div class="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Tiến Độ Submit</div>
+          </div>
+          <div class="w-24 bg-slate-800 rounded-full h-2.5 overflow-hidden">
+            <div id="progress-bar" class="bg-emerald-500 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Visual Submission Pipeline Diagram (Mermaid.js & Chart.js) -->
+    <section class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h3 class="text-sm font-bold text-white uppercase tracking-wider text-indigo-400">Luồng Thực Hiện Submit Task Tuần Tự (Tier 2 Visual Flow)</h3>
+          <p class="text-xs text-slate-400 mt-0.5">5 bước khép kín bàn giao task và đồng bộ kho dữ liệu lên mây</p>
+        </div>
+        <a href="BAO_CAO_TIEN_DO_LOP_BAC_PRESENTATION.html" class="px-3 py-1.5 text-xs font-semibold bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 border border-indigo-500/40 rounded-lg transition flex items-center gap-1.5">
+          <span>Xem Slide Báo Cáo GVHD</span>
+          <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+        </a>
+      </div>
+      <div class="mermaid bg-slate-950 p-4 rounded-xl border border-slate-800 overflow-x-auto text-center flex justify-center">
+flowchart LR
+  S1["Bước 1: Cập Nhật Word/Docs<br>(Paste Bảng 1.1 & Lớp Bạc)"] --> S2["Bước 2: Cập Nhật Notion<br>(NT-020, NT-021, NT-022)"]
+  S2 --> S3["Bước 3: Nhắn Duy R2<br>(Gửi Token & Hướng Dẫn)"]
+  S3 --> S4["Bước 4: Báo Cáo Thầy Khải<br>(Gửi File MD / Chiếu Slide)"]
+  S4 --> S5["Bước 5: Git Push Main<br>(Chạy Lệnh Terminal)"]
+
+  classDef active fill:#1e1b4b,stroke:#6366f1,stroke-width:1.5px,color:#c7d2fe;
+  class S1,S2,S3,S4,S5 active;
+      </div>
+    </section>
+
+    <!-- Step 1: Copy to Word / Google Docs -->
+    <section class="step-card bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm">
+      <div class="flex items-start gap-4">
+        <div class="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 flex items-center justify-center font-bold text-lg shrink-0">
+          1
+        </div>
+        <div class="space-y-4 flex-grow">
+          <div class="flex items-center justify-between">
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+              <span>Cập Nhật Báo Cáo Vào Google Docs / Word Chung Của Nhóm</span>
+              <span class="text-xs px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-500/30">Nội dung học thuật</span>
+            </h3>
+            <label class="flex items-center space-x-2 text-xs text-slate-400 cursor-pointer select-none">
+              <input type="checkbox" class="task-checkbox rounded border-slate-700 text-indigo-600 focus:ring-indigo-500" onchange="updateProgress()">
+              <span>Đã xong bước này</span>
+            </label>
+          </div>
+          <p class="text-xs text-slate-400">
+            Mở tệp mã nguồn Markdown: <code class="text-indigo-300 bg-slate-800 px-1.5 py-0.5 rounded">docs/academic/BaoCao_TieuLuan_ChuyenNganh_KTDL.md</code> và sao chép các phần sau vào bản thảo chung:
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+            <div class="bg-slate-950 p-3 rounded-lg border border-slate-800/80">
+              <strong class="text-emerald-400 block mb-1"><i class="fa-solid fa-check text-[10px] mr-1"></i> Các phần ĐÃ LÀM (Copy vào ngay):</strong>
+              <ul class="space-y-1 text-slate-300">
+                <li>• <strong>Bảng 1.1 Kế hoạch tiến độ</strong>: Tuần 1 đến Tuần 8 (ĐÃ LÀM), Tuần 9 (SẼ LÀM TUẦN TỚI).</li>
+                <li>• <strong>Chương 1</strong>: Cơ sở lý thuyết & Luận giải công nghệ (Delta Lake, DuckDB, Zstandard, Crawl4AI, R2).</li>
+                <li>• <strong>Chương 2</strong>: Kiến trúc 4 lớp, Ingestion và Tầng Bronze Delta Lake.</li>
+                <li>• <strong>Chương 3</strong>: Lược đồ 11 trường Lớp Bạc, `registration_link`, ma trận Bảng 1.2 và JSON sample.</li>
+                <li>• <strong>Chương 4</strong>: Kết quả nén Zstandard Bronze (80.2%) và trích xuất Silver.</li>
+                <li>• <strong>Phần 3</strong>: Mục 3.1 Đánh giá tiến độ hiện tại (Tới Lớp Bạc).</li>
+              </ul>
+            </div>
+            <div class="bg-slate-950 p-3 rounded-lg border border-slate-800/80">
+              <strong class="text-amber-400 block mb-1"><i class="fa-solid fa-hourglass-half text-[10px] mr-1"></i> Các phần ĐỂ TRỐNG (Đúng yêu cầu của Duy):</strong>
+              <ul class="space-y-1 text-slate-300">
+                <li>• <strong>Mục 2.3.3, 2.4, 2.5</strong>: Để nguyên nhãn <em>[Đề cương thiết kế - Đang triển khai]</em>.</li>
+                <li>• <strong>Mục 4.4</strong>: Đo lường OLAP Gold $\rightarrow$ Để trống: <em>[Chưa triển khai — Đang thực hiện tiếp theo]</em>.</li>
+                <li>• <strong>Mục 4.5</strong>: Đánh giá RAG và Web MVP $\rightarrow$ Để trống: <em>[Chưa triển khai — Đang thực hiện tiếp theo]</em>.</li>
+                <li>• <strong>Tuần 10–15</strong> trong Bảng 1.1: Để nhãn <em>[Dự kiến thực hiện]</em>.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Step 2: Update Notion Board -->
+    <section class="step-card bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm">
+      <div class="flex items-start gap-4">
+        <div class="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 flex items-center justify-center font-bold text-lg shrink-0">
+          2
+        </div>
+        <div class="space-y-4 flex-grow">
+          <div class="flex items-center justify-between">
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+              <span>Cập Nhật Tiến Độ Lên Notion Task Board Của Nhóm</span>
+              <span class="text-xs px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30">Quản lý dự án</span>
+            </h3>
+            <label class="flex items-center space-x-2 text-xs text-slate-400 cursor-pointer select-none">
+              <input type="checkbox" class="task-checkbox rounded border-slate-700 text-indigo-600 focus:ring-indigo-500" onchange="updateProgress()">
+              <span>Đã xong bước này</span>
+            </label>
+          </div>
+          <p class="text-xs text-slate-400">
+            Truy cập trang Notion Board của đề tài ACDP và cập nhật 3 thẻ công việc chính:
+          </p>
+          <div class="space-y-2 text-xs">
+            <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 flex items-center justify-between">
+              <div>
+                <span class="font-bold text-indigo-400">NT-020</span>: Silver Layer Competition Schema & Data Contracts
+                <div class="text-[11px] text-slate-400">Đính kèm link: <code>src/acdp/lakehouse/schema.py</code> và <code>tests/test_silver_schema.py</code></div>
+              </div>
+              <span class="px-2 py-1 rounded bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30">Done</span>
+            </div>
+            <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 flex items-center justify-between">
+              <div>
+                <span class="font-bold text-indigo-400">NT-021</span>: Specialized Topic Project Report Manuscript (TLCN)
+                <div class="text-[11px] text-slate-400">Đính kèm link: <code>docs/academic/BaoCao_TieuLuan_ChuyenNganh_KTDL.md</code></div>
+              </div>
+              <span class="px-2 py-1 rounded bg-amber-500/20 text-amber-400 font-bold border border-amber-500/30">In Review (Scope Bạc)</span>
+            </div>
+            <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 flex items-center justify-between">
+              <div>
+                <span class="font-bold text-indigo-400">NT-022</span>: Cloudflare R2 Migration & Multi-Tier Sync Technical Guide
+                <div class="text-[11px] text-slate-400">Đính kèm link: <code>docs/deliverables/HUONG_DAN_MIGRATE_R2_LAKEHOUSE.md</code></div>
+              </div>
+              <span class="px-2 py-1 rounded bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30">Done</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Step 3: Send R2 Guide & Credentials to Duy -->
+    <section class="step-card bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm">
+      <div class="flex items-start gap-4">
+        <div class="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 flex items-center justify-center font-bold text-lg shrink-0">
+          3
+        </div>
+        <div class="space-y-4 flex-grow">
+          <div class="flex items-center justify-between">
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+              <span>Gửi Hướng Dẫn Kỹ Thuật & Khóa R2 Cho Duy</span>
+              <span class="text-xs px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Phối hợp đồng đội</span>
+            </h3>
+            <label class="flex items-center space-x-2 text-xs text-slate-400 cursor-pointer select-none">
+              <input type="checkbox" class="task-checkbox rounded border-slate-700 text-indigo-600 focus:ring-indigo-500" onchange="updateProgress()">
+              <span>Đã xong bước này</span>
+            </label>
+          </div>
+          <p class="text-xs text-slate-400">
+            Hưng gửi tin nhắn qua Zalo/Telegram/Discord cho Duy nội dung sau (nhớ điền các token thật của Cloudflare R2):
+          </p>
+          <div class="code-block p-4 relative">
+            <button onclick="copyToClipboard('msg-duy', this)" class="absolute top-3 right-3 text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded border border-slate-700 flex items-center gap-1 transition">
+              <i class="fa-regular fa-copy"></i> Copy Tin Nhắn
+            </button>
+            <pre id="msg-duy" class="text-xs text-slate-300 overflow-x-auto whitespace-pre-wrap font-mono">Duy ơi, tui đã tạo xong bucket "acdp-lakehouse" trên Cloudflare R2 và đẩy 1 số dữ liệu mẫu lớp Đồng lên rồi.
+Ông làm theo file hướng dẫn step-by-step tui mới viết tại:
+docs/deliverables/HUONG_DAN_MIGRATE_R2_LAKEHOUSE.md
+
+Để config máy ông kết nối được, ông tạo file .env ở thư mục gốc repo rồi điền mấy cái này vô:
+AWS_ENDPOINT_URL=https://&lt;ACCOUNT_ID&gt;.r2.cloudflarestorage.com
+AWS_ACCESS_KEY_ID=&lt;ACCESS_KEY_ID_CỦA_HƯNG_GỬI&gt;
+AWS_SECRET_ACCESS_KEY=&lt;SECRET_ACCESS_KEY_CỦA_HƯNG_GỬI&gt;
+AWS_REGION=auto
+AWS_ALLOW_HTTP=false
+AWS_S3_ALLOW_UNSAFE_RENAME=true
+
+BRONZE_STORAGE_URI=s3://acdp-lakehouse/bronze/events
+SILVER_STORAGE_URI=s3://acdp-lakehouse/silver/competitions
+GOLD_STORAGE_URI=s3://acdp-lakehouse/gold/marts
+
+Ông cài thư viện: uv add deltalake duckdb pyarrow python-dotenv
+Xong chạy script Bước 3 trong file là đọc được ngay data lớp Đồng tui đã đẩy lên R2. Sau đó ông test push Lớp Bạc theo Bước 4 nhé!</pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Step 4: Prepare Advisor Report -->
+    <section class="step-card bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm">
+      <div class="flex items-start gap-4">
+        <div class="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 flex items-center justify-center font-bold text-lg shrink-0">
+          4
+        </div>
+        <div class="space-y-4 flex-grow">
+          <div class="flex items-center justify-between">
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+              <span>Chuẩn Bị File Báo Cáo Tiến Độ Gửi Thầy Khải</span>
+              <span class="text-xs px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">Báo cáo GVHD</span>
+            </h3>
+            <label class="flex items-center space-x-2 text-xs text-slate-400 cursor-pointer select-none">
+              <input type="checkbox" class="task-checkbox rounded border-slate-700 text-indigo-600 focus:ring-indigo-500" onchange="updateProgress()">
+              <span>Đã xong bước này</span>
+            </label>
+          </div>
+          <p class="text-xs text-slate-400">
+            Tài liệu báo cáo độc lập đã được chuẩn bị sẵn tại: <code class="text-indigo-300 bg-slate-800 px-1.5 py-0.5 rounded">docs/academic/KeHoach_TienDo_BaoCao_GVHD.md</code>
+          </p>
+          <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 text-xs text-slate-300 space-y-1">
+            <div>• <strong>Hình thức</strong>: Bạn có thể in ra PDF hoặc gửi trực tiếp nội dung qua email / Zalo trao đổi với Thầy Khải.</div>
+            <div>• <strong>Điểm nhấn để trình bày</strong>: Nhóm đã hoàn thành xuất sắc Tầng Bronze (nén 80.2% Zstandard trên Delta Lake), chuẩn hóa Lược đồ Lớp Bạc (11 trường định lượng) và tuần tới sẽ chạy pipeline bóc tách tự động đẩy lên Cloudflare R2.</div>
+            <div>• <strong>Mở file trình chiếu trực quan</strong>: Bạn có thể mở tệp <code class="text-indigo-300">docs/deliverables/BAO_CAO_TIEN_DO_LOP_BAC_PRESENTATION.html</code> để chiếu biểu đồ và sơ đồ kiến trúc khi gặp Thầy Khải và Duy.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Step 5: Git Commit & Push on Hưng's Machine -->
+    <section class="step-card bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm">
+      <div class="flex items-start gap-4">
+        <div class="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 flex items-center justify-center font-bold text-lg shrink-0">
+          5
+        </div>
+        <div class="space-y-4 flex-grow">
+          <div class="flex items-center justify-between">
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+              <span>Đẩy Mã Nguồn Lên GitHub (Chính Hưng Thực Hiện)</span>
+              <span class="text-xs px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30">Thao tác Git</span>
+            </h3>
+            <label class="flex items-center space-x-2 text-xs text-slate-400 cursor-pointer select-none">
+              <input type="checkbox" class="task-checkbox rounded border-slate-700 text-indigo-600 focus:ring-indigo-500" onchange="updateProgress()">
+              <span>Đã xong bước này</span>
+            </label>
+          </div>
+          <p class="text-xs text-slate-400">
+            Theo quy tắc an toàn của Agent, trợ lý AI không được phép tự động commit/push mã nguồn. Bạn mở terminal tại máy cá nhân và chạy các lệnh sau:
+          </p>
+          <div class="code-block p-4 relative">
+            <button onclick="copyToClipboard('git-commands', this)" class="absolute top-3 right-3 text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded border border-slate-700 flex items-center gap-1 transition">
+              <i class="fa-regular fa-copy"></i> Copy Lệnh Git
+            </button>
+            <pre id="git-commands" class="text-xs text-emerald-400 overflow-x-auto whitespace-pre font-mono"># 1. Kiểm tra các file đã thay đổi
+git status
+
+# 2. Thêm các file mã nguồn và báo cáo đã hoàn thiện
+git add src/ docs/ tests/ 221026task.md
+
+# 3. Tạo commit với thông điệp chuẩn mực Conventional Commits
+git commit -m "feat(silver): finalize silver schema, concise r2 guide and advisor progress report"
+
+# 4. Đẩy lên nhánh main
+git push origin main</pre>
+          </div>
+          <p class="text-[11px] text-amber-400/90 flex items-center gap-1.5">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <span>Lưu ý: Tệp <code>.env</code> đã được cấu hình trong <code>.gitignore</code>, không bao giờ lo bị lộ khóa bí mật lên GitHub.</span>
+          </p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800 bg-slate-900/60 py-6 text-center text-xs text-slate-500">
+    <p>Dự án ACDP — Khoa Công nghệ Thông tin, Trường Đại học Công nghệ Kỹ thuật TP.HCM (HCM-UTE)</p>
+    <p class="mt-1">Tài liệu checklist hỗ trợ hoàn tất tác vụ tuần 8 (Học kỳ 1, 2026–2027)</p>
+  </footer>
+
+  <script>
+    function updateProgress() {
+      const checkboxes = document.querySelectorAll('.task-checkbox');
+      const total = checkboxes.length;
+      let checked = 0;
+      checkboxes.forEach(cb => { if (cb.checked) checked++; });
+      const percent = Math.round((checked / total) * 100);
+      document.getElementById('progress-percent').innerText = percent + '%';
+      document.getElementById('progress-bar').style.width = percent + '%';
+      
+      // Save state to localStorage
+      const state = Array.from(checkboxes).map(cb => cb.checked);
+      localStorage.setItem('acdp_submit_checklist', JSON.stringify(state));
+    }
+
+    // Load state
+    window.addEventListener('DOMContentLoaded', () => {
+      const saved = localStorage.getItem('acdp_submit_checklist');
+      if (saved) {
+        try {
+          const state = JSON.parse(saved);
+          const checkboxes = document.querySelectorAll('.task-checkbox');
+          checkboxes.forEach((cb, idx) => {
+            if (state[idx] !== undefined) cb.checked = state[idx];
+          });
+          updateProgress();
+        } catch(e) {}
+      }
+    });
+
+    function copyToClipboard(elementId, btn) {
+      const text = document.getElementById(elementId).innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const originalHtml = btn.innerHTML;
+        btn.innerHTML = '<i class="fa-solid fa-check text-emerald-400"></i> Đã Copy!';
+        btn.classList.add('bg-emerald-950', 'border-emerald-700', 'text-emerald-300');
+        setTimeout(() => {
+          btn.innerHTML = originalHtml;
+          btn.classList.remove('bg-emerald-950', 'border-emerald-700', 'text-emerald-300');
+        }, 2000);
+      });
+    }
+
+    // Initialize Mermaid.js
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'dark',
+      themeVariables: {
+        darkMode: true,
+        background: '#020617',
+        primaryColor: '#312e81',
+        primaryTextColor: '#e2e8f0',
+        primaryBorderColor: '#6366f1',
+        lineColor: '#64748b'
+      }
+    });
+  </script>
+</body>
+</html>

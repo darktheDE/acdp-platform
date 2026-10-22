@@ -24,6 +24,10 @@ This document establishes the bidirectional mapping between tasks managed on the
 | **NT-014** | Academic Competition Landscape Survey & Ingestion Scaling Roadmap ([`T02`](../rd-tasks/T02.md)) | Hung & Duy | Phase 1 (W1–W3) | [`docs/deliverables/NT-014-competition-landscape-survey.md`](../deliverables/NT-014-competition-landscape-survey.md) | ✅ Complete |
 | **NT-018** | Bronze Layer Storage & Open Table Format Tech Stack Evaluation ([`T13`](../rd-tasks/T13.md)) | Duy & Hung | Phase 1 (W1–W3) | [`docs/deliverables/NT-018-bronze-storage-and-table-format-evaluation.md`](../deliverables/NT-018-bronze-storage-and-table-format-evaluation.md) | ✅ Complete |
 | **NT-019** | Tri-Storage Bronze Lakehouse Engine Implementation (Local, SeaweedFS, R2) | Duy & Hung | Phase 1 (W3–W4) | [`src/acdp/lakehouse/bronze.py`](../../src/acdp/lakehouse/bronze.py) | ✅ Complete |
+| **NT-020** | Silver Layer Competition Schema & Data Contracts Implementation | Hung & Duy | Phase 1 (W6–W7) | [`src/acdp/lakehouse/schema.py`](../../src/acdp/lakehouse/schema.py), [`tests/test_silver_schema.py`](../../tests/test_silver_schema.py) | ✅ Complete |
+| **NT-021** | Comprehensive FIT-HCMUTE Specialized Topic Project Report Manuscript | Hung & Duy | Phase 1 (W7–W15) | [`docs/academic/BaoCao_TieuLuan_ChuyenNganh_KTDL.md`](../academic/BaoCao_TieuLuan_ChuyenNganh_KTDL.md) | ✅ Complete |
+| **NT-022** | Lakehouse Cloudflare R2 Migration & Multi-Tier Sync Technical Guide | Hung & Duy | Phase 1 (W8) | [`docs/deliverables/HUONG_DAN_MIGRATE_R2_LAKEHOUSE.md`](../deliverables/HUONG_DAN_MIGRATE_R2_LAKEHOUSE.md) | ✅ Complete |
+
 
 ---
 

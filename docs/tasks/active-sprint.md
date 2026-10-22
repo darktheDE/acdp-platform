@@ -27,6 +27,9 @@ This document maintains the immediate context, active tasks, and session state f
 - [x] **TASK-0004**: Formulate SPEC-0001 (System Foundation and Configuration Standards).
 - [x] **TASK-0105**: Resolve business dilemmas & technical feasibility review for [`docs/rd-tasks/T01.md`](../rd-tasks/T01.md) (Deliverable NT-013).
 - [x] **TASK-0106**: Complete academic competition survey and phased ingestion scaling roadmap for [`docs/rd-tasks/T02.md`](../rd-tasks/T02.md) (Deliverable NT-014).
+- [x] **TASK-0107**: Implement Silver Layer Competition Schema & Data Contracts (Pydantic v2 `SilverCompetitionRecord`, Deliverable NT-020).
+- [x] **TASK-0108**: Author Comprehensive FIT-HCMUTE Specialized Topic Project Report Manuscript (`BaoCao_TieuLuan_ChuyenNganh_KTDL.md`, Deliverable NT-021).
+
 
 ---
 
