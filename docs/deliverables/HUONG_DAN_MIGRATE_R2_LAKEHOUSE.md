@@ -1,174 +1,145 @@
-# HƯỚNG DẪN CẤU HÌNH VÀ ĐẨY DỮ LIỆU LÊN LAKEHOUSE R2
-*(Tài liệu thực chiến dành cho Duy — Dự án ACDP)*
+# HƯỚNG DẪN CẤU HÌNH VÀ ĐỒNG BỘ DỮ LIỆU TRÊN CLOUDFLARE R2 (QUY MÔ TỐI GIẢN 5–10 CUỘC THI)
+*(Tài liệu thực chiến dành cho Duy & Hưng — Giai đoạn Tiểu luận chuyên ngành ACDP)*
 
-Bucket R2: `acdp-lakehouse` (Hưng đã tạo sẵn và đã đẩy dữ liệu mẫu lớp Đồng).  
-Mục tiêu tài liệu: Hướng dẫn Duy thiết lập cấu hình trên máy cá nhân, kiểm tra kết nối và tự đẩy (push) dữ liệu các lớp Đồng, Bạc, Vàng lên R2.
+Bucket R2: `acdp-lakehouse`.  
+Mục tiêu tài liệu: Hướng dẫn thiết lập cấu hình và đồng bộ dữ liệu theo **Phương án Tối giản nhất (DIR-015)** cho tập **5–10 cuộc thi mẫu** trong giai đoạn Tiểu luận chuyên ngành (TLCN):
+- **Tầng Bronze**: Cào văn bản Markdown sạch bằng `Crawl4AI` và đẩy trực tiếp lên R2 bằng `boto3` (`src/acdp/1_crawl_to_bronze.py`), **không nén nhị phân Zstandard**.
+- **Tầng Silver**: Đọc văn bản Markdown từ R2 (hoặc `data/raw/markdown/`), dùng `instructor` bóc tách thành thực thể Pydantic v2 `SilverCompetitionRecord` (`src/acdp/2_instruction.py`) và lưu dưới dạng tệp Parquet / JSON chuẩn.
+- **Tầng Gold / Truy vấn**: Dùng **DuckDB** đọc trực tiếp tệp Parquet / JSON từ R2 hoặc Local.
 
 ---
 
-## BƯỚC 1: CÀI ĐẶT THƯ VIỆN CẦN THIẾT
+## BƯỚC 1: ĐỒNG BỘ MÔI TRƯỜNG PYTHON BẰNG `uv`
 
-Mở terminal trong thư mục dự án và cài đặt các thư viện thao tác với Delta Lake và S3/R2:
+Mở terminal tại thư mục gốc của dự án và đồng bộ các gói phụ thuộc đã khai báo trong `pyproject.toml`:
 
 ```bash
-uv add deltalake duckdb pyarrow python-dotenv boto3
+uv sync
 ```
-*(Nếu dùng pip thông thường: `pip install deltalake duckdb pyarrow python-dotenv boto3`)*
 
 ---
 
-## BƯỚC 2: CẤU HÌNH TỆP `.env` TRÊN MÁY DUY
+## BƯỚC 2: CẤU HÌNH TỆP `.env`
 
-Tạo hoặc mở tệp `.env` tại thư mục gốc của repository (tệp này đã có trong `.gitignore`, không lo bị đẩy lên GitHub).
-
-Điền các thông số kết nối do Hưng cung cấp:
+Tạo hoặc mở tệp `.env` tại thư mục gốc của repository (tệp này đã có trong `.gitignore`, tuyệt đối không đẩy lên GitHub):
 
 ```env
 # ==============================================================================
-# CLOUDFLARE R2 CREDENTIALS (HƯNG CUNG CẤP)
+# CLOUDFLARE R2 CREDENTIALS
 # ==============================================================================
+BUCKET_NAME=acdp-lakehouse
 AWS_ENDPOINT_URL=https://<ACCOUNT_ID>.r2.cloudflarestorage.com
-AWS_ACCESS_KEY_ID=<ACCESS_KEY_ID_DO_HUNG_GUI>
-AWS_SECRET_ACCESS_KEY=<SECRET_ACCESS_KEY_DO_HUNG_GUI>
+AWS_ACCESS_KEY_ID=<ACCESS_KEY_ID>
+AWS_SECRET_ACCESS_KEY=<SECRET_ACCESS_KEY>
 AWS_REGION=auto
 AWS_ALLOW_HTTP=false
-
-# Bắt buộc để delta-rs ghi file an toàn trên R2
 AWS_S3_ALLOW_UNSAFE_RENAME=true
 
-# Đường dẫn 3 phân tầng Lakehouse trên R2
-BRONZE_STORAGE_URI=s3://acdp-lakehouse/bronze/events
-SILVER_STORAGE_URI=s3://acdp-lakehouse/silver/competitions
-GOLD_STORAGE_URI=s3://acdp-lakehouse/gold/marts
+# Đường dẫn lưu trữ
+BRONZE_STORAGE_BACKEND=cloudflare_r2
+BRONZE_STORAGE_URI=s3://acdp-lakehouse/bronze
+SILVER_STORAGE_URI=s3://acdp-lakehouse/silver
+GOLD_STORAGE_URI=s3://acdp-lakehouse/gold
 ```
 
 ---
 
-## BƯỚC 3: KIỂM TRA KẾT NỐI VÀ ĐỌC DỮ LIỆU LỚP ĐỒNG ĐÃ CÓ
+## BƯỚC 3: THU THẬP VÀ ĐẨY DỮ LIỆU MARKDOWN LÊN TẦNG BRONZE R2 (`1_crawl_to_bronze.py`)
 
-Chạy đoạn mã Python kiểm tra xem máy Duy đã kết nối thành công và đọc được dữ liệu lớp Đồng mà Hưng đã đẩy lên hay chưa:
+Với quy mô 5–10 cuộc thi của giai đoạn TLCN, hệ thống sử dụng trực tiếp kịch bản [`src/acdp/1_crawl_to_bronze.py`](../../src/acdp/1_crawl_to_bronze.py) để cào nội dung văn bản Markdown (`text/markdown; charset=utf-8`) và đẩy thẳng lên R2 qua `boto3`:
 
 ```python
 import os
-from deltalake import DeltaTable
+from datetime import datetime
+from urllib.parse import urlparse
+import boto3
 from dotenv import load_dotenv
 
 load_dotenv()
 
-storage_options = {
-    "AWS_ENDPOINT_URL": os.environ["AWS_ENDPOINT_URL"],
-    "AWS_ACCESS_KEY_ID": os.environ["AWS_ACCESS_KEY_ID"],
-    "AWS_SECRET_ACCESS_KEY": os.environ["AWS_SECRET_ACCESS_KEY"],
-    "AWS_REGION": "auto",
-    "AWS_S3_ALLOW_UNSAFE_RENAME": "true",
-}
+s3_client = boto3.client(
+    service_name="s3",
+    endpoint_url=os.getenv("AWS_ENDPOINT_URL"),
+    aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),
+    aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
+    region_name="auto",
+)
 
-r2_bronze_uri = os.environ.get("BRONZE_STORAGE_URI", "s3://acdp-lakehouse/bronze/events")
+def upload_to_bronze(md_content: str, source_url: str) -> str:
+    """Đẩy trực tiếp văn bản Markdown nguyên bản (UTF-8) của cuộc thi lên tầng Bronze R2."""
+    now = datetime.now()
+    dm_name = urlparse(source_url).netloc or source_url
 
-print(f"[*] Đang kết nối tới R2: {r2_bronze_uri}")
-dt = DeltaTable(r2_bronze_uri, storage_options=storage_options)
-table = dt.to_pyarrow_table()
+    bronze_key = (
+        f"bronze/{dm_name}"
+        f"/year={now.year}/month={now.strftime('%m')}/day={now.strftime('%d')}/"
+        f"{int(now.timestamp())}"
+    )
 
-print(f"[+] Kết nối R2 thành công!")
-print(f"[+] Số bản ghi lớp Đồng hiện có trên R2: {len(table)}")
-print(f"[+] Schema các cột: {table.column_names}")
+    s3_client.put_object(
+        Bucket=os.getenv("BUCKET_NAME", "acdp-lakehouse"),
+        Key=bronze_key,
+        Body=md_content.encode("utf-8"),
+        ContentType="text/markdown; charset=utf-8",
+        Metadata={"source": dm_name, "layer": "bronze"},
+    )
+    print(f"[+] Đã đẩy nội dung {dm_name} lên Bronze R2: {bronze_key}")
+    return bronze_key
 ```
-
-Nếu in ra số lượng bản ghi và danh sách cột (ví dụ: `raw_id`, `source_url`, `crawled_at`...), máy Duy đã kết nối R2 hoàn tất.
 
 ---
 
-## BƯỚC 4: HƯỚNG DẪN DUY PUSH DỮ LIỆU LÊN R2
+## BƯỚC 4: TRÍCH XUẤT VÀ ĐẨY DỮ LIỆU LÊN TẦNG SILVER R2 (`2_instruction.py`)
 
-### 4.1. Đẩy dữ liệu Lớp Bạc (Silver Layer) — Nhiệm vụ trọng tâm của Duy
-
-Sau khi Duy bóc tách thông tin và khởi tạo danh sách các thực thể `SilverCompetitionRecord` (Pydantic v2), Duy đẩy trực tiếp lên R2 bằng hàm sau:
+Sau khi dùng `instructor` bóc tách 5–10 file Markdown thành danh sách các thực thể `SilverCompetitionRecord` (Pydantic v2), chuyển đổi trực tiếp sang tệp Parquet và đẩy lên tầng Silver R2:
 
 ```python
+import io
 import os
+import boto3
 import pyarrow as pa
-from deltalake import write_deltalake
+import pyarrow.parquet as pq
 from dotenv import load_dotenv
 from acdp.lakehouse.schema import SilverCompetitionRecord
 
 load_dotenv()
 
-storage_options = {
-    "AWS_ENDPOINT_URL": os.environ["AWS_ENDPOINT_URL"],
-    "AWS_ACCESS_KEY_ID": os.environ["AWS_ACCESS_KEY_ID"],
-    "AWS_SECRET_ACCESS_KEY": os.environ["AWS_SECRET_ACCESS_KEY"],
-    "AWS_REGION": "auto",
-    "AWS_S3_ALLOW_UNSAFE_RENAME": "true",
-}
-
-def push_silver_records_to_r2(records: list[SilverCompetitionRecord]):
-    """Chuyển đổi danh sách Pydantic Silver thành Arrow Table và đẩy lên R2."""
+def push_silver_records_to_r2(records: list[SilverCompetitionRecord]) -> None:
+    """Chuyển danh sách SilverCompetitionRecord thành file Parquet gọn nhẹ trên R2."""
     if not records:
-        print("[!] Không có bản ghi nào để đẩy.")
         return
 
-    # 1. Chuyển đổi danh sách Pydantic sang dictionary
     data_dicts = [r.to_json_dict() for r in records]
-    
-    # 2. Tạo PyArrow Table
     arrow_table = pa.Table.from_pylist(data_dicts)
-    
-    r2_silver_uri = os.environ.get("SILVER_STORAGE_URI", "s3://acdp-lakehouse/silver/competitions")
-    print(f"[*] Đang đẩy {len(records)} bản ghi Lớp Bạc lên R2: {r2_silver_uri}")
-    
-    # 3. Ghi nối tiếp (append) vào bảng Delta trên R2
-    write_deltalake(
-        r2_silver_uri,
-        arrow_table,
-        mode="append",
-        storage_options=storage_options,
+
+    buffer = io.BytesIO()
+    pq.write_table(arrow_table, buffer)
+    buffer.seek(0)
+
+    s3_client = boto3.client(
+        service_name="s3",
+        endpoint_url=os.getenv("AWS_ENDPOINT_URL"),
+        aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),
+        aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
+        region_name="auto",
     )
-    print("[+] Đẩy dữ liệu Lớp Bạc lên Cloudflare R2 thành công!")
+
+    bucket = os.getenv("BUCKET_NAME", "acdp-lakehouse")
+    silver_key = "silver/competitions.parquet"
+    s3_client.put_object(
+        Bucket=bucket,
+        Key=silver_key,
+        Body=buffer.getvalue(),
+        ContentType="application/octet-stream",
+    )
+    print(f"[+] Đã đẩy {len(records)} cuộc thi chuẩn hóa lên s3://{bucket}/{silver_key}")
 ```
 
 ---
 
-### 4.2. Đẩy dữ liệu Lớp Đồng (Bronze Layer) — Nếu Duy có thêm nguồn cào mới
+## BƯỚC 5: TRUY VẤN PHÂN TÍCH TRỰC TIẾP BẰNG DUCKDB (TẦNG SILVER & GOLD)
 
-Nếu Duy thu thập thêm trang web thô và muốn đẩy trực tiếp vào Lớp Đồng:
-
-```python
-import os
-import pyarrow as pa
-from deltalake import write_deltalake
-from dotenv import load_dotenv
-from acdp.lakehouse.schema import BRONZE_ARROW_SCHEMA, BronzeRecord
-
-load_dotenv()
-
-storage_options = {
-    "AWS_ENDPOINT_URL": os.environ["AWS_ENDPOINT_URL"],
-    "AWS_ACCESS_KEY_ID": os.environ["AWS_ACCESS_KEY_ID"],
-    "AWS_SECRET_ACCESS_KEY": os.environ["AWS_SECRET_ACCESS_KEY"],
-    "AWS_REGION": "auto",
-    "AWS_S3_ALLOW_UNSAFE_RENAME": "true",
-}
-
-def push_bronze_records_to_r2(records: list[BronzeRecord]):
-    """Đẩy các bản ghi HTML thô nén Zstandard lên Tầng Đồng R2."""
-    data_dicts = [r.model_dump() for r in records]
-    arrow_table = pa.Table.from_pylist(data_dicts, schema=BRONZE_ARROW_SCHEMA)
-    
-    r2_bronze_uri = os.environ.get("BRONZE_STORAGE_URI", "s3://acdp-lakehouse/bronze/events")
-    write_deltalake(
-        r2_bronze_uri,
-        arrow_table,
-        mode="append",
-        storage_options=storage_options,
-    )
-    print(f"[+] Đã đẩy {len(records)} bản ghi lên Lớp Đồng R2!")
-```
-
----
-
-### 4.3. Đẩy dữ liệu Lớp Vàng (Gold Layer) — Phục vụ phân tích OLAP
-
-Khi tổng hợp bảng sự kiện hoặc bảng chiều từ Lớp Bạc, Duy dùng DuckDB đẩy trực tiếp tệp Parquet lên R2 mà không cần lưu trung gian:
+Với 5–10 cuộc thi đã chuẩn hóa trong tệp Parquet trên R2 (hoặc lưu cục bộ tại `data/lakehouse/silver/competitions.parquet`), **DuckDB** đọc và phân tích trực tiếp trong vài mili-giây mà không cần cài đặt PostgreSQL hay cụm máy chủ:
 
 ```python
 import os
@@ -185,59 +156,21 @@ con.execute(f"""
     SET s3_endpoint = '{endpoint}';
     SET s3_access_key_id = '{os.environ["AWS_ACCESS_KEY_ID"]}';
     SET s3_secret_access_key = '{os.environ["AWS_SECRET_ACCESS_KEY"]}';
+    SET s3_region = 'auto';
     SET s3_use_ssl = true;
     SET s3_url_style = 'path';
 """)
 
-print("[*] Đang xuất bản Fact_Competitions lên Lớp Vàng R2...")
-con.execute("""
-    COPY (
-        SELECT 
-            competition_id,
-            canonical_name,
-            organizer_type,
-            edition_year,
-            total_prize_vnd,
-            first_prize_vnd,
-            min_team_size,
-            max_team_size,
-            registration_fee_vnd
-        FROM delta_scan('s3://acdp-lakehouse/silver/competitions')
-    ) TO 's3://acdp-lakehouse/gold/marts/fact_competitions.parquet' (FORMAT PARQUET);
-""")
-print("[+] Xuất bản Lớp Vàng thành công!")
-```
-
----
-
-## BƯỚC 5: TRUY VẤN NHANH DỮ LIỆU TỪ R2 BẰNG DUCKDB (KHÔNG TẢI TỆP)
-
-Duy có thể viết truy vấn SQL trực tiếp trên mây từ máy cá nhân với tốc độ mili-giây:
-
-```python
-import os
-import duckdb
-from dotenv import load_dotenv
-
-load_dotenv()
-
-con = duckdb.connect()
-con.execute("INSTALL httpfs; LOAD httpfs; INSTALL delta; LOAD delta;")
-
-endpoint = os.environ["AWS_ENDPOINT_URL"].replace("https://", "")
-con.execute(f"""
-    SET s3_endpoint = '{endpoint}';
-    SET s3_access_key_id = '{os.environ["AWS_ACCESS_KEY_ID"]}';
-    SET s3_secret_access_key = '{os.environ["AWS_SECRET_ACCESS_KEY"]}';
-    SET s3_use_ssl = true;
-    SET s3_url_style = 'path';
-""")
-
-# Truy vấn dữ liệu thực tế trên R2
-df = con.execute("""
-    SELECT canonical_name, organizer_name, registration_deadline, total_prize_vnd
-    FROM delta_scan('s3://acdp-lakehouse/silver/competitions')
-    LIMIT 5;
+bucket = os.getenv("BUCKET_NAME", "acdp-lakehouse")
+df = con.execute(f"""
+    SELECT 
+        canonical_name,
+        organizer_name,
+        registration_deadline,
+        total_prize_vnd,
+        registration_link
+    FROM read_parquet('s3://{bucket}/silver/competitions.parquet')
+    ORDER BY total_prize_vnd DESC;
 """).df()
 
 print(df)
@@ -245,8 +178,8 @@ print(df)
 
 ---
 
-## 3 NGUYÊN TẮC QUAN TRỌNG KHI LÀM VIỆC CHUNG
+## 3 NGUYÊN TẮC QUAN TRỌNG TRONG GIAI ĐOẠN TLCN (5–10 CUỘC THI)
 
-1. Bảo mật khóa truy cập: Không chia sẻ hoặc commit tệp `.env` lên GitHub dưới bất kỳ hình thức nào.
-2. Chế độ ghi nối tiếp: Luôn sử dụng `mode="append"` khi đẩy dữ liệu để tránh ghi đè làm mất các bản ghi mà thành viên khác đã đẩy lên trước đó.
-3. Cờ an toàn Delta Lake: Đảm bảo luôn bật `AWS_S3_ALLOW_UNSAFE_RENAME=true` trong môi trường để `delta-rs` hoàn tất giao dịch commit an toàn trên R2.
+1. **Giữ kiến trúc tối giản**: Ở quy mô 5–10 cuộc thi ($\sim 1\text{ MB}$), lưu văn bản Markdown (`UTF-8`) nguyên bản ở tầng Bronze và tệp Parquet ở tầng Silver để dễ dàng kiểm tra bằng mắt thường và gỡ lỗi nhanh.
+2. **Bảo mật khóa truy cập**: Tuyệt đối không chia sẻ hoặc commit tệp `.env` lên GitHub.
+3. **Tái lập kiểm thử**: Luôn giữ bản sao của 7 cuộc thi mẫu trong `data/raw/markdown/` để có thể chạy thử nghiệm cục bộ ngay cả khi không có kết nối mạng.
