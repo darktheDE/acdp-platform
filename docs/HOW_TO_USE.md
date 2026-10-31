@@ -1,20 +1,24 @@
 # ACDP Direction & AI Prompting Guide
-> **A Comprehensive Handbook for Humans & AI Agents Working in the ACDP Workspace**
+> **A Handbook for Humans & AI Agents Working in the ACDP Workspace**
 
-This document serves as the primary onboarding manual. It explains the purpose and capabilities of the repository, guides human reviewers on navigating its assets, and provides a ready-to-use **Prompt Cookbook** for interacting with any AI agent (Google Antigravity, Claude Code, Cursor, etc.) across every phase of the project.
+This document serves as the primary onboarding manual for the **Academic Competition Discovery Platform (ACDP)** at **Trường Đại học Công nghệ Kỹ thuật TP.HCM (HCM-UTE)**. It outlines the repository structure, clarifies the **Phase 1 (TLCN Lean MVP: 5–10 competitions)** vs. **Phase 2 (KLTN Full Scale)** boundaries, and provides a Prompt Cookbook for AI agents.
 
 ---
 
-## 1. What is ACDP? (Repository Overview)
+## 1. What is ACDP? (Repository Overview & Scope Boundary)
 
-The **Academic Competition Discovery Platform (ACDP)** is an end-to-end data-centric system built for the Faculty of Information Technology at Ho Chi Minh City University of Technology and Engineering (FIT-HCMUTE).
+The **Academic Competition Discovery Platform (ACDP)** is an end-to-end data engineering and AI system built for the Faculty of Information Technology (FIT-HCMUTE).
 
-### Core Capabilities
-1. **Automated Event Ingestion**: Scrapes and normalizes academic contests and hackathons across dynamic websites and social media using Crawl4AI, Playwright, and LLM Schema Enforcement (Pydantic).
-2. **Medallion Lakehouse**: Tiered data processing (`Bronze` raw payload $\rightarrow$ `Silver` cleaned DuckDB $\rightarrow$ `Gold` PostgreSQL analytical data mart) managed with dbt-core.
-3. **RAG Regulation Copilot**: Hybrid Search (BM25 + Qdrant Dense Embeddings) with Cross-Encoder re-ranking, strictly grounded in official rulebooks to eliminate hallucinations.
-4. **Teammate & Advisor Matchmaking**: Vector similarity and heuristic constraints to recommend cross-functional peers (e.g. frontend + data/AI) and match projects with faculty research domains.
-5. **Faculty BI & Student Portal**: Next.js 15 web application and high-performance FastAPI backend.
+### Phase 1: TLCN Lean MVP Scope (`DIR-015` — Current Active Phase)
+During the 15-week Special Topic Project (*Tiểu luận chuyên ngành*), the team focuses on simulating the data architecture and validating technical feasibility over a small, curated set of **5–10 competition links** (currently 7 competitions in `data/raw/`):
+1. **On-Demand Event Ingestion**: Crawls 5–10 selected academic contests on-demand using `Crawl4AI` (`src/acdp/1_crawl_to_bronze.py`) and stores clean UTF-8 Markdown directly on **Local Files** and **Cloudflare R2** (without unnecessary intermediate `zstandard` binary compression).
+2. **Bronze-to-Silver LLM Extraction**: Uses `Instructor` + `LiteLLM` constrained by `Pydantic v2` (`SilverCompetitionRecord` in `src/acdp/lakehouse/schema.py`) to extract structured competition records (`src/acdp/2_instruction.py`) saved as Parquet/JSON.
+3. **In-Process OLAP Analytics**: Queries Silver/Gold Parquet datasets directly via **DuckDB** without requiring heavy container daemons (`PostgreSQL`, `dbt-core`, or `SeaweedFS`).
+4. **RAG Regulation Copilot**: Hybrid Search (`BM25` + `Qdrant` dense embeddings) with Cross-Encoder re-ranking grounded in official contest rulebooks.
+5. **Student Portal & Faculty Dashboard MVP**: FastAPI backend and Next.js 15 web interface.
+
+### Phase 2: KLTN Full-Scale Scope (Graduation Thesis)
+High-volume automated crawling (periodic batch jobs, seasonality scheduler, HTTP `ETag` polling, realtime webhooks), multi-channel fuzzy entity deduplication, teammate matchmaking, and faculty advisor alignment are scheduled for Phase 2 (*Khóa luận tốt nghiệp*).
 
 ---
 
@@ -25,86 +29,71 @@ acdp-platform/
 ├── AGENTS.md               <-- Master operating contract for all AI agents
 ├── GEMINI.md / CLAUDE.md   <-- Tool-specific configuration loaders
 ├── .cursorrules            <-- Cursor IDE & Windsurf directives
-├── .agents/skills/         <-- On-demand skills (Research, Writing, Slides, Benchmark, Experiments)
-├── data/                   <-- Data & Lakehouse storage (README.md, data/raw/ fixtures, data/lakehouse/)
-├── src/acdp/               <-- Core application codebase (Lakehouse, crawlers, APIs)
+├── pyproject.toml          <-- Python dependencies managed via uv
+├── .agents/skills/         <-- 9 specialized skills (Research, Thesis, Anti-Slop, Visual Dossier, etc.)
+├── data/                   <-- Data storage (README.md, data/raw/ 7 sample contests, data/lakehouse/)
+├── src/acdp/               <-- Core application codebase
+│   ├── config.py           <-- Pydantic v2 settings (Local & Cloudflare R2)
+│   ├── 1_crawl_to_bronze.py<-- On-demand Crawl4AI AdaptiveCrawler to R2 Bronze
+│   ├── 2_instruction.py    <-- Instructor + LiteLLM Bronze-to-Silver extraction
+│   └── lakehouse/          <-- Bronze/Silver schemas (schema.py), storage (bronze.py), seed.py
+├── tests/                  <-- Pytest suites for Bronze storage and Silver schema contracts
 └── docs/
     ├── README.md           <-- Central documentation index
     ├── HOW_TO_USE.md       <-- THIS FILE: Direction & prompt cookbook
-    ├── academic/           <-- Thesis proposals, BibTeX library, literature review
-    ├── research/           <-- Competitor analysis (Devpost, Unstop, etc.)
+    ├── frameworks/         <-- Prompt Execution Framework, TEAM_DIRECTIVES.md (DIR-001 to DIR-015)
+    ├── academic/           <-- TLCN report manuscript, GVHD progress report, BibTeX, proposal
+    ├── research/           <-- Competitor analysis (Devpost, Unstop, Ybox)
     ├── experiments/        <-- Empirical benchmarks (Ragas scorecards, query latency)
-    ├── deliverables/       <-- Research outputs & spikes mapped to NOTION tasks
+    ├── deliverables/       <-- Notion task outputs & Cloudflare R2 technical guide
     ├── adr/                <-- Architecture Decision Records
-    ├── specs/              <-- Technical specifications & Pydantic data contracts
-    ├── tasks/              <-- Notion task mapping, roadmap, and active sprint
+    ├── specs/              <-- SPEC-0001 (Foundation) & SPEC-0002 (Lean Ingestion & Schema)
+    ├── rd-tasks/           <-- R&D research dossiers (T01, T02, T08_v2, T13)
+    ├── tasks/              <-- Notion task mapping, 15-week roadmap, and active sprint (with Code TODOs)
     └── rfc/                <-- Change management protocol (RFC process)
 ```
 
 ---
 
-## 3. Notion Task Synchronization
+## 3. Notion Task Synchronization & Quality Verification
 
-The research and development team (Do Kien Hung & Nguyen Van Quang Duy) coordinates development milestones via **Notion**. 
-- To see the master task list and corresponding repository artifacts, consult [`docs/tasks/notion-task-mapping.md`](./tasks/notion-task-mapping.md).
-- To log research outputs, technical spikes, or evaluation reports corresponding to a Notion task, write them under [`docs/deliverables/`](./deliverables/) using [`docs/deliverables/0000-deliverable-template.md`](./deliverables/0000-deliverable-template.md).
+- **Notion Task Mapping**: Consult [`docs/tasks/notion-task-mapping.md`](./tasks/notion-task-mapping.md) and [`docs/tasks/active-sprint.md`](./tasks/active-sprint.md) before starting work.
+- **Automated Verification Commands**:
+  ```bash
+  # 1. Run unit tests for Bronze and Silver schemas
+  uv run pytest -v
+
+  # 2. Run Anti-Slop scientific writing linter on documentation
+  uv run python .agents/skills/anti-slop-scientific-writer/scripts/detect_ai_slop.py <path-to-doc> --strict
+
+  # 3. Verify external URL reachability
+  uv run python .agents/skills/url-link-verifier/scripts/verify_links.py <path-to-doc>
+  ```
 
 ---
 
 ## 4. AI Agent Prompt Cookbook (Copy & Paste)
 
-When opening this workspace with any AI agent, use the prompts below to trigger the specialized skills and achieve production-grade results:
-
 ### Mode 1: Academic Literature & SOTA Research
 ```text
-@AGENTS.md Kích hoạt skill academic-researcher:
-Hãy tìm kiếm và tổng hợp các bài báo khoa học gần đây nhất (từ 2023 - 2026) về chủ đề "LLM Information Extraction from Unstructured Web Data" và "Hybrid Search in Administrative RAG". 
+@AGENTS.md Hãy tìm kiếm và tổng hợp các bài báo khoa học gần đây (2023 - 2026) về chủ đề "LLM Information Extraction from Unstructured Web Data" và "Hybrid Search in Administrative RAG". 
 Trích xuất: Phương pháp cốt lõi, tập dữ liệu kiểm thử, hạn chế còn tồn đọng và điểm khác biệt của đề tài ACDP. 
 Sau đó tạo mục trích dẫn BibTeX chuẩn và cập nhật vào docs/academic/references.bib.
 ```
 
 ### Mode 2: Competitor & Strategic Analysis
 ```text
-@AGENTS.md Kích hoạt skill competitor-benchmark:
-Hãy tiến hành phân tích và so sánh đối thủ giữa ACDP với nền tảng Devpost và Unstop.
+@AGENTS.md Hãy tiến hành phân tích và so sánh đối thủ giữa ACDP với nền tảng Devpost và Unstop.
 Lập ma trận so sánh 5 chiều: Cơ chế thu thập dữ liệu, Khả năng tra cứu thể lệ, Thuật toán ghép đội, Kênh kết nối giảng viên, và Bảng điều khiển phân tích cho trường đại học. 
 Lưu kết quả phân tích vào docs/research/competitor-benchmarks.md.
 ```
 
 ### Mode 3: Drafting Thesis Chapters (FIT-HCMUTE Standard)
 ```text
-@AGENTS.md Kích hoạt skill thesis-writer:
-Dựa trên ADR-0001 và tài liệu trong docs/academic/, hãy viết bản thảo Chương 3: "Thiết kế kiến trúc và Hệ thống" (Mục 3.1 và 3.2) bằng văn phong học thuật tiếng Việt trang trọng chuẩn Khoa CNTT - ĐH Công nghệ Kỹ thuật TP.HCM (FIT-HCMUTE). 
-Bao gồm sơ đồ luồng dữ liệu 4 tầng, định nghĩa schema Pydantic cho Ingestion Layer, và các trích dẫn \cite{} tương ứng.
+@AGENTS.md Dựa trên SPEC-0002 và tài liệu trong docs/academic/, hãy viết hoặc cập nhật bản thảo trong docs/academic/BaoCao_TieuLuan_ChuyenNganh_KTDL.md bằng văn phong học thuật tiếng Việt tự nhiên chuẩn Khoa CNTT - Trường Đại học Công nghệ Kỹ thuật TP.HCM (HCM-UTE), tuân thủ DIR-009, DIR-010 và giới hạn quy mô 5-10 cuộc thi của TLCN (DIR-015).
 ```
 
-### Mode 4: Slide Decks & Presentation Pitching
+### Mode 4: Slide Decks & Visual Dossiers
 ```text
-@AGENTS.md Kích hoạt skill defense-pitch-builder:
-Hãy tạo một slide deck hoàn chỉnh bằng HTML/CSS tự đóng gói (self-contained) chuẩn phong cách học thuật để nhóm báo cáo đề cương trước GVHD ThS. Trần Quang Khải.
-Bố cục 10 slide: Đặt vấn đề, 4 nút thắt thực tế, kiến trúc Medallion Lakehouse, Hybrid RAG, phân định phạm vi TLCN 15 tuần vs KLTN, và demo kế hoạch triển khai.
-```
-
-### Mode 5: Adversarial Committee Defense Q&A
-```text
-@AGENTS.md Kích hoạt skill defense-pitch-builder:
-Đóng vai Giảng viên phản biện (GVPB) khó tính tại Hội đồng bảo vệ Tiểu luận chuyên ngành Khoa CNTT HCMUTE.
-Hãy đặt ra 5 câu hỏi phản biện hóc búa nhất nhằm chất vấn nhóm về:
-1. Tính chất chuyên ngành Kỹ thuật Dữ liệu trong đề tài.
-2. Phương pháp kiểm soát ảo giác (hallucination) trong RAG thể lệ.
-3. Độ bền bỉ của crawler khi website nguồn chặn IP hoặc đổi DOM.
-Sau đó, hãy soạn câu trả lời mẫu có tính thuyết phục cao dựa trên các ADR và Spec hiện có.
-```
-
-### Mode 6: Experiment Design & Evaluation
-```text
-@AGENTS.md Kích hoạt skill experiment-evaluator:
-Hãy thiết kế khung thực nghiệm đo lường chất lượng của RAG engine theo tiêu chuẩn Ragas (Faithfulness, Answer Relevance, Context Precision). 
-Định nghĩa bộ câu hỏi kiểm thử giả lập (synthetic test dataset) gồm 20 câu hỏi thể lệ thi và tạo scorecard ghi nhận kết quả vào docs/experiments/.
-```
-
-### Mode 7: Logging Deliverables from Notion Tasks
-```text
-@AGENTS.md Chúng tôi vừa hoàn thành task trên Notion: "NT-012: Nghiên cứu công nghệ Crawl4AI và thiết kế schema Pydantic cho fanpage Facebook". 
-Hãy giúp nhóm tổng hợp bản báo cáo kết quả nghiên cứu (deliverable) theo mẫu docs/deliverables/0000-deliverable-template.md và lưu vào docs/deliverables/NT-012-crawl4ai-schema-spike.md, đồng thời cập nhật docs/tasks/notion-task-mapping.md.
+@AGENTS.md Hãy tạo một báo cáo trực quan Single-File HTML (Tailwind CSS + Mermaid.js + Chart.js) tổng hợp tiến độ thực hiện tầng Bronze và Silver trên bộ 7 cuộc thi mẫu để nhóm báo cáo với GVHD ThS. Trần Quang Khải.
 ```

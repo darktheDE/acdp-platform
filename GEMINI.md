@@ -67,6 +67,9 @@ All agents operating in this workspace must strictly abide by the rules and adap
     - Whenever the user requests research reports, deliverables, architecture deep-dives, or benchmarks, PROACTIVELY PROPOSE or GENERATE a **Single-File Interactive HTML Dossier** (Tailwind CSS CDN + Mermaid.js CDN + Chart.js CDN) alongside markdown to avoid text-heavy visual fatigue.
     - Structure in 3 tiers: (1) 1-Minute Executive Summary KPI cards, (2) Interactive Mermaid Architecture Diagrams & Chart.js Benchmark Charts, (3) Collapsible deep technical specs & code diffs.
     - Route output to `.scratchpad/<name>.html` (on-demand personal analysis) or `docs/deliverables/<name>.html` (formal project deliverable).
+16. **Lean TLCN Scope (5–10 Competitions) & Minimalist Tech Stack (DIR-015)**:
+    - Phase 1 (TLCN) strictly targets **5–10 curated competition links** crawled on-demand to prove pipeline feasibility. High-volume and automated realtime/batch crawling belong to Phase 2 (KLTN).
+    - Use the minimalist stack for TLCN: `Crawl4AI` $\rightarrow$ raw Markdown on `Cloudflare R2` / `Local` $\rightarrow$ `Instructor` + `Pydantic v2` (`SilverCompetitionRecord`) $\rightarrow$ `Parquet/JSON` queried directly by `DuckDB` (no `zstandard` payload compression).
 
 
 
