@@ -79,10 +79,18 @@ BANNED_WORDS_VI = {
     "hành trình": "quá trình, giai đoạn, chu kỳ",
     "bước ngoặt": "cải tiến lớn, sự thay đổi",
     "đóng vai trò then chốt": "cần thiết cho, quyết định",
+    "giữ vai trò then chốt": "ảnh hưởng trực tiếp đến, cần thiết cho",
+    "vai trò then chốt": "ảnh hưởng trực tiếp đến, cần thiết cho",
     "đóng vai trò quan trọng": "ảnh hưởng trực tiếp đến, cần thiết",
     "giải pháp toàn diện": "hệ thống, kiến trúc (nêu rõ phạm vi cụ thể)",
     "vượt trội": "cao hơn X% (nêu số liệu đo đạc)",
     "tối ưu hóa vượt bậc": "tối ưu, cải thiện (kèm số liệu)",
+    "năng lực thực chiến": "năng lực giải quyết bài toán thực tế",
+    "thực chiến": "thực tế, thực tiễn",
+    "tiết kiệm tài nguyên tuyệt đối": "giảm thiểu chi phí bộ nhớ nền",
+    "tương thích hoàn hảo": "tương thích trực tiếp với",
+    "ngăn chặn triệt để": "loại bỏ, hạn chế tối đa",
+    "cào định kỳ mù quáng": "cào định kỳ theo chu kỳ cố định",
     "hãy cùng khám phá": "bỏ câu chào rào đón, đi thẳng vào nội dung",
     "chắc chắn rồi": "bỏ câu xã giao, trả lời trực diện",
     "như chúng ta đã biết": "loại bỏ (dẫn chứng nguồn cụ thể)",
@@ -297,7 +305,7 @@ class SlopDetector:
                 ))
             curr_char += len(p) + 2
 
-        # 4. Check for Monotonous Bold-First Bullets
+        # 4. Check for Monotonous Bold-First Bullets (Global & Local Contiguous Cluster Check)
         bullet_lines = [l.strip() for l in lines if re.match(r"^[-*+]\s+", l.strip())]
         if len(bullet_lines) >= 4:
             bold_count = sum(1 for b in bullet_lines if re.match(r"^[-*+]\s+\*\*[^*]+\*\*", b))
@@ -312,6 +320,47 @@ class SlopDetector:
                     suggestion="Vary list item structure. Use natural narrative phrasing or markdown tables for key-value data.",
                     penalty=6
                 ))
+
+        # Local Contiguous Cluster Check: Flag any contiguous block of >= 5 bold-first bullets
+        contiguous_bold_bullets = 0
+        cluster_start_line = 1
+        in_code = False
+        for idx, raw_line in enumerate(lines, start=1):
+            stripped = raw_line.strip()
+            if stripped.startswith("```"):
+                in_code = not in_code
+                contiguous_bold_bullets = 0
+                continue
+            if in_code or not stripped:
+                continue
+            if re.match(r"^(?:[-*+]|\d+\.)\s+\*\*[^*]+\*\*\s*:", stripped):
+                if contiguous_bold_bullets == 0:
+                    cluster_start_line = idx
+                contiguous_bold_bullets += 1
+            else:
+                if contiguous_bold_bullets >= 5:
+                    violations.append(SlopViolation(
+                        file_path=file_path,
+                        line_number=cluster_start_line,
+                        rule_id="F-LOCAL-BOLD-BULLET-CLUSTER",
+                        category="Formatting Trope",
+                        matched_text=f"{contiguous_bold_bullets} contiguous bold-first list items starting at L{cluster_start_line}",
+                        context="Monotonous local block of '- **Keyword**: ...' list items reduces prose burstiness.",
+                        suggestion="Convert long key-value bullet blocks into a structured Markdown table or flowing academic paragraphs.",
+                        penalty=6
+                    ))
+                contiguous_bold_bullets = 0
+        if contiguous_bold_bullets >= 5:
+            violations.append(SlopViolation(
+                file_path=file_path,
+                line_number=cluster_start_line,
+                rule_id="F-LOCAL-BOLD-BULLET-CLUSTER",
+                category="Formatting Trope",
+                matched_text=f"{contiguous_bold_bullets} contiguous bold-first list items starting at L{cluster_start_line}",
+                context="Monotonous local block of '- **Keyword**: ...' list items reduces prose burstiness.",
+                suggestion="Convert long key-value bullet blocks into a structured Markdown table or flowing academic paragraphs.",
+                penalty=6
+            ))
 
         # Calculate Normalized Slop Score (0 - 100)
         total_penalties = sum(v.penalty for v in violations)

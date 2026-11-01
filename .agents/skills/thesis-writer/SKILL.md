@@ -31,14 +31,10 @@ This skill guides the AI agent in drafting formal academic manuscripts, reports,
 ## 2. Invariant Academic Standards
 
 1. **Objective Third-Person Voice**: Never use informal first-person singular pronouns (*"tôi", "em", "mình"*). Use objective phrases: *"Nhóm tác giả nhận thấy...", "Hệ thống được thiết kế...", "Kết quả thực nghiệm chỉ ra..."*.
-2. **Standardized 5-Chapter Structure**: Must adhere to the canonical FIT-HCMUTE structure detailed in [`references/fit_hcmute_thesis_guideline.md`](./references/fit_hcmute_thesis_guideline.md):
-   - Chương 1: Giới thiệu và Tổng quan đề tài.
-   - Chương 2: Cơ sở lý thuyết và Tổng quan nghiên cứu.
-   - Chương 3: Thiết kế kiến trúc và Hệ thống.
-   - Chương 4: Cài đặt thực nghiệm và Đánh giá.
-   - Chương 5: Kết luận và Hướng phát triển.
-3. **Rigorous Cross-Referencing**: Every table, figure, and equation must be explicitly numbered and cross-referenced in paragraph text (e.g. *"như minh họa tại Hình 3.2"*, *"kết quả ghi nhận tại Bảng 4.1"*).
-4. **Citation Discipline**: Never make unsupported factual assertions; link claims to valid BibTeX citations using `\cite{...}` in LaTeX or `[Author, Year]` in Markdown.
+2. **Standardized Chapter & Section Numbering**: Must adhere to the canonical FIT-HCMUTE structure detailed in [`references/fit_hcmute_thesis_guideline.md`](./references/fit_hcmute_thesis_guideline.md). Never duplicate decimal section numbers (`1.1`, `1.2`) across different parts of the same manuscript (use Roman numerals `I.1`, `III.1` for Introductory/Concluding Parts if separate from numbered Chapters).
+3. **Rigorous Cross-Referencing & Chapter-Prefixed Numbering**: Every table, figure, and equation must be explicitly numbered by its chapter (`Hình <chương>.<thứ tự>`, `Bảng <chương>.<thứ tự>`, or `Bảng 0.<thứ tự>` in frontmatter) and cross-referenced in paragraph text (e.g., *"như minh họa tại Hình 2.1"*, *"kết quả ghi nhận tại Bảng 4.1"*).
+4. **Unified IEEE Citation Discipline**: Never mix APA `[Author, Year]` brackets with IEEE numbered bibliography lists. Standardize all in-text citations to IEEE numbered brackets (`[1]`, `[2]`, or *"Armbrust và cộng sự [2]"*) matching `# TÀI LIỆU THAM KHẢO`.
+5. **High Sentence Burstiness (Anti-Monotonous Bullets)**: Begin every technical subsection with a 4–6 sentence analytical paragraph explaining causes and mechanisms. Never write more than 4 consecutive `- **Bold Keyword**: Description` bullet points; convert multi-attribute schemas into Markdown Data Dictionary tables.
 
 ---
 

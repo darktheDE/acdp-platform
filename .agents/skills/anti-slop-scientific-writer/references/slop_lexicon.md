@@ -60,8 +60,14 @@
 | **hành trình** | Nhân cách hóa quy trình kỹ thuật. | *chu kỳ thực thi, tiến trình, vòng đời dữ liệu* |
 | **bước ngoặt** | Cường điệu hóa tác vụ thông thường. | *cải tiến kỹ thuật, điểm chuyển đổi kiến trúc* |
 | **đóng vai trò then chốt/quan trọng** | Điệp từ rỗng, thiếu định lượng. | *quyết định, cần thiết đối với, ảnh hưởng trực tiếp đến* |
+| **giữ vai trò then chốt / vai trò then chốt** | Khẩu hiệu sáo rỗng trong văn phong học thuật. | *ảnh hưởng trực tiếp đến, cần thiết đối với* |
 | **giải pháp toàn diện** | Khẩu hiệu quảng cáo, thiếu ranh giới. | *kiến trúc tích hợp (nêu rõ các module cụ thể)* |
 | **vượt trội / tối ưu hóa vượt bậc** | Tuyên bố định tính thiếu căn cứ số liệu. | *cải thiện 35% throughput, giảm 120ms latency* |
+| **năng lực thực chiến / thực chiến** | Từ lóng tuyển dụng/marketing, thiếu tính học thuật. | *năng lực giải quyết bài toán thực tế, kỹ năng thực hành* |
+| **tiết kiệm tài nguyên tuyệt đối** | Tuyệt đối hóa phi thực chứng. | *giảm thiểu chi phí bộ nhớ nền, hoạt động in-process* |
+| **tương thích hoàn hảo** | Khẩu hiệu quảng cáo, thiếu kiểm định kỹ thuật. | *tương thích trực tiếp với, đáp ứng cấu hình* |
+| **ngăn chặn triệt để / triệt tiêu hiện tượng** | Cường điệu hóa khả năng của thuật toán. | *loại bỏ, giảm thiểu, hạn chế tối đa* |
+| **cào định kỳ mù quáng** | Nhân cách hóa mang tính cảm tính. | *cào định kỳ theo chu kỳ cố định không xét biến đổi* |
 | **hãy cùng tôi khám phá** | Giọng điệu hướng dẫn viên, không chuyên nghiệp. | *Xóa bỏ; bắt đầu ngay bằng phân tích kỹ thuật* |
 | **chắc chắn rồi / tuyệt vời** | Xã giao nịnh bợ, tiêu tốn token. | *Xóa bỏ hoàn toàn; trả lời trực diện vào câu hỏi* |
 | **như chúng ta đã biết** | Mượn sự đồng thuận giả định (Appeal to familiarity). | *Xóa bỏ; trích dẫn nguồn hoặc số liệu cụ thể* |
