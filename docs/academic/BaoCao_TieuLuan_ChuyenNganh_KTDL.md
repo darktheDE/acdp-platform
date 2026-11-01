@@ -4,27 +4,60 @@
 **KHOA CÔNG NGHỆ THÔNG TIN**  
 **BỘ MÔN HỆ THỐNG THÔNG TIN**
 
----
+<br><br><br>
 
-**ĐỀ TÀI**:
-## XÂY DỰNG HỆ THỐNG THU THẬP, XỬ LÝ DỮ LIỆU VÀ NỀN TẢNG HỖ TRỢ SINH VIÊN THAM GIA CÁC CUỘC THI HỌC THUẬT, CÔNG NGHỆ
+**NGUYỄN VĂN QUANG DUY - 23110086**  
+**ĐỖ KIẾN HƯNG - 23133030**
 
-**HỌC PHẦN**: TIỂU LUẬN CHUYÊN NGÀNH  
-**CHUYÊN NGÀNH**: KỸ THUẬT DỮ LIỆU  
-**HỌC KỲ 1 - NĂM HỌC 2026 - 2027**
+<br>
 
-**Sinh viên thực hiện**:
-1. **Nguyễn Văn Quang Duy** — MSSV: `23110086`
-2. **Đỗ Kiến Hưng** — MSSV: `23133030`
+Đề Tài:
 
-**Giáo viên hướng dẫn khoa học**:
-**ThS. Trần Quang Khải**
+**XÂY DỰNG HỆ THỐNG THU THẬP, XỬ LÝ DỮ LIỆU VÀ NỀN TẢNG HỖ TRỢ SINH VIÊN THAM GIA CÁC CUỘC THI HỌC THUẬT, CÔNG NGHỆ**
 
----
+**TIỂU LUẬN CHUYÊN NGÀNH KỸ THUẬT DỮ LIỆU**
 
-*TP. Hồ Chí Minh, ngày 07 tháng 12 năm 2026*
+**GIÁO VIÊN HƯỚNG DẪN**  
+**THS. TRẦN QUANG KHẢI**
+
+<br>
+
+**KHÓA 2023 - 2027**  
+*Tp. Hồ Chí Minh, ngày 07 tháng 12 năm 2026*
 
 \newpage
+
+## TRANG PHỤ BÌA
+
+**TRƯỜNG ĐẠI HỌC CÔNG NGHỆ KỸ THUẬT TP.HCM (HCM-UTE)**  
+**KHOA CÔNG NGHỆ THÔNG TIN**  
+**BỘ MÔN HỆ THỐNG THÔNG TIN**
+
+<br><br><br>
+
+**NGUYỄN VĂN QUANG DUY - 23110086**  
+**ĐỖ KIẾN HƯNG - 23133030**
+
+<br>
+
+Đề Tài:
+
+**XÂY DỰNG HỆ THỐNG THU THẬP, XỬ LÝ DỮ LIỆU VÀ NỀN TẢNG HỖ TRỢ SINH VIÊN THAM GIA CÁC CUỘC THI HỌC THUẬT, CÔNG NGHỆ**
+
+**TIỂU LUẬN CHUYÊN NGÀNH KỸ THUẬT DỮ LIỆU**
+
+**GIÁO VIÊN HƯỚNG DẪN**  
+**THS. TRẦN QUANG KHẢI**
+
+<br>
+
+**KHÓA 2023 - 2027**  
+*Tp. Hồ Chí Minh, ngày 07 tháng 12 năm 2026*
+
+\newpage
+
+| **ĐH CÔNG NGHỆ KỸ THUẬT TP.HCM**<br>**KHOA CNTT**<br>\*\*\*\*\*\*\* | **CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM**<br>**Độc lập – Tự do – Hạnh Phúc**<br>\*\*\*\*\*\*\* |
+| :---: | :---: |
 
 ## PHIẾU NHẬN XÉT CỦA GIÁO VIÊN HƯỚNG DẪN
 
@@ -32,13 +65,13 @@
 | :--- | :--- |
 | **Họ và tên Sinh viên 1** | Nguyễn Văn Quang Duy — **MSSV 1**: `23110086` |
 | **Họ và tên Sinh viên 2** | Đỗ Kiến Hưng — **MSSV 2**: `23133030` |
-| **Ngành đào tạo** | Kỹ thuật Dữ liệu |
+| **Ngành** | Kỹ Thuật Dữ Liệu |
 | **Tên đề tài** | XÂY DỰNG HỆ THỐNG THU THẬP, XỬ LÝ DỮ LIỆU VÀ NỀN TẢNG HỖ TRỢ SINH VIÊN THAM GIA CÁC CUỘC THI HỌC THUẬT, CÔNG NGHỆ |
-| **Họ và tên Giáo viên hướng dẫn** | ThS. Trần Quang Khải |
+| **Họ và tên Giảng viên hướng dẫn** | ThS. Trần Quang Khải |
 
-### NỘI DUNG NHẬN XÉT
+### NHẬN XÉT
 
-1. **Về nội dung đề tài và khối lượng thực hiện**:
+1. **Về nội dung đề tài & khối lượng thực hiện**:
 ...................................................................................................................................................
 ...................................................................................................................................................
 ...................................................................................................................................................
@@ -52,17 +85,20 @@
 ...................................................................................................................................................
 ...................................................................................................................................................
 
-4. **Đề nghị cho bảo vệ hay không**: ......................................................................................
+4. **Đề nghị cho bảo vệ hay không ?**: ....................................................................................
 5. **Đánh giá loại**: ...............................................................................................................
-6. **Điểm số**: .......................................................................................................................
+6. **Điểm**: .............................................................................................................................
 
-*TP. Hồ Chí Minh, ngày    tháng 12 năm 2026*  
+*Tp. Hồ Chí Minh, ngày    tháng 12 năm 2026*  
 **Giáo viên hướng dẫn**  
-*(Ký và ghi rõ họ tên)*  
+*(Ký & ghi rõ họ tên)*  
 <br><br><br>
 **ThS. Trần Quang Khải**
 
 \newpage
+
+| **ĐH CÔNG NGHỆ KỸ THUẬT TP.HCM**<br>**KHOA CNTT**<br>\*\*\*\*\*\*\* | **CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM**<br>**Độc lập – Tự do – Hạnh Phúc**<br>\*\*\*\*\*\*\* |
+| :---: | :---: |
 
 ## PHIẾU NHẬN XÉT CỦA GIÁO VIÊN PHẢN BIỆN
 
@@ -70,13 +106,13 @@
 | :--- | :--- |
 | **Họ và tên Sinh viên 1** | Nguyễn Văn Quang Duy — **MSSV 1**: `23110086` |
 | **Họ và tên Sinh viên 2** | Đỗ Kiến Hưng — **MSSV 2**: `23133030` |
-| **Ngành đào tạo** | Kỹ thuật Dữ liệu |
+| **Ngành** | Kỹ Thuật Dữ Liệu |
 | **Tên đề tài** | XÂY DỰNG HỆ THỐNG THU THẬP, XỬ LÝ DỮ LIỆU VÀ NỀN TẢNG HỖ TRỢ SINH VIÊN THAM GIA CÁC CUỘC THI HỌC THUẬT, CÔNG NGHỆ |
 | **Họ và tên Giáo viên phản biện** | ...................................................................................... |
 
-### NỘI DUNG NHẬN XÉT
+### NHẬN XÉT
 
-1. **Về nội dung đề tài và khối lượng thực hiện**:
+1. **Về nội dung đề tài & khối lượng thực hiện**:
 ...................................................................................................................................................
 ...................................................................................................................................................
 ...................................................................................................................................................
@@ -90,13 +126,13 @@
 ...................................................................................................................................................
 ...................................................................................................................................................
 
-4. **Đề nghị cho bảo vệ hay không**: ......................................................................................
+4. **Đề nghị cho bảo vệ hay không ?**: ....................................................................................
 5. **Đánh giá loại**: ...............................................................................................................
-6. **Điểm số**: .......................................................................................................................
+6. **Điểm**: .............................................................................................................................
 
-*TP. Hồ Chí Minh, ngày    tháng 12 năm 2026*  
+*Tp. Hồ Chí Minh, ngày    tháng 12 năm 2026*  
 **Giáo viên phản biện**  
-*(Ký và ghi rõ họ tên)*  
+*(Ký & ghi rõ họ tên)*  
 <br><br><br>
 
 \newpage
@@ -111,24 +147,27 @@ Nhóm tác giả cũng xin gửi lời cảm ơn chân thành đến gia đình,
 
 Dù nhóm tác giả đã nỗ lực tối đa để nghiên cứu và cài đặt hệ thống một cách chỉn chu nhất, báo cáo chắc chắn không tránh khỏi những thiếu sót nhất định. Nhóm tác giả rất mong nhận được những nhận xét, góp ý quý báu từ quý Thầy Cô trong Hội đồng phản biện để tiếp tục hoàn thiện hệ thống trong học phần Khóa luận tốt nghiệp tiếp theo.
 
-*TP. Hồ Chí Minh, tháng 12 năm 2026*  
+*Tp. Hồ Chí Minh, tháng 12 năm 2026*  
 **Nhóm tác giả đề tài**  
 **Nguyễn Văn Quang Duy & Đỗ Kiến Hưng**
 
 \newpage
 
+| **Trường ĐH Công Nghệ Kỹ Thuật TP.HCM**<br>**Khoa : CNTT** | |
+| :---: | --- |
+
 ## ĐỀ CƯƠNG TIỂU LUẬN CHUYÊN NGÀNH
 
 | Thông tin đề tài | Nội dung đăng ký theo quy định [9] |
 | :--- | :--- |
-| **Sinh viên thực hiện 1** | Nguyễn Văn Quang Duy — **MSSV**: `23110086` |
-| **Sinh viên thực hiện 2** | Đỗ Kiến Hưng — **MSSV**: `23133030` |
-| **Thời gian thực hiện** | Từ ngày 31/08/2026 đến ngày 15/12/2026 (15 tuần) |
-| **Chuyên ngành** | Kỹ thuật Dữ liệu |
-| **Tên tiểu luận** | XÂY DỰNG HỆ THỐNG THU THẬP, XỬ LÝ DỮ LIỆU VÀ NỀN TẢNG HỖ TRỢ SINH VIÊN THAM GIA CÁC CUỘC THI HỌC THUẬT, CÔNG NGHỆ |
-| **Giáo viên hướng dẫn** | ThS. Trần Quang Khải |
+| **Họ và Tên SV 1** | Nguyễn Văn Quang Duy (MSSV 1: `23110086`) |
+| **Họ và Tên SV 2** | Đỗ Kiến Hưng (MSSV 2: `23133030`) |
+| **Thời gian làm** | Từ: `31/08/2026` đến: `15/12/2026` (15 tuần) |
+| **Chuyên ngành** | Kỹ Thuật Dữ Liệu |
+| **Tên Tiểu Luận** | XÂY DỰNG HỆ THỐNG THU THẬP, XỬ LÝ DỮ LIỆU VÀ NỀN TẢNG HỖ TRỢ SINH VIÊN THAM GIA CÁC CUỘC THI HỌC THUẬT, CÔNG NGHỆ |
+| **GV hướng dẫn** | ThS. Trần Quang Khải |
 
-### Nhiệm Vụ Của Tiểu Luận:
+### Nhiệm Vụ Của Tiểu Luận :
 1. Khảo sát thực trạng tiếp cận thông tin, phân tích nhu cầu và các rào cản thực tế của sinh viên Khoa Công nghệ Thông tin - HCM-UTE khi tham gia các kỳ thi học thuật và công nghệ.
 2. Xây dựng và kiểm chứng tính khả thi của đường ống thu thập dữ liệu (Ingestion Pipeline) trên tập 5 đến 10 cuộc thi học thuật tiêu biểu bằng công nghệ tự động hóa trình duyệt Crawl4AI và Playwright (chạy theo yêu cầu trong giai đoạn Tiểu luận chuyên ngành, tạo tiền đề mở rộng thu thập tự động quy mô lớn ở giai đoạn Khóa luận tốt nghiệp).
 3. Thiết kế và triển khai kho lưu trữ phân tầng Medallion Lakehouse tinh gọn:
@@ -138,35 +177,98 @@ Dù nhóm tác giả đã nỗ lực tối đa để nghiên cứu và cài đ�
 4. Xây dựng dịch vụ truy vấn thông minh Hybrid RAG (kết hợp thuật toán tìm kiếm từ khóa BM25 và tìm kiếm vector ngữ nghĩa trên Qdrant cùng mô hình Cross-Encoder re-ranking), hỗ trợ tra cứu quy chế, mốc thời gian và điều kiện dự thi với độ tin cậy trích dẫn cao, hạn chế tối đa hiện tượng ảo giác.
 5. Xây dựng giao diện ứng dụng Web người dùng MVP (Next.js 15, Tailwind CSS) cho phép tìm kiếm, lọc sự kiện, hỏi đáp thể lệ và bảng điều khiển phân tích số liệu mùa vụ cho đơn vị quản lý đào tạo.
 
-### Kế Hoạch Thực Hiện Và Tiến Độ Thực Tế:
+### Đề Cương Viết Luận Văn :
+
+| Phần / Chương mục | Nội dung chính trình bày trong từng phần |
+| :--- | :--- |
+| **Phần 1: MỞ ĐẦU** | Tính cấp thiết của đề tài; Mục đích của đề tài; Đối tượng và phạm vi nghiên cứu; Phương pháp nghiên cứu và phân tích các công trình có liên quan; Kết quả dự kiến đạt được. |
+| **Phần 2 - Chương 1** | Cơ sở lý thuyết và luận giải công nghệ (Medallion Lakehouse, Crawl4AI & LLM Extraction, Modular Hybrid RAG, DuckDB OLAP). |
+| **Phần 2 - Chương 2** | Thiết kế kiến trúc hệ thống và kho dữ liệu Medallion Lakehouse (Kiến trúc 4 phân tầng, thiết kế tầng Thu thập, tầng Lưu trữ Bronze - Silver - Gold, tầng RAG và tầng Phục vụ). |
+| **Phần 2 - Chương 3** | Đặc tả dữ liệu lớp Bạc và quy trình trích xuất thực thể (Ma trận trường thông tin cốt lõi, Từ điển dữ liệu `SilverCompetitionRecord`, JSON Schema Contract, kiểm kiểu Pydantic v2 và thuật toán khử trùng lặp). |
+| **Phần 2 - Chương 4** | Triển khai thực nghiệm và đánh giá kết quả giai đoạn 1 (Môi trường Lean MVP Stack, kết quả thu thập 7 cuộc thi mẫu trên Cloudflare R2, kiểm định lược đồ lớp Bạc và truy vấn DuckDB). |
+| **Phần 3: KẾT LUẬN** | Đánh giá mức độ hoàn thành nhiệm vụ; Những mặt hạn chế và thách thức kỹ thuật; Định hướng nghiên cứu và lộ trình phát triển cho Khóa luận tốt nghiệp; Danh mục 14 Tài liệu tham khảo chuẩn IEEE `[1]–[14]`. |
+
+### Kế Hoạch Thực Hiện :
 
 Tiến độ thực hiện học phần Tiểu luận chuyên ngành tính đến thời điểm báo cáo (Tuần 9) được tổng hợp chi tiết trong Bảng 0.1, phân định rõ các công việc **ĐÃ LÀM** (Tuần 1–9), công việc **SẼ LÀM TRONG TUẦN TỚI** (Tuần 10) và kế hoạch dự kiến cho các tuần tiếp theo:
 
-#### Bảng 0.1: Báo cáo kế hoạch và tiến độ thực tế học phần Tiểu luận chuyên ngành
+###### Bảng 0.1: Báo cáo kế hoạch và tiến độ thực tế học phần Tiểu luận chuyên ngành
 
-| STT | Tuần / Thời gian | Tình trạng | Nội dung công việc chi tiết | Sản phẩm bàn giao | Phụ trách |
-| :---: | :---: | :---: | :--- | :--- | :---: |
-| 1 | Tuần 1 (31/8 - 6/9) | **ĐÃ LÀM** | Khảo sát thực tế nhu cầu sinh viên FIT-HCMUTE; phân tích 4 nút thắt thực tế; thiết lập kho lưu trữ Git và cấu hình dự án. | Bản khảo sát nhu cầu; Cấu hình kho lưu trữ ban đầu. | Đỗ Kiến Hưng<br>Nguyễn Văn Quang Duy |
-| 2 | Tuần 2 (7/9 - 13/9) | **ĐÃ LÀM** | Nghiên cứu tổng quan tài liệu khoa học quốc tế (Cho, Armbrust, Xu, Lewis); đối sánh các nền tảng thực tế (Devpost, Unstop, Ybox); khởi tạo R&D Task T01 và T02. | Báo cáo nghiên cứu R&D T01, T02; Bảng đối sánh hệ thống. | Nguyễn Văn Quang Duy |
-| 3 | Tuần 3 (14/9 - 20/9) | **ĐÃ LÀM** | Thiết kế kiến trúc phân tầng 4 lớp; phân định ranh giới 15 tuần TLCN (mô phỏng khả thi trên 5–10 cuộc thi) và KLTN (mở rộng quy mô và tự động hóa); báo cáo đề cương với GVHD ThS. Trần Quang Khải. | Đề cương chi tiết đề tài; Bản vẽ kiến trúc dữ liệu. | Đỗ Kiến Hưng<br>Nguyễn Văn Quang Duy |
-| 4 | Tuần 4 (21/9 - 27/9) | **ĐÃ LÀM** | Đánh giá công cụ cào web động Playwright và Crawl4AI; thu thập bộ dữ liệu kiểm thử thực tế từ 7 cuộc thi trọng điểm (Code Tour, AI Challenge TP.HCM, DataDNA, HackAITHON...). | Bộ dữ liệu mẫu tại `data/raw/html/` và `data/raw/markdown/`. | Nguyễn Văn Quang Duy<br>Đỗ Kiến Hưng |
-| 5 | Tuần 5 (28/9 - 4/10) | **ĐÃ LÀM** | Nghiên cứu sâu tầng lưu trữ Bronze (Task T13); đánh giá các phương án lưu trữ (Local SSD, Cloudflare R2, SeaweedFS) và định dạng bảng; chốt cấu hình tối giản cho quy mô 5–10 cuộc thi của TLCN. | Báo cáo nghiệm thu NT-018; Đặc tả SPEC-0001 & SPEC-0002. | Nguyễn Văn Quang Duy<br>Đỗ Kiến Hưng |
-| 6 | Tuần 6 (5/10 - 11/10) | **ĐÃ LÀM** | Cài đặt tiện ích lưu trữ tầng Bronze (`src/acdp/lakehouse/bronze.py`) lưu văn bản UTF-8 nguyên bản và truy vấn qua DuckDB. | Module `src/acdp/lakehouse/bronze.py`; 5 bài test `test_bronze_storage.py` (100% Passed). | Đỗ Kiến Hưng |
-| 7 | Tuần 7 (12/10 - 18/10) | **ĐÃ LÀM** | Thiết kế lược đồ dữ liệu lớp Bạc (Silver Schema) trên Pydantic v2 với các trường định lượng dễ cào và người dùng quan tâm nhất; xây dựng mã băm `generate_fingerprint()` và kiểm kiểu tài chính. | Lược đồ `SilverCompetitionRecord`; Kiểm thử xác thực `test_silver_schema.py` (100% Passed). | Nguyễn Văn Quang Duy |
-| 8 | Tuần 8 (19/10 - 25/10) | **ĐÃ LÀM** | Thiết lập Bucket `acdp-lakehouse` trên Cloudflare R2; xây dựng tài liệu kỹ thuật hướng dẫn đồng bộ dữ liệu đám mây và soạn thảo báo cáo tới Lớp Bạc. | Tài liệu `HUONG_DAN_MIGRATE_R2_LAKEHOUSE.md` (NT-022); Bản thảo báo cáo TLCN. | Đỗ Kiến Hưng<br>Nguyễn Văn Quang Duy |
-| 9 | Tuần 9 (26/10 - 1/11) | **ĐÃ LÀM** | Cài đặt kịch bản `src/acdp/1_crawl_to_bronze.py` tích hợp Crawl4AI AdaptiveCrawler đẩy trực tiếp văn bản Markdown của 7 cuộc thi lên tầng Bronze Cloudflare R2; tích hợp thư viện `instructor` & `litellm` (`src/acdp/2_instruction.py`) và tinh giản bộ công nghệ (bỏ nén Zstandard dư thừa). | Kịch bản `1_crawl_to_bronze.py`; Dữ liệu Markdown trên R2; Khởi tạo `2_instruction.py`. | Nguyễn Văn Quang Duy<br>Đỗ Kiến Hưng |
-| **10** | **Tuần 10 (2/11 - 8/11)** | **SẼ LÀM TRONG TUẦN TỚI** | **1. Hoàn thiện kịch bản `src/acdp/2_instruction.py` sử dụng `instructor` để trích xuất 7 file Markdown từ tầng Bronze sang thực thể `SilverCompetitionRecord` và lưu thành tệp Parquet trên R2.<br>2. Xây dựng các câu truy vấn phân tích SQL OLAP (Tầng Gold) trực tiếp bằng DuckDB trên tập 7 cuộc thi đã chuẩn hóa.** | **Bộ dữ liệu Silver Parquet của 7 cuộc thi trên R2; Tập truy vấn phân tích DuckDB Tầng Gold.** | **Nguyễn Văn Quang Duy<br>Đỗ Kiến Hưng** |
-| 11 | Tuần 11 (9/11 - 15/11) | *Dự kiến* | Xây dựng phân tầng lưu trữ vector; cài đặt cơ sở dữ liệu vector Qdrant; thử nghiệm mô hình embedding văn bản tiếng Việt; phân đoạn tài liệu quy chế của 7 cuộc thi theo cấu trúc điều khoản. | Container Qdrant; Module phân đoạn tài liệu và vector hóa. | Nguyễn Văn Quang Duy |
-| 12 | Tuần 12 (16/11 - 22/11) | *Dự kiến* | Triển khai kiến trúc Hybrid RAG kết hợp thuật toán tìm kiếm từ khóa BM25 và tìm kiếm vector ngữ nghĩa; tích hợp mô hình tái xếp hạng Cross-Encoder nhằm loại bỏ hiện tượng sinh thông tin sai lệch. | Pipeline Hybrid Search; Module hỏi đáp quy chế RAG. | Nguyễn Văn Quang Duy |
-| 13 | Tuần 13 (23/11 - 29/11) | *Dự kiến* | Xây dựng Backend REST API bằng FastAPI cung cấp các endpoint tra cứu dữ liệu cuộc thi từ DuckDB, phân tích thống kê và hỏi đáp quy chế. | Mã nguồn FastAPI backend; Bộ tài liệu OpenAPI Swagger. | Đỗ Kiến Hưng |
-| 14 | Tuần 14 (30/11 - 6/12) | *Dự kiến* | Xây dựng ứng dụng Web Portal cho sinh viên (Next.js 15, Tailwind CSS) và Bảng điều khiển phân tích số liệu mùa vụ cho Ban Chủ nhiệm Khoa (Faculty Analytics Dashboard). | Giao diện Web Portal sinh viên; Màn hình Dashboard quản trị. | Đỗ Kiến Hưng<br>Nguyễn Văn Quang Duy |
-| 15 | Tuần 15 (7/12 - 13/12) | *Dự kiến* | Kiểm thử toàn diện hệ thống (End-to-End Testing); hoàn thiện toàn văn báo cáo Tiểu luận chuyên ngành theo quy chuẩn FIT-HCMUTE; slide báo cáo nghiệm thu và chuẩn bị bảo vệ. | Toàn văn Báo cáo TLCN; Slide báo cáo nghiệm thu. | Đỗ Kiến Hưng<br>Nguyễn Văn Quang Duy |
+| STT | Thời gian | Công việc | Ghi chú (Tình trạng & Sản phẩm bàn giao) |
+| :---: | :---: | :--- | :--- |
+| 1 | Tuần 1 (31/8 - 6/9) | Khảo sát thực tế nhu cầu sinh viên FIT-HCMUTE; phân tích 4 nút thắt thực tế; thiết lập kho lưu trữ Git và cấu hình dự án. | **ĐÃ LÀM**: Bản khảo sát nhu cầu; Cấu hình kho lưu trữ ban đầu (Hưng, Duy). |
+| 2 | Tuần 2 (7/9 - 13/9) | Nghiên cứu tổng quan tài liệu khoa học quốc tế (Cho, Armbrust, Xu, Lewis); đối sánh các nền tảng thực tế (Devpost, Unstop, Ybox); khởi tạo R&D Task T01 và T02. | **ĐÃ LÀM**: Báo cáo nghiên cứu R&D T01, T02; Bảng đối sánh hệ thống (Duy). |
+| 3 | Tuần 3 (14/9 - 20/9) | Thiết kế kiến trúc phân tầng 4 lớp; phân định ranh giới 15 tuần TLCN (mô phỏng khả thi trên 5–10 cuộc thi) và KLTN (mở rộng quy mô và tự động hóa); báo cáo đề cương với GVHD ThS. Trần Quang Khải. | **ĐÃ LÀM**: Đề cương chi tiết đề tài; Bản vẽ kiến trúc dữ liệu (Hưng, Duy). |
+| 4 | Tuần 4 (21/9 - 27/9) | Đánh giá công cụ cào web động Playwright và Crawl4AI; thu thập bộ dữ liệu kiểm thử thực tế từ 7 cuộc thi trọng điểm (Code Tour, AI Challenge TP.HCM, DataDNA, HackAITHON...). | **ĐÃ LÀM**: Bộ dữ liệu mẫu tại `data/raw/html/` và `data/raw/markdown/` (Duy, Hưng). |
+| 5 | Tuần 5 (28/9 - 4/10) | Nghiên cứu sâu tầng lưu trữ Bronze (Task T13); đánh giá các phương án lưu trữ (Local SSD, Cloudflare R2, SeaweedFS) và định dạng bảng; chốt cấu hình tối giản cho quy mô 5–10 cuộc thi của TLCN. | **ĐÃ LÀM**: Báo cáo nghiệm thu NT-018; Đặc tả SPEC-0001 & SPEC-0002 (Duy, Hưng). |
+| 6 | Tuần 6 (5/10 - 11/10) | Cài đặt tiện ích lưu trữ tầng Bronze (`src/acdp/lakehouse/bronze.py`) lưu văn bản UTF-8 nguyên bản và truy vấn qua DuckDB. | **ĐÃ LÀM**: Module `bronze.py`; 5 bài test `test_bronze_storage.py` đạt 100% (Hưng). |
+| 7 | Tuần 7 (12/10 - 18/10) | Thiết kế lược đồ dữ liệu lớp Bạc (Silver Schema) trên Pydantic v2 với các trường định lượng dễ cào và người dùng quan tâm nhất; xây dựng mã băm `generate_fingerprint()` và kiểm kiểu tài chính. | **ĐÃ LÀM**: Lược đồ `SilverCompetitionRecord`; Kiểm thử `test_silver_schema.py` đạt 100% (Duy). |
+| 8 | Tuần 8 (19/10 - 25/10) | Thiết lập Bucket `acdp-lakehouse` trên Cloudflare R2; xây dựng tài liệu kỹ thuật hướng dẫn đồng bộ dữ liệu đám mây và soạn thảo báo cáo tới Lớp Bạc. | **ĐÃ LÀM**: Tài liệu `HUONG_DAN_MIGRATE_R2_LAKEHOUSE.md` (NT-022); Bản thảo báo cáo TLCN (Hưng, Duy). |
+| 9 | Tuần 9 (26/10 - 1/11) | Cài đặt kịch bản `src/acdp/1_crawl_to_bronze.py` tích hợp Crawl4AI AdaptiveCrawler đẩy trực tiếp văn bản Markdown của 7 cuộc thi lên tầng Bronze Cloudflare R2; tích hợp thư viện `instructor` & `litellm` (`src/acdp/2_instruction.py`) và tinh giản bộ công nghệ (bỏ nén Zstandard dư thừa). | **ĐÃ LÀM**: Kịch bản `1_crawl_to_bronze.py`; Dữ liệu Markdown trên R2; Khởi tạo `2_instruction.py` (Duy, Hưng). |
+| **10** | **Tuần 10 (2/11 - 8/11)** | **1. Hoàn thiện kịch bản `src/acdp/2_instruction.py` sử dụng `instructor` để trích xuất 7 file Markdown từ tầng Bronze sang thực thể `SilverCompetitionRecord` và lưu thành tệp Parquet trên R2.<br>2. Xây dựng các câu truy vấn phân tích SQL OLAP (Tầng Gold) trực tiếp bằng DuckDB trên tập 7 cuộc thi đã chuẩn hóa.** | **SẼ LÀM TRONG TUẦN TỚI**: **Bộ dữ liệu Silver Parquet của 7 cuộc thi trên R2; Tập truy vấn phân tích DuckDB Tầng Gold (Duy, Hưng).** |
+| 11 | Tuần 11 (9/11 - 15/11) | Xây dựng phân tầng lưu trữ vector; cài đặt cơ sở dữ liệu vector Qdrant; thử nghiệm mô hình embedding văn bản tiếng Việt; phân đoạn tài liệu quy chế của 7 cuộc thi theo cấu trúc điều khoản. | *Dự kiến*: Container Qdrant; Module phân đoạn tài liệu và vector hóa (Duy). |
+| 12 | Tuần 12 (16/11 - 22/11) | Triển khai kiến trúc Hybrid RAG kết hợp thuật toán tìm kiếm từ khóa BM25 và tìm kiếm vector ngữ nghĩa; tích hợp mô hình tái xếp hạng Cross-Encoder nhằm loại bỏ hiện tượng sinh thông tin sai lệch. | *Dự kiến*: Pipeline Hybrid Search; Module hỏi đáp quy chế RAG (Duy). |
+| 13 | Tuần 13 (23/11 - 29/11) | Xây dựng Backend REST API bằng FastAPI cung cấp các endpoint tra cứu dữ liệu cuộc thi từ DuckDB, phân tích thống kê và hỏi đáp quy chế. | *Dự kiến*: Mã nguồn FastAPI backend; Bộ tài liệu OpenAPI Swagger (Hưng). |
+| 14 | Tuần 14 (30/11 - 6/12) | Xây dựng ứng dụng Web Portal cho sinh viên (Next.js 15, Tailwind CSS) và Bảng điều khiển phân tích số liệu mùa vụ cho Ban Chủ nhiệm Khoa (Faculty Analytics Dashboard). | *Dự kiến*: Giao diện Web Portal sinh viên; Màn hình Dashboard quản trị (Hưng, Duy). |
+| 15 | Tuần 15 (7/12 - 13/12) | Kiểm thử toàn diện hệ thống (End-to-End Testing); hoàn thiện toàn văn báo cáo Tiểu luận chuyên ngành theo quy chuẩn FIT-HCMUTE; slide báo cáo nghiệm thu và chuẩn bị bảo vệ. | *Dự kiến*: Toàn văn Báo cáo TLCN; Slide báo cáo nghiệm thu (Hưng, Duy). |
+
+<br>
+
+| **Người viết đề cương**<br>*(Ký và ghi rõ họ tên)*<br><br><br>**Nguyễn Văn Quang Duy - Đỗ Kiến Hưng** | *Ngày    tháng    năm 2026*<br>**Ý kiến của giáo viên hướng dẫn**<br>*(Ký và ghi rõ họ tên)*<br><br><br>**ThS. Trần Quang Khải** |
+| :---: | :---: |
 
 \newpage
-## BẢNG KÝ HIỆU VÀ TỪ VIẾT TẮT
-*(Sắp xếp theo thứ tự bảng chữ cái A–Z theo quy định của Khoa CNTT - HCM-UTE [9])*
 
-| Ký hiệu / Viết tắt | Tên đầy đủ Tiếng Việt | Tên Tiếng Anh nguyên bản |
+## MỤC LỤC
+
+| Đề mục / Chương mục | Nội dung chính |
+| :--- | :--- |
+| **TRANG PHỤ BÌA** | Trang bìa lót theo quy định biểu mẫu Khoa CNTT |
+| **PHIẾU NHẬN XÉT CỦA GIÁO VIÊN HƯỚNG DẪN** | Biểu mẫu đánh giá của Giáo viên hướng dẫn (Mẫu 6) |
+| **PHIẾU NHẬN XÉT CỦA GIÁO VIÊN PHẢN BIỆN** | Biểu mẫu đánh giá của Giáo viên phản biện (Mẫu 6) |
+| **LỜI CẢM ƠN** | Lời tri ân Nhà trường, Khoa CNTT và Giảng viên hướng dẫn |
+| **ĐỀ CƯƠNG TIỂU LUẬN CHUYÊN NGÀNH** | Nhiệm vụ, đề cương chi tiết và kế hoạch thực hiện (Mẫu 4) |
+| **DANH MỤC BẢNG BIỂU** | Danh sách các bảng số liệu và đặc tả trong báo cáo |
+| **DANH MỤC HÌNH VẼ** | Danh sách các sơ đồ kiến trúc trong báo cáo |
+| **DANH MỤC TỪ VIẾT TẮT** | Danh sách các ký hiệu và thuật ngữ viết tắt (xếp A–Z) |
+| **TÓM TẮT / ABSTRACT** | Tóm tắt nội dung nghiên cứu bằng tiếng Việt và tiếng Anh |
+| **Phần 1: MỞ ĐẦU** | Tính cấp thiết; Mục đích; Đối tượng & Phạm vi; Cách tiếp cận & Phương pháp nghiên cứu; Phân tích các công trình liên quan; Kết quả dự kiến đạt được |
+| **Phần 2: NỘI DUNG** | |
+| **Chương 1: CƠ SỞ LÝ THUYẾT VÀ LUẬN GIẢI CÔNG NGHỆ** | 1.1. Kiến trúc Medallion Lakehouse; 1.2. Thu thập thích ứng & LLM Extraction; 1.3. Kiến trúc Hybrid RAG & Ragas; 1.4. Động cơ OLAP DuckDB & Serving Stack; Kết luận Chương 1 |
+| **Chương 2: THIẾT KẾ KIẾN TRÚC HỆ THỐNG VÀ KHO DỮ LIỆU MEDALLION LAKEHOUSE** | 2.1. Kiến trúc phân tầng 4 lớp; 2.2. Thiết kế tầng Thu thập; 2.3. Thiết kế tầng Lưu trữ Bronze - Silver - Gold; 2.4. Thiết kế tầng Xử lý Ngữ nghĩa & RAG; 2.5. Thiết kế tầng Phục vụ & Dashboard; Kết luận Chương 2 |
+| **Chương 3: ĐẶC TẢ DỮ LIỆU LỚP BẠC VÀ QUY TRÌNH TRÍCH XUẤT THỰC THỂ** | 3.1. Chuẩn hóa dữ liệu cuộc thi & Ma trận trường cốt lõi; 3.2. Đặc tả lược đồ `SilverCompetitionRecord`; 3.3. Hợp đồng JSON Schema & Mẫu dữ liệu thực tế; 3.4. Mô hình kiểm kiểu Pydantic v2; 3.5. Thuật toán khử trùng lặp trên DuckDB; Kết luận Chương 3 |
+| **Chương 4: TRIỂN KHAI THỰC NGHIỆM VÀ ĐÁNH GIÁ KẾT QUẢ GIAI ĐOẠN 1** | 4.1. Môi trường Lean MVP Stack; 4.2. Kết quả thu thập 7 cuộc thi mẫu tại tầng Bronze; 4.3. Kết quả kiểm thử lược đồ tầng Silver; 4.4. Hiệu năng truy vấn OLAP DuckDB; 4.5. Đánh giá sơ bộ dịch vụ RAG & Giao diện MVP; Kết luận Chương 4 |
+| **Phần 3: KẾT LUẬN** | Đánh giá kết quả đạt được; Ưu nhược điểm và hạn chế kỹ thuật; Định hướng phát triển cho Khóa luận tốt nghiệp |
+| **TÀI LIỆU THAM KHẢO** | Danh mục 14 công trình khoa học và tài liệu tham chiếu chuẩn IEEE |
+| **PHỤ LỤC** | Phụ lục A: Tổ chức cây thư mục đĩa CD / Gói bàn giao (Mẫu 5); Phụ lục B: Bảng kiểm tra báo cáo trước khi nộp (Mẫu 5) |
+
+\newpage
+
+## DANH MỤC BẢNG BIỂU
+
+| Số hiệu bảng | Tên bảng biểu | Chương / Phần |
+| :---: | :--- | :---: |
+| **Bảng 0.1** | Báo cáo kế hoạch và tiến độ thực tế học phần Tiểu luận chuyên ngành | Đề cương (Mẫu 4) |
+| **Bảng 1.1** | So sánh đối sánh các định dạng bảng mở trong hệ sinh thái Lakehouse | Chương 1 |
+| **Bảng 2.1** | Cấu trúc hợp đồng dữ liệu bảng tầng Đồng (BronzeRecord Schema) | Chương 2 |
+| **Bảng 3.1** | Ma trận phân tích mức độ ưu tiên của các trường thông tin Lớp Bạc | Chương 3 |
+| **Bảng 3.2** | Đặc tả từ điển dữ liệu (Data Dictionary) của thực thể lớp Bạc SilverCompetitionRecord | Chương 3 |
+| **Bảng 4.1** | Kết quả thu thập và làm sạch văn bản Markdown tại tầng Bronze trên 7 cuộc thi mẫu | Chương 4 |
+
+---
+
+## DANH MỤC HÌNH VẼ
+
+| Số hiệu hình | Tên hình vẽ / Sơ đồ | Chương / Phần |
+| :---: | :--- | :---: |
+| **Hình 2.1** | Sơ đồ kiến trúc tổng thể 4 phân tầng của hệ thống ACDP | Chương 2 |
+
+\newpage
+
+## DANH MỤC TỪ VIẾT TẮT
+*(Sắp xếp theo thứ tự bảng chữ cái A–Z, không lạm dụng chữ viết tắt theo quy định của Khoa CNTT - HCM-UTE [9])*
+
+| Ký hiệu / Viết tắt | Tên Tiếng Việt | Tên Tiếng Anh |
 | :--- | :--- | :--- |
 | **ACDP** | Nền tảng khám phá cuộc thi học thuật | Academic Competition Discovery Platform |
 | **API** | Giao diện lập trình ứng dụng | Application Programming Interface |
@@ -186,7 +288,7 @@ Tiến độ thực hiện học phần Tiểu luận chuyên ngành tính đế
 
 \newpage
 
-## TÓM TẮT TIỂU LUẬN
+## TÓM TẮT
 
 Tham gia các sân chơi học thuật chuyên môn và các chương trình đào tạo tài năng công nghệ là phương thức thiết thực giúp sinh viên ngành Công nghệ Thông tin tích lũy năng lực giải quyết bài toán kỹ thuật thực tế. Dữ liệu khảo sát sơ bộ nhu cầu người học tại Trường Đại học Công nghệ Kỹ thuật TP.HCM (HCM-UTE) cho thấy sinh viên đối mặt với nhiều rào cản như thông tin cuộc thi bị phân tán rải rác trên mạng xã hội, văn bản thể lệ dài dòng gây khó khăn khi tra cứu, tình trạng thiếu hụt đồng đội có kỹ năng bổ trợ và cơ sở đào tạo chưa có công cụ định lượng theo dõi phong trào học thuật. Đề tài này giải quyết bài toán trên bằng cách xây dựng NỀN TẢNG KHÁM PHÁ CUỘC THI HỌC THUẬT DÀNH CHO SINH VIÊN (ACADEMIC COMPETITION DISCOVERY PLATFORM - ACDP), tích hợp đường ống kỹ thuật dữ liệu từ khâu thu thập, chuẩn hóa lưu trữ đến dịch vụ tra cứu thông minh và kết nối người dùng.
 
@@ -209,26 +311,26 @@ Within the 15-week scope of the Special Topic Project (Tiểu luận chuyên ng�
 **Keywords**: *Data Pipeline, Medallion Lakehouse, Focused Crawling, LLM Information Extraction, Retrieval-Augmented Generation (RAG), Teammate Recommendation, Higher Education Analytics.*
 
 \newpage
-# PHẦN 1: MỞ ĐẦU
+# Phần 1: MỞ ĐẦU
 
-## Mục I.1. Trình bày tính cấp thiết của đề tài
+### Tính cấp thiết của đề tài
 
-### I.1.1. Bối cảnh thị trường lao động và sự phát triển của các sân chơi học thuật công nghệ
+#### Bối cảnh thị trường lao động và sự phát triển của các sân chơi học thuật công nghệ
 Trong bối cảnh chuyển đổi số và phát triển nhanh chóng của các công nghệ tính toán, thị trường lao động ngành Công nghệ Thông tin đặt ra những tiêu chuẩn khắt khe đối với nguồn nhân lực tốt nghiệp đại học. Các doanh nghiệp công nghệ không chỉ căn cứ vào điểm số học tập trên giảng đường mà ưu tiên đánh giá ứng viên qua năng lực giải quyết vấn đề kỹ thuật thực tế, khả năng làm việc dưới áp lực thời gian và kỹ năng phối hợp liên ngành. Trước yêu cầu đó, các hội thi học thuật, các kỳ thi lập trình thuật toán như Olympic Tin học Sinh viên Việt Nam, Kỳ thi Lập trình Sinh viên Quốc tế ICPC, các giải thưởng nghiên cứu khoa học như Giải thưởng Euréka, Sinh viên Nghiên cứu Khoa học các cấp, các cuộc thi an toàn thông tin và các cuộc thi phát triển ứng dụng như Hackathon hay AI Challenge ngày càng gia tăng về cả số lượng lẫn quy mô tổ chức.
 
 Tham gia các sân chơi chuyên môn này là phương thức trực tiếp giúp sinh viên tiếp cận các bài toán kỹ thuật tương đương môi trường công nghiệp. Tuy nhiên, kết quả khảo sát sơ bộ nhu cầu người học tại Trường Đại học Công nghệ Kỹ thuật TP.HCM (HCM-UTE) cho thấy tỷ lệ sinh viên chủ động đăng ký tham gia các cuộc thi vẫn chưa tương xứng với tiềm năng đào tạo của Khoa. Khoảng cách này bắt nguồn từ bốn nút thắt mang tính hệ thống trong cách thức truyền thông, tiếp cận dữ liệu và tổ chức hoạt động học thuật hiện nay.
 
-### I.1.2. Tối ưu hóa thời gian tiếp cận thông tin và chi phí cơ hội cho sinh viên
+#### Tối ưu hóa thời gian tiếp cận thông tin và chi phí cơ hội cho sinh viên
 Nút thắt đầu tiên xuất phát từ sự phân mảnh thông tin giữa các kênh truyền thông. Hiện nay, thông báo phát động các cuộc thi không tập trung tại một cổng dữ liệu duy nhất mà phân tán trên hàng chục trang mạng xã hội, cổng thông tin Đoàn - Hội, website của các trường thành viên, diễn đàn sinh viên hoặc các kênh thông báo nội bộ. Đặc tính phân tán này tạo ra chi phí cơ hội lớn đối với người học: nhiều sinh viên có năng lực chuyên môn tốt và có nguyện vọng tham gia nhưng do hạn chế về thời gian theo dõi liên tục các kênh truyền thông nên thường xuyên bỏ lỡ thời hạn đăng ký.
 
 Thêm vào đó, thông báo cuộc thi trên mạng xã hội thường có định dạng bài viết tự do dài dòng, chèn nhiều nội dung quảng bá hoặc thể lệ nằm trong các tệp hình ảnh hay tệp PDF đính kèm từ 10 đến 30 trang. Việc tra cứu các thông tin cốt lõi như điều kiện dự thi, quy cách bảng đấu, thành phần nhóm, lệ phí và mốc thời gian gia hạn tiêu tốn nhiều thời gian đọc hiểu của sinh viên. Một hệ thống có khả năng tự động gom tụ, bóc tách cấu trúc và chuẩn hóa các mốc thời hạn quan trọng sẽ giải phóng sinh viên khỏi gánh nặng tìm kiếm dữ liệu thủ công, giúp người học tập trung thời gian cho công tác ôn luyện chuyên môn.
 
-### I.1.3. Xây dựng hồ sơ năng lực thực tiễn gia tăng lợi thế cạnh tranh nghề nghiệp
+#### Xây dựng hồ sơ năng lực thực tiễn gia tăng lợi thế cạnh tranh nghề nghiệp
 Nút thắt thứ hai liên quan trực tiếp đến nhu cầu tích lũy hồ sơ năng lực cá nhân (CV) của sinh viên. Trong bối cảnh hàng ngàn cử nhân và kỹ sư tốt nghiệp mỗi năm với bảng điểm tương đương nhau, những thành tích đạt được tại các cuộc thi học thuật uy tín trở thành bằng chứng định lượng rõ ràng về năng lực giải quyết bài toán thực tế. Thành tích thi đấu phản ánh khả năng lập trình, tư duy tối ưu hóa thuật toán, kỹ năng kiến trúc hệ thống và năng lực bảo vệ giải pháp trước các chuyên gia trong ngành.
 
 Tuy nhiên, sinh viên năm thứ nhất và năm thứ hai thường thiếu định hướng về lộ trình các cuộc thi phù hợp với năng lực hiện tại của bản thân. Người học thiếu dữ liệu tham khảo về mức độ khó của đề thi các năm trước, các dạng bài thường gặp, cũng như thiếu kho lưu trữ mã nguồn mẫu của những đội tuyển đoạt giải để học hỏi phương pháp làm bài. Khi thông tin cuộc thi được chuẩn hóa bài bản, có phân cấp độ khó và gắn liền với các từ khóa kỹ năng chuyên môn, sinh viên sẽ chủ động xây dựng lộ trình rèn luyện nhằm đáp ứng trực tiếp các tiêu chí tuyển dụng của doanh nghiệp.
 
-### I.1.4. Thúc đẩy phong trào học thuật, hỗ trợ sinh viên liên kết đội nhóm và kết nối giảng viên hướng dẫn chuyên môn
+#### Thúc đẩy phong trào học thuật, hỗ trợ sinh viên liên kết đội nhóm và kết nối giảng viên hướng dẫn chuyên môn
 Nút thắt thứ ba nằm ở quá trình hiện thực hóa nguyện vọng tham gia thi đấu của sinh viên trong môi trường học đường. Khác với các kỳ thi quy mô quốc gia đã có lộ trình đào tạo tuyển chọn tập trung từ trước (như đội tuyển Olympic hay ICPC), đa số sinh viên có nhu cầu thử sức ở các sân chơi học thuật thường niên do các Khoa, các Câu lạc bộ học thuật tổ chức (như WebDev, AI Club, DSC) hoặc các giải đấu công nghệ cấp Thành phố (AI Challenge TP.HCM, các giải Hackathon mở rộng). Tại các sân chơi này, sinh viên thường gặp ba rào cản thực tế:
 1. Rào cản tìm kiếm đồng đội có kỹ năng bù trừ: Sinh viên thường có ý tưởng và thế mạnh ở một mảng chuyên môn như mô hình Trí tuệ nhân tạo hoặc Kỹ thuật dữ liệu, nhưng cuộc thi đòi hỏi sản phẩm hoàn chỉnh yêu cầu thêm kỹ năng lập trình giao diện, thiết kế hệ thống hoặc thuyết trình sản phẩm. Việc tham gia đơn lẻ hoặc không tìm được đồng đội phù hợp khiến nhiều sinh viên phải từ bỏ ý định đăng ký.
 2. Thiếu hướng dẫn quy trình tham gia rõ ràng: Thể lệ cuộc thi thường phức tạp về thể thức nộp bài, định dạng báo cáo sơ khảo và các mốc nộp sản phẩm. Sinh viên thiếu một công cụ tra cứu nhanh giúp giải đáp tức thời cách thức đăng ký, lập hồ sơ và chuẩn bị phương án dự thi.
@@ -236,19 +338,19 @@ Nút thắt thứ ba nằm ở quá trình hiện thực hóa nguyện vọng th
 
 Do đó, việc xây dựng một nền tảng khám phá sự kiện học thuật tích hợp dịch vụ tra cứu thể lệ thông minh và định hướng phát triển công cụ hỗ trợ ghép đội dựa trên kỹ năng bù trừ, kết nối giảng viên hướng dẫn là giải pháp thiết thực cho phong trào học thuật của Khoa.
 
-### I.1.5. Nhu cầu quản trị dữ liệu phong trào học thuật của cơ sở đào tạo
+#### Nhu cầu quản trị dữ liệu phong trào học thuật của cơ sở đào tạo
 Nút thắt thứ tư xuất phát từ công tác quản lý của Ban Chủ nhiệm Khoa và các tổ chức Đoàn - Hội. Hiện nay, việc ghi nhận dữ liệu sinh viên tham gia các cuộc thi phần lớn được thực hiện thủ công thông qua các đợt rà soát cuối năm hoặc qua các biểu mẫu khảo sát rời rạc. Cơ sở đào tạo thiếu một bảng điều khiển phân tích số liệu thể hiện tổng thể mức độ quan tâm của sinh viên theo từng khóa tuyển sinh và từng chuyên ngành đào tạo (Khoa học Máy tính, Kỹ thuật Phần mềm, Hệ thống Thông tin, Kỹ thuật Dữ liệu, An toàn Thông tin). Đồng thời, Khoa cũng cần dữ liệu định lượng về xu hướng dịch chuyển công nghệ qua từng năm và bản đồ mùa vụ thi đấu trong năm học để chủ động điều chỉnh lịch thi học kỳ, tránh trùng lặp với thời gian diễn ra vòng chung kết các kỳ thi lớn.
 
 Xuất phát từ bốn vấn đề thực tiễn trên, việc nghiên cứu và triển khai đề tài **"XÂY DỰNG HỆ THỐNG THU THẬP, XỬ LÝ DỮ LIỆU VÀ NỀN TẢNG HỖ TRỢ SINH VIÊN THAM GIA CÁC CUỘC THI HỌC THUẬT, CÔNG NGHỆ"** mang tính ứng dụng thực tiễn rõ rệt cho sinh viên và đáp ứng nhu cầu chuyển đổi số công tác quản trị học thuật của Khoa Công nghệ Thông tin [9].
 
 ---
 
-## Mục I.2. Mục đích của đề tài
+### Mục đích của đề tài
 
-### I.2.1. Mục tiêu tổng quát
+#### Mục tiêu tổng quát
 Xây dựng một hệ thống Kỹ thuật Dữ liệu hoàn chỉnh bao gồm đường ống thu thập dữ liệu web động, kho lưu trữ phân tầng Medallion Lakehouse tinh gọn trên đám mây, dịch vụ truy vấn ngữ nghĩa thông minh Hybrid RAG và ứng dụng web người dùng nhằm tự động hóa việc tổng hợp, chuẩn hóa thông tin cuộc thi học thuật, cung cấp dịch vụ tra cứu quy chế chính xác, định hướng kết nối lập đội và cung cấp công cụ phân tích số liệu cho Khoa Công nghệ Thông tin.
 
-### I.2.2. Mục tiêu cụ thể
+#### Mục tiêu cụ thể
 Để đạt được mục tiêu tổng quát, đề tài xác lập 5 mục tiêu kỹ thuật cụ thể tương ứng với lộ trình nghiên cứu từ Tiểu luận chuyên ngành đến Khóa luận tốt nghiệp:
 1. Xây dựng đường ống thu thập dữ liệu cuộc thi học thuật: Tự động hóa quá trình thu thập và làm sạch bài đăng cuộc thi từ các trang web mục tiêu bằng công nghệ tự động hóa trình duyệt `Crawl4AI` và `Playwright` (triển khai kiểm chứng trên tập 5–10 cuộc thi tiêu biểu trong giai đoạn TLCN và thiết kế cơ chế làm mới có điều kiện cho giai đoạn KLTN).
 2. Thiết kế và triển khai kho dữ liệu phân tầng Medallion Lakehouse tinh gọn: Xây dựng kho lưu trữ ba tầng Bronze, Silver, Gold trên nền tảng đám mây Cloudflare R2, định dạng tệp cột Apache Parquet / Delta Lake và động cơ phân tích nhúng DuckDB; chuẩn hóa dữ liệu văn bản phi cấu trúc thành hơn 10 trường thuộc tính định lượng qua mô hình ngôn ngữ lớn kết hợp Pydantic v2 và thực thi thuật toán khử trùng lặp sự kiện đa nguồn.
@@ -258,15 +360,15 @@ Xây dựng một hệ thống Kỹ thuật Dữ liệu hoàn chỉnh bao gồm 
 
 ---
 
-## Mục I.3. Đối tượng và phạm vi nghiên cứu
+### Đối tượng và phạm vi nghiên cứu
 
-### I.3.1. Đối tượng nghiên cứu
+#### Đối tượng nghiên cứu
 Về mặt dữ liệu, đối tượng nghiên cứu của đề tài bao gồm các nguồn thông tin sự kiện học thuật, thông báo phát động, văn bản thể lệ, quy chế thi đấu, danh mục bảng thi và cơ cấu giải thưởng của các cuộc thi CNTT dành cho sinh viên tại Việt Nam và quốc tế. Về mặt kỹ thuật, đề tài tập trung nghiên cứu các phương pháp Kỹ thuật Dữ liệu hiện đại bao gồm kỹ thuật thu thập web động, trích xuất thông tin có cấu trúc bằng mô hình ngôn ngữ lớn kết hợp Pydantic Schema, kiến trúc kho dữ liệu hồ phân tầng Medallion Lakehouse trên đám mây, kỹ thuật truy vấn tạo sinh tăng cường Hybrid RAG và các giải thuật tối ưu hóa ghép đội dựa trên độ bù trừ vector kỹ năng.
 
-### I.3.2. Đối tượng khảo sát
+#### Đối tượng khảo sát
 Đối tượng khảo sát trực tiếp của đề tài là sinh viên các khóa đang theo học tại Khoa Công nghệ Thông tin - Trường Đại học Công nghệ Kỹ thuật TP.HCM (HCM-UTE), cùng với Ban Chủ nhiệm Khoa, các Trợ lý Thanh niên và Ban Chấp hành Đoàn - Hội Khoa CNTT phụ trách công tác quản lý và phát động phong trào học thuật.
 
-### I.3.3. Phạm vi nghiên cứu và phân định lộ trình thực hiện
+#### Phạm vi nghiên cứu và phân định lộ trình thực hiện
 Đề tài tuân thủ quy định thực hiện học phần của Khoa CNTT [9] và được phân định ranh giới rõ ràng giữa hai giai đoạn 15 tuần nhằm đảm bảo tính khả thi thực nghiệm và chiều sâu kỹ thuật:
 
 **Giai đoạn 1: Tiểu luận chuyên ngành (HK1/2026-2027, 15 tuần — Mô phỏng hệ thống & Kiểm chứng tính khả thi)**:
@@ -276,16 +378,20 @@ Trong giai đoạn Tiểu luận chuyên ngành, nhóm nghiên cứu sử dụng
 Sang giai đoạn Khóa luận tốt nghiệp, hệ thống được nâng cấp lên cơ chế thu thập tự động theo lô định kỳ (batch job có lập lịch mùa vụ, kiểm tra `ETag`) và thời gian thực (realtime webhooks) trên hàng trăm nguồn dữ liệu từ các trường đại học khu vực TP.HCM và toàn quốc. Để đáp ứng lưu lượng dữ liệu lớn, nhóm sẽ kích hoạt các kỹ thuật tối ưu hóa hạ tầng gồm gom tệp nhỏ (`OPTIMIZE` bin-packing), kho đối tượng tự quản SeaweedFS và thuật toán khử trùng lặp chuỗi mờ đa kênh quy mô lớn. Đồng thời, các tính năng nâng cao như thuật toán gợi ý đồng đội bù trừ kỹ năng, kết nối hướng nghiên cứu của giảng viên, kho lưu trữ tri thức bài giải mẫu và tự động hóa quy trình đề xuất cộng điểm rèn luyện sẽ được hoàn thiện đồng bộ.
 
 ---
-## Mục I.4. Phương pháp nghiên cứu và tổng quan các công trình liên quan
 
-### I.4.1. Phương pháp nghiên cứu
-Đề tài áp dụng hệ thống bốn phương pháp nghiên cứu khoa học kết hợp giữa lý thuyết và thực nghiệm:
+### Cách tiếp cận và phương pháp nghiên cứu
+
+Đề tài tiếp cận bài toán theo hướng Kỹ thuật Dữ liệu lấy chất lượng lược đồ làm trung tâm (Schema-Centric Data Engineering), áp dụng bốn phương pháp nghiên cứu khoa học kết hợp giữa lý thuyết và thực nghiệm:
 1. Phương pháp nghiên cứu lý thuyết: Thu thập, tổng hợp, phân loại và phân tích các tài liệu khoa học chuyên ngành trong các kỷ yếu hội nghị và tạp chí quốc tế như ACM, IEEE, NeurIPS, VLDB, CIDR về kỹ thuật thu thập web [6], [7], [8], kiến trúc Lakehouse [2], [10], [11], [12], [13], trích xuất thực thể bằng mô hình ngôn ngữ lớn [4], hệ thống RAG [1], [3] và giải thuật tối ưu hóa lập nhóm [5].
 2. Phương pháp mô hình hóa dữ liệu: Xây dựng mô hình dữ liệu bán cấu trúc và có cấu trúc qua Pydantic Schema, mô hình hóa kho dữ liệu phân tầng theo kiến trúc Medallion gồm ba lớp Bronze, Silver, Gold, và mô hình hóa luồng dữ liệu từ dạng phi cấu trúc sang các thuộc tính định lượng phục vụ phân tích OLAP.
 3. Phương pháp điều tra, khảo sát: Xây dựng bảng câu hỏi khảo sát trực tuyến gửi tới sinh viên Khoa Công nghệ Thông tin - HCM-UTE nhằm thu thập dữ liệu định lượng về thói quen tiếp cận thông tin cuộc thi, tỷ lệ tham gia, các trở ngại gặp phải khi tìm kiếm đồng đội và nhu cầu kết nối giảng viên hướng dẫn.
 4. Phương pháp thực nghiệm: Cài đặt nguyên mẫu hệ thống (MVP) kết nối kho lưu trữ đám mây Cloudflare R2 và máy trạm cục bộ; tiến hành kiểm thử đơn vị tự động (`pytest`), đo lường định lượng hiệu năng làm sạch văn bản, kiểm định tỷ lệ hợp lệ lược đồ dữ liệu trên DuckDB/Parquet, và đánh giá chất lượng câu trả lời của mô hình RAG bằng bộ chỉ số định lượng Ragas.
 
-### I.4.2. Tổng quan các công trình nghiên cứu tiền nhiệm
+---
+
+### Phân tích những công trình nghiên cứu có liên quan
+
+#### Tổng quan các công trình khoa học tiền nhiệm
 Kiến trúc của đề tài ACDP được xây dựng trên cơ sở kế thừa và tích hợp các thành tựu khoa học đã được công bố quốc tế theo năm nhóm lĩnh vực:
 
 1. Thu thập dữ liệu web và cơ chế làm mới định kỳ:
@@ -303,19 +409,19 @@ Kiến trúc của đề tài ACDP được xây dựng trên cơ sở kế th�
 5. Thuật toán tạo nhóm và ghép đội học thuật:
    Công trình của Lappas và cộng sự tại hội nghị ACM SIGKDD [5] đặt bài toán tìm kiếm đội nhóm chuyên gia đáp ứng một tập hợp kỹ năng yêu cầu đồng thời tối thiểu hóa chi phí phối hợp giữa các thành viên. Đề tài kế thừa tư tưởng này để định hình mô hình toán học biểu diễn kỹ năng sinh viên qua vector nhúng chuyên môn, phục vụ lộ trình phát triển tính năng ghép đội ở giai đoạn tiếp theo.
 
-### I.4.3. Đánh giá các hệ thống hiện có và khoảng trống nghiên cứu
+#### Đánh giá các hệ thống hiện có và khoảng trống nghiên cứu
 Hiện nay, trên thế giới và tại Việt Nam đã xuất hiện một số nền tảng phục vụ sự kiện học thuật và nghề nghiệp nhưng đều bộc lộ những giới hạn nhất định khi áp dụng vào bối cảnh đại học trong nước. Các nền tảng quốc tế như Devpost, Unstop, Kaggle hay HackerEarth vận hành hiệu quả nhưng dựa hoàn toàn vào mô hình ban tổ chức tự đăng bài thủ công; các hệ thống này không có cơ chế tự động quét và bóc tách thông tin từ các trang web và mạng xã hội địa phương tại Việt Nam, đồng thời không hỗ trợ tiếng Việt trong việc tra cứu thể lệ chi tiết. Trong khi đó, các cổng thông tin phong trào trong nước như Ybox hay KhoaHocTre chỉ đăng tải bài viết tổng hợp dưới dạng văn bản tĩnh thuần túy, thiếu bộ lọc thuộc tính định lượng (như lọc theo lệ phí, quy mô đội thi), không có trợ lý AI hỏi đáp quy chế và không cung cấp bảng điều khiển phân tích số liệu cho các trường đại học.
 
 Từ thực tế đó, khoảng trống nghiên cứu mà đề tài ACDP trực tiếp giải quyết là xây dựng một đường ống Kỹ thuật Dữ liệu tích hợp có khả năng: (1) Thu thập và trích xuất dữ liệu cuộc thi từ các nguồn thông tin phân mảnh tại Việt Nam bằng mô hình ngôn ngữ lớn có ràng buộc lược đồ; (2) Lưu trữ phân tầng theo chuẩn Medallion Lakehouse tinh gọn trên đám mây để phục vụ đồng thời phân tích định lượng (OLAP) và tra cứu ngữ nghĩa; (3) Cung cấp trợ lý Hybrid RAG chuyên biệt cho thể lệ cuộc thi học thuật tiếng Việt; và (4) Gắn kết dữ liệu sự kiện với công tác quản trị phong trào của Khoa Công nghệ Thông tin - HCM-UTE.
 
 ---
 
-## Mục I.5. Kết quả dự kiến đạt được
+### Kết quả dự kiến đạt được
 
-### I.5.1. Đóng góp về mặt khoa học và phương pháp luận
+#### Đóng góp về mặt khoa học và phương pháp luận
 Đề tài xác lập mô hình kiến trúc Kỹ thuật Dữ liệu phân tầng Medallion Lakehouse tinh gọn áp dụng hiệu quả cho bài toán dữ liệu sự kiện giáo dục đại học với chi phí vận hành thấp. Bên cạnh đó, nghiên cứu xây dựng quy trình chuẩn hóa thực thể sự kiện học thuật (`SilverCompetitionRecord`) từ văn bản web phi cấu trúc sử dụng mô hình ngôn ngữ lớn kết hợp Pydantic v2, đồng thời đề xuất quy trình truy vấn văn bản thể lệ lai ghép Hybrid RAG (BM25 + Qdrant + Cross-Encoder) đảm bảo độ tin cậy trích dẫn cao trên văn bản quy chế tiếng Việt.
 
-### I.5.2. Đóng góp về mặt kỹ thuật thực tiễn và sản phẩm bàn giao trong giai đoạn TLCN
+#### Đóng góp về mặt kỹ thuật thực tiễn và sản phẩm bàn giao trong giai đoạn TLCN
 1. Đường ống thu thập dữ liệu (Ingestion Pipeline): Bộ mã nguồn hoàn chỉnh vận hành trên `Crawl4AI` và `Playwright` (`src/acdp/1_crawl_to_bronze.py`), thu thập và làm sạch bài viết từ 5–10 nguồn cuộc thi học thuật trọng điểm.
 2. Kho lưu trữ Lakehouse phân tầng trên đám mây: Kho dữ liệu trên Cloudflare R2 và ổ cứng cục bộ lưu trữ văn bản gốc tầng Bronze và tệp Parquet tầng Silver đã chuẩn hóa hơn 10 trường thuộc tính định lượng (`src/acdp/2_instruction.py`), truy vấn phân tích trực tiếp qua DuckDB và khử trùng lặp sự kiện đa nguồn.
 3. Dịch vụ AI và REST API: Hệ thống backend FastAPI cung cấp các API tra cứu dữ liệu sự kiện từ DuckDB và API hỏi đáp thể lệ qua Hybrid RAG.
@@ -324,9 +430,9 @@ Từ thực tế đó, khoảng trống nghiên cứu mà đề tài ACDP trực
 
 \newpage
 
-# PHẦN 2: NỘI DUNG NGHIÊN CỨU VÀ TRIỂN KHAI KỸ THUẬT
+# Phần 2: NỘI DUNG
 
-## CHƯƠNG 1: CƠ SỞ LÝ THUYẾT VÀ LUẬN GIẢI CÔNG NGHỆ
+## Chương 1: CƠ SỞ LÝ THUYẾT VÀ LUẬN GIẢI CÔNG NGHỆ
 
 ### 1.1. Kiến trúc kho dữ liệu hồ phân tầng Medallion Lakehouse và Lựa chọn công nghệ lưu trữ
 
@@ -341,7 +447,7 @@ Trong khuôn khổ đề tài ACDP, mô hình Medallion phân tách vòng đời
 #### 1.1.2. Đánh giá và so sánh các định dạng lưu trữ bảng mở (Open Table Formats)
 Trong hệ sinh thái Lakehouse hiện đại, việc lựa chọn định dạng lưu trữ cột và bảng mở quyết định trực tiếp đến hiệu năng giao dịch, tính tương thích của công cụ truy vấn và chi phí bộ nhớ máy chủ [10], [12]. Nhóm nghiên cứu đã tiến hành khảo sát và đánh giá đối sánh bốn định dạng phổ biến nhất hiện nay dựa trên các tiêu chí kỹ thuật đặc thù của dự án, như được tổng hợp tại Bảng 1.1:
 
-##### Bảng 1.1: So sánh đối sánh các định dạng bảng mở trong hệ sinh thái Lakehouse
+###### Bảng 1.1: So sánh đối sánh các định dạng bảng mở trong hệ sinh thái Lakehouse
 
 | Tiêu chí kỹ thuật | Apache Parquet & Delta Lake (`delta-rs`) | Apache Iceberg (`pyiceberg`) | Apache Hudi | Lance Format |
 | :--- | :--- | :--- | :--- | :--- |
@@ -414,9 +520,15 @@ Do đó, đề tài lựa chọn **DuckDB** làm động cơ truy vấn phân t�
 #### 1.4.2. Nền tảng phục vụ ứng dụng (Serving Stack)
 Tầng giao tiếp người dùng được thiết kế tách biệt giữa dịch vụ xử lý dữ liệu phía máy chủ và giao diện hiển thị phía trình duyệt. Ở phía máy chủ, khung làm việc **FastAPI (Python 3.13)** cung cấp các giao diện lập trình ứng dụng RESTful bất đồng bộ (`asyncio`), kết nối trực tiếp tới động cơ DuckDB để trả về danh sách cuộc thi đã chuẩn hóa và kết nối tới Qdrant để xử lý các truy vấn hỏi đáp quy chế. Ở phía giao diện người dùng, ứng dụng web được xây dựng trên **Next.js 15, React 19 và Tailwind CSS**, tích hợp các thư viện biểu đồ trực quan để hiển thị cổng tra cứu sự kiện cho sinh viên cũng như bảng điều khiển phân tích số liệu mùa vụ cho Ban Chủ nhiệm Khoa.
 
+---
+
+### Kết luận Chương 1
+
+Chương 1 đã hệ thống hóa cơ sở lý thuyết và luận giải chi tiết việc lựa chọn bộ công nghệ cho hệ thống ACDP dựa trên 14 công trình nghiên cứu quốc tế. Cụ thể, đề tài đã phân tích nguyên lý kiến trúc kho dữ liệu phân tầng Medallion Lakehouse [2], [13], đối sánh các định dạng bảng mở (Bảng 1.1) để lựa chọn cặp công nghệ Apache Parquet kết hợp kho đối tượng đám mây Cloudflare R2 và động cơ phân tích in-process DuckDB phù hợp với quy mô tinh gọn 5–10 cuộc thi của giai đoạn Tiểu luận chuyên ngành. Đồng thời, chương này đã làm rõ cơ sở khoa học của kỹ thuật thu thập web động thích ứng bằng `Crawl4AI` và `Playwright` [6], [7], [8], phương pháp trích xuất thông tin có cấu trúc qua `instructor` và `Pydantic v2` [4], cùng kiến trúc truy vấn lai ghép Hybrid RAG (`BM25` + `Qdrant` + `Cross-Encoder`) được kiểm định qua bộ khung đo lường Ragas [1], [3]. Các nền tảng lý thuyết này là cơ sở trực tiếp để thiết kế kiến trúc phân tầng 4 lớp của hệ thống trong Chương 2.
+
 \newpage
 
-## CHƯƠNG 2: THIẾT KẾ KIẾN TRÚC HỆ THỐNG VÀ KHO DỮ LIỆU MEDALLION LAKEHOUSE
+## Chương 2: THIẾT KẾ KIẾN TRÚC HỆ THỐNG VÀ KHO DỮ LIỆU MEDALLION LAKEHOUSE
 
 ### 2.1. Kiến trúc phân tầng 4 lớp tổng thể
 
@@ -460,7 +572,7 @@ flowchart TD
         FAST_API --> DASHBOARD["Bảng Điều Khiển Quản Trị Học Thuật Khoa CNTT"]
     end
 ```
-*Hình 2.1: Sơ đồ kiến trúc tổng thể 4 phân tầng của hệ thống ACDP*
+###### Hình 2.1: Sơ đồ kiến trúc tổng thể 4 phân tầng của hệ thống ACDP
 
 ---
 
@@ -479,7 +591,7 @@ Tại quy mô 5–10 cuộc thi của giai đoạn Tiểu luận chuyên ngành 
 
 Trên kho lưu trữ đám mây **Cloudflare R2**, kịch bản `src/acdp/1_crawl_to_bronze.py` đẩy trực tiếp nội dung Markdown của từng cuộc thi lên bucket `acdp-lakehouse` theo cấu trúc phân vùng thời gian `bronze/{domain_name}/year={YYYY}/month={MM}/day={DD}/{timestamp}` thông qua giao thức S3 (`boto3`). Đồng thời, khi ánh xạ vào hợp đồng dữ liệu bảng `BronzeRecord` tại `src/acdp/lakehouse/schema.py`, mỗi bản ghi lưu trữ đầy đủ khóa định danh `raw_id` (UUID v4), địa chỉ nguồn (`source_url`, `source_domain`), mốc thời gian thu thập chuẩn UTC (`crawled_at`), mã trạng thái HTTP (`http_status`, `content_type`), mã băm kiểm tra toàn vẹn SHA-256 (`content_hash`), nội dung văn bản gốc `UTF-8` (`raw_content`) và chuỗi siêu dữ liệu `metadata_json`, như được tổng hợp tại Bảng 2.1:
 
-##### Bảng 2.1: Cấu trúc hợp đồng dữ liệu bảng tầng Đồng (BronzeRecord Schema)
+###### Bảng 2.1: Cấu trúc hợp đồng dữ liệu bảng tầng Đồng (BronzeRecord Schema)
 
 | Tên trường thuộc tính | Kiểu dữ liệu | Ràng buộc | Ý nghĩa kỹ thuật tại tầng Bronze |
 | :--- | :--- | :--- | :--- |
@@ -521,9 +633,15 @@ Tầng phục vụ đóng vai trò là giao diện tương tác trực tiếp v�
 
 Ở phía giao diện hiển thị, ứng dụng Web Portal dành cho sinh viên (xây dựng trên Next.js 15) hỗ trợ người học tìm kiếm nhanh các giải đấu đang mở cổng đăng ký và tương tác trực tiếp với trợ lý hỏi đáp quy chế. Song song đó, màn hình Bảng điều khiển phân tích số liệu (Faculty Analytics Dashboard) dành cho Ban Chủ nhiệm Khoa CNTT hiển thị trực quan bản đồ nhiệt mùa vụ thi đấu trong năm học, biểu đồ phân bổ tổng giá trị giải thưởng theo từng mảng chuyên môn và tỷ lệ các cuộc thi yêu cầu kỹ năng phối hợp làm việc nhóm.
 
+---
+
+### Kết luận Chương 2
+
+Chương 2 đã trình bày thiết kế kiến trúc tổng thể 4 phân tầng của nền tảng ACDP (Hình 2.1), phân định rõ ranh giới giữa phạm vi kiểm chứng khả thi trên 5–10 cuộc thi của học phần Tiểu luận chuyên ngành và lộ trình tự động hóa quy mô lớn của học phần Khóa luận tốt nghiệp. Tại tầng lưu trữ Medallion Lakehouse, chương đã đặc tả cấu trúc bảng `BronzeRecord` (Bảng 2.1) lưu trữ văn bản Markdown `UTF-8` nguyên bản trên Cloudflare R2, luồng chuyển đổi dữ liệu sang tệp cột Parquet tại tầng Silver và mô hình dữ liệu chiều (`Fact_Competitions`, `Dim_Time`, `Dim_Domain`, `Dim_Organizer`) truy vấn trực tiếp qua DuckDB tại tầng Gold. Bên cạnh đó, thiết kế đường ống phân đoạn điều khoản trên Qdrant và các giao diện REST API FastAPI đã tạo dựng khung kiến trúc thống nhất, làm tiền đề để đặc tả chi tiết từ điển dữ liệu lớp Bạc trong Chương 3.
+
 \newpage
 
-## CHƯƠNG 3: ĐẶC TẢ DỮ LIỆU LỚP BẠC VÀ QUY TRÌNH TRÍCH XUẤT THỰC THỂ
+## Chương 3: ĐẶC TẢ DỮ LIỆU LỚP BẠC VÀ QUY TRÌNH TRÍCH XUẤT THỰC THỂ
 
 ### 3.1. Sự cần thiết của việc chuẩn hóa cấu trúc dữ liệu cuộc thi trong Kỹ thuật Dữ liệu
 
@@ -542,7 +660,7 @@ Khi thiết kế cấu trúc dữ liệu cho Lớp Bạc trong giai đoạn hi�
 
 Ma trận phân tích 11 trường thông tin cốt lõi tại Lớp Bạc được thể hiện trong Bảng 3.1:
 
-##### Bảng 3.1: Ma trận phân tích mức độ ưu tiên của các trường thông tin Lớp Bạc
+###### Bảng 3.1: Ma trận phân tích mức độ ưu tiên của các trường thông tin Lớp Bạc
 
 | Trường thuộc tính | Vị trí xuất hiện phổ biến trong bài đăng | Độ phức tạp khi cào | Mức độ quan tâm của sinh viên (End User) | Ý nghĩa thực tiễn đối với sinh viên |
 | :--- | :--- | :---: | :---: | :--- |
@@ -566,7 +684,7 @@ Lược đồ dữ liệu lớp Bạc (`SilverCompetitionRecord`) được nhóm
 
 Thay vì lưu trữ dưới dạng chuỗi văn bản tự do dễ phát sinh lỗi khi tổng hợp, mọi thuộc tính thời gian đều được ép kiểu về chuẩn `ISO 8601 (YYYY-MM-DD)`, mọi thuộc tính tiền tệ đều được quy đổi về đơn vị đồng Việt Nam kiểu số nguyên không âm (`BIGINT >= 0`), và cơ cấu giải thưởng được tách thành danh sách cấu trúc con `PrizeItem` (`rank_name`, `amount_vnd`, `quantity`, `description`). Chi tiết từ điển dữ liệu (Data Dictionary) của toàn bộ 35 trường thuộc tính thuộc 8 nhóm trong thực thể `SilverCompetitionRecord` được định nghĩa đầy đủ tại Bảng 3.2:
 
-#### Bảng 3.2: Đặc tả từ điển dữ liệu (Data Dictionary) của thực thể lớp Bạc SilverCompetitionRecord
+###### Bảng 3.2: Đặc tả từ điển dữ liệu (Data Dictionary) của thực thể lớp Bạc SilverCompetitionRecord
 
 | Nhóm chiều thuộc tính | Tên trường (Field Name) | Kiểu dữ liệu (Type) | Ràng buộc & Mặc định | Mô tả ý nghĩa nghiệp vụ và quy tắc chuẩn hóa |
 | :--- | :--- | :--- | :--- | :--- |
@@ -804,9 +922,15 @@ Trong thực tế thu thập dữ liệu, một sự kiện học thuật uy tí
    $$\text{Similarity}(S_1, S_2) = \frac{|S_1| + |S_2| - \text{Levenshtein}(S_1, S_2)}{|S_1| + |S_2|}$$
    - Nếu $\text{Similarity} \ge 0.88$ và cùng năm tổ chức `edition_year`, hệ thống tiến hành hợp nhất bản ghi: giữ nguyên các trường thuộc tính từ nguồn có trọng số tin cậy cao nhất (`Website BTC > Cổng thông tin Trường/Khoa > Fanpage > Báo chí tổng hợp`) và bổ sung liên kết vào danh sách `source_urls`.
 
+---
+
+### Kết luận Chương 3
+
+Chương 3 đã giải quyết bài toán cốt lõi của chuyên ngành Kỹ thuật Dữ liệu trong đề tài là chuyển đổi văn bản thông báo cuộc thi phi cấu trúc sang thực thể nghiệp vụ có cấu trúc chặt chẽ tại tầng Silver. Dựa trên ma trận đánh giá tính khả thi khi cào và mức độ thiết yếu đối với sinh viên (Bảng 3.1), nhóm nghiên cứu đã xây dựng từ điển dữ liệu `SilverCompetitionRecord` gồm 35 trường thuộc tính phân bố trên 8 nhóm chiều (Bảng 3.2), kết hợp cơ chế kiểm kiểu tự động của Pydantic v2 và giải thuật khử trùng lặp hai pha trên DuckDB. Thiết kế lược đồ này là cơ sở trực tiếp để triển khai thực nghiệm và đánh giá kết quả trên tập dữ liệu thực tế trong Chương 4.
+
 \newpage
 
-## CHƯƠNG 4: TRIỂN KHAI THỰC NGHIỆM VÀ ĐÁNH GIÁ KẾT QUẢ GIAI ĐOẠN 1
+## Chương 4: TRIỂN KHAI THỰC NGHIỆM VÀ ĐÁNH GIÁ KẾT QUẢ GIAI ĐOẠN 1
 
 ### 4.1. Môi trường phát triển và bộ công nghệ tối giản (Lean MVP Stack)
 
@@ -822,7 +946,7 @@ Nhằm kiểm chứng tính khả thi của việc cào dữ liệu tự động
 
 Thống kê chi tiết dung lượng dữ liệu HTML gốc và văn bản Markdown sạch (`UTF-8`) trích xuất được từ 7 cuộc thi mẫu được ghi nhận tại Bảng 4.1:
 
-#### Bảng 4.1: Kết quả thu thập và làm sạch văn bản Markdown tại tầng Bronze trên 7 cuộc thi mẫu
+###### Bảng 4.1: Kết quả thu thập và làm sạch văn bản Markdown tại tầng Bronze trên 7 cuộc thi mẫu
 
 | STT | Tên miền nguồn thu thập | Tên cuộc thi học thuật thực nghiệm | Dung lượng HTML gốc (Bytes) | Dung lượng Markdown sạch (Bytes) | Trạng thái đồng bộ Bronze R2 |
 | :---: | :--- | :--- | :---: | :---: | :---: |
@@ -859,11 +983,17 @@ Thực nghiệm kiểm định lược đồ lớp Bạc (`SilverCompetitionReco
 
 *[Dự kiến triển khai trong Tuần 11–14 của học phần Tiểu luận chuyên ngành]*
 
+---
+
+### Kết luận Chương 4
+
+Chương 4 đã trình bày môi trường cài đặt và các kết quả thực nghiệm bước đầu của hệ thống ACDP trong giai đoạn Tiểu luận chuyên ngành. Kết quả thực thi kịch bản `src/acdp/1_crawl_to_bronze.py` trên 7 cuộc thi học thuật thực tế (Bảng 4.1) chứng minh công cụ `Crawl4AI` giúp giảm hơn 92% dung lượng nhiễu HTML (từ 975.6 KB xuống 68.5 KB văn bản Markdown `UTF-8` sạch) và đồng bộ ổn định lên tầng Bronze trên Cloudflare R2. Đồng thời, quá trình kiểm định thực thể `SilverCompetitionRecord` qua bộ kiểm thử đơn vị tự động đạt tỷ lệ hợp lệ lược đồ 100%, tạo nền tảng dữ liệu sạch cho các truy vấn phân tích OLAP bằng DuckDB và dịch vụ hỏi đáp quy chế Hybrid RAG trong các tuần tiếp theo.
+
 \newpage
 
-# PHẦN 3: KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN
+# Phần 3: KẾT LUẬN
 
-## Mục III.1. Đánh giá mức độ hoàn thành nhiệm vụ đến giai đoạn hiện tại (Tuần 9/15)
+### Đánh giá mức độ hoàn thành nhiệm vụ đến giai đoạn hiện tại (Tuần 9/15)
 
 Tính đến thời điểm báo cáo tiến độ hiện tại của học phần Tiểu luận chuyên ngành (Tuần 9, Học kỳ 1 năm học 2026–2027), nhóm nghiên cứu gồm hai sinh viên Nguyễn Văn Quang Duy và Đỗ Kiến Hưng, dưới sự hướng dẫn khoa học của ThS. Trần Quang Khải, đã hoàn thành các mục tiêu nghiên cứu và kết quả kỹ thuật cốt lõi theo đúng kế hoạch đề ra tại Bảng 0.1. Về mặt cơ sở lý thuyết, nhóm đã hệ thống hóa nền tảng khoa học từ 14 công trình quốc tế uy tín và tinh giản bộ công nghệ phù hợp sát thực tế với quy mô thực nghiệm **5–10 cuộc thi** của giai đoạn Tiểu luận chuyên ngành (loại bỏ các bước nén nhị phân trung gian như Zstandard và các dịch vụ máy chủ nặng nề không cần thiết).
 
@@ -871,16 +1001,16 @@ Về mặt triển khai kỹ thuật, nhóm đã cài đặt hoàn chỉnh kịc
 
 ---
 
-## Mục III.2. Những mặt hạn chế và thách thức kỹ thuật
+### Ưu nhược điểm và những hạn chế kỹ thuật
 
-Bên cạnh những kết quả đã đạt được, hệ thống mẫu trong giai đoạn Tiểu luận chuyên ngành được chủ động giới hạn phạm vi để ưu tiên tính khả thi, do đó còn một số điểm cần tiếp tục mở rộng:
+Bên cạnh những ưu điểm về kiến trúc lưu trữ tinh gọn, khả năng loại bỏ nhiễu HTML cao và cơ chế kiểm kiểu lược đồ chặt chẽ, hệ thống mẫu trong giai đoạn Tiểu luận chuyên ngành được chủ động giới hạn phạm vi để ưu tiên tính khả thi, do đó còn một số điểm hạn chế cần tiếp tục mở rộng:
 1. **Quy mô dữ liệu đang ở mức mô phỏng kiểm chứng (5–10 cuộc thi)**: Trong giai đoạn Tiểu luận chuyên ngành, hệ thống mới chỉ thực nghiệm trên tập nhỏ gồm 7 cuộc thi tiêu biểu được kích hoạt cào theo yêu cầu (on-demand) để kiểm tra độ chính xác của luồng dữ liệu, chưa vận hành cào tự động số lượng lớn.
 2. **Tính phụ thuộc vào mô hình ngôn ngữ lớn khi trích xuất**: Quy trình chuyển đổi văn bản Markdown sang lược đồ `SilverCompetitionRecord` phụ thuộc vào thời gian phản hồi và hạn mức của mô hình ngôn ngữ lớn.
 3. **Chưa tích hợp thông báo tự động thời gian thực**: Người dùng vẫn cần truy cập ứng dụng Web để tra cứu mà chưa có kênh nhận thông báo đẩy tự động khi có cuộc thi mới.
 
 ---
 
-## Mục III.3. Định hướng nghiên cứu và lộ trình phát triển cho Khóa luận tốt nghiệp
+### Định hướng nghiên cứu và lộ trình phát triển cho Khóa luận tốt nghiệp
 
 Từ nền tảng đường ống dữ liệu đã được kiểm chứng tính khả thi trên bộ 5–10 cuộc thi mẫu trong học phần Tiểu luận chuyên ngành, nhóm nghiên cứu xác lập lộ trình mở rộng quy mô lớn trong học phần Khóa luận tốt nghiệp (Học kỳ 2 năm học 2026–2027):
 1. **Mở rộng cào số lượng lớn và tự động hóa theo lô / thời gian thực (Batch & Real-Time Ingestion)**: Chuyển đổi từ cơ chế cào theo yêu cầu sang hệ thống thu thập tự động hoàn toàn thông qua các tiến trình lập lịch định kỳ theo mùa vụ (Batch Jobs có kiểm tra `HTTP ETag / 304 Not Modified` [6]), kết hợp Webhooks và RSS Feeds để tự động thu thập hàng trăm cuộc thi trên toàn quốc.
@@ -919,3 +1049,38 @@ Từ nền tảng đường ống dữ liệu đã được kiểm chứng tính
 [13] M. Armbrust, T. Das, L. Shen, X. Li, R. Sethi, A. Mukhi, P. Boncz, Y. Zhu, J. Chen, S. Agarwal, và M. Zaharia, "Delta Lake: High-Performance ACID Table Storage over Cloud Object Stores", *Proceedings of the VLDB Endowment (PVLDB)*, tập 13, số 12, tr. 3411–3424, 2020.
 
 [14] D. Beaver, S. Kumar, H. C. Li, J. Sobel, và P. Vajgel, "Finding a needle in Haystack: Facebook's photo storage", trong *Kỷ yếu Hội nghị USENIX OSDI '10*, tr. 47–60, 2010.
+
+\newpage
+
+# PHỤ LỤC
+
+### Phụ lục A: Tổ chức cây thư mục đĩa CD / Gói mã nguồn bàn giao (Theo Mẫu 5)
+
+Tuân thủ quy định nộp báo cáo của Khoa Công nghệ Thông tin (`Mẫu 5` [9]), toàn bộ mã nguồn, dữ liệu thử nghiệm và tài liệu của đề tài được đóng gói theo cấu trúc thư mục chuẩn như sau:
+
+| Thư mục chuẩn (`Mẫu 5`) | Ánh xạ trong kho lưu trữ dự án (`acdp-platform`) | Nội dung lưu trữ chi tiết |
+| :--- | :--- | :--- |
+| **`ACDP_PLATFORM/SETUP/`** | `pyproject.toml`, `uv.lock`, `docs/guides/HUONG_DAN_MIGRATE_R2_LAKEHOUSE.md` | Kịch bản thiết lập môi trường Python, cấu hình biến môi trường Cloudflare R2 và hướng dẫn cài đặt hệ thống kèm dữ liệu mẫu. |
+| **`ACDP_PLATFORM/SOURCE/`** | `src/acdp/`, `tests/`, `data/raw/` | Toàn bộ mã nguồn đường ống thu thập (`1_crawl_to_bronze.py`), trích xuất lược đồ (`2_instruction.py`), mô hình dữ liệu (`lakehouse/schema.py`, `bronze.py`), bộ kiểm thử đơn vị (`tests/`) và dữ liệu thử nghiệm của 7 cuộc thi mẫu (`data/raw/`). |
+| **`THESIS/DOC/`** | `docs/academic/*.md` / `.docx` | Tập tin văn bản báo cáo Tiểu luận chuyên ngành và Đề cương chi tiết định dạng `.DOCX` / `.MD`. |
+| **`THESIS/PDF/`** | `docs/academic/*.pdf` | Tập tin báo cáo Tiểu luận chuyên ngành xuất bản dưới định dạng `.PDF`. |
+| **`REF/`** | `docs/rd-tasks/` | Các bài báo khoa học quốc tế `[1]–[14]` và hồ sơ nghiên cứu đối sánh công nghệ sử dụng trong báo cáo. |
+| **`SOFT/`** | Cấu hình công cụ môi trường | Hướng dẫn cài đặt trình duyệt không đầu Playwright Chromium, Ollama và DuckDB CLI. |
+
+---
+
+### Phụ lục B: Bảng kiểm tra hình thức và bố cục báo cáo trước khi nộp (Theo Mẫu 5)
+
+| STT | Hạng mục kiểm tra theo quy định của Khoa CNTT (`Mẫu 5` [9]) | Trạng thái đối soát trong Báo cáo |
+| :---: | :--- | :---: |
+| 1 | Tên đề tài, Họ tên & MSSV của 2 sinh viên thực hiện, Tên Bộ môn trên trang bìa | Đã tuân thủ đầy đủ |
+| 2 | Trang bìa chính và Trang phụ bìa (theo đúng biểu mẫu quy định) | Đã tuân thủ đầy đủ |
+| 3 | Phiếu nhận xét của Giáo viên hướng dẫn và Giáo viên phản biện (`Mẫu 6`) | Đã tuân thủ đầy đủ |
+| 4 | Trang Lời cảm ơn | Đã tuân thủ đầy đủ |
+| 5 | Đề cương chi tiết của đề tài (`Mẫu 4`), có bảng Kế hoạch thực hiện và mục chữ ký của SV & GVHD | Đã tuân thủ đầy đủ |
+| 6 | Mục lục, Danh mục bảng biểu, Danh mục hình vẽ, Danh mục từ viết tắt (xếp A–Z) | Đã tuân thủ đầy đủ |
+| 7 | Tóm tắt báo cáo (Tiếng Việt & Tiếng Anh) đặt trước Phần 1: Mở đầu | Đã tuân thủ đầy đủ |
+| 8 | Bố cục 3 phần chính (`Phần 1: MỞ ĐẦU`, `Phần 2: NỘI DUNG`, `Phần 3: KẾT LUẬN`), đánh số chương/mục bằng chữ số Ả-rập, không dùng số La Mã, cuối mỗi chương có Kết luận chương | Đã tuân thủ đầy đủ |
+| 9 | Danh mục tài liệu tham khảo chuẩn IEEE `[1]–[14]`, mọi tài liệu đều được trích dẫn trong bài | Đã tuân thủ đầy đủ |
+| 10 | Phụ lục hướng dẫn tổ chức cây thư mục bàn giao | Đã tuân thủ đầy đủ |
+| 11 | Hình thức trình bày: Khổ A4, Times New Roman `13pt`, giãn dòng `1.5 lines`, tên bảng đặt trên bảng, tên hình đặt dưới hình | Đã tuân thủ đầy đủ |

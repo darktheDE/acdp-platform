@@ -32,9 +32,9 @@ This skill equips the AI agent to build compelling presentation decks, pitch nar
 
 1. **Self-Contained Offline Independence**: Presentation HTML files must work completely offline without relying on external CDNs for CSS/JS, ensuring failure-proof delivery in university lecture halls.
 2. **Keyboard Navigation Support**: Must include standard keyboard listeners for `ArrowRight`, `ArrowLeft`, and `Space`.
-3. **Pacing & Timing Constraint**:
-   - 10-Slide Deck $\rightarrow$ 10–12 minutes total presentation time (~60–75 seconds per slide).
-   - See pacing guidelines in [`references/committee_defense_rubric.md`](./references/committee_defense_rubric.md).
+3. **Pacing & Timing Constraint (`Mẫu 3 - Hướng Dẫn Làm Luận Văn`, Mục IV.2)**:
+   - Official FIT-HCMUTE Defense Budget: **15–20 minutes slide presentation** + **5 minutes live program demo** + **10 minutes committee Q&A**.
+   - Every presentation must directly answer the 3 core questions of `Mẫu 3`: ***"Làm gì? Làm như thế nào? Kết quả ra sao?"*** and align with the official grading rubrics (`Mẫu 1` for TLCN and `Mẫu 2` for KLTN) in [`references/committee_defense_rubric.md`](./references/committee_defense_rubric.md).
 4. **Structured Defense Q&A Formula**: Every committee answer must follow the 4-part formula:
    `[Direct Answer Claim] -> [Architecture Reference (ADR/Spec)] -> [Empirical Metric / Evidence] -> [Known Trade-off / Mitigation]`.
 
