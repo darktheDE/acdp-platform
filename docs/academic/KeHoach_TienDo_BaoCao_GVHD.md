@@ -7,12 +7,14 @@
 
 ---
 
-- **Tên đề tài**: XÂY DỰNG HỆ THỐNG THU THẬP, XỬ LÝ DỮ LIỆU VÀ NỀN TẢNG HỖ TRỢ SINH VIÊN THAM GIA CÁC CUỘC THI HỌC THUẬT, CÔNG NGHỆ
-- **Sinh viên thực hiện 1**: Nguyễn Văn Quang Duy — **MSSV 1**: 23110086
-- **Sinh viên thực hiện 2**: Đỗ Kiến Hưng — **MSSV 2**: 23133030
-- **Giáo viên hướng dẫn khoa học**: ThS. Trần Quang Khải
-- **Thời gian báo cáo**: Tuần 9 (Học kỳ 1, Năm học 2026–2027)
-- **Giai đoạn hiện tại**: Hoàn thành thu thập Tầng Bronze trên bộ 7 cuộc thi mẫu và triển khai trích xuất Tầng Bạc (Silver Layer)
+| Hạng mục thông tin | Chi tiết đăng ký |
+| :--- | :--- |
+| **Tên đề tài** | XÂY DỰNG HỆ THỐNG THU THẬP, XỬ LÝ DỮ LIỆU VÀ NỀN TẢNG HỖ TRỢ SINH VIÊN THAM GIA CÁC CUỘC THI HỌC THUẬT, CÔNG NGHỆ |
+| **Sinh viên thực hiện 1** | Nguyễn Văn Quang Duy (MSSV 1: `23110086`) |
+| **Sinh viên thực hiện 2** | Đỗ Kiến Hưng (MSSV 2: `23133030`) |
+| **Giáo viên hướng dẫn khoa học** | ThS. Trần Quang Khải |
+| **Thời gian báo cáo** | Tuần 9 (Học kỳ 1, Năm học 2026–2027) |
+| **Giai đoạn hiện tại** | Hoàn thành thu thập Tầng Bronze trên bộ 7 cuộc thi mẫu và triển khai trích xuất Tầng Bạc (Silver Layer) |
 
 ---
 

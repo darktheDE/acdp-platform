@@ -4,15 +4,15 @@
 
 ---
 
-### TÊN ĐỀ TÀI
-- **Tiếng Việt**: **Xây dựng hệ thống thu thập, xử lý dữ liệu và nền tảng hỗ trợ sinh viên tham gia các cuộc thi học thuật, công nghệ**
-- **Tiếng Anh**: **Building a Data Pipeline and Platform for Academic Competition Discovery, Knowledge Management, and Teammate Recommendation**
+### THÔNG TIN ĐỀ TÀI, TÁC GIẢ VÀ CÁN BỘ HƯỚNG DẪN
 
-### THÔNG TIN TÁC GIẢ VÀ CÁN BỘ HƯỚNG DẪN
-- **Sinh viên thực hiện**:
-  1. **Đỗ Kiến Hưng** — MSSV: `23133030` — Ngành Kỹ thuật Dữ liệu, Khoa CNTT, Trường ĐH Công nghệ Kỹ thuật TP.HCM
-  2. **Nguyễn Văn Quang Duy** — MSSV: `23110086` — Ngành Kỹ thuật Dữ liệu, Khoa CNTT, Trường ĐH Công nghệ Kỹ thuật TP.HCM
-- **Cán bộ hướng dẫn khoa học**: **ThS. Trần Quang Khải** — Bộ môn Hệ thống Thông tin, Khoa CNTT, Trường ĐH Công nghệ Kỹ thuật TP.HCM
+| Hạng mục | Nội dung chi tiết |
+| :--- | :--- |
+| **Tên đề tài (Tiếng Việt)** | **Xây dựng hệ thống thu thập, xử lý dữ liệu và nền tảng hỗ trợ sinh viên tham gia các cuộc thi học thuật, công nghệ** |
+| **Tên đề tài (Tiếng Anh)** | **Building a Data Pipeline and Platform for Academic Competition Discovery, Knowledge Management, and Teammate Recommendation** |
+| **Sinh viên thực hiện 1** | Đỗ Kiến Hưng (MSSV: `23133030`) - Ngành Kỹ thuật Dữ liệu, Khoa CNTT, Trường ĐH Công nghệ Kỹ thuật TP.HCM |
+| **Sinh viên thực hiện 2** | Nguyễn Văn Quang Duy (MSSV: `23110086`) - Ngành Kỹ thuật Dữ liệu, Khoa CNTT, Trường ĐH Công nghệ Kỹ thuật TP.HCM |
+| **Cán bộ hướng dẫn** | **ThS. Trần Quang Khải** - Bộ môn Hệ thống Thông tin, Khoa CNTT, Trường ĐH Công nghệ Kỹ thuật TP.HCM |
 
 ---
 
@@ -28,10 +28,10 @@ Tham gia các sân chơi học thuật chuyên môn và các chương trình đ�
 ## 2. ĐẶT VẤN ĐỀ VÀ TÍNH CẤP THIẾT
 Hàng năm, sinh viên ngành CNTT có nhiều cơ hội tham gia các kỳ thi chuyên môn (Olympic Tin học, ICPC, Sinh viên NCKH, Euréka, Sinh viên với An toàn thông tin, các cuộc thi Hackathon/AI Challenge) cũng như các chương trình đào tạo trọng điểm (VinUni AI, Samsung Innovation Campus, Google/NIC...). Dù vậy, tỉ lệ tham gia của sinh viên vẫn chưa tương xứng với tiềm năng vì bốn nguyên nhân cụ thể:
 
-1. **Thông tin bị phân tán**: Các thông báo về cuộc thi xuất hiện rải rác trên nhiều fanpage Facebook, website đơn vị tổ chức, cổng thông tin Đoàn - Hội và nhóm mạng xã hội. Sinh viên không thường xuyên theo dõi sẽ dễ dàng bỏ lỡ thời hạn đăng ký.
-2. **Khó tiếp cận quy chế và tài liệu ôn luyện**: Tài liệu thể lệ thường dài và phức tạp; thiếu một kho lưu trữ tập trung về đề thi các năm trước, lời giải tham khảo hay kinh nghiệm thực chiến từ các anh chị khóa trên.
-3. **Trở ngại trong việc lập đội và liên hệ giảng viên**: Nhiều sinh viên có nguyện vọng dự thi nhưng không tìm được bạn cùng nhóm có kỹ năng bù trừ (ví dụ: cần người làm Frontend kết hợp với người làm Data/AI); đồng thời sinh viên gặp rào cản khi muốn liên hệ với thầy cô có hướng nghiên cứu phù hợp để xin hướng dẫn.
-4. **Thiếu công cụ theo dõi cho Khoa**: Ban Chủ nhiệm Khoa chưa có hệ thống thống kê tự động để ghi nhận dữ liệu sinh viên tham gia, hỗ trợ quy trình khen thưởng kịp thời và đánh giá xu hướng công nghệ qua từng năm học.
+1. Thông tin bị phân tán: Các thông báo về cuộc thi xuất hiện rải rác trên nhiều fanpage Facebook, website đơn vị tổ chức, cổng thông tin Đoàn - Hội và nhóm mạng xã hội. Sinh viên không thường xuyên theo dõi sẽ dễ dàng bỏ lỡ thời hạn đăng ký.
+2. Khó tiếp cận quy chế và tài liệu ôn luyện: Tài liệu thể lệ thường dài và phức tạp; thiếu một kho lưu trữ tập trung về đề thi các năm trước, lời giải tham khảo hay kinh nghiệm thực tế từ các anh chị khóa trên.
+3. Trở ngại trong việc lập đội và liên hệ giảng viên: Nhiều sinh viên có nguyện vọng dự thi nhưng không tìm được bạn cùng nhóm có kỹ năng bù trừ (ví dụ: cần người làm Frontend kết hợp với người làm Data/AI); đồng thời sinh viên gặp rào cản khi muốn liên hệ với thầy cô có hướng nghiên cứu phù hợp để xin hướng dẫn.
+4. Thiếu công cụ theo dõi cho Khoa: Ban Chủ nhiệm Khoa chưa có hệ thống thống kê tự động để ghi nhận dữ liệu sinh viên tham gia, hỗ trợ quy trình khen thưởng kịp thời và đánh giá xu hướng công nghệ qua từng năm học.
 
 Việc ứng dụng chuyên môn Kỹ thuật Dữ liệu để xây dựng hệ thống tự động thu thập, chuẩn hóa, phân tích và cung cấp dịch vụ tra cứu thông minh là giải pháp kỹ thuật có tính ứng dụng trực tiếp và giá trị thực tiễn cao cho Khoa CNTT.
 
@@ -40,9 +40,9 @@ Việc ứng dụng chuyên môn Kỹ thuật Dữ liệu để xây dựng hệ
 ## 3. CÂU HỎI VÀ MỤC TIÊU NGHIÊN CỨU
 
 ### Câu hỏi nghiên cứu:
-- **RQ1**: Phương pháp nào giúp tự động hóa quá trình thu thập và trích xuất dữ liệu có cấu trúc (Schema JSON) từ các nguồn bài viết mạng xã hội và website động với độ chính xác cao và khả năng chịu lỗi tốt khi giao diện nguồn thay đổi?
-- **RQ2**: Cấu trúc lưu trữ Lakehouse phân tầng nào đảm bảo tối ưu cho việc truy vấn phân tích (OLAP) và trích xuất vector phục vụ tìm kiếm ngữ nghĩa?
-- **RQ3**: Thiết kế luồng RAG như thế nào để trả lời chính xác các câu hỏi về thể lệ cuộc thi dựa trên tài liệu quy chế mà không xảy ra hiện tượng sinh thông tin sai lệch (hallucination)?
+- Phương pháp nào giúp tự động hóa quá trình thu thập và trích xuất dữ liệu có cấu trúc (Schema JSON) từ các nguồn bài viết mạng xã hội và website động với độ chính xác cao và khả năng chịu lỗi tốt khi giao diện nguồn thay đổi (RQ1)?
+- Cấu trúc lưu trữ Lakehouse phân tầng nào đảm bảo tối ưu cho việc truy vấn phân tích (OLAP) và trích xuất vector phục vụ tìm kiếm ngữ nghĩa (RQ2)?
+- Thiết kế luồng RAG như thế nào để trả lời chính xác các câu hỏi về thể lệ cuộc thi dựa trên tài liệu quy chế mà không xảy ra hiện tượng sinh thông tin sai lệch (RQ3)?
 
 ### Mục tiêu cụ thể:
 1. Xây dựng Data Pipeline tự động thu thập dữ liệu từ 5 đến 10 nguồn thông tin cuộc thi trọng điểm.
@@ -53,66 +53,77 @@ Việc ứng dụng chuyên môn Kỹ thuật Dữ liệu để xây dựng hệ
 ---
 
 ## 4. TỔNG QUAN NGHIÊN CỨU VÀ ĐÓNG GÓP MỚI
-- **Nền tảng sự kiện học thuật**: Các hệ thống hiện có như Devpost, Unstop hay StudentCompetitions chủ yếu vận hành theo mô hình ban tổ chức tự đăng bài thủ công, không có cơ chế thu thập tự động từ mạng xã hội địa phương tại Việt Nam và chưa tích hợp sâu vào quy trình hỗ trợ sinh viên trong trường đại học.
-- **Trích xuất thông tin bằng LLM**: Các công trình gần đây về Web Scraping tự động (như Crawl4AI, ScrapeGraphAI) đã chỉ ra rằng việc kết hợp công cụ render trình duyệt với LLM có ràng buộc cấu trúc (Schema Enforcement) giúp giảm thiểu đáng kể chi phí bảo trì so với việc viết bộ phân tích cú pháp (parser) tĩnh truyền thống.
-- **Mô hình RAG trong tra cứu văn bản học thuật**: Ứng dụng RAG kết hợp giữa tìm kiếm từ khóa (BM25) và tìm kiếm ngữ nghĩa (Dense Vector Retrieval) đã được chứng minh đem lại độ chính xác cao đối với các văn bản quy định hành chính và học thuật.
-- **Đóng góp của đề tài**: Tích hợp một quy trình hoàn chỉnh từ thu thập dữ liệu tự động, chuẩn hóa lưu trữ, tra cứu thông minh dựa trên AI đến thuật toán ghép đội và bảng phân tích chuyên biệt cho môi trường giáo dục đại học tại Việt Nam.
+Trên cơ sở khảo sát các công trình khoa học và hệ thống thực tế, đề tài kế thừa và phát triển bốn hướng nghiên cứu chính:
+- Đối với các nền tảng sự kiện học thuật hiện có như Devpost, Unstop hay StudentCompetitions, các hệ thống này chủ yếu vận hành theo mô hình ban tổ chức tự đăng bài thủ công, không có cơ chế thu thập tự động từ mạng xã hội địa phương tại Việt Nam và chưa tích hợp sâu vào quy trình hỗ trợ sinh viên trong trường đại học.
+- Về kỹ thuật trích xuất thông tin bằng mô hình ngôn ngữ lớn, các công trình gần đây [3] đã chỉ ra rằng việc kết hợp công cụ dựng trang trình duyệt (`Crawl4AI` + `Playwright`) với mô hình ngôn ngữ lớn có ràng buộc cấu trúc (`instructor` + `Pydantic v2`) giúp giảm thiểu đáng kể chi phí bảo trì so với việc viết bộ phân tích cú pháp tĩnh truyền thống.
+- Về kiến trúc lưu trữ và tra cứu văn bản học thuật, mô hình kho dữ liệu phân tầng Medallion Lakehouse [2] kết hợp kiến trúc RAG lai ghép giữa tìm kiếm từ khóa (BM25) và tìm kiếm ngữ nghĩa (Dense Vector Retrieval) [1], [5] đem lại độ chính xác cao đối với các văn bản quy định hành chính và học thuật, đồng thời hỗ trợ bài toán gợi ý ghép đội chuyên môn [4].
+- Từ đó, đóng góp trọng tâm của đề tài là tích hợp một quy trình hoàn chỉnh tuân thủ quy định học thuật của Khoa CNTT [6], từ thu thập dữ liệu cuộc thi, chuẩn hóa lưu trữ trên Cloudflare R2 và DuckDB, tra cứu quy chế thông minh dựa trên Hybrid RAG đến định hướng ghép đội và bảng phân tích số liệu cho môi trường giáo dục đại học tại Việt Nam.
 
 ---
 
 ## 5. PHƯƠNG PHÁP NGHIÊN CỨU VÀ KIẾN TRÚC HỆ THỐNG
 
 ```
-[Nguồn: Web / Fanpage / Cổng thông tin]
-                  │ (Crawl4AI / Playwright / LLM Parser)
+[Nguồn: 5–10 Website Cuộc thi Học thuật Tiêu biểu]
+                  │ (Crawl4AI / Playwright / Instructor + Pydantic v2)
                   ▼
 ┌────────────────────────────────────────────────────────────────────────┐
-│                        DATA PIPELINE & LAKEHOUSE                       │
-│  [Bronze: Raw Payload] ──> [Silver: Cleaned Data] ──> [Gold: Data Mart] │
+│            MEDALLION LAKEHOUSE TINH GỌN (CLOUDFLARE R2 & LOCAL)        │
+│  [Bronze: UTF-8 Markdown] ──> [Silver: Parquet] ──> [Gold: DuckDB OLAP] │
 └────────────────────────────────────────────────────────────────────────┘
                   │                                        │
-                  ▼ (Vector Embedding)                     ▼ (Query API)
+                  ▼ (Clause Chunking)                      ▼ (Zero-Copy SQL)
 ┌───────────────────────────────────┐     ┌──────────────────────────────┐
 │          AI & RAG ENGINE          │     │        SERVING LAYER         │
 │  - Vector Database (Qdrant)       │     │  - Backend REST API (FastAPI)│
-│  - Hybrid Search (BM25 + Vector)  │     │  - Web Portal (Next.js)      │
-│  - Trợ lý tra cứu thể lệ          │     │  - Dashboard thống kê Khoa   │
+│  - Hybrid Search (BM25 + Vector)  │     │  - Web Portal (Next.js 15)   │
+│  - Cross-Encoder Re-ranking       │     │  - Dashboard thống kê Khoa   │
 └───────────────────────────────────┘     └──────────────────────────────┘
 ```
 
-1. **Tầng Thu thập (Ingestion Layer)**: Sử dụng Playwright (v1.48+) và Crawl4AI (v0.9+) để tải nội dung các trang web động. Áp dụng LLM với cấu hình Pydantic Schema (v2.10+) để trích xuất các trường: *tên cuộc thi, đơn vị tổ chức, thời hạn đăng ký, bảng thi, link đăng ký, tóm tắt thể lệ*.
-2. **Tầng Lưu trữ (Lakehouse Layer)**: Triển khai mô hình phân tầng Medallion sử dụng DuckDB (v1.2+)/Parquet kết hợp PostgreSQL (v17+) và dbt-core (v1.9+). Xử lý chuẩn hóa định dạng ngày tháng và thuật toán so khớp chuỗi (Fuzzy matching) để khử các bản ghi trùng lặp khi một cuộc thi được chia sẻ trên nhiều kênh.
-3. **Tầng Xử lý AI (AI & RAG Layer)**: Phân đoạn tài liệu quy chế theo cấu trúc điều khoản, sinh vector nhúng và lưu vào cơ sở dữ liệu vector Qdrant (v1.19+). Luồng RAG sử dụng kỹ thuật Hybrid Search (BM25 + Dense Vectors) và Cross-Encoder Re-ranking để tăng độ khớp của ngữ cảnh trước khi đưa vào mô hình sinh câu trả lời.
-4. **Tầng Phục vụ (Serving Layer)**: Cung cấp REST API qua FastAPI (v0.115+, Python 3.13+), giao diện người dùng xây dựng bằng Next.js (v15+) cho phép lọc tìm kiếm cuộc thi, giao tiếp với trợ lý AI và xem bảng biểu thống kê.
+1. **Tầng Thu thập (Ingestion Layer)**: Sử dụng `Playwright` và `Crawl4AI` (`AdaptiveCrawler`) để tải và làm sạch nội dung các trang web cuộc thi động sang định dạng văn bản Markdown (`UTF-8`). Áp dụng mô hình ngôn ngữ lớn kết hợp thư viện `instructor` và lược đồ `Pydantic v2` (`SilverCompetitionRecord`) [3] để trích xuất các trường định lượng cốt lõi gồm: *tên cuộc thi, đơn vị tổ chức, thời hạn đăng ký, bảng thi, đường dẫn đăng ký, cơ cấu giải thưởng và toàn văn thể lệ*.
+2. **Tầng Lưu trữ (Lean Medallion Lakehouse Layer)**: Triển khai mô hình phân tầng Medallion tinh gọn [2] phù hợp với quy mô kiểm chứng 5–10 cuộc thi của giai đoạn Tiểu luận chuyên ngành: lưu trữ trực tiếp văn bản Markdown (`UTF-8`) tại tầng Bronze trên kho đối tượng đám mây **Cloudflare R2** và ổ cứng cục bộ (lược bỏ bước nén nhị phân trung gian không cần thiết); lưu trữ thực thể đã chuẩn hóa dưới dạng tệp cột **Apache Parquet** tại tầng Silver kèm hàm băm SHA-256 `generate_fingerprint()` khử trùng lặp; và sử dụng động cơ phân tích nhúng **DuckDB** tại tầng Gold để truy vấn trực tiếp (zero-copy SQL) mà không cần vận hành máy chủ cơ sở dữ liệu cồng kềnh.
+3. **Tầng Xử lý AI (AI & RAG Layer)**: Phân đoạn tài liệu quy chế theo cấu trúc điều khoản, sinh vector nhúng và lưu vào cơ sở dữ liệu vector **Qdrant**. Luồng RAG sử dụng kỹ thuật Hybrid Search (BM25 + Dense Vectors) và mô hình `Cross-Encoder Re-ranking` [1], [5] để nâng cao độ chính xác của ngữ cảnh trước khi tổng hợp câu trả lời kèm trích dẫn nguồn.
+4. **Tầng Phục vụ (Serving Layer)**: Cung cấp REST API qua **FastAPI (Python 3.13)** kết nối trực tiếp với DuckDB và Qdrant; giao diện người dùng xây dựng bằng **Next.js 15** và **Tailwind CSS** cho phép lọc tìm kiếm cuộc thi, hỏi đáp quy chế và xem bảng biểu thống kê mùa vụ.
 
 ---
 
 ## 6. PHẠM VI VÀ KẾ HOẠCH THỰC HIỆN
 
 ### Phân định phạm vi Tiểu luận chuyên ngành và Khóa luận tốt nghiệp:
-- **Tiểu luận chuyên ngành (15 tuần)**: Tập trung vào phần lõi kỹ thuật dữ liệu (MVP): Xây dựng bộ thu thập tự động 5–10 nguồn, hoàn thiện kho dữ liệu phân tầng, xây dựng dịch vụ RAG tra cứu thể lệ cơ bản và giao diện Web MVP kèm bảng thống kê.
-- **Khóa luận tốt nghiệp (15 tuần tiếp theo)**: Mở rộng thu thập dữ liệu thời gian thực (Streaming/Webhook), hoàn thiện thuật toán gợi ý ghép đội và giảng viên hướng dẫn, xây dựng kho lưu trữ bài thi đạt giải và tự động hóa quy trình đề xuất khen thưởng cho Khoa.
+- **Tiểu luận chuyên ngành (15 tuần)**: Tập trung mô phỏng hệ thống và kiểm chứng tính khả thi kỹ thuật (Proof of Feasibility) trên tập dữ liệu chọn lọc gồm **5 đến 10 cuộc thi học thuật tiêu biểu** (7 cuộc thi thực tế được thu thập theo yêu cầu), hoàn thiện kho dữ liệu phân tầng Bronze - Silver - Gold tinh gọn trên Cloudflare R2 và DuckDB, xây dựng dịch vụ Hybrid RAG tra cứu thể lệ và giao diện Web MVP kèm bảng thống kê.
+- **Khóa luận tốt nghiệp (15 tuần tiếp theo)**: Mở rộng thu thập dữ liệu số lượng lớn tự động theo lô định kỳ (batch job) và thời gian thực (webhooks), kích hoạt các kỹ thuật tối ưu lưu trữ quy mô lớn, hoàn thiện thuật toán gợi ý ghép đội bù trừ kỹ năng [4] và kết nối giảng viên hướng dẫn, xây dựng kho lưu trữ bài giải mẫu và tự động hóa quy trình đề xuất cộng điểm rèn luyện cho Khoa.
 
 ### Lộ trình 15 tuần học phần Tiểu luận:
-- **Tuần 1 – 3**: Khảo sát nguồn dữ liệu, thiết kế Schema và đặc tả kiến trúc. Báo cáo đề cương với GVHD.
-- **Tuần 4 – 7**: Lập trình bộ thu thập đa nguồn, tích hợp trích xuất LLM và xử lý khử trùng dữ liệu.
-- **Tuần 8 – 10**: Thiết lập cơ sở dữ liệu vector, xây dựng luồng RAG tra cứu và đánh giá độ chính xác.
-- **Tuần 11 – 13**: Hoàn thiện giao diện Web người dùng, tích hợp API và xây dựng trang thống kê.
-- **Tuần 14 – 15**: Kiểm thử hệ thống, viết báo cáo toàn văn và chuẩn bị bảo vệ đề tài (~07/12/2026).
+
+| Giai đoạn | Nội dung công việc thực hiện |
+| :---: | :--- |
+| **Tuần 1 – 3** | Khảo sát nhu cầu sinh viên, nghiên cứu tài liệu khoa học, thiết kế kiến trúc 4 tầng và báo cáo đề cương với GVHD [6]. |
+| **Tuần 4 – 9** | Cài đặt đường ống thu thập `Crawl4AI` đẩy văn bản Markdown của 7 cuộc thi mẫu lên tầng Bronze Cloudflare R2 (`1_crawl_to_bronze.py`); thiết kế lược đồ `SilverCompetitionRecord` trên Pydantic v2, kiểm thử đơn vị và khởi tạo module trích xuất `instructor` (`2_instruction.py`). |
+| **Tuần 10** | Hoàn thiện trích xuất 7 cuộc thi sang tệp Parquet tầng Silver trên R2 và xây dựng bộ truy vấn phân tích OLAP tầng Gold bằng DuckDB. |
+| **Tuần 11 – 12** | Thiết lập cơ sở dữ liệu vector Qdrant, xây dựng luồng Hybrid RAG tra cứu thể lệ và đánh giá theo khung Ragas. |
+| **Tuần 13 – 15** | Xây dựng FastAPI backend, giao diện Web Portal (Next.js 15), kiểm thử tích hợp toàn hệ thống, hoàn thiện quyển báo cáo toàn văn và chuẩn bị bảo vệ đề tài (~07/12/2026). |
 
 ---
 
 ## 7. Ý NGHĨA THỰC TIỄN
-- **Đối với sinh viên**: Giúp tiếp cận cơ hội học thuật tập trung, nắm bắt thể lệ nhanh chóng và có thêm công cụ tìm kiếm đồng đội phù hợp.
-- **Đối với giảng viên**: Tạo kênh kết nối với sinh viên có cùng hướng nghiên cứu chuyên môn và quan tâm đến các cuộc thi cụ thể.
-- **Đối với Khoa CNTT**: Cung cấp dữ liệu thống kê phục vụ công tác quản lý, theo dõi phong trào học thuật và khen thưởng sinh viên.
+Hệ thống ACDP mang lại giá trị ứng dụng trực tiếp cho ba nhóm đối tượng trong môi trường đại học:
+- Đối với sinh viên: Giúp tiếp cận cơ hội học thuật tập trung, nắm bắt thể lệ nhanh chóng và có thêm công cụ tìm kiếm đồng đội phù hợp.
+- Đối với giảng viên: Tạo kênh kết nối với sinh viên có cùng hướng nghiên cứu chuyên môn và quan tâm đến các cuộc thi cụ thể.
+- Đối với Khoa CNTT: Cung cấp dữ liệu thống kê phục vụ công tác quản lý, theo dõi phong trào học thuật và khen thưởng sinh viên.
 
 ---
 
-## 8. TÀI LIỆU THAM KHẢO
-1. **Lewis, P., Perez, E., Piktus, A., Petroni, F., Karpukhin, V., Goyal, N., Küttler, H., Lewis, M., Yih, W. T., Rocktäschel, T., Riedel, S., & Kiela, D.** (2020). *Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks*. Advances in Neural Information Processing Systems (NeurIPS), 33, 9459–9474.
-2. **Armbrust, M., Ghodsi, A., Xin, R., & Zaharia, M.** (2021). *Lakehouse: A New Generation of Open Platforms that Unify Data Warehousing and Advanced Analytics*. Proceedings of the 11th Conference on Innovative Data Systems Research (CIDR 2021).
-3. **Xu, D., Chen, W., Peng, W., Zhang, C., Xu, T., Zhao, X., Chen, X., & Zheng, Y.** (2024). *Large Language Models for Information Extraction: A Survey*. arXiv preprint arXiv:2308.07107.
-4. **Lappas, T., Liu, K., & Terzi, E.** (2009). *Finding a team of experts in social networks*. In Proceedings of the 15th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining (KDD '09), pp. 467–476. DOI: 10.1145/1557019.1557074.
-5. **Gao, Y., Xiong, Y., Gao, X., Jia, K., Pan, J., Bi, Y., Dai, Y., Sun, J., & Wang, H.** (2023). *Retrieval-Augmented Generation for Large Language Models: A Survey*. arXiv preprint arXiv:2312.10997.
-6. **Khoa Công nghệ Thông tin - Trường ĐH Công nghệ Kỹ thuật TP.HCM** (2026). *Quy định thực hiện Tiểu luận chuyên ngành và Khóa luận tốt nghiệp ngành Kỹ thuật Dữ liệu*.
+# TÀI LIỆU THAM KHẢO
+
+[1] P. Lewis, E. Perez, A. Piktus, F. Petroni, V. Karpukhin, N. Goyal, H. Küttler, M. Lewis, W. T. Yih, T. Rocktäschel, S. Riedel, và D. Kiela, "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks", *Advances in Neural Information Processing Systems (NeurIPS)*, tập 33, tr. 9459–9474, 2020.
+
+[2] M. Armbrust, A. Ghodsi, R. Xin, và M. Zaharia, "Lakehouse: A New Generation of Open Platforms that Unify Data Warehousing and Advanced Analytics", trong *Kỷ yếu Hội nghị Innovative Data Systems Research (CIDR 2021)*, 2021.
+
+[3] D. Xu, W. Chen, W. Peng, C. Zhang, T. Xu, X. Zhao, X. Chen, và Y. Zheng, "Large Language Models for Information Extraction: A Survey", *arXiv preprint arXiv:2308.07107*, 2024.
+
+[4] T. Lappas, K. Liu, và E. Terzi, "Finding a team of experts in social networks", trong *Kỷ yếu Hội nghị Quốc tế ACM SIGKDD (KDD '09)*, tr. 467–476, 2009.
+
+[5] Y. Gao, Y. Xiong, X. Gao, K. Jia, J. Pan, Y. Bi, Y. Dai, J. Sun, và H. Wang, "Retrieval-Augmented Generation for Large Language Models: A Survey", *arXiv preprint arXiv:2312.10997*, 2023.
+
+[6] Khoa Công nghệ Thông tin - Trường Đại học Công nghệ Kỹ thuật TP.HCM, *Quy định thực hiện Tiểu luận chuyên ngành và Khóa luận tốt nghiệp ngành Kỹ thuật Dữ liệu*, FIT HCMUTE, 2026.
