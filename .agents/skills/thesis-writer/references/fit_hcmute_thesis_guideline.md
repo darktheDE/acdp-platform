@@ -19,10 +19,13 @@ Tài liệu này tổng hợp các quy định bắt buộc về hình thức tr
 
 ---
 
-## 2. Quy Tắc Trình Bày Hình Ảnh & Bảng Biểu
+## 2. Quy Tắc Trình Bày Hình Ảnh, Bảng Biểu & Văn Phong Học Thuật
 
-- **Đánh số thứ tự kép theo chương**: `Hình <chương>.<thứ tự>` (ví dụ: *Hình 3.1: Kiến trúc tổng thể hệ thống ACDP*).
+- **Đánh số thứ tự kép theo chương**: `Hình <chương>.<thứ tự>`, `Bảng <chương>.<thứ tự>` (ví dụ: *Hình 2.1: Kiến trúc tổng thể hệ thống ACDP*, *Bảng 4.1: Kết quả thu thập...*). Các bảng nằm ở phần Đề cương / Mở đầu trước Chương 1 đánh số `Bảng 0.1`. Tuyệt đối không đánh trùng số hiệu bảng hoặc dùng tiền tố `Bảng 1.x` trong Chương 3, Chương 4.
+- **Không trùng lặp số hiệu tiểu mục**: Nếu báo cáo chia theo cấu trúc 3 Phần (`PHẦN 1: MỞ ĐẦU`, `PHẦN 2: NỘI DUNG`, `PHẦN 3: KẾT LUẬN`), các mục trong Phần 1 và Phần 3 phải đánh số La Mã (`I.1`, `I.2` và `III.1`, `III.2`) để tránh trùng lặp với các mục thập phân (`1.1`, `1.2`, `3.1`, `3.2`) của các Chương trong Phần 2.
 - **Vị trí chú thích**:
   - Đối với **Hình (Figure)**: Chú thích đặt **ở dưới** hình.
   - Đối với **Bảng (Table)**: Chú thích đặt **ở trên** bảng.
 - **Ràng buộc dẫn nhập**: Tuyệt đối không để hình hoặc bảng "mồ côi" mà không có câu văn viện dẫn trong đoạn văn lân cận (*"như được thể hiện trong Bảng 3.2..."*).
+- **Chuẩn trích dẫn IEEE đồng nhất**: Sử dụng số thứ tự trong ngoặc vuông `[1]`, `[2]` khớp với danh mục `TÀI LIỆU THAM KHẢO` cuối bài; không trộn lẫn `[Author et al., Year]` với danh mục IEEE.
+- **Nhịp điệu câu văn tự nhiên (Sentence Burstiness)**: Tránh liệt kê quá 4 gạch đầu dòng có dạng `- **Từ khóa**: Mô tả` liên tiếp. Các danh sách thuộc tính dữ liệu (Schema) phải được trình bày dưới dạng Bảng Từ điển Dữ liệu (Data Dictionary Table) kèm đoạn văn phân tích.

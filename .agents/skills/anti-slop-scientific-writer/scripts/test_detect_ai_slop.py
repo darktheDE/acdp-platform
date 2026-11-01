@@ -78,5 +78,33 @@ class TestSlopDetector(unittest.TestCase):
         rule_ids = [v.rule_id for v in report.violations]
         self.assertIn("T04-SIGNPOSTED-CONCLUSION", rule_ids)
 
+    def test_vietnamese_hyperbole_words(self):
+        text = (
+            "Đề tài giúp sinh viên tích lũy năng lực thực chiến và giữ vai trò then chốt "
+            "trong việc tiết kiệm tài nguyên tuyệt đối."
+        )
+        report = self.detector.analyze_text(text)
+        self.assertFalse(report.is_clean)
+        rule_ids = [v.rule_id for v in report.violations]
+        self.assertIn("W-BANNED-WORD-VI", rule_ids)
+
+    def test_local_bold_bullet_cluster(self):
+        text = (
+            "Normal introductory paragraph with natural prose.\n\n"
+            "- Plain item 1\n"
+            "- Plain item 2\n"
+            "- Plain item 3\n\n"
+            "Now a monotonous AI cluster:\n"
+            "- **Field 1**: Description 1\n"
+            "- **Field 2**: Description 2\n"
+            "- **Field 3**: Description 3\n"
+            "- **Field 4**: Description 4\n"
+            "- **Field 5**: Description 5\n"
+        )
+        report = self.detector.analyze_text(text)
+        self.assertFalse(report.is_clean)
+        rule_ids = [v.rule_id for v in report.violations]
+        self.assertIn("F-LOCAL-BOLD-BULLET-CLUSTER", rule_ids)
+
 if __name__ == "__main__":
     unittest.main()
