@@ -145,7 +145,7 @@ Nhóm tác giả xin bày tỏ lòng biết ơn sâu sắc và chân thành nh�
 
 Nhóm tác giả cũng xin gửi lời cảm ơn chân thành đến gia đình, các bạn sinh viên Khoa Công nghệ Thông tin đã nhiệt tình tham gia các đợt khảo sát, đóng góp ý kiến thực tế và hỗ trợ kiểm thử hệ thống mẫu trong suốt 15 tuần nghiên cứu.
 
-Dù nhóm tác giả đã nỗ lực tối đa để nghiên cứu và cài đặt hệ thống một cách chỉn chu nhất, báo cáo chắc chắn không tránh khỏi những thiếu sót nhất định. Nhóm tác giả rất mong nhận được những nhận xét, góp ý quý báu từ quý Thầy Cô trong Hội đồng phản biện để tiếp tục hoàn thiện hệ thống trong học phần Khóa luận tốt nghiệp tiếp theo.
+Dù nhóm tác giả đã nỗ lực nghiên cứu và cài đặt hệ thống một cách chỉn chu, báo cáo không tránh khỏi những thiếu sót nhất định. Nhóm tác giả rất mong nhận được những nhận xét, góp ý quý báu từ quý Thầy Cô trong Hội đồng phản biện để tiếp tục hoàn thiện hệ thống trong học phần Khóa luận tốt nghiệp tiếp theo.
 
 *Tp. Hồ Chí Minh, tháng 12 năm 2026*  
 **Nhóm tác giả đề tài**  
@@ -168,14 +168,11 @@ Dù nhóm tác giả đã nỗ lực tối đa để nghiên cứu và cài đ�
 | **GV hướng dẫn** | ThS. Trần Quang Khải |
 
 ### Nhiệm Vụ Của Tiểu Luận :
-1. Khảo sát thực trạng tiếp cận thông tin, phân tích nhu cầu và các rào cản thực tế của sinh viên Khoa Công nghệ Thông tin - HCM-UTE khi tham gia các kỳ thi học thuật và công nghệ.
-2. Xây dựng và kiểm chứng tính khả thi của đường ống thu thập dữ liệu (Ingestion Pipeline) trên tập 5 đến 10 cuộc thi học thuật tiêu biểu bằng công nghệ tự động hóa trình duyệt Crawl4AI và Playwright (chạy theo yêu cầu trong giai đoạn Tiểu luận chuyên ngành, tạo tiền đề mở rộng thu thập tự động quy mô lớn ở giai đoạn Khóa luận tốt nghiệp).
-3. Thiết kế và triển khai kho lưu trữ phân tầng Medallion Lakehouse tinh gọn:
-   - Tầng Bronze: Lưu trữ trực tiếp văn bản Markdown/HTML nguyên bản (UTF-8) trên kho đối tượng đám mây Cloudflare R2 và ổ cứng cục bộ, tối giản hóa luồng xử lý phù hợp với quy mô 5–10 cuộc thi (không dùng nén nhị phân Zstandard trung gian).
-   - Tầng Silver: Xây dựng lược đồ dữ liệu chuẩn hóa Pydantic v2 (`SilverCompetitionRecord`) với các trường thuộc tính định lượng dễ cào và người dùng quan tâm nhất, kết hợp thư viện `instructor` và mô hình ngôn ngữ lớn để trích xuất cấu trúc văn bản sang định dạng Parquet/JSON.
-   - Tầng Gold: Thiết lập các truy vấn phân tích trực tuyến (OLAP) trực tiếp bằng động cơ DuckDB in-process phục vụ bảng điều khiển quản trị.
-4. Xây dựng dịch vụ truy vấn thông minh Hybrid RAG (kết hợp thuật toán tìm kiếm từ khóa BM25 và tìm kiếm vector ngữ nghĩa trên Qdrant cùng mô hình Cross-Encoder re-ranking), hỗ trợ tra cứu quy chế, mốc thời gian và điều kiện dự thi với độ tin cậy trích dẫn cao, hạn chế tối đa hiện tượng ảo giác.
-5. Xây dựng giao diện ứng dụng Web người dùng MVP (Next.js 15, Tailwind CSS) cho phép tìm kiếm, lọc sự kiện, hỏi đáp thể lệ và bảng điều khiển phân tích số liệu mùa vụ cho đơn vị quản lý đào tạo.
+1. Khảo sát thực trạng, nhu cầu và rào cản tham gia cuộc thi học thuật của sinh viên FIT-HCMUTE.
+2. Xây dựng đường ống thu thập web động (`Crawl4AI`, `Playwright`) kiểm thử khả thi trên 5–10 cuộc thi mẫu.
+3. Thiết lập kho dữ liệu Medallion Lakehouse tinh gọn trên Cloudflare R2 và DuckDB (Bronze UTF-8, Silver Pydantic v2/Parquet, Gold OLAP).
+4. Triển khai dịch vụ tra cứu thể lệ Hybrid RAG (BM25 + Qdrant + Cross-Encoder) đảm bảo độ tin cậy trích dẫn.
+5. Xây dựng giao diện Web MVP (Next.js 15) phục vụ sinh viên tra cứu và hỗ trợ Khoa phân tích dữ liệu phong trào.
 
 ### Đề Cương Viết Luận Văn :
 
@@ -294,7 +291,7 @@ Tham gia các sân chơi học thuật chuyên môn và các chương trình đ�
 
 Hệ thống được thiết kế dựa trên kiến trúc Kỹ thuật Dữ liệu phân tầng Medallion Lakehouse kết hợp các kỹ thuật trí tuệ nhân tạo hiện đại. Tầng thu thập dữ liệu sử dụng công nghệ tự động hóa trình duyệt Crawl4AI và Playwright để trích xuất nội dung văn bản Markdown sạch từ website các cuộc thi học thuật và đẩy lên kho lưu trữ đối tượng đám mây Cloudflare R2. Tầng xử lý áp dụng mô hình ngôn ngữ lớn kết hợp thư viện `instructor` và cơ chế ràng buộc lược đồ Pydantic Schema Enforcement nhằm chuyển đổi văn bản phi cấu trúc thành dữ liệu có cấu trúc (`SilverCompetitionRecord`) gồm hơn 10 chiều thuộc tính định lượng, sau đó lưu trữ dưới dạng tệp Parquet và truy vấn phân tích trực tiếp qua engine in-process DuckDB. Tầng phục vụ triển khai dịch vụ Hybrid RAG kết hợp thuật toán tìm kiếm từ khóa BM25 và truy vấn vector ngữ nghĩa trên Qdrant cùng mô hình Cross-Encoder re-ranking phục vụ tra cứu quy chế chính xác, đồng thời cung cấp giao diện ứng dụng Web và bảng điều khiển phân tích số liệu cho đơn vị quản lý đào tạo.
 
-Trong phạm vi 15 tuần của học phần Tiểu luận chuyên ngành, nhóm nghiên cứu tập trung mô phỏng hệ thống dữ liệu và kiểm chứng tính khả thi kỹ thuật (Proof of Feasibility) trên tập dữ liệu chọn lọc gồm 5 đến 10 cuộc thi học thuật tiêu biểu (7 cuộc thi thực tế) được thu thập theo yêu cầu (on-demand), hoàn thiện kho dữ liệu phân tầng Bronze-Silver-Gold tinh gọn trên Cloudflare R2 và DuckDB, cùng hệ thống tra cứu thể lệ hướng tới độ tin cậy ngữ cảnh cao (mục tiêu kiểm thử dự kiến với Faithfulness $> 0.90$ và Answer Relevance $> 0.85$ theo khung đo lường Ragas). Các bài toán mở rộng quy mô thu thập hàng loạt, lập lịch cào tự động và thuật toán gợi ý ghép đội học thuật được định hướng triển khai hoàn chỉnh trong học phần Khóa luận tốt nghiệp tiếp theo.
+Trong phạm vi 15 tuần của học phần Tiểu luận chuyên ngành, nhóm nghiên cứu tập trung mô phỏng hệ thống dữ liệu và kiểm chứng tính khả thi kỹ thuật (Proof of Feasibility) trên tập dữ liệu chọn lọc gồm 5 đến 10 cuộc thi học thuật tiêu biểu (7 cuộc thi thực tế) được thu thập theo yêu cầu (on-demand). Hệ thống hoàn thiện kho dữ liệu phân tầng Bronze-Silver-Gold tinh gọn trên Cloudflare R2 và DuckDB, kết hợp dịch vụ tra cứu thể lệ hướng tới độ tin cậy ngữ cảnh cao (mục tiêu kiểm thử dự kiến đạt Faithfulness $> 0.90$ và Answer Relevance $> 0.85$ theo khung đo lường Ragas). Các bài toán mở rộng quy mô thu thập hàng loạt, lập lịch cào tự động và thuật toán gợi ý ghép đội học thuật được định hướng triển khai trong học phần Khóa luận tốt nghiệp tiếp theo.
 
 **Từ khóa**: *Data Pipeline, Medallion Lakehouse, Focused Crawling, LLM Information Extraction, Retrieval-Augmented Generation (RAG), Teammate Recommendation, Higher Education Analytics.*
 
@@ -348,7 +345,7 @@ Xuất phát từ bốn vấn đề thực tiễn trên, việc nghiên cứu v�
 ### Mục đích của đề tài
 
 #### Mục tiêu tổng quát
-Xây dựng một hệ thống Kỹ thuật Dữ liệu hoàn chỉnh bao gồm đường ống thu thập dữ liệu web động, kho lưu trữ phân tầng Medallion Lakehouse tinh gọn trên đám mây, dịch vụ truy vấn ngữ nghĩa thông minh Hybrid RAG và ứng dụng web người dùng nhằm tự động hóa việc tổng hợp, chuẩn hóa thông tin cuộc thi học thuật, cung cấp dịch vụ tra cứu quy chế chính xác, định hướng kết nối lập đội và cung cấp công cụ phân tích số liệu cho Khoa Công nghệ Thông tin.
+Xây dựng một hệ thống Kỹ thuật Dữ liệu bao gồm đường ống thu thập dữ liệu web động, kho lưu trữ phân tầng Medallion Lakehouse tinh gọn trên đám mây, dịch vụ truy vấn ngữ nghĩa thông minh Hybrid RAG và ứng dụng web người dùng. Hệ thống hướng tới tự động hóa việc tổng hợp, chuẩn hóa thông tin cuộc thi học thuật, cung cấp dịch vụ tra cứu quy chế chính xác, định hướng kết nối lập đội và cung cấp công cụ phân tích số liệu cho Khoa Công nghệ Thông tin.
 
 #### Mục tiêu cụ thể
 Để đạt được mục tiêu tổng quát, đề tài xác lập 5 mục tiêu kỹ thuật cụ thể tương ứng với lộ trình nghiên cứu từ Tiểu luận chuyên ngành đến Khóa luận tốt nghiệp:
@@ -629,7 +626,7 @@ Tầng xử lý ngữ nghĩa được thiết kế để vận hành song song v
 
 ### 2.5. Thiết kế tầng Phục vụ và Bảng điều khiển phân tích số liệu (Serving & BI Dashboard) [Đề cương thiết kế - Đang triển khai]
 
-Tầng phục vụ đóng vai trò là giao diện tương tác trực tiếp với người dùng cuối thông qua kiến trúc tách biệt Backend API và Frontend Portal. Ở tầng dịch vụ Backend, hệ thống FastAPI được thiết kế với 4 nhóm đường dẫn REST API chính: `/api/v1/competitions` phục vụ tra cứu danh sách cuộc thi kèm bộ lọc đa chiều (lĩnh vực, thời hạn, quy mô đội); `/api/v1/competitions/{id}` trả về toàn văn chi tiết thể lệ, cơ cấu giải thưởng và các mốc thời gian của từng cuộc thi; `/api/v1/rag/query` tiếp nhận câu hỏi ngôn ngữ tự nhiên về quy chế thi đấu và trả về câu trả lời có gắn trích dẫn điều khoản gốc; và `/api/v1/analytics/seasonality` xuất dữ liệu tổng hợp từ DuckDB phục vụ hiển thị biểu đồ thống kê.
+Tầng phục vụ đóng vai trò là giao diện tương tác trực tiếp với người dùng cuối thông qua kiến trúc tách biệt Backend API và Frontend Portal. Ở tầng dịch vụ Backend, hệ thống FastAPI được thiết kế với 4 nhóm đường dẫn REST API chính. Cụ thể, đường dẫn `/api/v1/competitions` phục vụ tra cứu danh sách cuộc thi kèm bộ lọc đa chiều (lĩnh vực, thời hạn, quy mô đội), trong khi `/api/v1/competitions/{id}` trả về toàn văn chi tiết thể lệ, cơ cấu giải thưởng và các mốc thời gian của từng cuộc thi. Song song đó, đường dẫn `/api/v1/rag/query` tiếp nhận câu hỏi ngôn ngữ tự nhiên về quy chế thi đấu để trả về câu trả lời có gắn trích dẫn điều khoản gốc, và `/api/v1/analytics/seasonality` xuất dữ liệu tổng hợp từ DuckDB phục vụ hiển thị biểu đồ thống kê.
 
 Ở phía giao diện hiển thị, ứng dụng Web Portal dành cho sinh viên (xây dựng trên Next.js 15) hỗ trợ người học tìm kiếm nhanh các giải đấu đang mở cổng đăng ký và tương tác trực tiếp với trợ lý hỏi đáp quy chế. Song song đó, màn hình Bảng điều khiển phân tích số liệu (Faculty Analytics Dashboard) dành cho Ban Chủ nhiệm Khoa CNTT hiển thị trực quan bản đồ nhiệt mùa vụ thi đấu trong năm học, biểu đồ phân bổ tổng giá trị giải thưởng theo từng mảng chuyên môn và tỷ lệ các cuộc thi yêu cầu kỹ năng phối hợp làm việc nhóm.
 
@@ -680,7 +677,7 @@ Ma trận phân tích 11 trường thông tin cốt lõi tại Lớp Bạc đư�
 
 ### 3.2. Đặc tả Lược đồ dữ liệu lớp Bạc (Silver Schema Specification)
 
-Lược đồ dữ liệu lớp Bạc (`SilverCompetitionRecord`) được nhóm nghiên cứu tổ chức thành 8 nhóm chiều thuộc tính nghiệp vụ nhằm đáp ứng đồng thời hai mục tiêu: cung cấp dữ liệu định lượng có kiểm kiểu chặt chẽ cho động cơ phân tích OLAP DuckDB (các nhóm Định danh, Đơn vị tổ chức, Thời gian mùa vụ, Lĩnh vực kỹ năng, Điều kiện dự thi và Tài chính giải thưởng) và cung cấp văn bản quy chế đã làm sạch cho dịch vụ truy vấn ngữ nghĩa Hybrid RAG (nhóm Tri thức quy chế và Giám sát khử trùng lặp).
+Lược đồ dữ liệu lớp Bạc (`SilverCompetitionRecord`) được nhóm nghiên cứu tổ chức thành 8 nhóm chiều thuộc tính nghiệp vụ nhằm đáp ứng hai mục tiêu kỹ thuật. Thứ nhất, lược đồ cung cấp dữ liệu định lượng có kiểm kiểu chặt chẽ cho động cơ phân tích OLAP DuckDB (các nhóm Định danh, Đơn vị tổ chức, Thời gian mùa vụ, Lĩnh vực kỹ năng, Điều kiện dự thi và Tài chính giải thưởng). Thứ hai, lược đồ lưu trữ văn bản quy chế đã làm sạch cho dịch vụ truy vấn ngữ nghĩa Hybrid RAG (nhóm Tri thức quy chế và Giám sát khử trùng lặp).
 
 Thay vì lưu trữ dưới dạng chuỗi văn bản tự do dễ phát sinh lỗi khi tổng hợp, mọi thuộc tính thời gian đều được ép kiểu về chuẩn `ISO 8601 (YYYY-MM-DD)`, mọi thuộc tính tiền tệ đều được quy đổi về đơn vị đồng Việt Nam kiểu số nguyên không âm (`BIGINT >= 0`), và cơ cấu giải thưởng được tách thành danh sách cấu trúc con `PrizeItem` (`rank_name`, `amount_vnd`, `quantity`, `description`). Chi tiết từ điển dữ liệu (Data Dictionary) của toàn bộ 35 trường thuộc tính thuộc 8 nhóm trong thực thể `SilverCompetitionRecord` được định nghĩa đầy đủ tại Bảng 3.2:
 
@@ -936,7 +933,7 @@ Chương 3 đã giải quyết bài toán cốt lõi của chuyên ngành Kỹ t
 
 Toàn bộ hệ thống ACDP trong giai đoạn Tiểu luận chuyên ngành được cài đặt và kiểm thử với cấu hình tinh gọn, tối ưu cho quy mô dữ liệu thực nghiệm gồm 5 đến 10 cuộc thi học thuật trên máy trạm cá nhân của sinh viên (CPU 8 lõi Intel Core i7-13700H, 16GB RAM, 512GB NVMe SSD). Môi trường phát triển phần mềm được chuẩn hóa trên nền Python 3.11+ / 3.13+ và quản lý gói phụ thuộc tất định qua công cụ `uv` (`pyproject.toml` và `uv.lock`).
 
-Ở tầng thu thập dữ liệu, kịch bản `src/acdp/1_crawl_to_bronze.py` vận hành `Crawl4AI` (`AsyncWebCrawler` và `AdaptiveCrawler`) trên nền `Playwright` kết hợp mô hình nhúng cục bộ qua `Ollama`. Dữ liệu sau khi thu thập được đẩy trực tiếp lên kho lưu trữ đối tượng đám mây **Cloudflare R2** (Bucket `acdp-lakehouse`) thông qua thư viện `boto3` và `deltalake` dưới định dạng văn bản Markdown `UTF-8` nguyên bản, loại bỏ các tiến trình nén nhị phân trung gian (`zstandard`) và các dịch vụ máy chủ lưu trữ nặng nề. Tiếp đó, tại tầng xử lý và phân tích, kịch bản `src/acdp/2_instruction.py` kết hợp thư viện `instructor`, `litellm` và `Pydantic v2` (`SilverCompetitionRecord`) để chuyển đổi văn bản sang tệp cột Parquet, cho phép động cơ **DuckDB** chạy nhúng in-process truy vấn trực tiếp từ ổ cứng cục bộ và Cloudflare R2.
+Ở tầng thu thập dữ liệu, kịch bản `src/acdp/1_crawl_to_bronze.py` vận hành `Crawl4AI` (`AsyncWebCrawler` và `AdaptiveCrawler`) trên nền `Playwright` kết hợp mô hình nhúng cục bộ qua `Ollama`. Dữ liệu sau khi thu thập được đẩy trực tiếp lên kho lưu trữ đối tượng đám mây **Cloudflare R2** (Bucket `acdp-lakehouse`) thông qua thư viện `boto3` và `deltalake` dưới định dạng văn bản Markdown `UTF-8` nguyên bản, loại bỏ các tiến trình nén nhị phân trung gian (`zstandard`) và các dịch vụ máy chủ lưu trữ độc lập. Tiếp đó, tại tầng xử lý và phân tích, kịch bản `src/acdp/2_instruction.py` kết hợp thư viện `instructor`, `litellm` và `Pydantic v2` (`SilverCompetitionRecord`) để chuyển đổi văn bản sang tệp cột Parquet, cho phép động cơ **DuckDB** chạy nhúng in-process truy vấn trực tiếp từ ổ cứng cục bộ và Cloudflare R2.
 
 ---
 
@@ -961,7 +958,7 @@ Thống kê chi tiết dung lượng dữ liệu HTML gốc và văn bản Markd
 
 Kết quả thực nghiệm từ Bảng 4.1 cho thấy:
 1. **Hiệu quả làm sạch nhiễu giao diện của `Crawl4AI`**: Việc chuyển đổi trực tiếp từ mã nguồn HTML thô (975.6 KB) sang văn bản Markdown sạch (68.5 KB) giúp loại bỏ hơn **92%** các thẻ định dạng dư thừa (`<script>`, `<style>`, thanh điều hướng), giúp tiết kiệm trực tiếp chi phí token khi đưa vào mô hình ngôn ngữ lớn ở tầng Silver.
-2. **Tính hợp lý của kiến trúc lưu trữ tối giản**: Với tổng dung lượng 7 bài đăng cuộc thi chỉ khoảng **68.5 KB** văn bản Markdown (và dưới 1 MB đối với HTML gốc), việc lưu trữ trực tiếp chuỗi văn bản `UTF-8` nguyên bản trên Cloudflare R2 và bảng Bronze giúp nhóm tác giả dễ dàng kiểm tra nội dung trực quan, truy vấn tức thời bằng câu lệnh SQL trên DuckDB mà hoàn toàn không cần đến bước nén nhị phân `zstandard` trung gian.
+2. **Tính hợp lý của kiến trúc lưu trữ tối giản**: Với tổng dung lượng 7 bài đăng cuộc thi chỉ khoảng **68.5 KB** văn bản Markdown (và dưới 1 MB đối với HTML gốc), việc lưu trữ trực tiếp chuỗi văn bản `UTF-8` nguyên bản trên Cloudflare R2 và bảng Bronze giúp nhóm tác giả dễ dàng kiểm tra nội dung trực quan. Động cơ DuckDB có thể truy vấn tức thời cột `raw_content` bằng câu lệnh SQL mà không cần bước nén nhị phân `zstandard` trung gian.
 
 Toàn bộ 5 bài kiểm thử đơn vị của tầng Bronze (`tests/test_bronze_storage.py`) đều vượt qua 100% các tiêu chuẩn kiểm định về bảo toàn nội dung chuỗi tiếng Việt (`UTF-8`), tính chính xác của mã băm SHA-256 (`content_hash`) và khả năng ghi nối tiếp dữ liệu để truy vấn trực tiếp cột `raw_content` qua DuckDB.
 
@@ -995,7 +992,7 @@ Chương 4 đã trình bày môi trường cài đặt và các kết quả th�
 
 ### Đánh giá mức độ hoàn thành nhiệm vụ đến giai đoạn hiện tại (Tuần 9/15)
 
-Tính đến thời điểm báo cáo tiến độ hiện tại của học phần Tiểu luận chuyên ngành (Tuần 9, Học kỳ 1 năm học 2026–2027), nhóm nghiên cứu gồm hai sinh viên Nguyễn Văn Quang Duy và Đỗ Kiến Hưng, dưới sự hướng dẫn khoa học của ThS. Trần Quang Khải, đã hoàn thành các mục tiêu nghiên cứu và kết quả kỹ thuật cốt lõi theo đúng kế hoạch đề ra tại Bảng 0.1. Về mặt cơ sở lý thuyết, nhóm đã hệ thống hóa nền tảng khoa học từ 14 công trình quốc tế uy tín và tinh giản bộ công nghệ phù hợp sát thực tế với quy mô thực nghiệm **5–10 cuộc thi** của giai đoạn Tiểu luận chuyên ngành (loại bỏ các bước nén nhị phân trung gian như Zstandard và các dịch vụ máy chủ nặng nề không cần thiết).
+Tính đến thời điểm báo cáo tiến độ hiện tại của học phần Tiểu luận chuyên ngành (Tuần 9, Học kỳ 1 năm học 2026–2027), nhóm nghiên cứu gồm hai sinh viên Nguyễn Văn Quang Duy và Đỗ Kiến Hưng, dưới sự hướng dẫn khoa học của ThS. Trần Quang Khải, đã hoàn thành các mục tiêu nghiên cứu và kết quả kỹ thuật cốt lõi theo đúng kế hoạch đề ra tại Bảng 0.1. Về mặt cơ sở lý thuyết, nhóm đã hệ thống hóa nền tảng khoa học từ 14 công trình quốc tế uy tín và tinh giản bộ công nghệ phù hợp sát thực tế với quy mô thực nghiệm **5–10 cuộc thi** của giai đoạn Tiểu luận chuyên ngành (loại bỏ các bước nén nhị phân trung gian như Zstandard và các dịch vụ máy chủ cơ sở dữ liệu độc lập không cần thiết).
 
 Về mặt triển khai kỹ thuật, nhóm đã cài đặt hoàn chỉnh kịch bản `src/acdp/1_crawl_to_bronze.py` sử dụng `Crawl4AI AdaptiveCrawler` để thu thập và làm sạch văn bản Markdown (`UTF-8`) của 7 cuộc thi thực tế (giảm hơn 92% nhiễu giao diện HTML), đồng bộ trực tiếp lên kho lưu trữ đối tượng đám mây **Cloudflare R2** (`acdp-lakehouse`) và ổ cứng cục bộ. Tại tầng Silver, nhóm đã xây dựng lược đồ `SilverCompetitionRecord` trên Pydantic v2 (`src/acdp/lakehouse/schema.py`) với 8 nhóm thuộc tính định lượng (Bảng 3.2), tích hợp hàm sinh mã băm `generate_fingerprint()`, khởi tạo module trích xuất cấu trúc bằng thư viện `instructor` (`src/acdp/2_instruction.py`) và vượt qua 100% cả 7 bài kiểm thử đơn vị tự động (`tests/test_bronze_storage.py` và `tests/test_silver_schema.py`). Trong tuần tiếp theo (Tuần 10), nhóm tập trung hoàn thiện kịch bản xuất toàn bộ 7 thực thể cuộc thi sang tệp Parquet tầng Silver trên Cloudflare R2 và xây dựng bộ truy vấn phân tích OLAP tầng Gold bằng DuckDB.
 
