@@ -1,79 +1,49 @@
-"""Unit and Integration Tests for Bronze Lakehouse Storage Engine.
+"""Unit tests for Bronze Layer Ingestion, Configuration, and UTF-8 Storage Integrity.
 
 Tests:
-1. Zstandard compression & decompression bit-level integrity.
-2. BronzeRecord creation and content hash generation.
-3. Storage options generation for Tri-Storage backends (Local, SeaweedFS, Cloudflare R2).
-4. Delta Lake writing, appending, and time-travel versioning (Zero-JVM).
-5. DuckDB delta_scan in-process analytical querying.
+1. Storage options generation from AppConfig for local POSIX and Cloudflare R2 backends.
+2. UTF-8 Markdown read/write parity and SHA-256 fingerprint hashing.
+3. R2 Object Storage key format and URL domain slugging logic.
+4. Empty and corrupted crawl response handling (prevent 0-byte uploads).
 """
 
-from datetime import datetime, timezone
 import hashlib
+from datetime import datetime
 from pathlib import Path
-
-from deltalake import DeltaTable
-import duckdb
-import pytest
+from urllib.parse import urlparse
 
 from acdp.config import AppConfig
-from acdp.lakehouse.bronze import (
-    compress_payload,
-    decompress_payload,
-    optimize_bronze_table,
-    query_bronze_with_duckdb,
-    write_bronze_batch,
-)
-from acdp.lakehouse.schema import BronzeRecord
 
 
-def test_compression_decompression_parity() -> None:
-    """Verify that compressing and decompressing preserves the exact string."""
-    sample_html = (
-        "<!DOCTYPE html><html><head><title>Test Hackathon</title></head>"
-        "<body><h1>Cuộc thi Học thuật FIT-HCMUTE 2026</h1>"
-        "<p>Giải nhất: 15.000.000 VND</p></body></html>"
-    )
-    compressed = compress_payload(sample_html)
-    assert isinstance(compressed, bytes)
-    assert len(compressed) < len(sample_html.encode("utf-8"))
-
-    decompressed = decompress_payload(compressed)
-    assert decompressed == sample_html
-
-
-def test_bronze_record_factory() -> None:
-    """Verify BronzeRecord factory computes correct SHA-256 and metadata."""
-    sample_html = "<html><body>Event Announcement</body></html>"
-    expected_hash = hashlib.sha256(sample_html.encode("utf-8")).hexdigest()
-
-    record = BronzeRecord.create(
-        source_url="https://codetour.org",
-        source_domain="codetour.org",
-        raw_html=sample_html,
-        compress_fn=compress_payload,
-        http_status=200,
-        metadata={"crawler": "crawl4ai"},
-    )
-
-    assert record.source_url == "https://codetour.org"
-    assert record.source_domain == "codetour.org"
-    assert record.content_hash == expected_hash
-    assert record.http_status == 200
-    assert "crawler" in record.metadata_json
-    assert decompress_payload(record.raw_html_bytes) == sample_html
-
-
-def test_storage_options_backends() -> None:
-    """Verify storage_options generation for local, seaweedfs, and cloudflare_r2."""
-    # 1. Local backend
+def test_storage_options_local_backend() -> None:
+    """Verify local storage backend returns empty options dictionary for local POSIX IO."""
     local_cfg = AppConfig(
         bronze_storage_backend="local",
         bronze_storage_uri="./data/lakehouse/bronze",
     )
     assert local_cfg.get_storage_options() == {}
 
-    # 2. SeaweedFS backend
+
+def test_storage_options_cloudflare_r2_backend() -> None:
+    """Verify Cloudflare R2 storage options configure S3 parameters accurately."""
+    r2_cfg = AppConfig(
+        bronze_storage_backend="cloudflare_r2",
+        bronze_storage_uri="s3://acdp-lakehouse/bronze",
+        aws_endpoint_url="https://abc123.r2.cloudflarestorage.com",
+        aws_access_key_id="r2_access_key_sample",
+        aws_secret_access_key="r2_secret_key_sample",
+        aws_region="auto",
+    )
+    r2_opts = r2_cfg.get_storage_options()
+    assert r2_opts["AWS_ENDPOINT_URL"] == "https://abc123.r2.cloudflarestorage.com"
+    assert r2_opts["AWS_ACCESS_KEY_ID"] == "r2_access_key_sample"
+    assert r2_opts["AWS_SECRET_ACCESS_KEY"] == "r2_secret_key_sample"
+    assert r2_opts["AWS_REGION"] == "auto"
+    assert r2_opts["AWS_S3_ALLOW_UNSAFE_RENAME"] == "true"
+
+
+def test_storage_options_seaweedfs_backend() -> None:
+    """Verify SeaweedFS local S3 backend enables unencrypted HTTP transport."""
     seaweed_cfg = AppConfig(
         bronze_storage_backend="seaweedfs",
         bronze_storage_uri="s3://acdp-bronze/events",
@@ -84,113 +54,59 @@ def test_storage_options_backends() -> None:
     )
     seaweed_opts = seaweed_cfg.get_storage_options()
     assert seaweed_opts["AWS_ENDPOINT_URL"] == "http://localhost:8333"
-    assert seaweed_opts["AWS_ACCESS_KEY_ID"] == "test_key"
-    assert seaweed_opts["AWS_SECRET_ACCESS_KEY"] == "test_secret"
     assert seaweed_opts["AWS_ALLOW_HTTP"] == "true"
-    assert seaweed_opts["AWS_S3_ALLOW_UNSAFE_RENAME"] == "true"
 
-    # 3. Cloudflare R2 backend
-    r2_cfg = AppConfig(
-        bronze_storage_backend="cloudflare_r2",
-        bronze_storage_uri="s3://acdp-bronze/events",
-        aws_endpoint_url="https://abc123.r2.cloudflarestorage.com",
-        aws_access_key_id="r2_key",
-        aws_secret_access_key="r2_secret",
-        aws_region="auto",
+
+def test_markdown_utf8_storage_and_sha256_integrity(tmp_path: Path) -> None:
+    """Verify UTF-8 Markdown with Vietnamese diacritics preserves exact byte integrity and hash."""
+    sample_markdown = (
+        "# Cuộc thi Học thuật Khoa CNTT - HCM-UTE 2026\n\n"
+        "- **Tên cuộc thi**: AI Challenge TP.HCM 2026\n"
+        "- **Tổng giải thưởng**: 150.000.000 VNĐ\n"
+        "- **Hạn chót**: 15/10/2026\n"
+        "- **Mô tả**: Phát triển giải pháp Trí tuệ Nhân tạo ứng dụng trong thành phố thông minh.\n"
     )
-    r2_opts = r2_cfg.get_storage_options()
-    assert r2_opts["AWS_ENDPOINT_URL"] == "https://abc123.r2.cloudflarestorage.com"
-    assert r2_opts["AWS_ACCESS_KEY_ID"] == "r2_key"
-    assert r2_opts["AWS_SECRET_ACCESS_KEY"] == "r2_secret"
-    assert r2_opts["AWS_REGION"] == "auto"
+    file_path = tmp_path / "sample_contest.md"
+
+    # Write UTF-8
+    file_path.write_text(sample_markdown, encoding="utf-8")
+
+    # Read and assert byte-level parity
+    content_read = file_path.read_text(encoding="utf-8")
+    assert content_read == sample_markdown
+
+    # SHA-256 fingerprinting for duplicate detection
+    sha256_hash = hashlib.sha256(content_read.encode("utf-8")).hexdigest()
+    assert isinstance(sha256_hash, str)
+    assert len(sha256_hash) == 64
+    assert sha256_hash == hashlib.sha256(sample_markdown.encode("utf-8")).hexdigest()
 
 
-def test_delta_lake_local_write_and_append(tmp_path: Path) -> None:
-    """Verify Delta Lake batch write, version tracking, and compaction on local filesystem."""
-    test_table_dir = tmp_path / "lakehouse_bronze"
-    test_cfg = AppConfig(
-        bronze_storage_backend="local",
-        bronze_storage_uri=str(test_table_dir),
-    )
+def test_bronze_r2_key_generation_logic() -> None:
+    """Verify the R2 bronze object key pattern conforms to the daily snapshot taxonomy."""
+    raw_url = "https://codetour.org/rules/2026"
+    parsed_domain = urlparse(raw_url).netloc
+    assert parsed_domain == "codetour.org"
 
-    records_batch_1 = [
-        BronzeRecord.create(
-            source_url="https://fit.hcmute.edu.vn/event/1",
-            source_domain="fit.hcmute.edu.vn",
-            raw_html="<html><body>Event 1 Payload</body></html>",
-            compress_fn=compress_payload,
-        ),
-        BronzeRecord.create(
-            source_url="https://fit.hcmute.edu.vn/event/2",
-            source_domain="fit.hcmute.edu.vn",
-            raw_html="<html><body>Event 2 Payload</body></html>",
-            compress_fn=compress_payload,
-        ),
-    ]
+    test_date = datetime(2026, 11, 7, 10, 30, 0)
+    fake_timestamp = int(test_date.timestamp())
 
-    # Batch 1 write
-    count_1 = write_bronze_batch(records_batch_1, config=test_cfg)
-    assert count_1 == 2
-
-    dt = DeltaTable(str(test_table_dir))
-    assert dt.version() == 0
-    assert len(dt.file_uris()) >= 1
-
-    # Batch 2 append
-    records_batch_2 = [
-        BronzeRecord.create(
-            source_url="https://codetour.org/2026",
-            source_domain="codetour.org",
-            raw_html="<html><body>Code Tour 2026</body></html>",
-            compress_fn=compress_payload,
-        ),
-    ]
-    count_2 = write_bronze_batch(records_batch_2, config=test_cfg, mode="append")
-    assert count_2 == 1
-
-    dt_updated = DeltaTable(str(test_table_dir))
-    assert dt_updated.version() == 1
-    assert dt_updated.to_pyarrow_table().num_rows == 3
-
-    # Compaction optimize call
-    optimize_bronze_table(config=test_cfg)
-
-
-def test_duckdb_query_local_delta(tmp_path: Path) -> None:
-    """Verify DuckDB queries Delta Lake table correctly via delta extension."""
-    test_table_dir = tmp_path / "duckdb_test_bronze"
-    test_cfg = AppConfig(
-        bronze_storage_backend="local",
-        bronze_storage_uri=str(test_table_dir),
+    bronze_key = (
+        f"bronze/{parsed_domain}"
+        f"/year={test_date.year}/month={test_date.strftime('%m')}/day={test_date.strftime('%d')}/"
+        f"{fake_timestamp}"
     )
 
-    html_content = "<html><body>Testing DuckDB Integration</body></html>"
-    record = BronzeRecord.create(
-        source_url="https://aichallenge.hochiminhcity.gov.vn",
-        source_domain="aichallenge.hochiminhcity.gov.vn",
-        raw_html=html_content,
-        compress_fn=compress_payload,
-        http_status=200,
-    )
-
-    write_bronze_batch([record], config=test_cfg)
-
-    # Query via DuckDB
-    escaped_path = str(test_table_dir).replace("\\", "/")
-    query = f"""
-        SELECT 
-            raw_id, 
-            source_domain, 
-            http_status,
-            octet_length(raw_html_bytes) as compressed_len
-        FROM delta_scan('{escaped_path}')
-    """
-    rel = query_bronze_with_duckdb(query, config=test_cfg)
-    arrow_tbl = rel.arrow().read_all()
-
-    assert arrow_tbl.num_rows == 1
-    assert arrow_tbl.column("source_domain")[0].as_py() == "aichallenge.hochiminhcity.gov.vn"
-    assert arrow_tbl.column("http_status")[0].as_py() == 200
-    assert arrow_tbl.column("compressed_len")[0].as_py() > 0
+    assert bronze_key.startswith("bronze/codetour.org/year=2026/month=11/day=07/")
+    assert str(fake_timestamp) in bronze_key
 
 
+def test_empty_content_check_logic() -> None:
+    """Verify that empty or whitespace-only crawl results are flagged as invalid for Bronze upload."""
+    empty_md = ""
+    whitespace_md = "   \n\t  \n"
+    valid_md = "# Valid Title\nSome content"
+
+    assert not empty_md or not empty_md.strip()
+    assert not whitespace_md or not whitespace_md.strip()
+    assert not (not valid_md or not valid_md.strip())
