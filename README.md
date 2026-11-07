@@ -1,25 +1,12 @@
 # ACDP: Academic Competition Discovery Platform
-> **Building a Lean Data Lakehouse and RAG Platform for Academic Competition Discovery and Knowledge Management**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Python: 3.11+](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
-[![uv](https://img.shields.io/badge/uv-Package%20Manager-DE5FE9?logo=uv&logoColor=white)](https://docs.astral.sh/uv/)
-[![Phase](https://img.shields.io/badge/Phase%201-TLCN%20Lean%20MVP-success.svg)](docs/tasks/roadmap.md)
-[![Tests](https://img.shields.io/badge/Pytest-14%2F14%20Passed-brightgreen.svg)](tests/)
-
-An end-to-end data engineering platform developed at **Trường Đại học Công nghệ Kỹ thuật TP.HCM (HCM-UTE)** that automates competition discovery, provides a RAG-powered regulation query copilot, and delivers analytical OLAP marts.
+An end-to-end data engineering platform that automates competition discovery, provides a RAG-powered regulation query copilot, and delivers analytical OLAP marts.
 
 ---
 
 ## 1. Overview & Problem Statement
 
-Academic hackathons, coding contests, and research challenges are crucial for student development. However, notices and rulebooks are fragmented across dynamic websites and social media, leading to missed deadlines and information asymmetry. 
-
-**ACDP** addresses this challenge with a two-phase academic roadmap:
-- **Phase 1 — Special Topic Project (Tiểu luận chuyên ngành - TLCN)**: Simulates the platform end-to-end and validates technical feasibility over **5–10 representative competitions** using a minimalist, zero-overhead stack ([DIR-015](docs/frameworks/TEAM_DIRECTIVES.md)).
-- **Phase 2 — Graduation Thesis (Khóa luận tốt nghiệp - KLTN)**: Scales to automated nationwide multi-source crawling, fuzzy entity deduplication, and production teammate recommendation.
-
-*For formal academic proposals and literature reviews, see [`docs/academic/Proposal_NCKH_TLCN.md`](docs/academic/Proposal_NCKH_TLCN.md).*
+Academic hackathons, coding contests, and research challenges are crucial for student development. However, notices and rulebooks are fragmented across dynamic websites and social media, leading to missed deadlines and information asymmetry.
 
 ---
 
@@ -96,16 +83,7 @@ uv run python src/acdp/3_chatbot_mvp.py --chat
 
 ---
 
-## 6. Academic Documentation Hub
-
-- **Báo cáo Tiến độ GVHD**: [`docs/academic/KeHoach_TienDo_BaoCao_GVHD.md`](docs/academic/KeHoach_TienDo_BaoCao_GVHD.md)
-- **Bản thảo Báo cáo TLCN**: [`docs/academic/BaoCao_TieuLuan_ChuyenNganh_KTDL.md`](docs/academic/BaoCao_TieuLuan_ChuyenNganh_KTDL.md)
-- **Đặc tả Kiến trúc (SPEC-0001 & SPEC-0002)**: [`docs/specs/`](docs/specs/)
-- **Kế hoạch 15 Tuần & Active Sprint**: [`docs/tasks/roadmap.md`](docs/tasks/roadmap.md) • [`docs/tasks/active-sprint.md`](docs/tasks/active-sprint.md)
-
----
-
-## 7. Contributors & Scientific Advisor
+## 6. Contributors & Scientific Advisor
 
 ### Core Authors
 - **Đỗ Kiến Hưng** (MSSV: `23133030`) — Data Engineering, FIT, HCM-UTE — [@darktheDE](https://github.com/darktheDE)
@@ -116,6 +94,6 @@ uv run python src/acdp/3_chatbot_mvp.py --chat
 
 ---
 
-## 8. License
+## 7. License
 
 This repository is licensed under the [MIT License](LICENSE).
