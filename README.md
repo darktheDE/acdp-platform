@@ -1,183 +1,143 @@
 # ACDP: Academic Competition Discovery Platform
-> **Building a Data Pipeline and Platform for Academic Competition Discovery, Knowledge Management, and Teammate Recommendation**
+> **Building a Lean Data Lakehouse and RAG Platform for Academic Competition Discovery and Knowledge Management**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Python](https://img.shields.io/badge/Python-3.13+-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![Python: 3.11+](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![uv](https://img.shields.io/badge/uv-Package%20Manager-DE5FE9?logo=uv&logoColor=white)](https://docs.astral.sh/uv/)
-[![Phase](https://img.shields.io/badge/Phase%201-TLCN%20Lean%20MVP%20(5--10%20Contests)-success.svg)](docs/tasks/roadmap.md)
+[![Phase](https://img.shields.io/badge/Phase%201-TLCN%20Lean%20MVP-success.svg)](docs/tasks/roadmap.md)
+[![Tests](https://img.shields.io/badge/Pytest-14%2F14%20Passed-brightgreen.svg)](tests/)
 
-An end-to-end data platform developed at **Ho Chi Minh City University of Technology and Engineering (HCM-UTE)** that automates academic competition ingestion, provides RAG-powered regulation query assistants, enables intelligent teammate matchmaking, and delivers faculty-level analytical dashboards.
-
----
-
-[Overview](#overview) • [Key Features](#key-features) • [Architecture](#system-architecture) • [Data Storage](data/README.md) • [Tech Stack](#technology-governance--lean-mvp-architecture) • [Documentation](docs/README.md) • [User & AI Guide](docs/HOW_TO_USE.md) • [Getting Started](#getting-started) • [Contributors & Advisor](#contributors--advisor)
+An end-to-end data engineering platform developed at **Trường Đại học Công nghệ Kỹ thuật TP.HCM (HCM-UTE)** that automates competition discovery, provides a RAG-powered regulation query copilot, and delivers analytical OLAP marts.
 
 ---
 
-## Overview
+## 1. Overview & Problem Statement
 
-Academic competitions, hackathons, and talent programs (such as ICPC, National Student Olympiad in Informatics, Euréka, AI Challenge TP.HCM, and Code Tour) are vital for students to gain hands-on engineering experience. However, students and academic institutions face four core bottlenecks:
+Academic hackathons, coding contests, and research challenges are crucial for student development. However, notices and rulebooks are fragmented across dynamic websites and social media, leading to missed deadlines and information asymmetry. 
 
-- **Scattered Information**: Announcements are fragmented across external portals and social media fanpages, causing missed registration deadlines.
-- **Rule Navigation & Knowledge Gap**: Complex rulebooks and the absence of centralized historical repositories hinder student preparation.
-- **Team Formation & Mentorship Friction**: Difficulties in identifying cross-functional peers and connecting with faculty advisors whose research matches the competition theme.
-- **Lack of Institutional Visibility**: Faculty leadership lacks consolidated analytics on student engagement, domain trends, and seasonal distribution.
+**ACDP** addresses this challenge with a two-phase academic roadmap:
+- **Phase 1 — Special Topic Project (Tiểu luận chuyên ngành - TLCN)**: Simulates the platform end-to-end and validates technical feasibility over **5–10 representative competitions** using a minimalist, zero-overhead stack ([DIR-015](docs/frameworks/TEAM_DIRECTIVES.md)).
+- **Phase 2 — Graduation Thesis (Khóa luận tốt nghiệp - KLTN)**: Scales to automated nationwide multi-source crawling, fuzzy entity deduplication, and production teammate recommendation.
 
-**ACDP** addresses these bottlenecks through a two-phase academic roadmap:
-1. **Phase 1 — Special Topic Project (Tiểu luận chuyên ngành - TLCN, 15-Week Lean MVP)**: Simulates the end-to-end data platform and validates technical feasibility over a curated dataset of **5–10 representative competition links** crawled on-demand (`Crawl4AI` $\rightarrow$ `Cloudflare R2 / Local` raw Markdown $\rightarrow$ `Instructor + Pydantic v2` structured extraction $\rightarrow$ `DuckDB` analytics & `Hybrid RAG`).
-2. **Phase 2 — Graduation Thesis (Khóa luận tốt nghiệp - KLTN, 15-Week Full System)**: Scales to automated periodic batch and realtime ingestion across nationwide sources, multi-channel entity deduplication, teammate recommendation, and faculty advisor alignment.
+*For formal academic proposals and literature reviews, see [`docs/academic/Proposal_NCKH_TLCN.md`](docs/academic/Proposal_NCKH_TLCN.md).*
 
 ---
 
-## Key Features
-
-- **On-Demand & Adaptive Web Ingestion**: Headless browser crawlers (`Crawl4AI` & `Playwright`) extract clean UTF-8 Markdown from dynamic competition websites (`src/acdp/1_crawl_to_bronze.py`), while `Instructor` and `LiteLLM` enforce structured JSON/Parquet schemas via `Pydantic v2` (`src/acdp/2_instruction.py`).
-- **Lean Medallion Lakehouse Architecture**: Tiered data processing ([`data/`](data/README.md) & **Cloudflare R2**: `Bronze` raw UTF-8 Markdown $\rightarrow$ `Silver` validated `SilverCompetitionRecord` entities $\rightarrow$ `Gold` analytical views queried in-process via `DuckDB`).
-- **AI-Powered Regulation Copilot**: Hybrid Search (lexical BM25 + Qdrant dense vector retrieval) with Cross-Encoder re-ranking grounded in official contest regulations.
-- **Teammate & Advisor Matchmaking (Phase 2 KLTN)**: Vector skill complementarity and heuristic filters matching students with peers and faculty research domains.
-- **Interactive Student Portal & BI Dashboard**: Responsive Next.js 15 web application and administrative dashboards tracking competition seasonality and prize distributions.
-
----
-
-## System Architecture
+## 2. System Architecture
 
 ```mermaid
 flowchart TD
-    subgraph Ingestion["1. Data Ingestion Layer (TLCN: 5–10 Curated Contests On-Demand)"]
-        A1["Curated Competition Portals (5–10 Links)"] --> B1["Crawl4AI AdaptiveCrawler (1_crawl_to_bronze.py)"]
+    subgraph Ingestion["1. Data Ingestion Layer (5–10 Curated Sources)"]
+        A["Curated Portals & Fanpages"] --> B["Crawl4AI AdaptiveCrawler (1_crawl_to_bronze.py)"]
     end
 
     subgraph Lakehouse["2. Lean Medallion Lakehouse Layer (Local & Cloudflare R2)"]
-        B1 --> C1["Bronze Layer: Raw UTF-8 Markdown (s3://acdp-lakehouse/bronze/)"]
-        C1 --> B2["Instructor + LiteLLM Schema Parser (2_instruction.py)"]
-        B2 --> C2["Silver Layer: Validated SilverCompetitionRecord (.parquet / .json)"]
-        C2 --> C3["Gold Layer: Analytical Views & Fact_Competitions (DuckDB In-Process)"]
+        B --> C["Bronze: Raw UTF-8 Markdown (s3://acdp-lakehouse/bronze/)"]
+        C --> D["Instructor + Pydantic v2 Parser (2_instruction.py)"]
+        D --> E["Silver: Validated Competition Schema (competitions.parquet)"]
+        E --> F["Gold: OLAP Analytical Views (DuckDB In-Process)"]
     end
 
     subgraph Intelligence["3. Semantic & Intelligence Layer"]
-        C2 --> D1["Clause Chunking & Vector Embeddings"]
-        D1 --> D2["Vector Storage (Qdrant) & BM25 Index"]
-        D2 --> D3["Hybrid Search & Cross-Encoder Re-ranking"]
-        D3 --> D4["Regulation RAG Copilot"]
+        C --> G["SemanticChunker & Vector Embedding (Ollama)"]
+        G --> H["Qdrant Vector Store & MMR Retriever"]
+        H --> I["Gemini LLM Regulation Copilot (3_chatbot_mvp.py)"]
     end
 
     subgraph Serving["4. Serving & Presentation Layer"]
-        C3 --> E1["FastAPI Backend Services"]
-        D4 --> E1
-        E1 --> F1["Student Competition Explorer Portal (Next.js 15)"]
-        E1 --> F2["Faculty Analytics & Seasonality Dashboard"]
+        F --> J["DuckDB Analytics Charts"]
+        I --> K["Gradio ChatInterface / Next.js 15 Web Portal"]
     end
 ```
 
-> 📖 **Data Architecture Reference**: For physical layout, the 7 reproducible sample competitions (`data/raw/`), and Cloudflare R2 synchronization instructions, see [`data/README.md`](data/README.md) and [`docs/deliverables/HUONG_DAN_MIGRATE_R2_LAKEHOUSE.md`](docs/deliverables/HUONG_DAN_MIGRATE_R2_LAKEHOUSE.md).
-
 ---
 
-## Technology Governance & Lean MVP Architecture
+## 3. Medallion Pipeline & Tech Stack
 
-> [!NOTE]
-> **Lean TLCN Scope & Minimalist Stack (DIR-015)**:  
-> Following comprehensive first-principles R&D under [`docs/rd-tasks/`](docs/rd-tasks/), the team enforces a strict separation between **Phase 1 (TLCN Feasibility MVP: 5–10 competitions)** and **Phase 2 (KLTN High-Volume Scale)**. To eliminate over-engineering on a 5–10 competition dataset ($\sim 1\text{ MB}$), unnecessary intermediate binary compression (`zstandard`) and heavy container daemons (`SeaweedFS`, `PostgreSQL`, `dbt-core`) are excluded from the Phase 1 execution path.
-
-| Architecture Layer | Phase 1 (TLCN: 5–10 Competitions On-Demand) | Phase 2 (KLTN: Large-Scale & Automated) | Active Spec / Deliverable |
+| Lakehouse Tier | Processing Scope & Target | Core Technology | Source Module |
 | :--- | :--- | :--- | :--- |
-| **Ingestion & Crawling** | `Crawl4AI` (`AdaptiveCrawler`) executed on-demand over 5–10 curated URLs | Automated batch scheduler (HTTP `ETag`), search discovery & webhooks | [`SPEC-0002`](docs/specs/0002-data-ingestion-and-schema-spec.md) / [`1_crawl_to_bronze.py`](src/acdp/1_crawl_to_bronze.py) |
-| **Bronze Layer Storage** | Raw UTF-8 Markdown (`.md`) on **Local Files** & **Cloudflare R2** (`boto3`) | High-volume compaction, `SeaweedFS` Haystack object store | [`NT-018`](docs/deliverables/NT-018-bronze-storage-and-table-format-evaluation.md) / [`HUONG_DAN_MIGRATE_R2_LAKEHOUSE.md`](docs/deliverables/HUONG_DAN_MIGRATE_R2_LAKEHOUSE.md) |
-| **Silver Extraction & Schema** | `Instructor` + `LiteLLM` + `Pydantic v2` (`Competition` $\rightarrow$ Parquet/JSON) | Multi-channel fuzzy Levenshtein entity resolution | [`schemas.py`](src/acdp/schemas.py) / [`2_instruction.py`](src/acdp/2_instruction.py) |
-| **Gold Analytics & OLAP** | **DuckDB** in-process SQL directly over R2 / Local Parquet | Hybrid OLAP (DuckDB) + Transactional OLTP (PostgreSQL) | [`SPEC-0001`](docs/specs/0001-system-foundation-spec.md) / [`NT-013`](docs/deliverables/NT-013-business-technical-feasibility-review.md) |
-| **Semantic RAG Copilot** | Semantic chunking + Qdrant Vector Store + Gradio Chatbot (`3_chatbot_mvp.py`) + Ragas evaluation | Multi-modal PDF/Poster OCR & Historical Knowledge Vault | [`3_chatbot_mvp.py`](src/acdp/3_chatbot_mvp.py) / [`NT-012`](docs/tasks/notion-task-mapping.md) |
+| **Bronze Layer** | Raw, lossless Markdown capture from dynamic web pages | `Crawl4AI` (`AdaptiveCrawler`) + `Cloudflare R2` (S3) | [`src/acdp/1_crawl_to_bronze.py`](src/acdp/1_crawl_to_bronze.py) |
+| **Silver Layer** | Pydantic v2 structured extraction with few-shot prompting | `Instructor` + `LiteLLM` + `Pydantic v2` | [`src/acdp/2_instruction.py`](src/acdp/2_instruction.py), [`schemas.py`](src/acdp/schemas.py) |
+| **Gold Layer** | In-process SQL OLAP analytics over Silver Parquet | **DuckDB** (`httpfs` extension) | [`src/acdp/config.py`](src/acdp/config.py), [`data/README.md`](data/README.md) |
+| **Semantic RAG** | Regulation clause chunking, vector retrieval & chat UI | `Qdrant` + `Ollama` + `Google GenAI` + `Gradio` | [`src/acdp/3_chatbot_mvp.py`](src/acdp/3_chatbot_mvp.py) |
 
 ---
 
-## Roadmap & Project Scope
+## 4. Repository Layout
 
-The project is conducted within the **Major in Data Engineering**, Faculty of Information Technology at **Trường Đại học Công nghệ Kỹ thuật TP.HCM (HCM-UTE)**, structured across two consecutive 15-week phases:
-
-### Phase 1: Special Topic Project (Tiểu luận chuyên ngành - 15-Week Lean MVP)
-- [x] Problem formulation, business feasibility (`T01`), competition survey (`T02`), and thesis introduction (`T08_v2`).
-- [x] On-demand ingestion pipeline covering 7 representative competition sources (`data/raw/` & `src/acdp/1_crawl_to_bronze.py`) synced to Cloudflare R2.
-- [x] Silver layer Pydantic v2 schema specification and clean data contracts (`src/acdp/schemas.py`).
-- [x] Automated Bronze-to-Silver LLM structured extraction with Few-Shot prompting (`src/acdp/2_instruction.py`).
-- [x] Core RAG copilot MVP with Qdrant vector store and interactive Gradio interface (`src/acdp/3_chatbot_mvp.py`).
-- [ ] Silver Parquet persistence & DuckDB Gold layer analytical queries over the curated competition dataset (In Progress - Week 10–11).
-- [ ] Quantitative RAG evaluation using Ragas framework and realigned test suite.
-- [ ] MVP web portal for contest exploration and faculty analytics dashboard.
-
-### Phase 2: Graduation Thesis (Khóa luận tốt nghiệp - 15-Week Full System)
-- [ ] Large-scale automated crawling via periodic batch jobs (Seasonality Scheduler) and live webhook feeds.
-- [ ] Multi-channel fuzzy deduplication and high-volume Lakehouse compaction.
-- [ ] Production teammate recommendation algorithm and faculty research matchmaking.
-- [ ] Historical knowledge repository with past winning solutions and automated student activity credit (*điểm rèn luyện*) integration.
+```text
+acdp-platform/
+├── src/acdp/               # Core data pipeline and application modules
+│   ├── 1_crawl_to_bronze.py    # Crawl4AI ingestion to Cloudflare R2 Bronze
+│   ├── 2_instruction.py        # Instructor few-shot extraction to Silver JSON
+│   ├── 3_chatbot_mvp.py        # RAG Regulation Chatbot with Qdrant & Gradio
+│   ├── config.py               # Application & storage configuration (AppConfig)
+│   └── schemas.py              # Pydantic v2 data contracts (Competition, PrizeTier)
+├── data/
+│   ├── raw/markdown/       # Curated fixtures for 7 reproducible sample competitions
+│   └── lakehouse/          # Local Medallion tiers (Bronze, Silver, Gold, DuckDB)
+├── tests/                  # Unit and integration test suites (100% Passed)
+├── docs/                   # Academic manuscripts, architecture specs, ADRs, roadmap
+│   ├── academic/           # TLCN report draft, registration & NCKH proposal
+│   ├── specs/              # Technical specifications (SPEC-0001, SPEC-0002)
+│   └── tasks/              # Active sprint context, Notion mapping & 15-week roadmap
+├── pyproject.toml          # Python dependencies & build specification (uv)
+└── README.md
+```
 
 ---
 
-## Getting Started
+## 5. Quickstart
 
-### Prerequisites
-- [Python 3.11+ / 3.13+](https://www.python.org/downloads/)
-- [`uv` Python Package Manager](https://docs.astral.sh/uv/)
-
-### 1. Install Dependencies
+### Step 1: Install Dependencies
 ```bash
 uv sync
 ```
 
-### 2. Environment Configuration
-Create a `.env` file in the project root:
+### Step 2: Configure Environment
+Copy the template and provide your API keys:
 ```bash
 cp .env.example .env
 ```
-Configure your Cloudflare R2 and LLM credentials in `.env`:
-```env
-BUCKET_NAME=acdp-lakehouse
-BRONZE_STORAGE_BACKEND=local
-BRONZE_STORAGE_URI=./data/lakehouse/bronze
-SILVER_STORAGE_URI=./data/lakehouse/silver
-GOLD_STORAGE_URI=./data/lakehouse/gold
+*(Required for Cloudflare R2 sync: `AWS_ENDPOINT_URL`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`; for RAG: `GEMINI_API_KEY`).*
 
-# Cloudflare R2 Credentials (for team sync)
-AWS_ENDPOINT_URL=https://<account_id>.r2.cloudflarestorage.com
-AWS_ACCESS_KEY_ID=your_r2_access_key
-AWS_SECRET_ACCESS_KEY=your_r2_secret_key
-AWS_REGION=auto
-
-# LLM API Keys
-GEMINI_API_KEY=your_gemini_api_key
-```
-
-### 3. Run Unit Tests & Sample Pipeline
+### Step 3: Run Verification & Pipeline
 ```bash
-# Run Bronze and Silver schema verification suite
+# 1. Run unit tests
 uv run pytest -v
 
-# Run on-demand Crawl4AI ingestion to Cloudflare R2
+# 2. Ingest competition pages to Bronze (R2 / Local)
 uv run python src/acdp/1_crawl_to_bronze.py
+
+# 3. Extract structured Silver schema using Instructor
+uv run python src/acdp/2_instruction.py --extract
+
+# 4. Launch RAG Regulation Chatbot (Gradio UI)
+uv run python src/acdp/3_chatbot_mvp.py --chat
 ```
 
 ---
 
-## Contributors & Advisor
+## 6. Academic Documentation Hub
 
-### Core Authors
-- **Do Kien Hung (Đỗ Kiến Hưng)**  
-  Student ID: `23133030`  
-  Major in Data Engineering, Faculty of Information Technology  
-  Trường Đại học Công nghệ Kỹ thuật TP.HCM (HCM-UTE)  
-  GitHub: [@darktheDE](https://github.com/darktheDE)
-
-- **Nguyen Van Quang Duy (Nguyễn Văn Quang Duy)**  
-  Student ID: `23110086`  
-  Major in Data Engineering, Faculty of Information Technology  
-  Trường Đại học Công nghệ Kỹ thuật TP.HCM (HCM-UTE)  
-  GitHub: [@QuangDuyReal](https://github.com/QuangDuyReal)
-
-### Scientific Advisor
-- **M.Sc. Tran Quang Khai (ThS. Trần Quang Khải)**  
-  Lecturer, Faculty of Information Technology  
-  Trường Đại học Công nghệ Kỹ thuật TP.HCM (HCM-UTE)
+- **Báo cáo Tiến độ GVHD**: [`docs/academic/KeHoach_TienDo_BaoCao_GVHD.md`](docs/academic/KeHoach_TienDo_BaoCao_GVHD.md)
+- **Bản thảo Báo cáo TLCN**: [`docs/academic/BaoCao_TieuLuan_ChuyenNganh_KTDL.md`](docs/academic/BaoCao_TieuLuan_ChuyenNganh_KTDL.md)
+- **Đặc tả Kiến trúc (SPEC-0001 & SPEC-0002)**: [`docs/specs/`](docs/specs/)
+- **Kế hoạch 15 Tuần & Active Sprint**: [`docs/tasks/roadmap.md`](docs/tasks/roadmap.md) • [`docs/tasks/active-sprint.md`](docs/tasks/active-sprint.md)
 
 ---
 
-## License
+## 7. Contributors & Scientific Advisor
 
-This project is licensed under the [MIT License](LICENSE).
+### Core Authors
+- **Đỗ Kiến Hưng** (MSSV: `23133030`) — Data Engineering, FIT, HCM-UTE — [@darktheDE](https://github.com/darktheDE)
+- **Nguyễn Văn Quang Duy** (MSSV: `23110086`) — Data Engineering, FIT, HCM-UTE — [@QuangDuyReal](https://github.com/QuangDuyReal)
+
+### Scientific Advisor
+- **ThS. Trần Quang Khải** — Giảng viên Khoa Công nghệ Thông tin, Trường Đại học Công nghệ Kỹ thuật TP.HCM (HCM-UTE)
+
+---
+
+## 8. License
+
+This repository is licensed under the [MIT License](LICENSE).
