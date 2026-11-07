@@ -23,6 +23,7 @@ dependencies = [
     "langchain-qdrant>=1.1.0",
     "langchain-text-splitters>=1.1.3",
     "litellm>=1.104.2",
+    "prefect>=3.0.0",
     "pyarrow>=26.0.0",
     "pydantic>=2.14.0",
     "pydantic-settings>=2.15.0",

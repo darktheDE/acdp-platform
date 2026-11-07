@@ -54,7 +54,7 @@ OLLAMA_NUM_CTX = int(os.getenv("OLLAMA_NUM_CTX", "8192"))
 
 # Thư mục gốc dự án và thư mục mặc định lưu trữ file JSON trích xuất
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_OUTPUT_DIR = PROJECT_ROOT / "data" / "extracted"
+DEFAULT_OUTPUT_DIR = PROJECT_ROOT / "data" / "extractions"
 
 s3_client = boto3.client(
     service_name="s3",
@@ -405,24 +405,21 @@ def extract_competition_from_markdown(
         },
     ]
 
-    # Chuẩn hóa role tương thích đa nhà cung cấp:
-    # Google GenAI SDK yêu cầu role 'model' thay vì 'assistant'
-    is_google = any(k in LLM_PROVIDER.lower() for k in ("google", "gemini"))
-    messages = []
-    for m in raw_messages:
-        role = m["role"]
-        if is_google and role == "assistant":
-            role = "model"
-        messages.append({"role": role, "content": m["content"]})
+    messages = list(raw_messages)
 
     extra_kwargs = {}
     if "ollama" in LLM_PROVIDER.lower():
         extra_kwargs["extra_body"] = {"options": {"num_ctx": OLLAMA_NUM_CTX}}
 
+    chosen_model = os.getenv("LLM_MODEL") or os.getenv("LLM_PROVIDER") or "gemma-4-31b-it"
+    if "/" in chosen_model:
+        chosen_model = chosen_model.split("/")[-1]
+
     extraction: CompetitionExtractionResult = client.chat.completions.create(
+        model=chosen_model,
         response_model=CompetitionExtractionResult,
         messages=messages,
-        max_retries=3,
+        max_retries=1,
         **extra_kwargs,
     )
     return extraction
@@ -456,18 +453,33 @@ def process_bronze_bucket(
 
     client = None
     if run_llm:
-        print(f"Initializing Instructor client with provider: {LLM_PROVIDER} ...")
-        if "ollama" in LLM_PROVIDER.lower():
+        gemini_key = os.getenv("GEMINI_API_KEY")
+        if gemini_key and "your_gemini" not in gemini_key:
+            from openai import OpenAI
+            model_display = os.getenv("LLM_MODEL") or LLM_PROVIDER
+            print(f"Initializing Instructor client with Gemini OpenAI endpoint (Model: {model_display}) ...")
+            raw_client = OpenAI(
+                base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
+                api_key=gemini_key,
+                timeout=45.0,
+            )
+            client = instructor.from_openai(raw_client, mode=instructor.Mode.JSON)
+        elif "ollama" in LLM_PROVIDER.lower():
+            print(f"Initializing Instructor client with Ollama provider: {LLM_PROVIDER} ...")
             client = instructor.from_provider(LLM_PROVIDER, mode=instructor.Mode.JSON)
         else:
+            print(f"Initializing Instructor client with provider: {LLM_PROVIDER} ...")
             client = instructor.from_provider(LLM_PROVIDER)
-
-    print(f"Connecting to Cloudflare R2 Bucket: {BUCKET_NAME}")
-    paginator = s3_client.get_paginator("list_objects_v2")
-    pages = paginator.paginate(Bucket=BUCKET_NAME, Prefix="bronze/")
 
     valid_crawl_items = []
     skipped_metadata_count = 0
+
+    if not BUCKET_NAME:
+        raise RuntimeError("BUCKET_NAME is not configured in .env. Cloudflare R2 bucket connection is required.")
+
+    print(f"Connecting to Cloudflare R2 Bucket: {BUCKET_NAME} (Strict Cloud Mode - Zero Fallback)")
+    paginator = s3_client.get_paginator("list_objects_v2")
+    pages = paginator.paginate(Bucket=BUCKET_NAME, Prefix="bronze/")
 
     # 1. Thu thập và phân loại toàn bộ tệp trong Bronze
     for p in pages:
@@ -561,8 +573,12 @@ def process_bronze_bucket(
             empty_count += 1
             continue
 
-        response = s3_client.get_object(Bucket=BUCKET_NAME, Key=fkey)
-        raw_markdown = response["Body"].read().decode("utf-8", errors="replace")
+        if item.get("is_local"):
+            with open(item["key"], encoding="utf-8") as f:
+                raw_markdown = f.read()
+        else:
+            response = s3_client.get_object(Bucket=BUCKET_NAME, Key=fkey)
+            raw_markdown = response["Body"].read().decode("utf-8", errors="replace")
 
         if not raw_markdown.strip():
             print(">> [SKIP] Content contains only whitespace.")
@@ -609,7 +625,8 @@ def process_bronze_bucket(
                 print(f">> [SAVED JSON] Kết quả domain đã lưu tại: {domain_json_path}")
 
             except Exception as e:
-                print(f">> [ERROR] Extraction failed: {e}")
+                print(f">> [ERROR] Extraction failed for domain '{item['domain']}': {e}")
+                raise e
         else:
             print(">> [READY] Filtered & Schema ready. Set run_llm=True (hoặc truyền --extract) để gọi LLM & xuất JSON.")
 
