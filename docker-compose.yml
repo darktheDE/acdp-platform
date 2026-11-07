@@ -16,6 +16,7 @@ services:
     environment:
       - MB_DB_FILE=/metabase-data/metabase.db
       - MB_ANON_TRACKING_ENABLED=false
+      - JAVA_OPTS=-XX:+UseG1GC -Xms256m -Xmx512m
 
   # ============================================================================
   # Prefect 3.x Server: Orchestration Dashboard & Pipeline State Tracking
@@ -54,5 +55,4 @@ volumes:
   prefect_data:
     driver: local
   qdrant_data:
-    driver: local
     driver: local

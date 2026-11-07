@@ -38,14 +38,22 @@ class AppConfig(BaseSettings):
         description="Path to local DuckDB lakehouse database file",
     )
 
-    # Lakehouse Bronze Storage Configuration
+    # Lakehouse Storage Configuration
     bronze_storage_backend: Literal["local", "cloudflare_r2"] = Field(
-        default="local",
+        default="cloudflare_r2",
         description="Storage backend: 'local' (POSIX SSD) or 'cloudflare_r2' (Cloud S3)",
     )
     bronze_storage_uri: str = Field(
-        default="./data/lakehouse/bronze",
-        description="Delta Lake storage directory path or s3:// URI",
+        default="s3://acdp-lakehouse/bronze",
+        description="Bronze storage directory path or s3:// URI",
+    )
+    silver_storage_uri: str = Field(
+        default="s3://acdp-lakehouse/silver",
+        description="Silver layer Parquet storage directory path or s3:// URI",
+    )
+    gold_storage_uri: str = Field(
+        default="s3://acdp-lakehouse/gold",
+        description="Gold layer storage directory path or s3:// URI",
     )
     bucket_name: str = Field(
         default="acdp-lakehouse",
