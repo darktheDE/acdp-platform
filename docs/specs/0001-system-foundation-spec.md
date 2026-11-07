@@ -44,6 +44,6 @@ Runtime configurations are managed via `pydantic-settings` in [`src/acdp/config.
 ## 5. Verification & Pending Refactoring TODOs
 
 - [x] Configuration model validates `.env.example` without exceptions.
-- [x] `uv run pytest` passes 100% of Bronze and Silver unit tests.
-- [ ] **TODO-CODE-01**: Refactor `src/acdp/lakehouse/bronze.py` and `pyproject.toml` to remove legacy `zstandard` dependency in alignment with `DIR-015`.
+- [x] `uv run pytest` passes 100% of Bronze and Silver unit tests (14/14 tests passed).
+- [x] **TODO-CODE-01**: Pruned deprecated `src/acdp/lakehouse/` in favor of clean `src/acdp/schemas.py` and removed legacy `zstandard` dependency in alignment with `DIR-015`.
 - [ ] **TODO-CODE-02**: Synchronize `BUCKET_NAME`, `SILVER_STORAGE_URI`, and `GOLD_STORAGE_URI` in `src/acdp/config.py` and `.env.example`.

@@ -53,9 +53,9 @@ flowchart LR
 
 ---
 
-## 4. Component 2: Silver Layer Data Contract (`src/acdp/lakehouse/schema.py`)
+## 4. Component 2: Silver Layer Data Contract (`src/acdp/schemas.py`)
 
-The `SilverCompetitionRecord` Pydantic v2 model transforms unstructured competition Markdown into 8 quantitative and qualitative attribute groups:
+The `Competition` and `CompetitionExtractionResult` Pydantic v2 models transform unstructured competition Markdown into quantitative and qualitative attribute groups:
 
 | Dimension Group | Key Fields & Types | Validation & Normalization Rules |
 | :--- | :--- | :--- |
@@ -81,8 +81,8 @@ The `SilverCompetitionRecord` Pydantic v2 model transforms unstructured competit
 ## 6. Verification & Engineering TODO Tasks
 
 - [x] 7 sample competitions crawled and stored in `data/raw/markdown/` and uploaded to Cloudflare R2 via `src/acdp/1_crawl_to_bronze.py`.
-- [x] `SilverCompetitionRecord` Pydantic v2 contract implemented and verified in `tests/test_silver_schema.py`.
-- [ ] **TODO-CODE-01 (Refactor Bronze Code)**: Remove legacy `zstandard` compression from `pyproject.toml`, `src/acdp/lakehouse/bronze.py`, `src/acdp/lakehouse/schema.py`, and `tests/test_bronze_storage.py` so `BronzeRecord` stores plain UTF-8 text (`raw_content: str`).
+- [x] Standardized `Competition` Pydantic v2 contract implemented in `src/acdp/schemas.py` and verified in `tests/test_silver_schema.py` (14/14 tests passed).
+- [x] **TODO-CODE-01 (Refactor Bronze Code)**: Removed legacy `zstandard` compression and pruned deprecated `src/acdp/lakehouse/` folder in favor of clean `src/acdp/schemas.py` and raw UTF-8 text.
 - [ ] **TODO-CODE-02 (Sync R2 Env Config)**: Add `BUCKET_NAME`, `SILVER_STORAGE_URI`, and `GOLD_STORAGE_URI` to `src/acdp/config.py` and `.env.example`.
-- [ ] **TODO-CODE-03 (Implement Extraction Pipeline)**: Complete `src/acdp/2_instruction.py` to extract all 7 sample Markdown files into validated `SilverCompetitionRecord` Parquet records queryable by DuckDB.
+- [ ] **TODO-CODE-03 (Implement Extraction Pipeline)**: Complete `src/acdp/2_instruction.py` output connector to persist extracted records into Silver Parquet queryable by DuckDB.
 

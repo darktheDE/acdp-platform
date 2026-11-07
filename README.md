@@ -25,30 +25,7 @@ Academic hackathons, coding contests, and research challenges are crucial for st
 
 ## 2. System Architecture
 
-```mermaid
-flowchart TD
-    subgraph Ingestion["1. Data Ingestion Layer (5–10 Curated Sources)"]
-        A["Curated Portals & Fanpages"] --> B["Crawl4AI AdaptiveCrawler (1_crawl_to_bronze.py)"]
-    end
-
-    subgraph Lakehouse["2. Lean Medallion Lakehouse Layer (Local & Cloudflare R2)"]
-        B --> C["Bronze: Raw UTF-8 Markdown (s3://acdp-lakehouse/bronze/)"]
-        C --> D["Instructor + Pydantic v2 Parser (2_instruction.py)"]
-        D --> E["Silver: Validated Competition Schema (competitions.parquet)"]
-        E --> F["Gold: OLAP Analytical Views (DuckDB In-Process)"]
-    end
-
-    subgraph Intelligence["3. Semantic & Intelligence Layer"]
-        C --> G["SemanticChunker & Vector Embedding (Ollama)"]
-        G --> H["Qdrant Vector Store & MMR Retriever"]
-        H --> I["Gemini LLM Regulation Copilot (3_chatbot_mvp.py)"]
-    end
-
-    subgraph Serving["4. Serving & Presentation Layer"]
-        F --> J["DuckDB Analytics Charts"]
-        I --> K["Gradio ChatInterface / Next.js 15 Web Portal"]
-    end
-```
+![ACDP System Architecture Pipeline](docs/assets/arch.png)
 
 ---
 
@@ -78,6 +55,7 @@ acdp-platform/
 │   └── lakehouse/          # Local Medallion tiers (Bronze, Silver, Gold, DuckDB)
 ├── tests/                  # Unit and integration test suites (100% Passed)
 ├── docs/                   # Academic manuscripts, architecture specs, ADRs, roadmap
+│   ├── assets/             # Architecture diagrams, figures, and static media
 │   ├── academic/           # TLCN report draft, registration & NCKH proposal
 │   ├── specs/              # Technical specifications (SPEC-0001, SPEC-0002)
 │   └── tasks/              # Active sprint context, Notion mapping & 15-week roadmap
