@@ -31,7 +31,6 @@ from google.genai import types as genai_types
 from langchain_core.documents import Document
 from langchain_core.embeddings import Embeddings
 from langchain_experimental.text_splitter import SemanticChunker
-from langchain_ollama import OllamaEmbeddings
 from langchain_qdrant import QdrantVectorStore
 from qdrant_client import QdrantClient
 from qdrant_client.http.models import (
@@ -60,8 +59,8 @@ ENDPOINT_URL = os.getenv("AWS_ENDPOINT_URL")
 ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
 SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
 
-EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "qwen3-embedding:4b")
-# LLM sinh câu trả lời: dùng chung biến LLM_PROVIDER với module 2 (vd: google/gemini-3.5-flash-lite)
+EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "gemini-embedding-001")
+# LLM sinh câu trả lời: mặc định dùng Google Gemma 4 (gemma-4-26b-a4b-it) hoặc fallback gemini-3.5-flash
 CHAT_MODEL = os.getenv("CHAT_MODEL") or os.getenv("LLM_PROVIDER", "google/gemma-4-26b-a4b-it").split("/", 1)[-1]
 
 RETRIEVER_K = 6               # số chunk đưa vào prompt
@@ -71,44 +70,42 @@ MAX_HISTORY_TURNS = 6         # số lượt hỏi-đáp gần nhất đưa vào
 # ==============================================================================
 # KHỞI TẠO CLIENT
 # ==============================================================================
-class BatchedRetryEmbeddings(Embeddings):
-    """Bọc OllamaEmbeddings: chia nhỏ batch + retry.
+# google-genai tự đọc GOOGLE_API_KEY / GEMINI_API_KEY từ môi trường
+llm_client = genai.Client()
 
-    SemanticChunker gọi embed_documents() với TOÀN BỘ câu của một tài liệu trong 1 request
-    (hàng trăm câu). Trên CPU, request quá lớn làm runner của Ollama bị sập
-    ("dial tcp 127.0.0.1:<port>: connection refused"). Chia batch nhỏ và chờ runner
-    khởi động lại khi gặp lỗi kết nối.
-    """
 
-    def __init__(self, base: OllamaEmbeddings, batch_size: int = 16, max_retries: int = 4):
-        self.base = base
+class GeminiEmbeddings(Embeddings):
+    """Embeddings sử dụng Gemini API với hỗ trợ batching và MRL output_dimensionality."""
+
+    def __init__(self, client: genai.Client, model: str = "gemini-embedding-001", dimension: int = 2560, batch_size: int = 32):
+        self.client = client
+        self.model = model
+        self.dimension = dimension
         self.batch_size = batch_size
-        self.max_retries = max_retries
-
-    def _call(self, fn, arg):
-        for attempt in range(1, self.max_retries + 1):
-            try:
-                return fn(arg)
-            except Exception as e:
-                if attempt == self.max_retries:
-                    raise
-                wait = 5 * attempt
-                print(f"    [embed retry {attempt}/{self.max_retries}] {str(e)[:120]} -> chờ {wait}s")
-                time.sleep(wait)
 
     def embed_documents(self, texts: list[str]) -> list[list[float]]:
         vectors = []
+        cfg = {"output_dimensionality": self.dimension} if self.dimension else None
         for i in range(0, len(texts), self.batch_size):
-            vectors.extend(self._call(self.base.embed_documents, texts[i:i + self.batch_size]))
+            batch = texts[i : i + self.batch_size]
+            res = self.client.models.embed_content(
+                model=self.model,
+                contents=batch,
+                config=cfg,
+            )
+            for e in res.embeddings:
+                vectors.append(e.values)
         return vectors
 
     def embed_query(self, text: str) -> list[float]:
-        return self._call(self.base.embed_query, text)
+        return self.embed_documents([text])[0]
 
 
-embeddings = BatchedRetryEmbeddings(
-    OllamaEmbeddings(model=EMBEDDING_MODEL),
-    batch_size=int(os.getenv("EMBED_BATCH_SIZE", "16")),
+embeddings = GeminiEmbeddings(
+    client=llm_client,
+    model=EMBEDDING_MODEL,
+    dimension=2560,
+    batch_size=int(os.getenv("EMBED_BATCH_SIZE", "32")),
 )
 
 qdrant_client = QdrantClient(url=QDRANT_CLUSTER_ENDPOINT, api_key=QDRANT_API_KEY)
@@ -120,9 +117,6 @@ s3_client = boto3.client(
     aws_secret_access_key=SECRET_ACCESS_KEY,
     region_name="auto",
 )
-
-# google-genai tự đọc GOOGLE_API_KEY / GEMINI_API_KEY từ môi trường
-llm_client = genai.Client()
 
 
 # ==============================================================================
