@@ -12,9 +12,9 @@ The **Academic Competition Discovery Platform (ACDP)** is an end-to-end data eng
 ### Phase 1: TLCN Lean MVP Scope (`DIR-015` — Current Active Phase)
 During the 15-week Special Topic Project (*Tiểu luận chuyên ngành*), the team focuses on simulating the data architecture and validating technical feasibility over a small, curated set of **5–10 competition links** (currently 7 competitions in `data/raw/`):
 1. **On-Demand Event Ingestion**: Crawls 5–10 selected academic contests on-demand using `Crawl4AI` (`src/acdp/1_crawl_to_bronze.py`) and stores clean UTF-8 Markdown directly on **Local Files** and **Cloudflare R2** (without unnecessary intermediate `zstandard` binary compression).
-2. **Bronze-to-Silver LLM Extraction**: Uses `Instructor` + `LiteLLM` constrained by `Pydantic v2` (`SilverCompetitionRecord` in `src/acdp/lakehouse/schema.py`) to extract structured competition records (`src/acdp/2_instruction.py`) saved as Parquet/JSON.
+2. **Bronze-to-Silver LLM Extraction**: Uses `Instructor` + `LiteLLM` constrained by `Pydantic v2` (`Competition` in `src/acdp/schemas.py`) to extract structured competition records (`src/acdp/2_instruction.py`) saved as Parquet/JSON.
 3. **In-Process OLAP Analytics**: Queries Silver/Gold Parquet datasets directly via **DuckDB** without requiring heavy container daemons (`PostgreSQL`, `dbt-core`, or `SeaweedFS`).
-4. **RAG Regulation Copilot**: Hybrid Search (`BM25` + `Qdrant` dense embeddings) with Cross-Encoder re-ranking grounded in official contest rulebooks.
+4. **RAG Regulation Copilot**: Vector retrieval (`Qdrant` + `SemanticChunker` + `Gemini` + `Gradio` UI) grounded in official contest rulebooks (`src/acdp/3_chatbot_mvp.py`).
 5. **Student Portal & Faculty Dashboard MVP**: FastAPI backend and Next.js 15 web interface.
 
 ### Phase 2: KLTN Full-Scale Scope (Graduation Thesis)
@@ -33,11 +33,12 @@ acdp-platform/
 ├── .agents/skills/         <-- 9 specialized skills (Research, Thesis, Anti-Slop, Visual Dossier, etc.)
 ├── data/                   <-- Data storage (README.md, data/raw/ 7 sample contests, data/lakehouse/)
 ├── src/acdp/               <-- Core application codebase
-│   ├── config.py           <-- Pydantic v2 settings (Local & Cloudflare R2)
 │   ├── 1_crawl_to_bronze.py<-- On-demand Crawl4AI AdaptiveCrawler to R2 Bronze
-│   ├── 2_instruction.py    <-- Instructor + LiteLLM Bronze-to-Silver extraction
-│   └── lakehouse/          <-- Bronze/Silver schemas (schema.py), storage (bronze.py), seed.py
-├── tests/                  <-- Pytest suites for Bronze storage and Silver schema contracts
+│   ├── 2_instruction.py    <-- Instructor few-shot extraction to Silver JSON
+│   ├── 3_chatbot_mvp.py    <-- RAG Regulation Chatbot with Qdrant & Gradio
+│   ├── config.py           <-- Pydantic v2 settings (Local & Cloudflare R2)
+│   └── schemas.py          <-- Pydantic v2 data contracts (Competition, PrizeTier)
+├── tests/                  <-- Pytest suites for Bronze storage and Silver schema (14/14 Passed)
 └── docs/
     ├── README.md           <-- Central documentation index
     ├── HOW_TO_USE.md       <-- THIS FILE: Direction & prompt cookbook
