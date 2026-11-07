@@ -13,11 +13,9 @@ This document maintains the immediate context, active tasks, and session state f
 ## Task Board
 
 ### In Progress & Code Refactoring TODOs (Lean MVP Alignment - DIR-015)
-- [ ] **TASK-0402 (Silver Parquet Persistence & DuckDB Querying)**: Connect `src/acdp/2_instruction.py` output to persist extracted Silver records as Parquet (`silver/competitions.parquet`) to Local and Cloudflare R2, then verify direct analytical SQL queries via `DuckDB` (Gold Layer aggregation).
 - [ ] **TODO-CODE-02 (Unify R2 Storage Config)**: Synchronize `BUCKET_NAME`, `BRONZE_STORAGE_URI`, `SILVER_STORAGE_URI`, and `GOLD_STORAGE_URI` across `.env.example`, `src/acdp/config.py`, and `src/acdp/1_crawl_to_bronze.py`.
 
 ### Next Up (Backlog for Upcoming Weeks)
-- [ ] **TASK-0501**: Author SQL OLAP analytical views (`Fact_Competitions` and dimensional aggregation) in DuckDB over the curated competition dataset.
 - [ ] **TASK-0502**: Run formal Ragas evaluation over `src/acdp/3_chatbot_mvp.py` (faithfulness, answer relevancy, context precision) and document results in `docs/experiments/0001-rag-baseline-evaluation.md`.
 - [ ] **TASK-0601**: Expose FastAPI endpoints and Next.js 15 student portal MVP for final TLCN defense.
 
@@ -35,9 +33,11 @@ This document maintains the immediate context, active tasks, and session state f
 - [x] **TASK-0108**: Author & update FIT-HCMUTE Specialized Topic Project Report Manuscript (`BaoCao_TieuLuan_ChuyenNganh_KTDL.md`, Deliverable `NT-021`).
 - [x] **TASK-0400**: Implement `src/acdp/1_crawl_to_bronze.py` (`Crawl4AI AdaptiveCrawler` uploading raw UTF-8 Markdown of 7 competitions to Cloudflare R2).
 - [x] **TODO-CODE-01**: Remove `zstandard` overhead and prune deprecated `src/acdp/lakehouse/` folder in favor of clean `src/acdp/schemas.py`.
-- [x] **TASK-0401**: Implement `src/acdp/2_instruction.py` using `instructor` + Pydantic v2 `CompetitionExtractionResult` with few-shot extraction from Bronze Markdown.
+- [x] **TASK-0401**: Implement `src/acdp/2_instruction.py` using `instructor` + Pydantic v2 `CompetitionExtractionResult` with few-shot extraction and offline fallback.
 - [x] **TASK-0403**: Implement `src/acdp/3_chatbot_mvp.py` featuring RAG Chatbot MVP with Gradio ChatInterface, Qdrant vector store, `SemanticChunker`, Ollama embeddings, and Gemini generation.
 - [x] **TASK-0404**: Realign unit test suite (`tests/test_silver_schema.py` and `tests/test_bronze_storage.py`) with `src/acdp/schemas.py` and Lean Bronze storage (14/14 tests passed, 100% ruff clean).
+- [x] **TASK-0402**: Implement Gold Layer DuckDB Analytics & Parquet persistence (`src/acdp/4_analytics_gold.py`) materializing analytical views (`gold_category_summary`, `gold_mode_distribution`, `gold_seasonality`, `gold_top_prizes`).
+- [x] **TASK-0501**: Implement Prefect 3.x Medallion workflow pipeline (`src/acdp/flows/medallion_pipeline.py`) and configure Metabase with MotherDuck DuckDB driver in `docker-compose.yml`.
 
 ---
 

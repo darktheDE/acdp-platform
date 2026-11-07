@@ -462,39 +462,56 @@ def process_bronze_bucket(
         else:
             client = instructor.from_provider(LLM_PROVIDER)
 
-    print(f"Connecting to Cloudflare R2 Bucket: {BUCKET_NAME}")
-    paginator = s3_client.get_paginator("list_objects_v2")
-    pages = paginator.paginate(Bucket=BUCKET_NAME, Prefix="bronze/")
-
     valid_crawl_items = []
     skipped_metadata_count = 0
 
-    # 1. Thu thập và phân loại toàn bộ tệp trong Bronze
-    for p in pages:
-        if "Contents" not in p:
-            continue
+    # Fallback to local raw markdown fixtures if Cloudflare R2 bucket is not configured
+    if not BUCKET_NAME or os.getenv("ACDP_OFFLINE", "0") == "1":
+        print("[INFO] BUCKET_NAME not set or offline mode enabled. Using local fixtures from data/raw/markdown/ ...")
+        raw_md_dir = Path("data/raw/markdown")
+        if raw_md_dir.exists():
+            for md_file in raw_md_dir.glob("*.md"):
+                domain = md_file.stem
+                valid_crawl_items.append({
+                    "domain": domain,
+                    "date": "2026-11-07",
+                    "timestamp": 1794000000,
+                    "key": str(md_file),
+                    "is_local": True,
+                    "size": md_file.stat().st_size,
+                    "last_modified": datetime.now(),
+                })
+    else:
+        print(f"Connecting to Cloudflare R2 Bucket: {BUCKET_NAME}")
+        paginator = s3_client.get_paginator("list_objects_v2")
+        pages = paginator.paginate(Bucket=BUCKET_NAME, Prefix="bronze/")
 
-        for item in p["Contents"]:
-            fkey = item["Key"]
-            if fkey.endswith("/"):
+        # 1. Thu thập và phân loại toàn bộ tệp trong Bronze
+        for p in pages:
+            if "Contents" not in p:
                 continue
 
-            # Bỏ qua metadata của Delta Lake (_delta_log), parquet data files và tệp hệ thống ẩn
-            if (
-                "_delta_log" in fkey
-                or "/_" in fkey
-                or fkey.startswith("_")
-                or fkey.endswith((".parquet", ".crc", ".json"))
-                or "part-" in fkey
-            ):
-                skipped_metadata_count += 1
-                continue
+            for item in p["Contents"]:
+                fkey = item["Key"]
+                if fkey.endswith("/"):
+                    continue
 
-            parsed = parse_bronze_key(fkey)
-            if parsed:
-                parsed["size"] = item.get("Size", 0)
-                parsed["last_modified"] = item.get("LastModified")
-                valid_crawl_items.append(parsed)
+                # Bỏ qua metadata của Delta Lake (_delta_log), parquet data files và tệp hệ thống ẩn
+                if (
+                    "_delta_log" in fkey
+                    or "/_" in fkey
+                    or fkey.startswith("_")
+                    or fkey.endswith((".parquet", ".crc", ".json"))
+                    or "part-" in fkey
+                ):
+                    skipped_metadata_count += 1
+                    continue
+
+                parsed = parse_bronze_key(fkey)
+                if parsed:
+                    parsed["size"] = item.get("Size", 0)
+                    parsed["last_modified"] = item.get("LastModified")
+                    valid_crawl_items.append(parsed)
 
     if not valid_crawl_items:
         print(">> [INFO] Không tìm thấy tệp cào hợp lệ nào trong bucket.")
@@ -561,8 +578,12 @@ def process_bronze_bucket(
             empty_count += 1
             continue
 
-        response = s3_client.get_object(Bucket=BUCKET_NAME, Key=fkey)
-        raw_markdown = response["Body"].read().decode("utf-8", errors="replace")
+        if item.get("is_local"):
+            with open(item["key"], encoding="utf-8") as f:
+                raw_markdown = f.read()
+        else:
+            response = s3_client.get_object(Bucket=BUCKET_NAME, Key=fkey)
+            raw_markdown = response["Body"].read().decode("utf-8", errors="replace")
 
         if not raw_markdown.strip():
             print(">> [SKIP] Content contains only whitespace.")
