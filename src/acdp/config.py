@@ -47,6 +47,10 @@ class AppConfig(BaseSettings):
         default="./data/lakehouse/bronze",
         description="Delta Lake storage directory path or s3:// URI",
     )
+    bucket_name: str = Field(
+        default="acdp-lakehouse",
+        description="S3/R2 Bucket name for lakehouse storage layers",
+    )
 
     # S3 Object Storage Credentials (for Cloudflare R2 / S3)
     aws_endpoint_url: str = Field(
