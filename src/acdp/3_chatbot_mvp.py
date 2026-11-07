@@ -62,7 +62,7 @@ SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
 
 EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "qwen3-embedding:4b")
 # LLM sinh câu trả lời: dùng chung biến LLM_PROVIDER với module 2 (vd: google/gemini-3.5-flash-lite)
-CHAT_MODEL = os.getenv("CHAT_MODEL") or os.getenv("LLM_PROVIDER", "google/gemini-3.5-flash-lite").split("/", 1)[-1]
+CHAT_MODEL = os.getenv("CHAT_MODEL") or os.getenv("LLM_PROVIDER", "google/gemma-4-26b-a4b-it").split("/", 1)[-1]
 
 RETRIEVER_K = 6               # số chunk đưa vào prompt
 RETRIEVER_FETCH_K = 20        # số ứng viên trước khi MMR lọc đa dạng
