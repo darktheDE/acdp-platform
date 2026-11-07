@@ -48,23 +48,6 @@ services:
     volumes:
       - qdrant_data:/qdrant/storage
 
-  # ============================================================================
-  # SeaweedFS: Lightweight S3-Compatible Object Store (Optional)
-  # RAM: < 150MB | Port 8333 (S3 API), Port 9333 (Master)
-  # ============================================================================
-  seaweedfs:
-    image: chrislusf/seaweedfs:latest
-    container_name: acdp_seaweedfs
-    restart: unless-stopped
-    ports:
-      - "9333:9333" # Master HTTP
-      - "8333:8333" # S3 API endpoint
-    command: "server -s3 -s3.port=8333 -dir=/data"
-    volumes:
-      - seaweedfs_data:/data
-    environment:
-      - WEED_S3_ENABLE=true
-
 volumes:
   metabase_data:
     driver: local
@@ -72,5 +55,4 @@ volumes:
     driver: local
   qdrant_data:
     driver: local
-  seaweedfs_data:
     driver: local
