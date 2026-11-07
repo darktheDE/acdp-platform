@@ -13,14 +13,12 @@ This document maintains the immediate context, active tasks, and session state f
 ## Task Board
 
 ### In Progress & Code Refactoring TODOs (Lean MVP Alignment - DIR-015)
-- [ ] **TODO-CODE-01 (Remove Zstandard Overhead)**: Remove `zstandard` dependency from `pyproject.toml`, `src/acdp/lakehouse/bronze.py`, `src/acdp/lakehouse/schema.py`, and `tests/test_bronze_storage.py`; switch `BronzeRecord` to store raw UTF-8 Markdown (`raw_content: str`) consistent with `src/acdp/1_crawl_to_bronze.py`.
+- [ ] **TASK-0402 (Silver Parquet Persistence & DuckDB Querying)**: Connect `src/acdp/2_instruction.py` output to persist extracted Silver records as Parquet (`silver/competitions.parquet`) to Local and Cloudflare R2, then verify direct analytical SQL queries via `DuckDB` (Gold Layer aggregation).
 - [ ] **TODO-CODE-02 (Unify R2 Storage Config)**: Synchronize `BUCKET_NAME`, `BRONZE_STORAGE_URI`, `SILVER_STORAGE_URI`, and `GOLD_STORAGE_URI` across `.env.example`, `src/acdp/config.py`, and `src/acdp/1_crawl_to_bronze.py`.
-- [ ] **TASK-0401 (Silver LLM Extraction)**: Implement `src/acdp/2_instruction.py` using `instructor` and `litellm` to extract the 7 Markdown competition files from Bronze (`data/raw/markdown/` & R2) into validated `SilverCompetitionRecord` objects.
-- [ ] **TASK-0402 (Silver Persistence & DuckDB Querying)**: Persist extracted Silver records as Parquet/JSON to Local and Cloudflare R2 (`silver/competitions.parquet`) and verify direct analytical SQL queries via `DuckDB`.
 
 ### Next Up (Backlog for Upcoming Weeks)
-- [ ] **TASK-0501**: Design Gold Layer analytical queries (`Fact_Competitions` & dimensional views) directly on `DuckDB` over the 5–10 competition dataset.
-- [ ] **TASK-0502**: Build RAG prototype over the 7 competition rulebooks (clause chunking + hybrid retrieval) and evaluate with Ragas (`NT-012`).
+- [ ] **TASK-0501**: Author SQL OLAP analytical views (`Fact_Competitions` and dimensional aggregation) in DuckDB over the curated competition dataset.
+- [ ] **TASK-0502**: Run formal Ragas evaluation over `src/acdp/3_chatbot_mvp.py` (faithfulness, answer relevancy, context precision) and document results in `docs/experiments/0001-rag-baseline-evaluation.md`.
 - [ ] **TASK-0601**: Expose FastAPI endpoints and Next.js 15 student portal MVP for final TLCN defense.
 
 ### Completed
@@ -33,9 +31,13 @@ This document maintains the immediate context, active tasks, and session state f
 - [x] **TASK-0104**: Setup Python environment management (`pyproject.toml` and `uv.lock`) with `crawl4ai`, `instructor`, `litellm`, `duckdb`, `pydantic`.
 - [x] **TASK-0105**: Resolve business dilemmas & technical feasibility review for [`docs/rd-tasks/T01.md`](../rd-tasks/T01.md) (Deliverable `NT-013`).
 - [x] **TASK-0106**: Complete academic competition survey for [`docs/rd-tasks/T02.md`](../rd-tasks/T02.md) (Deliverable `NT-014`).
-- [x] **TASK-0107**: Implement Silver Layer Competition Schema & Data Contracts (Pydantic v2 `SilverCompetitionRecord`, Deliverable `NT-020`).
+- [x] **TASK-0107**: Implement Silver Layer Competition Schema & Data Contracts (Pydantic v2 `src/acdp/schemas.py`, Deliverable `NT-020`).
 - [x] **TASK-0108**: Author & update FIT-HCMUTE Specialized Topic Project Report Manuscript (`BaoCao_TieuLuan_ChuyenNganh_KTDL.md`, Deliverable `NT-021`).
 - [x] **TASK-0400**: Implement `src/acdp/1_crawl_to_bronze.py` (`Crawl4AI AdaptiveCrawler` uploading raw UTF-8 Markdown of 7 competitions to Cloudflare R2).
+- [x] **TODO-CODE-01**: Remove `zstandard` overhead and prune deprecated `src/acdp/lakehouse/` folder in favor of clean `src/acdp/schemas.py`.
+- [x] **TASK-0401**: Implement `src/acdp/2_instruction.py` using `instructor` + Pydantic v2 `CompetitionExtractionResult` with few-shot extraction from Bronze Markdown.
+- [x] **TASK-0403**: Implement `src/acdp/3_chatbot_mvp.py` featuring RAG Chatbot MVP with Gradio ChatInterface, Qdrant vector store, `SemanticChunker`, Ollama embeddings, and Gemini generation.
+- [x] **TASK-0404**: Realign unit test suite (`tests/test_silver_schema.py` and `tests/test_bronze_storage.py`) with `src/acdp/schemas.py` and Lean Bronze storage (14/14 tests passed, 100% ruff clean).
 
 ---
 

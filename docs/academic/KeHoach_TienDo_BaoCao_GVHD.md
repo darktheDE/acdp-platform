@@ -13,8 +13,8 @@
 | **Sinh viên thực hiện 1** | Nguyễn Văn Quang Duy (MSSV 1: `23110086`) |
 | **Sinh viên thực hiện 2** | Đỗ Kiến Hưng (MSSV 2: `23133030`) |
 | **Giáo viên hướng dẫn khoa học** | ThS. Trần Quang Khải |
-| **Thời gian báo cáo** | Tuần 9 (Học kỳ 1, Năm học 2026–2027) |
-| **Giai đoạn hiện tại** | Hoàn thành thu thập Tầng Bronze trên bộ 7 cuộc thi mẫu và triển khai trích xuất Tầng Bạc (Silver Layer) |
+| **Thời gian báo cáo** | Tuần 10 (Học kỳ 1, Năm học 2026–2027) |
+| **Giai đoạn hiện tại** | Hoàn thành trích xuất Lược đồ Tầng Bạc (Silver Schema), triển khai vượt tiến độ RAG Chatbot MVP (Qdrant + Gradio) và chuẩn bị nạp dữ liệu phân tích DuckDB Tầng Gold |
 
 ---
 
@@ -46,26 +46,26 @@ Bảng dưới đây trình bày chi tiết các công việc nhóm **ĐÃ HOÀN
 | **7** | Tuần 7<br>(12/10 - 18/10) | **ĐÃ LÀM** | Thiết kế lược đồ dữ liệu lớp Bạc (Silver Schema) trên Pydantic v2; xây dựng hàm sinh mã băm đại diện `generate_fingerprint()` và kiểm kiểu dữ liệu tài chính. | Lớp `SilverCompetitionRecord` tại `schema.py`; Bộ test `test_silver_schema.py` (Passed 100%). | Duy |
 | **8** | Tuần 8<br>(19/10 - 25/10) | **ĐÃ LÀM** | Thiết lập Bucket `acdp-lakehouse` trên Cloudflare R2; xây dựng tài liệu hướng dẫn đồng bộ dữ liệu đám mây giữa hai thành viên và hoàn thiện bản thảo báo cáo TLCN. | Tài liệu `HUONG_DAN_MIGRATE_R2_LAKEHOUSE.md` (NT-022); Bản thảo báo cáo TLCN. | Hưng<br>Duy |
 | **9** | Tuần 9<br>(26/10 - 1/11) | **ĐÃ LÀM** | Cài đặt kịch bản `src/acdp/1_crawl_to_bronze.py` tích hợp `Crawl4AI AdaptiveCrawler` đẩy trực tiếp văn bản Markdown của 7 cuộc thi lên tầng Bronze Cloudflare R2; tích hợp thư viện `instructor` & `litellm` (`src/acdp/2_instruction.py`) và chốt phương án tinh giản bộ công nghệ (lược bỏ nén Zstandard dư thừa). | Kịch bản `1_crawl_to_bronze.py`; Dữ liệu Markdown trên R2; Khởi tạo `2_instruction.py`. | Duy<br>Hưng |
-| **10** | **Tuần 10**<br>**(2/11 - 8/11)** | **SẼ LÀM TRONG TUẦN TỚI** | **1. Hoàn thiện kịch bản `src/acdp/2_instruction.py` sử dụng `instructor` để trích xuất 7 file Markdown từ tầng Bronze sang thực thể `SilverCompetitionRecord` và lưu thành tệp Parquet trên R2.<br>2. Dọn dẹp dependency `zstandard` trong `src/acdp/lakehouse/` và xây dựng các câu truy vấn phân tích SQL OLAP (Tầng Gold) trực tiếp bằng DuckDB trên tập 7 cuộc thi.** | **Bộ dữ liệu Silver Parquet của 7 cuộc thi trên R2; Tập truy vấn phân tích DuckDB Tầng Gold.** | **Duy**<br>**Hưng** |
-| 11 | Tuần 11<br>(9/11 - 15/11) | *Dự kiến* | Cài đặt cơ sở dữ liệu vector Qdrant; phân đoạn văn bản thể lệ của 7 cuộc thi mẫu theo cấu trúc điều khoản và tạo vector nhúng. | Module phân đoạn điều khoản và chỉ mục vector trên Qdrant. | Duy |
-| 12 | Tuần 12<br>(16/11 - 22/11) | *Dự kiến* | Xây dựng pipeline Hybrid Search (BM25 + Dense Vectors + Cross-Encoder re-ranking) trên tập thể lệ mẫu; đánh giá chất lượng câu trả lời theo khung Ragas. | Module Hybrid RAG; Bảng điểm đo lường Ragas. | Duy |
+| **10** | Tuần 10<br>(2/11 - 8/11) | **ĐÃ LÀM** | 1. Hoàn thiện kịch bản `src/acdp/2_instruction.py` sử dụng `instructor` trích xuất thông tin cuộc thi từ tầng Bronze theo lược đồ Pydantic v2 chuẩn hóa tại `src/acdp/schemas.py`.<br>2. Tinh giản triệt để kiến trúc: dọn dẹp gói nén `zstandard` và module `lakehouse/` cũ phù hợp quy mô dữ liệu TLCN (DIR-015).<br>3. **Triển khai vượt tiến độ**: Hoàn thành RAG Chatbot MVP (`src/acdp/3_chatbot_mvp.py`) tích hợp Gradio, SemanticChunker, vector DB Qdrant, Ollama và Google GenAI SDK. | Mã nguồn `2_instruction.py`, `schemas.py`, `3_chatbot_mvp.py`; Giao diện Gradio ChatInterface. | Duy<br>Hưng |
+| **11** | **Tuần 11**<br>**(9/11 - 15/11)** | **SẼ LÀM TRONG TUẦN TỚI** | **1. Kết nối pipeline trích xuất lưu trữ tệp Parquet và xây dựng các câu truy vấn phân tích SQL OLAP (Tầng Gold) trực tiếp bằng DuckDB trên tập cuộc thi mẫu.<br>2. Cập nhật và sửa đổi bộ test suite (`test_silver_schema.py`, `test_bronze_storage.py`) tương thích với kiến trúc `schemas.py` mới.<br>3. Thiết lập bộ đánh giá chất lượng câu trả lời RAG bằng khung Ragas (Faithfulness, Answer Relevancy).** | **Tệp Parquet Tầng Silver; Script phân tích DuckDB Tầng Gold; Bộ test suite tự động Passed 100%; Bảng đo lường Ragas.** | **Hưng**<br>**Duy** |
+| 12 | Tuần 12<br>(16/11 - 22/11) | *Dự kiến* | Tối ưu hóa Hybrid Search (kết hợp BM25 + Qdrant Dense Vectors + Cross-Encoder re-ranking); tinh chỉnh prompt và cơ chế trích dẫn nguồn thể lệ. | Module Hybrid RAG tối ưu; Báo cáo thực nghiệm đối sánh. | Duy |
 | 13 | Tuần 13<br>(23/11 - 29/11) | *Dự kiến* | Xây dựng Backend REST API bằng FastAPI cung cấp các endpoint tra cứu danh sách cuộc thi từ DuckDB và hỏi đáp thể lệ qua RAG. | Mã nguồn FastAPI backend; Tài liệu OpenAPI. | Hưng |
 | 14 | Tuần 14<br>(30/11 - 6/12) | *Dự kiến* | Xây dựng giao diện Web Portal sinh viên và màn hình biểu đồ thống kê cho Khoa CNTT (Next.js 15, Tailwind CSS). | Giao diện Web Portal sinh viên; Màn hình Dashboard thống kê. | Hưng<br>Duy |
 | 15 | Tuần 15<br>(7/12 - 13/12) | *Dự kiến* | Kiểm thử tích hợp toàn hệ thống trên bộ dữ liệu mẫu; hoàn thiện toàn văn quyển báo cáo Tiểu luận chuyên ngành và slide bảo vệ trước Hội đồng. | Toàn văn Báo cáo TLCN; Slide bảo vệ đề tài. | Hưng<br>Duy |
 
 ---
 
-## 3. CHI TIẾT CÁC CÔNG VIỆC TRỌNG TÂM TRONG TUẦN TỚI (TUẦN 10)
+## 3. CHI TIẾT CÁC CÔNG VIỆC TRỌNG TÂM TRONG TUẦN TỚI (TUẦN 11: 09/11 - 15/11/2026)
 
-Trong tuần tiếp theo (từ ngày 02/11 đến 08/11/2026), nhóm nghiên cứu tập trung giải quyết các nhiệm vụ kỹ thuật trên bộ 7 cuộc thi mẫu:
+Trong tuần tiếp theo (từ ngày 09/11 đến 15/11/2026), nhóm nghiên cứu tập trung giải quyết các nhiệm vụ kỹ thuật:
 
-1. **Hoàn thiện Pipeline trích xuất có cấu trúc Bronze sang Silver (`src/acdp/2_instruction.py`)**:
-   - Đọc nội dung văn bản Markdown nguyên bản của 7 cuộc thi từ tầng Bronze trên Cloudflare R2 (hoặc `data/raw/markdown/`).
-   - Sử dụng thư viện `instructor` kết hợp `litellm` để ép kiểu phản hồi của mô hình ngôn ngữ lớn theo đúng schema `SilverCompetitionRecord` (Pydantic v2).
-   - Chuẩn hóa toàn bộ ngày tháng sang chuẩn ISO 8601 (`YYYY-MM-DD`), giá trị giải thưởng sang kiểu số nguyên VND và xuất kết quả ra tệp `silver/competitions.parquet` trên Cloudflare R2.
-2. **Tinh giản mã nguồn Lakehouse & Truy vấn phân tích Tầng Gold bằng DuckDB**:
-   - Loại bỏ bước nén `zstandard` cũ trong `src/acdp/lakehouse/` để đồng nhất với định dạng Markdown/Parquet thuần trên R2.
-   - Sử dụng động cơ phân tích in-process `DuckDB` (kèm extension `httpfs`) đọc trực tiếp tệp `silver/competitions.parquet` từ Cloudflare R2 để thống kê tổng giải thưởng, phân bố cuộc thi theo lĩnh vực và thời hạn đăng ký.
+1. **Kết nối lưu trữ Parquet Tầng Silver & Xây dựng truy vấn phân tích DuckDB Tầng Gold**:
+   - Nối đầu ra trích xuất từ `src/acdp/2_instruction.py` thành tệp `competitions.parquet` lưu cục bộ và đồng bộ lên Cloudflare R2 (`s3://acdp-lakehouse/silver/`).
+   - Xây dựng các script phân tích SQL OLAP bằng `DuckDB` đọc trực tiếp tệp Parquet để tổng hợp số liệu (tổng giá trị giải thưởng, phân bố thể loại, hạn nộp hồ sơ, yêu cầu nhóm) phục vụ báo cáo và dashboard.
+2. **Cập nhật và sửa lỗi bộ kiểm thử tự động (Test Suite)**:
+   - Viết lại `tests/test_silver_schema.py` và `tests/test_bronze_storage.py` để tương thích hoàn toàn với kiến trúc `src/acdp/schemas.py` và luồng cào dữ liệu mới, đảm bảo 100% test pass.
+3. **Đánh giá thực nghiệm chất lượng RAG Chatbot bằng khung Ragas**:
+   - Sử dụng khung đánh giá chuẩn Ragas đo lường các chỉ số cốt lõi: *Faithfulness*, *Answer Relevancy*, *Context Precision* trên tập câu hỏi - đáp quy chế thi mẫu, lưu báo cáo vào `docs/experiments/0001-rag-baseline-evaluation.md`.
 
 ---
 

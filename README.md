@@ -83,9 +83,9 @@ flowchart TD
 | :--- | :--- | :--- | :--- |
 | **Ingestion & Crawling** | `Crawl4AI` (`AdaptiveCrawler`) executed on-demand over 5–10 curated URLs | Automated batch scheduler (HTTP `ETag`), search discovery & webhooks | [`SPEC-0002`](docs/specs/0002-data-ingestion-and-schema-spec.md) / [`1_crawl_to_bronze.py`](src/acdp/1_crawl_to_bronze.py) |
 | **Bronze Layer Storage** | Raw UTF-8 Markdown (`.md`) on **Local Files** & **Cloudflare R2** (`boto3`) | High-volume compaction, `SeaweedFS` Haystack object store | [`NT-018`](docs/deliverables/NT-018-bronze-storage-and-table-format-evaluation.md) / [`HUONG_DAN_MIGRATE_R2_LAKEHOUSE.md`](docs/deliverables/HUONG_DAN_MIGRATE_R2_LAKEHOUSE.md) |
-| **Silver Extraction & Schema** | `Instructor` + `LiteLLM` + `Pydantic v2` (`SilverCompetitionRecord` $\rightarrow$ Parquet/JSON) | Multi-channel fuzzy Levenshtein entity resolution | [`schema.py`](src/acdp/lakehouse/schema.py) / [`2_instruction.py`](src/acdp/2_instruction.py) |
+| **Silver Extraction & Schema** | `Instructor` + `LiteLLM` + `Pydantic v2` (`Competition` $\rightarrow$ Parquet/JSON) | Multi-channel fuzzy Levenshtein entity resolution | [`schemas.py`](src/acdp/schemas.py) / [`2_instruction.py`](src/acdp/2_instruction.py) |
 | **Gold Analytics & OLAP** | **DuckDB** in-process SQL directly over R2 / Local Parquet | Hybrid OLAP (DuckDB) + Transactional OLTP (PostgreSQL) | [`SPEC-0001`](docs/specs/0001-system-foundation-spec.md) / [`NT-013`](docs/deliverables/NT-013-business-technical-feasibility-review.md) |
-| **Semantic RAG Copilot** | Clause chunking + Hybrid Search (`BM25` + `Qdrant`) + Ragas evaluation | Multi-modal PDF/Poster OCR & Historical Knowledge Vault | Phase 1 Weeks 11–12 (`NT-012`) |
+| **Semantic RAG Copilot** | Semantic chunking + Qdrant Vector Store + Gradio Chatbot (`3_chatbot_mvp.py`) + Ragas evaluation | Multi-modal PDF/Poster OCR & Historical Knowledge Vault | [`3_chatbot_mvp.py`](src/acdp/3_chatbot_mvp.py) / [`NT-012`](docs/tasks/notion-task-mapping.md) |
 
 ---
 
@@ -96,9 +96,11 @@ The project is conducted within the **Major in Data Engineering**, Faculty of In
 ### Phase 1: Special Topic Project (Tiểu luận chuyên ngành - 15-Week Lean MVP)
 - [x] Problem formulation, business feasibility (`T01`), competition survey (`T02`), and thesis introduction (`T08_v2`).
 - [x] On-demand ingestion pipeline covering 7 representative competition sources (`data/raw/` & `src/acdp/1_crawl_to_bronze.py`) synced to Cloudflare R2.
-- [x] Silver layer Pydantic v2 data contract (`SilverCompetitionRecord`) and deterministic deduplication fingerprinting (`src/acdp/lakehouse/schema.py`).
-- [ ] Automated Bronze-to-Silver LLM structured extraction (`src/acdp/2_instruction.py`) and DuckDB Gold analytical queries (In Progress - Week 9–10).
-- [ ] Core RAG copilot for contest rules and guideline Q&A over the 5–10 competition dataset.
+- [x] Silver layer Pydantic v2 schema specification and clean data contracts (`src/acdp/schemas.py`).
+- [x] Automated Bronze-to-Silver LLM structured extraction with Few-Shot prompting (`src/acdp/2_instruction.py`).
+- [x] Core RAG copilot MVP with Qdrant vector store and interactive Gradio interface (`src/acdp/3_chatbot_mvp.py`).
+- [ ] Silver Parquet persistence & DuckDB Gold layer analytical queries over the curated competition dataset (In Progress - Week 10–11).
+- [ ] Quantitative RAG evaluation using Ragas framework and realigned test suite.
 - [ ] MVP web portal for contest exploration and faculty analytics dashboard.
 
 ### Phase 2: Graduation Thesis (Khóa luận tốt nghiệp - 15-Week Full System)
