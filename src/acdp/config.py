@@ -1,10 +1,11 @@
 """Configuration management module for ACDP Platform.
 
-Conforms to SPEC-0001 (Pydantic v2 Settings) and supports Tri-Storage backends:
-Local POSIX, SeaweedFS (Local S3), and Cloudflare R2 (Cloud S3).
+Conforms to SPEC-0001 (Pydantic v2 Settings) and supports Dual-Storage backends:
+Local POSIX and Cloudflare R2 (Cloud S3).
 """
 
 from typing import Literal
+
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -38,19 +39,19 @@ class AppConfig(BaseSettings):
     )
 
     # Lakehouse Bronze Storage Configuration
-    bronze_storage_backend: Literal["local", "seaweedfs", "cloudflare_r2"] = Field(
+    bronze_storage_backend: Literal["local", "cloudflare_r2"] = Field(
         default="local",
-        description="Storage backend: 'local' (POSIX SSD), 'seaweedfs' (Docker S3), or 'cloudflare_r2' (Cloud S3)",
+        description="Storage backend: 'local' (POSIX SSD) or 'cloudflare_r2' (Cloud S3)",
     )
     bronze_storage_uri: str = Field(
         default="./data/lakehouse/bronze",
         description="Delta Lake storage directory path or s3:// URI",
     )
 
-    # S3 Object Storage Credentials (for SeaweedFS & Cloudflare R2)
+    # S3 Object Storage Credentials (for Cloudflare R2 / S3)
     aws_endpoint_url: str = Field(
         default="",
-        description="Custom endpoint URL for S3 API (e.g. http://localhost:8333 or https://<account_id>.r2.cloudflarestorage.com)",
+        description="Custom endpoint URL for S3 API (e.g. https://<account_id>.r2.cloudflarestorage.com)",
     )
     aws_access_key_id: str = Field(
         default="",
@@ -61,12 +62,12 @@ class AppConfig(BaseSettings):
         description="Secret access key for S3 object storage",
     )
     aws_region: str = Field(
-        default="us-east-1",
+        default="auto",
         description="AWS/S3 region (use 'auto' for Cloudflare R2)",
     )
     aws_allow_http: bool = Field(
-        default=True,
-        description="Allow unencrypted HTTP communication (required for localhost SeaweedFS)",
+        default=False,
+        description="Allow unencrypted HTTP communication if using a custom S3 endpoint",
     )
     aws_s3_allow_unsafe_rename: bool = Field(
         default=True,

@@ -73,10 +73,10 @@
         <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm">
           <div class="text-xs font-medium text-slate-400 uppercase tracking-wider">Mức RAM Tiêu Thụ</div>
           <div class="mt-2 flex items-baseline gap-2">
-            <span class="text-3xl font-extrabold text-indigo-400">&lt; 150 MB</span>
-            <span class="text-xs text-slate-400">SeaweedFS S3</span>
+            <span class="text-3xl font-extrabold text-indigo-400">&lt; 50 MB</span>
+            <span class="text-xs text-slate-400">DuckDB + uv</span>
           </div>
-          <p class="mt-1 text-xs text-slate-500">Nhẹ hơn MinIO (1.5 GB RAM)</p>
+          <p class="mt-1 text-xs text-slate-500">In-Process OLAP tối giản</p>
         </div>
 
         <!-- KPI Card 3 -->
@@ -117,19 +117,17 @@
     <!-- TIER 2A: Architecture Tab -->
     <div id="tab-architecture" class="tab-content space-y-6">
       <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
-        <h3 class="text-base font-semibold text-white mb-4">Luồng Dữ Liệu Lớp Bronze (Tri-Storage Engine)</h3>
+        <h3 class="text-base font-semibold text-white mb-4">Luồng Dữ Liệu Lớp Bronze & Silver (Dual-Storage Engine)</h3>
         <div class="mermaid text-center">
 flowchart LR
-    Crawler[Crawler Engine] --> Compress[Zstandard Level 3]
-    Compress --> Model[BronzeRecord & Arrow Table]
-    Model --> DeltaRS[delta-rs Rust Engine]
+    Crawler[Crawl4AI Engine] --> RawMD[Raw UTF-8 Markdown]
+    RawMD --> Instructor[Instructor + LiteLLM]
+    Instructor --> Pydantic[SilverCompetitionRecord]
     
-    DeltaRS -->|local| LocalFS[(Local POSIX SSD)]
-    DeltaRS -->|seaweedfs| Seaweed[(SeaweedFS Docker S3)]
-    DeltaRS -->|cloudflare_r2| Cloudflare[(Cloudflare R2 Cloud S3)]
+    Pydantic -->|local| LocalFS[(Local POSIX / Parquet)]
+    Pydantic -->|cloudflare_r2| Cloudflare[(Cloudflare R2 Cloud S3)]
     
-    LocalFS --> DuckDB[DuckDB delta_scan Engine]
-    Seaweed --> DuckDB
+    LocalFS --> DuckDB[DuckDB OLAP Engine]
     Cloudflare --> DuckDB
         </div>
       </div>
@@ -205,11 +203,11 @@ flowchart LR
         new Chart(ctxRam, {
           type: 'bar',
           data: {
-            labels: ['Local POSIX', 'SeaweedFS (Haystack)', 'MinIO (Standard S3)'],
+            labels: ['Local POSIX (DuckDB)', 'Cloudflare R2', 'MinIO (Standard S3)'],
             datasets: [{
               label: 'Mức tiêu thụ RAM (MB)',
-              data: [0, 120, 1400],
-              backgroundColor: ['#10b981', '#6366f1', '#ef4444']
+              data: [15, 0, 1400],
+              backgroundColor: ['#10b981', '#38bdf8', '#ef4444']
             }]
           },
           options: {

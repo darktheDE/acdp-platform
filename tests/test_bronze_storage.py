@@ -42,19 +42,19 @@ def test_storage_options_cloudflare_r2_backend() -> None:
     assert r2_opts["AWS_S3_ALLOW_UNSAFE_RENAME"] == "true"
 
 
-def test_storage_options_seaweedfs_backend() -> None:
-    """Verify SeaweedFS local S3 backend enables unencrypted HTTP transport."""
-    seaweed_cfg = AppConfig(
-        bronze_storage_backend="seaweedfs",
+def test_storage_options_custom_s3_backend_http() -> None:
+    """Verify custom S3 backend configuration with HTTP enabled."""
+    custom_cfg = AppConfig(
+        bronze_storage_backend="cloudflare_r2",
         bronze_storage_uri="s3://acdp-bronze/events",
-        aws_endpoint_url="http://localhost:8333",
+        aws_endpoint_url="http://custom-s3-gateway:9000",
         aws_access_key_id="test_key",
         aws_secret_access_key="test_secret",
         aws_allow_http=True,
     )
-    seaweed_opts = seaweed_cfg.get_storage_options()
-    assert seaweed_opts["AWS_ENDPOINT_URL"] == "http://localhost:8333"
-    assert seaweed_opts["AWS_ALLOW_HTTP"] == "true"
+    opts = custom_cfg.get_storage_options()
+    assert opts["AWS_ENDPOINT_URL"] == "http://custom-s3-gateway:9000"
+    assert opts["AWS_ALLOW_HTTP"] == "true"
 
 
 def test_markdown_utf8_storage_and_sha256_integrity(tmp_path: Path) -> None:
