@@ -249,15 +249,80 @@ def verify_analytics(con: duckdb.DuckDBPyConnection) -> None:
     print("=" * 65)
 
 
+def export_gold_parquet_and_sync_r2(con: duckdb.DuckDBPyConnection, gold_dir: Path) -> list[Path]:
+    """Exports Gold tables/views to Parquet files and syncs Silver + Gold to Cloudflare R2."""
+    gold_dir.mkdir(parents=True, exist_ok=True)
+    gold_entities = [
+        "gold_competitions",
+        "gold_prizes",
+        "gold_category_summary",
+        "gold_mode_distribution",
+        "gold_seasonality",
+        "gold_top_prizes",
+    ]
+    exported_files: list[Path] = []
+    for entity in gold_entities:
+        parquet_file = gold_dir / f"{entity}.parquet"
+        escaped_file = str(parquet_file).replace("\\", "/")
+        con.execute(f"COPY {entity} TO '{escaped_file}' (FORMAT PARQUET)")
+        exported_files.append(parquet_file)
+        print(f">> [GOLD PARQUET EXPORTED] {entity} -> {parquet_file}")
+
+    # Synchronize to Cloudflare R2 bucket if configured
+    if settings.bronze_storage_backend == "cloudflare_r2" and settings.bucket_name:
+        import boto3
+
+        print(f"\n>> [R2 SYNC] Synchronizing Lakehouse Silver & Gold layers to Cloudflare R2: s3://{settings.bucket_name} ...")
+        s3 = boto3.client(
+            "s3",
+            endpoint_url=settings.aws_endpoint_url,
+            aws_access_key_id=settings.aws_access_key_id,
+            aws_secret_access_key=settings.aws_secret_access_key,
+            region_name=settings.aws_region or "auto",
+        )
+
+        # 1. Sync Silver Parquet
+        silver_dir = Path("data/lakehouse/silver")
+        silver_files = list(silver_dir.glob("*.parquet"))
+        for sp in silver_files:
+            s3.upload_file(str(sp), settings.bucket_name, f"silver/{sp.name}")
+            print(f">> [R2 SYNC SILVER] Uploaded: s3://{settings.bucket_name}/silver/{sp.name}")
+
+        # 2. Sync Gold Parquet
+        for gp in exported_files:
+            s3.upload_file(str(gp), settings.bucket_name, f"gold/{gp.name}")
+            print(f">> [R2 SYNC GOLD] Uploaded: s3://{settings.bucket_name}/gold/{gp.name}")
+
+        print(f">> [R2 SYNC COMPLETE] {len(silver_files)} Silver and {len(exported_files)} Gold Parquet files synced to R2.\n")
+
+    return exported_files
+
+
 def run_gold_pipeline() -> None:
-    """Executes the complete Gold analytics pipeline."""
+    """Executes the complete Gold analytics pipeline from Silver Parquet layer to DuckDB."""
     extractions_dir = Path("data/extractions")
     silver_dir = Path("data/lakehouse/silver")
+    gold_dir = Path("data/lakehouse/gold")
     duckdb_file = Path(settings.duckdb_database_path)
 
-    competitions = load_silver_competitions(extractions_dir)
-    comp_parquet, prizes_parquet = export_silver_parquet(competitions, silver_dir)
+    comp_parquet = silver_dir / "competitions.parquet"
+    prizes_parquet = silver_dir / "prizes.parquet"
+
+    # If new JSON extractions exist from LLM extraction, export them to Silver Parquet
+    json_files = list(extractions_dir.glob("*.json")) if extractions_dir.exists() else []
+    if json_files:
+        print(f">> Found {len(json_files)} Silver JSON extraction files. Materializing Silver Parquet...")
+        competitions = load_silver_competitions(extractions_dir)
+        comp_parquet, prizes_parquet = export_silver_parquet(competitions, silver_dir)
+    elif comp_parquet.exists():
+        print(f">> Using existing Silver Parquet dataset at {comp_parquet.resolve()} (Zero LLM Dependency)...")
+    else:
+        raise RuntimeError(
+            f"Silver layer missing: Neither Silver Parquet ('{comp_parquet.resolve()}') nor JSON extractions ('{extractions_dir.resolve()}') exist."
+        )
+
     con = build_gold_views(duckdb_file, comp_parquet, prizes_parquet)
+    export_gold_parquet_and_sync_r2(con, gold_dir)
     verify_analytics(con)
     con.close()
 
