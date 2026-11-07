@@ -49,7 +49,7 @@ Theo định hướng tinh giản công nghệ **DIR-015** cho quy mô 5–10 cu
    - Lưu trữ trực tiếp văn bản Markdown/HTML nguyên bản (`UTF-8`) được cào bởi `src/acdp/1_crawl_to_bronze.py` (hoặc nạp từ `data/raw/markdown/`).
    - **Không sử dụng nén nhị phân `zstandard`** ở quy mô 5–10 cuộc thi để giữ dữ liệu minh bạch, dễ đọc kiểm tra trực tiếp và giảm độ phức tạp của pipeline.
 2. **Tầng Silver (`silver/`)**:
-   - Dữ liệu sự kiện cuộc thi được bóc tách từ văn bản Markdown ở tầng Bronze thông qua thư viện `instructor` + `litellm`, tuân thủ chặt chẽ lược đồ Pydantic v2 `SilverCompetitionRecord` và lưu dưới dạng tệp `.parquet` / `.json`.
+   - Dữ liệu sự kiện cuộc thi được bóc tách từ văn bản Markdown ở tầng Bronze thông qua thư viện `instructor` + `litellm`, tuân thủ chặt chẽ lược đồ Pydantic v2 `Competition` ([`src/acdp/schemas.py`](../src/acdp/schemas.py)) và lưu dưới dạng tệp `.parquet` / `.json`.
 3. **Tầng Gold (`gold/`)**:
    - Các bảng chiều (Dimensions) và bảng sự kiện (Facts) được truy vấn trực tiếp bằng động cơ phân tích in-process **DuckDB** để phục vụ FastAPI backend và giao diện người dùng.
 

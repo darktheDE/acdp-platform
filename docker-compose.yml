@@ -1,21 +1,58 @@
 services:
   # ============================================================================
-  # SeaweedFS: Lightweight S3-Compatible Object Store (OSDI 2010 Haystack)
-  # RAM: < 150MB | Port 8333 (S3 API), Port 9333 (Master)
+  # Metabase BI Dashboard with MotherDuck DuckDB Driver
+  # Web UI: http://localhost:3000
   # ============================================================================
-  seaweedfs:
-    image: chrislusf/seaweedfs:latest
-    container_name: acdp_seaweedfs
+  metabase:
+    image: ghcr.io/motherduckdb/metabase-duckdb:latest
+    container_name: acdp_metabase
+    restart: unless-stopped
+    user: root
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./data/lakehouse:/data/lakehouse:ro
+      - metabase_data:/metabase-data
+    environment:
+      - MB_DB_FILE=/metabase-data/metabase.db
+      - MB_ANON_TRACKING_ENABLED=false
+      - JAVA_OPTS=-XX:+UseG1GC -Xms256m -Xmx512m
+
+  # ============================================================================
+  # Prefect 3.x Server: Orchestration Dashboard & Pipeline State Tracking
+  # Web UI: http://localhost:4200
+  # ============================================================================
+  prefect-server:
+    image: prefecthq/prefect:3-python3.11
+    container_name: acdp_prefect
     restart: unless-stopped
     ports:
-      - "9333:9333" # Master HTTP
-      - "8333:8333" # S3 API endpoint
-    command: "server -s3 -s3.port=8333 -dir=/data"
+      - "4200:4200"
+    command: prefect server start --host 0.0.0.0
     volumes:
-      - seaweedfs_data:/data
+      - prefect_data:/root/.prefect
     environment:
-      - WEED_S3_ENABLE=true
+      - PREFECT_SERVER_API_HOST=0.0.0.0
+      - PREFECT_UI_API_URL=http://localhost:4200/api
+
+  # ============================================================================
+  # Qdrant: Vector Database for RAG Regulation Copilot
+  # Web Dashboard & REST API: http://localhost:6333
+  # ============================================================================
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: acdp_qdrant
+    restart: unless-stopped
+    ports:
+      - "6333:6333"
+      - "6334:6334" # gRPC
+    volumes:
+      - qdrant_data:/qdrant/storage
 
 volumes:
-  seaweedfs_data:
+  metabase_data:
+    driver: local
+  prefect_data:
+    driver: local
+  qdrant_data:
     driver: local
