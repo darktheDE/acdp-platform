@@ -34,6 +34,7 @@ Detect user intent and activate the corresponding modular skill playbook:
 | **Mode 7: Quality & Link Verification** | [`.agents/skills/url-link-verifier/SKILL.md`](./.agents/skills/url-link-verifier/SKILL.md) | Reachability audit, dead link detection |
 | **Mode 8: Scientific Prose & Anti-Slop** | [`.agents/skills/anti-slop-scientific-writer/SKILL.md`](./.agents/skills/anti-slop-scientific-writer/SKILL.md) | Concise responses, zero AI slop/tropes, doc audit |
 | **Mode 9: Visual Dossiers & HTML Reports** | [`.agents/skills/visual-dossier-reporter/SKILL.md`](./.agents/skills/visual-dossier-reporter/SKILL.md) | Single-File HTML reports, Tailwind/Mermaid/Chart dashboards |
+| **Mode 10: Open Models & Ollama** | [`.agents/skills/ollama-bridge/SKILL.md`](./.agents/skills/ollama-bridge/SKILL.md) | Ollama orchestration, local SLM/embedding, Cloud API bridge |
 
 
 *Implicit Intent & Auto-Activation*: Every skill in this repository must automatically activate based on the user's intent and prompt context. Never demand or expect the user to explicitly call skills by name.

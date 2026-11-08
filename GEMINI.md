@@ -29,6 +29,7 @@ All agents operating in this workspace must strictly abide by the rules and adap
    - URL & Link Verifier: `.agents/skills/url-link-verifier/SKILL.md`
    - Scientific Prose & Anti-Slop: `.agents/skills/anti-slop-scientific-writer/SKILL.md`
    - Visual Dossiers & HTML Reports: `.agents/skills/visual-dossier-reporter/SKILL.md`
+   - Ollama Orchestration: `.agents/skills/ollama-bridge/SKILL.md`
 
 3. **Notion Synchronization**: Record deliverables in `docs/deliverables/` and maintain `docs/tasks/notion-task-mapping.md`.
 4. **Skill Engineering Specification**: When creating or upgrading any skill, strictly adhere to [`docs/frameworks/AGENT_SKILL_ENGINEERING_SPEC.md`](./docs/frameworks/AGENT_SKILL_ENGINEERING_SPEC.md). Never create cosmetic or prompt-only skills; always provide structured frontmatter with negative triggers, deterministic scripts (`scripts/`), deep references (`references/`), and verification suites.
