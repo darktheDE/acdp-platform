@@ -21,12 +21,11 @@
 | 5 | **Datathon VinUniversity** | https://www.datathon.site/ | Data Science / AI | 2025–2026 | Đơn vị tổ chức (VinTelligence), giải thưởng, lộ trình, thể lệ |
 | 6 | **AISC'26 (UIT)** | https://httt.uit.edu.vn/aisc/ | HTTT / AI / Data Analytics | 2026 | Đơn vị tổ chức (Khoa HTTT - UIT), giải thưởng, lịch trình, thể lệ |
 | 7 | **RMIT Hack-A-Venture 2026** | https://www.rmithackaventure.com/ | FinTech / Hackathon | 2026 | Đơn vị tổ chức (RMIT FinTech Club), giải thưởng, quy chế, lịch trình |
-| 8 | **QC4SG Vietnam 2026 (SEA Quantathon)** | https://vnquantum.org/events/quantum-hackathon-qc4sg/ | Quantum / AI Hackathon | 2026 | Đơn vị tổ chức (VNQuantum, NIC, OQI), giải thưởng, lịch trình, địa điểm |
-| 9 | **Vietnam Japan AI Hackathon 2026** | https://www.vjaihackathon.com/ | Agentic AI Hackathon | 2026 | Chủ đề, số đội/vòng thi (Pitch Day, Demo Day) |
-| 10 | **Qualcomm Vietnam Innovation Challenge (QVIC)** | https://qvic.vn/ | Deep Tech / AI / IoT | 2025–2027 | Đơn vị tổ chức (Qualcomm), giải thưởng, lộ trình, FAQs |
-| 11 | **Vietnam Business Innovation Challenge (VBIC)** | https://vbic.vn/ | Business / Tech Innovation | 2025–2026 | Đơn vị tổ chức, giải thưởng, timeline, đối tượng |
-| 12 | **Web3 HackFest 2025** | https://web3hackfest.org/ | Blockchain / AI / Game | 2025 | Đơn vị tổ chức, giải thưởng, lịch trình, hoạt động tại TP.HCM |
-| 13 | **Marketing Arena 2026** | https://marketingarena.vn/ | Business / Marketing Case | 2026 | Đơn vị tổ chức, giải thưởng, thể lệ, đối tượng |
+| 8 | **Vietnam Japan AI Hackathon 2026** | https://www.vjaihackathon.com/ | Agentic AI Hackathon | 2026 | Chủ đề, số đội/vòng thi (Pitch Day, Demo Day) |
+| 9 | **Qualcomm Vietnam Innovation Challenge (QVIC)** | https://qvic.vn/ | Deep Tech / AI / IoT | 2025–2027 | Đơn vị tổ chức (Qualcomm), giải thưởng, lộ trình, FAQs |
+| 10 | **Vietnam Business Innovation Challenge (VBIC)** | https://vbic.vn/ | Business / Tech Innovation | 2025–2026 | Đơn vị tổ chức, giải thưởng, timeline, đối tượng |
+| 11 | **Web3 HackFest 2025** | https://web3hackfest.org/ | Blockchain / AI / Game | 2025 | Đơn vị tổ chức, giải thưởng, lịch trình, hoạt động tại TP.HCM |
+| 12 | **Marketing Arena 2026** | https://marketingarena.vn/ | Business / Marketing Case | 2026 | Đơn vị tổ chức, giải thưởng, thể lệ, đối tượng |
 
 ### B. Nhóm SPA (2 trang — Cần `Crawl4AI` bật JS như cấu hình hiện tại)
 
