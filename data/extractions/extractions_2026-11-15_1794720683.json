@@ -1,0 +1,1760 @@
+{
+  "metadata": {
+    "extraction_date": "2026-11-15",
+    "generated_at": "2026-11-15T12:31:23.031412",
+    "total_targets": 18,
+    "successful_extractions": 18,
+    "competitions_found": 19
+  },
+  "results": [
+    {
+      "_metadata": {
+        "source_domain": "challenge.zalo.ai",
+        "source_key": "bronze/challenge.zalo.ai/year=2026/month=11/day=15/1794720141",
+        "crawl_date": "2026-11-15",
+        "crawl_timestamp": 1794720141,
+        "extracted_at": "2026-11-15T12:30:22.274652",
+        "raw_markdown_length": 17164,
+        "cleaned_markdown_length": 14251
+      },
+      "is_competition": true,
+      "reasoning": "Trang web chứa thông tin chi tiết về cuộc thi Zalo AI Challenge 2026 với các thử thách LifeMate và DataMate, lịch trình, cơ cấu giải thưởng và quy chế tham gia.",
+      "competitions": [
+        {
+          "name": "Zalo AI Challenge 2026",
+          "tagline": "Empower Vietnamese AI engineers' capacity and explore AI technologies to impact Vietnamese lives",
+          "url": "https://challenge.zalo.ai",
+          "summary": "Cuộc thi AI thường niên lớn tại Việt Nam nhằm nâng cao năng lực kỹ sư AI, tìm kiếm các giải pháp thực tế giải quyết các bài toán đời sống thông qua Agentic AI với 2 track LifeMate và DataMate.",
+          "organizers": [
+            "Zalo AI"
+          ],
+          "partners_and_sponsors": [],
+          "category": [
+            "Artificial Intelligence",
+            "Agentic AI",
+            "Natural Language Processing",
+            "Data Science"
+          ],
+          "target_audience": "Vietnamese AI enthusiasts, lập trình viên và kỹ sư AI",
+          "team_size_min": 1,
+          "team_size_max": 5,
+          "team_description": "Tối đa 5 thành viên mỗi đội, mỗi thành viên chỉ tham gia 1 đội duy nhất",
+          "mode": "online",
+          "location": null,
+          "participation_fee": "Miễn phí",
+          "total_prize_pool": "USD 12,000 in cash plus in-kind gift package",
+          "prizes": [
+            {
+              "tier": "First Prize",
+              "reward": "USD 3,500 in cash plus ZAIC gift package",
+              "estimated_value_vnd": 87500000.0,
+              "is_scholarship": false
+            },
+            {
+              "tier": "Second Prize",
+              "reward": "USD 2,500 in cash plus ZAIC gift package",
+              "estimated_value_vnd": 62500000.0,
+              "is_scholarship": false
+            },
+            {
+              "tier": "Top 5 per track",
+              "reward": "ZAIC gift package",
+              "estimated_value_vnd": null,
+              "is_scholarship": false
+            }
+          ],
+          "registration_start": null,
+          "registration_deadline": "2026-11-16",
+          "registration_status": "open",
+          "event_start": "2026-10-26",
+          "event_end": "2026-12-12",
+          "timeline_stages": [
+            {
+              "stage_name": "Start the challenge",
+              "start_date": "2026-10-26",
+              "end_date": "2026-10-26",
+              "description": "Phát hành bộ công cụ phát triển, dữ liệu huấn luyện và phần mềm đánh giá"
+            },
+            {
+              "stage_name": "Submit solutions",
+              "start_date": null,
+              "end_date": "2026-11-16",
+              "description": "Các đội nộp giải pháp bao gồm mã huấn luyện, mã kiểm tra và mô hình"
+            },
+            {
+              "stage_name": "Release private test",
+              "start_date": "2026-11-20",
+              "end_date": "2026-11-20",
+              "description": "Công bố bảng xếp hạng tạm thời dựa trên kết quả đã nộp"
+            },
+            {
+              "stage_name": "Submit the final result",
+              "start_date": null,
+              "end_date": "2026-11-23",
+              "description": "Các đội nộp kết quả cuối cùng cho tập dữ liệu kiểm tra riêng tư"
+            },
+            {
+              "stage_name": "Announce the finalists",
+              "start_date": "2026-12-02",
+              "end_date": "2026-12-02",
+              "description": "Công bố top 2 đội mỗi bảng"
+            },
+            {
+              "stage_name": "Announce the final standing",
+              "start_date": "2026-12-12",
+              "end_date": "2026-12-12",
+              "description": "Công bố kết quả chung cuộc dựa trên tập kiểm tra riêng tư khác"
+            }
+          ],
+          "challenge_overview": "Xây dựng các Agentic AI thông minh cho phép chuyển đổi yêu cầu giọng nói tiếng Việt thành hành động qua các ứng dụng (LifeMate) hoặc khai thác dữ liệu bảng phức tạp, lộn xộn trong đời sống thực tế (DataMate).",
+          "submission_platform": "Zalo AI Challenge Portal"
+        }
+      ]
+    },
+    {
+      "_metadata": {
+        "source_domain": "codetour.org",
+        "source_key": "bronze/codetour.org/year=2026/month=11/day=15/1794715241",
+        "crawl_date": "2026-11-15",
+        "crawl_timestamp": 1794715241,
+        "extracted_at": "2026-11-15T12:30:24.880153",
+        "raw_markdown_length": 46817,
+        "cleaned_markdown_length": 16000
+      },
+      "is_competition": true,
+      "reasoning": "Trang web cung cấp thông tin chi tiết về chuỗi sự kiện và cuộc thi lập trình thi đấu Code Tour 2026 do VNG tổ chức với các vòng thi đấu thuật toán trực tuyến và chung kết trực tiếp.",
+      "competitions": [
+        {
+          "name": "Code Tour 2026",
+          "tagline": "Thử thách tư duy thuật toán, nâng cao kỹ năng giải quyết vấn đề",
+          "url": "https://codetour.org/",
+          "summary": "Cuộc thi lập trình thi đấu quy mô toàn quốc do VNG tổ chức dành cho người trẻ từ 15 đến 24 tuổi, nhằm phát triển tư duy thuật toán và kết nối cộng đồng công nghệ Việt Nam.",
+          "organizers": [
+            "VNG Corporation"
+          ],
+          "partners_and_sponsors": [],
+          "category": [
+            "Competitive Programming",
+            "Software Engineering",
+            "Algorithms"
+          ],
+          "target_audience": "Học sinh, sinh viên và lập trình viên trẻ từ 15 đến 24 tuổi",
+          "team_size_min": 1,
+          "team_size_max": 1,
+          "team_description": "Cuộc thi cá nhân",
+          "mode": "hybrid",
+          "location": "Vòng loại trực tuyến trên nền tảng oj.io.vn, Vòng chung kết trực tiếp tại VNG Campus, TP.HCM",
+          "participation_fee": "Miễn phí",
+          "total_prize_pool": "100 triệu VNĐ",
+          "prizes": [
+            {
+              "tier": "Top 50 Final Round",
+              "reward": "Quyền lợi tham gia vòng chung kết trực tiếp và các phần quà từ ban tổ chức",
+              "estimated_value_vnd": null,
+              "is_scholarship": false
+            }
+          ],
+          "registration_start": null,
+          "registration_deadline": null,
+          "registration_status": "closed",
+          "event_start": "26/09/2026",
+          "event_end": "31/10/2026",
+          "timeline_stages": [
+            {
+              "stage_name": "Warm-up Code Challenge",
+              "start_date": "26/09/2026",
+              "end_date": "26/09/2026",
+              "description": "Vòng khởi động giúp thí sinh làm quen với hệ thống và hình thức thi"
+            },
+            {
+              "stage_name": "Code Challenge #1",
+              "start_date": "03/10/2026",
+              "end_date": "03/10/2026",
+              "description": "Vòng loại trực tuyến đầu tiên tranh tài giành suất vào Final Round"
+            },
+            {
+              "stage_name": "Code Challenge #2",
+              "start_date": "10/10/2026",
+              "end_date": "10/10/2026",
+              "description": "Vòng loại trực tuyến thứ hai mở thêm cơ hội vào chung kết"
+            },
+            {
+              "stage_name": "Final Round",
+              "start_date": "31/10/2026",
+              "end_date": "31/10/2026",
+              "description": "Vòng chung kết trực tiếp tại VNG Campus quy tụ các thí sinh xuất sắc nhất"
+            }
+          ],
+          "challenge_overview": "Giải các bài toán thuật toán và cấu trúc dữ liệu trên hệ thốngấm chấm điểm tự động trong thời gian quy định.",
+          "submission_platform": "codetour26.oj.io.vn"
+        }
+      ]
+    },
+    {
+      "_metadata": {
+        "source_domain": "datadna.onyxdata.co.uk",
+        "source_key": "bronze/datadna.onyxdata.co.uk/year=2026/month=11/day=15/1794715692",
+        "crawl_date": "2026-11-15",
+        "crawl_timestamp": 1794715692,
+        "extracted_at": "2026-11-15T12:30:27.121773",
+        "raw_markdown_length": 97693,
+        "cleaned_markdown_length": 15996
+      },
+      "is_competition": true,
+      "reasoning": "Trang web chứa danh sách các cuộc thi phân tích dữ liệu hàng tháng của DataDNA Onyx Data, tiêu biểu là cuộc thi Health System Performance Analytics Challenge tháng 11/2026.",
+      "competitions": [
+        {
+          "name": "November 2026 DataDNA – Health System Performance Analytics Challenge",
+          "tagline": "Health System Performance Analytics Challenge",
+          "url": "https://datadna.onyxdata.co.uk/challenges/november-2026-datadna-health-system-performance-analytics-challenge/",
+          "summary": "Phân tích bộ dữ liệu y tế toàn cầu và Vương quốc Anh từ 2018-2024 để đánh giá hiệu suất hệ thống y tế, chi tiêu, kết quả chăm sóc bệnh nhân và tác động của đại dịch COVID-19.",
+          "organizers": [
+            "Onyx Data"
+          ],
+          "partners_and_sponsors": [],
+          "category": [
+            "Data Science",
+            "Business Intelligence",
+            "Healthcare Analytics"
+          ],
+          "target_audience": "Data enthusiasts and professionals",
+          "team_size_min": 1,
+          "team_size_max": null,
+          "team_description": "Có thể tham gia cá nhân hoặc theo đội",
+          "mode": "online",
+          "location": "Online",
+          "participation_fee": "Miễn phí",
+          "total_prize_pool": null,
+          "prizes": [],
+          "registration_start": "01/11/2026",
+          "registration_deadline": null,
+          "registration_status": "open",
+          "event_start": "01/11/2026",
+          "event_end": null,
+          "timeline_stages": [
+            {
+              "stage_name": "Challenge Launch",
+              "start_date": "01/11/2026",
+              "end_date": null,
+              "description": "Bắt đầu phát hành dữ liệu và mở cổng nhận bài phân tích"
+            }
+          ],
+          "challenge_overview": "Phân tích các chỉ số y tế cốt lõi bao gồm công suất ICU, thời gian chờ tại phòng cấp cứu, tình trạng thiếu hụt nhân sự và tỷ lệ mắc bệnh để tối ưu hóa chính sách y tế và chăm sóc bệnh nhân.",
+          "submission_platform": "DataDNA Platform / LinkedIn"
+        }
+      ]
+    },
+    {
+      "_metadata": {
+        "source_domain": "dataforlife.vn",
+        "source_key": "bronze/dataforlife.vn/year=2026/month=11/day=15/1794717031",
+        "crawl_date": "2026-11-15",
+        "crawl_timestamp": 1794717031,
+        "extracted_at": "2026-11-15T12:30:30.815346",
+        "raw_markdown_length": 61186,
+        "cleaned_markdown_length": 15998
+      },
+      "is_competition": true,
+      "reasoning": "Tài liệu chứa thông tin chi tiết về cuộc thi quốc tế 'Data for Life' - Mùa 4 (2026) với chủ đề 'Build Together', bao gồm đơn vị tổ chức, thể lệ, các vòng thi và cơ cấu giải thưởng.",
+      "competitions": [
+        {
+          "name": "Data for Life - Mùa 4 (2026)",
+          "tagline": "Build Together",
+          "url": "https://dataforlife.vn/",
+          "summary": "Cuộc thi quốc tế do Bộ Công an tổ chức nhằm thúc đẩy đổi mới sáng tạo dựa trên dữ liệu và công nghệ số, kết nối Nhà nước – Nhà trường – Nhà doanh nghiệp để giải quyết các bài toán thực tiễn.",
+          "organizers": [
+            "Bộ Công an"
+          ],
+          "partners_and_sponsors": [],
+          "category": [
+            "Data Science",
+            "Artificial Intelligence",
+            "Digital Transformation",
+            "Software Engineering"
+          ],
+          "target_audience": "Cá nhân, học sinh, sinh viên, người đi làm, nhóm nghiên cứu, doanh nghiệp khởi nghiệp và chuyên gia trong/ngoài nước",
+          "team_size_min": 1,
+          "team_size_max": 10,
+          "team_description": "Mỗi đội thi có tối đa 10 thành viên. Cá nhân có thể đăng ký độc lập để Ban Tổ chức hỗ trợ ghép đội.",
+          "mode": "hybrid",
+          "location": "Việt Nam",
+          "participation_fee": "Miễn phí",
+          "total_prize_pool": null,
+          "prizes": [
+            {
+              "tier": "Giải Nhất",
+              "reward": "Vinh danh và nhận giải thưởng từ Ban Tổ chức",
+              "estimated_value_vnd": null,
+              "is_scholarship": false
+            },
+            {
+              "tier": "Giải Nhì",
+              "reward": "Vinh danh và nhận giải thưởng từ Ban Tổ chức",
+              "estimated_value_vnd": null,
+              "is_scholarship": false
+            },
+            {
+              "tier": "Giải Ba",
+              "reward": "Vinh danh và nhận giải thưởng từ Ban Tổ chức",
+              "estimated_value_vnd": null,
+              "is_scholarship": false
+            },
+            {
+              "tier": "Giải thưởng phụ",
+              "reward": "Giải pháp sáng tạo nhất, tác động xã hội lớn nhất, công nghệ ấn tượng nhất, cộng đồng bình chọn nhiều nhất",
+              "estimated_value_vnd": null,
+              "is_scholarship": false
+            }
+          ],
+          "registration_start": "15/08/2026",
+          "registration_deadline": "20/09/2026",
+          "registration_status": "open",
+          "event_start": "15/08/2026",
+          "event_end": "25/11/2026",
+          "timeline_stages": [
+            {
+              "stage_name": "Vòng 1 - Tuyển chọn hồ sơ",
+              "start_date": "15/08/2026",
+              "end_date": "20/09/2026",
+              "description": "Tiếp nhận và đánh giá hồ sơ, lựa chọn khoảng 60 đội vào vòng tiếp theo."
+            },
+            {
+              "stage_name": "Vòng 2 - Chinh phục, phát triển giải pháp",
+              "start_date": "25/09/2026",
+              "end_date": "06/11/2026",
+              "description": "Các đội được hỗ trợ cố vấn và điều kiện thử nghiệm để hoàn thiện sản phẩm khả dụng tối thiểu; lựa chọn khoảng 30 đội."
+            },
+            {
+              "stage_name": "Vòng 3 - Triển lãm",
+              "start_date": "01/11/2026",
+              "end_date": "07/11/2026",
+              "description": "Trưng bày, giới thiệu giải pháp, kết nối cộng đồng và nhà đầu tư; lựa chọn 06 đội vào chung kết."
+            },
+            {
+              "stage_name": "Vòng 4 - Chung kết",
+              "start_date": "20/11/2026",
+              "end_date": "25/11/2026",
+              "description": "Các đội thuyết trình, phản biện trước Hội đồng Giám khảo; chương trình phát sóng trên Đài Truyền hình Việt Nam."
+            }
+          ],
+          "challenge_overview": "Giải quyết các bài toán thực tiễn về Chính phủ số, đô thị thông minh, y tế, giáo dục, môi trường, an ninh trật tự và kinh tế số thông qua dữ liệu.",
+          "submission_platform": "Website chính thức www.dataforlife.vn"
+        }
+      ]
+    },
+    {
+      "_metadata": {
+        "source_domain": "event.navercorp.vn",
+        "source_key": "bronze/event.navercorp.vn/year=2026/month=11/day=15/1794720295",
+        "crawl_date": "2026-11-15",
+        "crawl_timestamp": 1794720295,
+        "extracted_at": "2026-11-15T12:30:35.084411",
+        "raw_markdown_length": 13770,
+        "cleaned_markdown_length": 11541
+      },
+      "is_competition": true,
+      "reasoning": "Văn bản cung cấp thông tin chi tiết về cuộc thi NAVER Vietnam AI Hackathon, bao gồm cơ cấu giải thưởng, các vòng thi, điều kiện tham gia và lịch trình.",
+      "competitions": [
+        {
+          "name": "NAVER Vietnam AI Hackathon",
+          "tagline": "Navigate the Future with NAVER AI",
+          "url": "https://event.navercorp.vn",
+          "summary": "Cuộc thi trực tuyến dành cho sinh viên và lập trình viên Việt Nam nhằm xây dựng các nguyên mẫu dịch vụ AI ứng dụng thực tiễn trên hạ tầng NAVER Cloud Platform.",
+          "organizers": [
+            "NAVER Vietnam"
+          ],
+          "partners_and_sponsors": [],
+          "category": [
+            "Artificial Intelligence",
+            "Software Engineering",
+            "Hackathon"
+          ],
+          "target_audience": "Công dân Việt Nam đang cư trú tại Việt Nam, là sinh viên đại học hoặc đã tốt nghiệp năm 2025 và hiện không làm việc tại bất kỳ công ty nào",
+          "team_size_min": 1,
+          "team_size_max": null,
+          "team_description": "Hồ sơ nộp cá nhân ban đầu, các nhóm sẽ được thành lập sau vòng sơ loại",
+          "mode": "online",
+          "location": "Trực tuyến toàn quốc, Lễ trao giải trực tiếp tại Trung tâm Lập trình NAVER Việt Nam, TP.HCM",
+          "participation_fee": "Miễn phí",
+          "total_prize_pool": "75.000.000 VNĐ",
+          "prizes": [
+            {
+              "tier": "Giải Nhất",
+              "reward": "40.000.000 VNĐ, cơ hội thực tập tại NAVER Việt Nam",
+              "estimated_value_vnd": 40000000.0,
+              "is_scholarship": false
+            },
+            {
+              "tier": "Giải Nhì",
+              "reward": "15.000.000 VNĐ, cơ hội thực tập tại NAVER Việt Nam",
+              "estimated_value_vnd": 15000000.0,
+              "is_scholarship": false
+            },
+            {
+              "tier": "Giải Ba",
+              "reward": "10.000.000 VNĐ",
+              "estimated_value_vnd": 10000000.0,
+              "is_scholarship": false
+            },
+            {
+              "tier": "Giải Khuyến khích",
+              "reward": "5.000.000 VNĐ / giải (2 đội)",
+              "estimated_value_vnd": 5000000.0,
+              "is_scholarship": false
+            }
+          ],
+          "registration_start": "07/08/2025",
+          "registration_deadline": "15/09/2025",
+          "registration_status": "closed",
+          "event_start": "08/09/2025",
+          "event_end": "05/12/2025",
+          "timeline_stages": [
+            {
+              "stage_name": "Đăng ký",
+              "start_date": "07/08/2025",
+              "end_date": "15/09/2025",
+              "description": "Mở cổng đăng ký trực tuyến cá nhân"
+            },
+            {
+              "stage_name": "Vòng sơ loại",
+              "start_date": "08/09/2025",
+              "end_date": "15/09/2025",
+              "description": "Thực hiện nhiệm vụ sơ loại và nộp qua email"
+            },
+            {
+              "stage_name": "Đào tạo",
+              "start_date": "01/10/2025",
+              "end_date": "28/10/2025",
+              "description": "Khóa đào tạo thực hành kéo dài 4 tuần về phát triển ứng dụng và dịch vụ AI"
+            },
+            {
+              "stage_name": "Vòng chung kết",
+              "start_date": "10/11/2025",
+              "end_date": "24/11/2025",
+              "description": "Phát triển Prototype Dịch vụ AI và thuyết trình trực tuyến"
+            },
+            {
+              "stage_name": "Lễ trao giải",
+              "start_date": "05/12/2025",
+              "end_date": "05/12/2025",
+              "description": "Buổi thuyết trình chung kết trực tiếp và trao giải tại TP.HCM"
+            }
+          ],
+          "challenge_overview": "Tạo ra các dịch vụ AI thiết thực giúp giải quyết các vấn đề thực tế và nâng cao năng suất sử dụng Web Track (React) hoặc Mobile Android Track (Kotlin)",
+          "submission_platform": "NAVER Cloud Platform & Website ban tổ chức"
+        }
+      ]
+    },
+    {
+      "_metadata": {
+        "source_domain": "httt.uit.edu.vn",
+        "source_key": "bronze/httt.uit.edu.vn/year=2026/month=11/day=15/1794718032",
+        "crawl_date": "2026-11-15",
+        "crawl_timestamp": 1794718032,
+        "extracted_at": "2026-11-15T12:30:38.981142",
+        "raw_markdown_length": 88057,
+        "cleaned_markdown_length": 16000
+      },
+      "is_competition": true,
+      "reasoning": "Tài liệu cung cấp thông tin chi tiết về cuộc thi Advanced Information Systems Contest (AISC) 2026 do Khoa Hệ thống Thông tin - Trường Đại học Công nghệ Thông tin ĐHQG-HCM tổ chức, bao gồm cơ cấu giải thưởng, lịch trình 4 vòng thi, và các đơn vị tài trợ.",
+      "competitions": [
+        {
+          "name": "Advanced Information Systems Contest 2026",
+          "tagline": "Sân chơi học thuật thường niên về kinh doanh và công nghệ",
+          "url": "https://httt.uit.edu.vn/aisc/",
+          "summary": "Advanced Information Systems Contest (AISC) là cuộc thi học thuật thường niên do Khoa Hệ thống Thông tin, Trường Đại học Công nghệ Thông tin – ĐHQG-HCM tổ chức, hướng đến sinh viên yêu thích lĩnh vực Hệ thống Thông tin và Thương mại điện tử.",
+          "organizers": [
+            "Khoa Hệ thống Thông tin, Trường Đại học Công nghệ Thông tin – ĐHQG-HCM",
+            "Đoàn Thanh niên Khoa Hệ thống Thông tin",
+            "Liên Chi Hội Khoa Hệ thống Thông tin"
+          ],
+          "partners_and_sponsors": [
+            "Công ty Cổ phần Quốc tế Phong Phú",
+            "CloudGO",
+            "FPT Software",
+            "Axon Active"
+          ],
+          "category": [
+            "Data Driven Business",
+            "Digital Business Ideas",
+            "Information Systems",
+            "E-Commerce"
+          ],
+          "target_audience": "Sinh viên yêu thích Hệ thống Thông tin & Thương mại Điện tử tại các trường đại học ở TP.HCM",
+          "team_size_min": null,
+          "team_size_max": null,
+          "team_description": null,
+          "mode": "offline",
+          "location": "Trường Đại học Công nghệ Thông tin - ĐHQG TP.HCM",
+          "participation_fee": "Miễn phí",
+          "total_prize_pool": "100.000.000đ",
+          "prizes": [
+            {
+              "tier": "Giải nhất",
+              "reward": "10.000.000đ (áp dụng cho mỗi chủ đề), kèm kỷ niệm chương và giấy chứng nhận",
+              "estimated_value_vnd": 10000000.0,
+              "is_scholarship": false
+            },
+            {
+              "tier": "Giải nhì",
+              "reward": "7.000.000đ (áp dụng cho mỗi chủ đề), kèm kỷ niệm chương và giấy chứng nhận",
+              "estimated_value_vnd": 7000000.0,
+              "is_scholarship": false
+            },
+            {
+              "tier": "Giải ba",
+              "reward": "5.000.000đ (áp dụng cho mỗi chủ đề), kèm kỷ niệm chương và giấy chứng nhận",
+              "estimated_value_vnd": 5000000.0,
+              "is_scholarship": false
+            },
+            {
+              "tier": "Giải khuyến khích",
+              "reward": "2.000.000đ",
+              "estimated_value_vnd": 2000000.0,
+              "is_scholarship": false
+            },
+            {
+              "tier": "Đề tài được yêu thích",
+              "reward": "2.000.000đ",
+              "estimated_value_vnd": 2000000.0,
+              "is_scholarship": false
+            },
+            {
+              "tier": "Thuyết minh ấn tượng",
+              "reward": "1.000.000đ",
+              "estimated_value_vnd": 1000000.0,
+              "is_scholarship": false
+            }
+          ],
+          "registration_start": "01/08/2026",
+          "registration_deadline": "15/09/2026",
+          "registration_status": "closed",
+          "event_start": "01/08/2026",
+          "event_end": "10/12/2026",
+          "timeline_stages": [
+            {
+              "stage_name": "Vòng 1: Đăng ký & nộp hồ sơ",
+              "start_date": "01/08/2026",
+              "end_date": "15/09/2026",
+              "description": "Đăng ký online và nộp hồ sơ dự thi trên website"
+            },
+            {
+              "stage_name": "Vòng 2: Thuyết trình ý tưởng",
+              "start_date": "22/10/2026",
+              "end_date": "22/10/2026",
+              "description": "Thuyết trình ý tưởng và nộp poster trước hội đồng giám khảo"
+            },
+            {
+              "stage_name": "Vòng 3: Bình chọn & mentor tư vấn",
+              "start_date": "01/11/2026",
+              "end_date": "10/11/2026",
+              "description": "Cộng đồng bình chọn trên Fanpage, mentor doanh nghiệp tư vấn hoàn thiện đề tài"
+            },
+            {
+              "stage_name": "Vòng 4: Chung kết & trao giải",
+              "start_date": "10/12/2026",
+              "end_date": "10/12/2026",
+              "description": "Trình bày, demo sản phẩm và vinh danh đội thi xuất sắc nhất tại UIT"
+            }
+          ],
+          "challenge_overview": "Giải quyết các bài toán kinh doanh - công nghệ thực tế thuộc lĩnh vực Hệ thống Thông tin và Thương mại Điện tử",
+          "submission_platform": "Website chính thức của cuộc thi (httt.uit.edu.vn/aisc)"
+        }
+      ]
+    },
+    {
+      "_metadata": {
+        "source_domain": "itconsultantchallenge.org",
+        "source_key": "bronze/itconsultantchallenge.org/year=2026/month=11/day=15/1794715884",
+        "crawl_date": "2026-11-15",
+        "crawl_timestamp": 1794715884,
+        "extracted_at": "2026-11-15T12:30:42.170782",
+        "raw_markdown_length": 11374,
+        "cleaned_markdown_length": 9507
+      },
+      "is_competition": true,
+      "reasoning": "Tài liệu chứa thông tin chi tiết về cuộc thi IT Consultant Challenge 2026, bao gồm chủ đề, đơn vị tổ chức, thể lệ các vòng thi, mốc thời gian và cơ cấu giải thưởng.",
+      "competitions": [
+        {
+          "name": "IT Consultant Challenge 2026",
+          "tagline": "Prompt to Production",
+          "url": "https://itconsultantchallenge.org/vi",
+          "summary": "Cuộc thi dành cho sinh viên và lập trình viên trẻ đóng vai trò chuyên gia tư vấn công nghệ, giải quyết bài toán kinh doanh thực tế và ứng dụng AI có trách nhiệm để xây dựng MVP.",
+          "organizers": [
+            "Code MeLy",
+            "Netcompany Vietnam"
+          ],
+          "partners_and_sponsors": [],
+          "category": [
+            "IT Consulting",
+            "Software Engineering",
+            "Artificial Intelligence"
+          ],
+          "target_audience": "Sinh viên đại học và các bạn trẻ yêu công nghệ, lập trình viên mới (IT Freshers)",
+          "team_size_min": 3,
+          "team_size_max": 3,
+          "team_description": "Mỗi đội bắt buộc gồm 3 thành viên",
+          "mode": "hybrid",
+          "location": "Vòng loại online, Vòng chung kết trực tiếp tại văn phòng Netcompany TP.HCM và trực tuyến cho khu vực khác",
+          "participation_fee": "Miễn phí",
+          "total_prize_pool": "Hơn 300 triệu VNĐ",
+          "prizes": [
+            {
+              "tier": "Quán quân",
+              "reward": "60 triệu VNĐ (trao dưới dạng e-voucher Got It)",
+              "estimated_value_vnd": 60000000.0,
+              "is_scholarship": false
+            },
+            {
+              "tier": "Á quân 1",
+              "reward": "30 triệu VNĐ (trao dưới dạng e-voucher Got It)",
+              "estimated_value_vnd": 30000000.0,
+              "is_scholarship": false
+            },
+            {
+              "tier": "Á quân 2",
+              "reward": "15 triệu VNĐ (trao dưới dạng e-voucher Got It)",
+              "estimated_value_vnd": 15000000.0,
+              "is_scholarship": false
+            },
+            {
+              "tier": "Top 20 - Engineer Pro",
+              "reward": "30% học bổng tất cả các khóa học",
+              "estimated_value_vnd": 51000000.0,
+              "is_scholarship": true
+            },
+            {
+              "tier": "Top 10 - DuaEdu",
+              "reward": "50% học bổng khóa học Data Analyst",
+              "estimated_value_vnd": 61000000.0,
+              "is_scholarship": true
+            },
+            {
+              "tier": "Top 5 - DuaEdu",
+              "reward": "70% học bổng khóa học Data Analyst",
+              "estimated_value_vnd": 85000000.0,
+              "is_scholarship": true
+            }
+          ],
+          "registration_start": "01/10/2026",
+          "registration_deadline": "26/10/2026",
+          "registration_status": "closed",
+          "event_start": "19/10/2026",
+          "event_end": "21/11/2026",
+          "timeline_stages": [
+            {
+              "stage_name": "Vòng 1: Discover",
+              "start_date": "19/10/2026",
+              "end_date": "26/10/2026",
+              "description": "Ban tổ chức đánh giá các proposal để tìm ra những ý tưởng sáng tạo và khả thi nhất."
+            },
+            {
+              "stage_name": "Vòng 2: Build",
+              "start_date": "02/11/2026",
+              "end_date": "09/11/2026",
+              "description": "Các đội phát triển ý tưởng thành MVP và nộp sản phẩm kèm AI journal."
+            },
+            {
+              "stage_name": "Vòng 3: Deliver (Chung kết & Demo)",
+              "start_date": "16/11/2026",
+              "end_date": "21/11/2026",
+              "description": "Các đội được chọn hoàn thiện giải pháp, demo sản phẩm và thuyết trình trực tiếp trước hội đồng giám khảo."
+            }
+          ],
+          "challenge_overview": "Giải quyết tình huống lấy cảm hứng từ dự án thực tế, phân tích nhu cầu kinh doanh, thiết kế giải pháp công nghệ và ứng dụng AI có trách nhiệm để xây dựng MVP.",
+          "submission_platform": "Google Forms / Website chính thức của cuộc thi"
+        }
+      ]
+    },
+    {
+      "_metadata": {
+        "source_domain": "marketingarena.vn",
+        "source_key": "bronze/marketingarena.vn/year=2026/month=11/day=15/1794719936",
+        "crawl_date": "2026-11-15",
+        "crawl_timestamp": 1794719936,
+        "extracted_at": "2026-11-15T12:30:45.120826",
+        "raw_markdown_length": 22421,
+        "cleaned_markdown_length": 12570
+      },
+      "is_competition": true,
+      "reasoning": "Tài liệu chứa đầy đủ thông tin về cuộc thi MARKETING ARENA 2026 (Mùa 11) với chủ đề, đối tượng, thể lệ, cơ cấu giải thưởng, các vòng thi và mốc thời gian chi tiết.",
+      "competitions": [
+        {
+          "name": "MARKETING ARENA 2026",
+          "tagline": "Never Shall The World End Once Agile Souls Transcend",
+          "url": "https://marketingarena.vn/",
+          "summary": "Sân chơi thực tiễn định hướng 'Business-oriented' dành cho sinh viên, nơi các đội thi giải quyết các bài toán chiến lược Marketing và kinh doanh thực tế từ doanh nghiệp.",
+          "organizers": [
+            "CREATIO FTU2"
+          ],
+          "partners_and_sponsors": [
+            "Handy Hảo Hảo",
+            "Zalopay",
+            "The Friday",
+            "Publicis Groupe",
+            "Colgate-Palmolive Vietnam",
+            "Masan Consumer",
+            "OKR Business",
+            "MindX"
+          ],
+          "category": [
+            "Marketing",
+            "Business Strategy",
+            "Business Case"
+          ],
+          "target_audience": "Công dân Việt Nam hợp pháp, là sinh viên Đại học, Cao đẳng hoặc du học sinh từ 18-24 tuổi",
+          "team_size_min": 3,
+          "team_size_max": 3,
+          "team_description": "Mỗi nhóm dự thi bắt buộc gồm đúng 03 thành viên",
+          "mode": "offline",
+          "location": "TP. Hồ Chí Minh",
+          "participation_fee": "Miễn phí",
+          "total_prize_pool": "23.000.000đ tiền mặt và các cơ hội shortcut việc làm giá trị",
+          "prizes": [
+            {
+              "tier": "Quán quân",
+              "reward": "23.000.000đ tiền mặt kèm theo các đặc quyền shortcut (vòng tuyển dụng) tại các doanh nghiệp lớn như The Friday, Publicis Groupe, Colgate-Palmolive, Masan Consumer, Zalopay, OKR Business và MindX",
+              "estimated_value_vnd": 23000000.0,
+              "is_scholarship": false
+            }
+          ],
+          "registration_start": "02/05/2026",
+          "registration_deadline": "14/05/2026",
+          "registration_status": "open",
+          "event_start": "07/05/2026",
+          "event_end": "28/06/2026",
+          "timeline_stages": [
+            {
+              "stage_name": "Vòng 01: Marketing Business Case",
+              "start_date": "14/05/2026",
+              "end_date": "21/05/2026",
+              "description": "Giải đề bài từ NTT Kim Cương (Handy Hảo Hảo & Zalopay), chọn ra Top 32 đội đi tiếp"
+            },
+            {
+              "stage_name": "Vòng 02: Marketing Business Strategy Case & Plan",
+              "start_date": "01/06/2026",
+              "end_date": "14/06/2026",
+              "description": "Thực hiện market research, xây dựng chiến lược và pitching với BGK, chọn ra Top 4 đội vào Chung kết"
+            },
+            {
+              "stage_name": "Vòng 03: Chung kết (Marketing Case & Hackathon Minicase)",
+              "start_date": "21/06/2026",
+              "end_date": "28/06/2026",
+              "description": "Giải case tăng trưởng theo cặp, giải đề Hackathon 24h và Gala Night trao giải"
+            }
+          ],
+          "challenge_overview": "Giải quyết các bài toán chiến lược Marketing thực tế và đề xuất kế hoạch triển khai cho các doanh nghiệp lớn",
+          "submission_platform": "Website chính thức và Typeform"
+        }
+      ]
+    },
+    {
+      "_metadata": {
+        "source_domain": "rmit-hackathon.com",
+        "source_key": "bronze/rmit-hackathon.com/year=2026/month=11/day=15/1794716149",
+        "crawl_date": "2026-11-15",
+        "crawl_timestamp": 1794716149,
+        "extracted_at": "2026-11-15T12:30:47.812329",
+        "raw_markdown_length": 29858,
+        "cleaned_markdown_length": 16000
+      },
+      "is_competition": true,
+      "reasoning": "Tài liệu chứa thông tin chi tiết về cuộc thi RMIT Hackathon 2026 bao gồm chủ đề, thể lệ, đơn vị tổ chức, địa điểm và kết quả chung cuộc tại các campus.",
+      "competitions": [
+        {
+          "name": "RMIT Hackathon 2026",
+          "tagline": "Security × Generative AI × Low-Resource Languages. Secure. Generate. Include.",
+          "url": "https://rmit-hackathon.com",
+          "summary": "Cuộc thi hackathon quốc tế quy tụ sinh viên đại học và sau đại học giải quyết các thách thức về An toàn bảo mật, Trí tuệ nhân tạo tạo sinh và Ngôn ngữ ít tài nguyên tại 4 cơ sở ở Úc, Việt Nam và Malaysia.",
+          "organizers": [
+            "School of Computing Technologies, RMIT University"
+          ],
+          "partners_and_sponsors": [
+            "Taylor’s University",
+            "Tide",
+            "DesignLive (Compnow)",
+            "Katalon",
+            "Orange Logic Vietnam"
+          ],
+          "category": [
+            "Cybersecurity",
+            "Generative AI",
+            "Software Engineering",
+            "Hackathon"
+          ],
+          "target_audience": "Sinh viên đại học và sau đại học đang theo học",
+          "team_size_min": 4,
+          "team_size_max": 4,
+          "team_description": "Mỗi đội bắt buộc gồm đúng 4 sinh viên",
+          "mode": "offline",
+          "location": "RMIT Melbourne, RMIT Saigon South, RMIT Hanoi, Taylor's University Lakeside Campus",
+          "participation_fee": "Miễn phí",
+          "total_prize_pool": "Up to VND 100M",
+          "prizes": [
+            {
+              "tier": "National / Campus Champions",
+              "reward": "Giải thưởng vinh danh các đội vô địch quốc gia và tại các campus Úc, Việt Nam, Malaysia",
+              "estimated_value_vnd": 100000000.0,
+              "is_scholarship": false
+            }
+          ],
+          "registration_start": null,
+          "registration_deadline": "13/10/2026",
+          "registration_status": "closed",
+          "event_start": "22/10/2026",
+          "event_end": "23/10/2026",
+          "timeline_stages": [
+            {
+              "stage_name": "Warm-up & Preparation",
+              "start_date": null,
+              "end_date": "21/10/2026",
+              "description": "Làm quen với nền tảng nguồn mở và diễn đàn thảo luận"
+            },
+            {
+              "stage_name": "Main Hackathon Event",
+              "start_date": "22/10/2026",
+              "end_date": "23/10/2026",
+              "description": "Thi đấu trực tiếp 2 ngày tại các cơ sở trường với 1 bài khởi động và 2 thử thách chính"
+            }
+          ],
+          "challenge_overview": "Tìm và vá lỗi hệ thống AI (prompt injection, data poisoning), cải thiện độ chính xác của LLM và giải quyết vấn đề của các ngôn ngữ ít tài nguyên.",
+          "submission_platform": "Kaggle (SkywardAI Labs)"
+        }
+      ]
+    },
+    {
+      "_metadata": {
+        "source_domain": "thucchien.ai",
+        "source_key": "bronze/thucchien.ai/year=2026/month=11/day=15/1794716359",
+        "crawl_date": "2026-11-15",
+        "crawl_timestamp": 1794716359,
+        "extracted_at": "2026-11-15T12:30:52.103425",
+        "raw_markdown_length": 42155,
+        "cleaned_markdown_length": 15996
+      },
+      "is_competition": true,
+      "reasoning": "Văn bản chứa thông tin chi tiết về cuộc thi 'A.I Thực Chiến' (Thực Chiến AI) năm 2026, bao gồm mục tiêu, đối tượng, thể lệ, các vòng thi và cơ cấu giải thưởng.",
+      "competitions": [
+        {
+          "name": "A.I Thực Chiến 2026",
+          "tagline": "Cuộc thi về Trí tuệ Nhân tạo ĐẦU TIÊN trên sóng truyền hình Quốc gia",
+          "url": "https://thucchien.ai",
+          "summary": "Cuộc thi tìm kiếm nhân tài AI quốc gia, xây dựng mô hình Multimodal/LLM/SLM tiếng Việt và hệ sinh thái ứng dụng Make in Vietnam, phát sóng trên VTV.",
+          "organizers": [
+            "Hiệp hội Dữ liệu Quốc gia (NDA)",
+            "Trung tâm Dữ liệu Quốc gia (NDC)",
+            "Đài Truyền hình Việt Nam (VTV)"
+          ],
+          "partners_and_sponsors": [
+            "Các trường đại học",
+            "Viện nghiên cứu",
+            "Doanh nghiệp công nghệ"
+          ],
+          "category": [
+            "Artificial Intelligence",
+            "Large Language Models",
+            "Small Language Models",
+            "Multimodal"
+          ],
+          "target_audience": "Công dân từ 18-35 tuổi gồm startup, sinh viên, nhà nghiên cứu trẻ và chuyên gia ứng dụng AI liên ngành",
+          "team_size_min": 1,
+          "team_size_max": 3,
+          "team_description": "Mỗi đội thi bao gồm từ 1 đến 3 thành viên, không phân biệt ngành nghề",
+          "mode": "hybrid",
+          "location": "Trường quay VTV, Hà Nội và các nền tảng trực tuyến",
+          "participation_fee": "Miễn phí",
+          "total_prize_pool": "Hàng tỷ VNĐ",
+          "prizes": [
+            {
+              "tier": "Hệ thống giải chính",
+              "reward": "Vinh danh các đội thi xuất sắc nhất tại truyền hình và nền tảng số",
+              "estimated_value_vnd": null,
+              "is_scholarship": false
+            },
+            {
+              "tier": "Ứng dụng dữ liệu xuất sắc",
+              "reward": "Giải thưởng phụ vinh danh giải pháp xuất sắc",
+              "estimated_value_vnd": null,
+              "is_scholarship": false
+            },
+            {
+              "tier": "Startup A.I toàn năng",
+              "reward": "Giải thưởng phụ vinh danh startup tiềm năng",
+              "estimated_value_vnd": null,
+              "is_scholarship": false
+            },
+            {
+              "tier": "Khán giả bình chọn",
+              "reward": "Giải thưởng dành cho đội thi được khán giả yêu thích nhất",
+              "estimated_value_vnd": null,
+              "is_scholarship": false
+            }
+          ],
+          "registration_start": "07/2026",
+          "registration_deadline": "09/2026",
+          "registration_status": "closed",
+          "event_start": "07/2026",
+          "event_end": "01/2027",
+          "timeline_stages": [
+            {
+              "stage_name": "Vòng 1 – Đăng ký & Sơ loại",
+              "start_date": "07/2026",
+              "end_date": "09/2026",
+              "description": "Nộp hồ sơ trực tuyến, video giới thiệu và hồ sơ năng lực. Chọn 100 đội vào vòng trong."
+            },
+            {
+              "stage_name": "Vòng 2 – Chung khảo – Thử thách tạo sản phẩm AI",
+              "start_date": "09/2026",
+              "end_date": "10/2026",
+              "description": "100 đội chia 10 bảng thi đấu tạo sản phẩm AI với API và công cụ."
+            },
+            {
+              "stage_name": "Vòng 3 – Bán Kết – Phát triển & Tối ưu các mô hình nền tảng",
+              "start_date": "10/2026",
+              "end_date": "12/2026",
+              "description": "Tập trung tại trường quay phát triển và tối ưu mô hình Multimodal/LLM/SLM tiếng Việt."
+            },
+            {
+              "stage_name": "Vòng 4 – Chung kết",
+              "start_date": "12/2026",
+              "end_date": "12/2026",
+              "description": "4 đội xây dựng MVP và pitching trực tiếp trước BGK và nhà đầu tư tại trường quay VTV."
+            },
+            {
+              "stage_name": "Gala trao giải",
+              "start_date": "01/2027",
+              "end_date": "01/2027",
+              "description": "Công bố và trao giải thưởng chính thức."
+            }
+          ],
+          "challenge_overview": "Xây dựng mô hình Multimodal/LLM/SLM tiếng Việt và hệ sinh thái ứng dụng Make in Vietnam phục vụ quản lý, kinh tế và xã hội.",
+          "submission_platform": "Website thucchien.ai và kho lưu trữ Git/ZIP"
+        }
+      ]
+    },
+    {
+      "_metadata": {
+        "source_domain": "vbic.vn",
+        "source_key": "bronze/vbic.vn/year=2026/month=11/day=15/1794719000",
+        "crawl_date": "2026-11-15",
+        "crawl_timestamp": 1794719000,
+        "extracted_at": "2026-11-15T12:30:55.825695",
+        "raw_markdown_length": 17017,
+        "cleaned_markdown_length": 10536
+      },
+      "is_competition": true,
+      "reasoning": "Trang web cung cấp thông tin chi tiết về cuộc thi 'Vietnam Business Innovation Challenge (VBIC)' dành cho học sinh trung học phổ thông, bao gồm cơ cấu giải thưởng, lịch trình, tiêu chí và đối tượng tham gia.",
+      "competitions": [
+        {
+          "name": "Vietnam Business Innovation Challenge (VBIC)",
+          "tagline": "A Case Study Competition for High School Students",
+          "url": "https://vbic.vn",
+          "summary": "Vietnam Business Innovation Challenge (VBIC) là cuộc thi giải case study kinh doanh dành cho học sinh THPT tại Việt Nam và Đông Nam Á, nhằm nuôi dưỡng tư duy phản biện, đổi mới sáng tạo và năng lực kinh doanh.",
+          "organizers": [
+            "Fulbright University Vietnam",
+            "Vietnam Business Innovation Challenge Team"
+          ],
+          "partners_and_sponsors": [
+            "Fulbright University Vietnam",
+            "IEG Global",
+            "Golden Gate Ventures",
+            "APUS Vietnam",
+            "C+P Consulting Asia",
+            "Viet Dragon Securities Corporation",
+            "DH Foods",
+            "ClassIn",
+            "British Council Vietnam"
+          ],
+          "category": [
+            "Business Case Study",
+            "Innovation",
+            "Economics and Finance"
+          ],
+          "target_audience": "Học sinh THPT từ 14 tuổi trở lên tại khu vực Đông Nam Á, thông thạo tiếng Anh",
+          "team_size_min": 3,
+          "team_size_max": 3,
+          "team_description": "Mỗi đội bắt buộc có đúng 3 học sinh",
+          "mode": "hybrid",
+          "location": "Thành phố Hồ Chí Minh, Việt Nam",
+          "participation_fee": "Miễn phí",
+          "total_prize_pool": "Học bổng đại học và các suất huấn luyện độc quyền",
+          "prizes": [
+            {
+              "tier": "Quán quân (Champion)",
+              "reward": "Học bổng 60% chương trình cử nhân tại Đại học Fulbright Việt Nam, miễn phí tham gia Fulbright Innovation Bootcamp tại TP.HCM",
+              "estimated_value_vnd": null,
+              "is_scholarship": true
+            },
+            {
+              "tier": "Á quân 1 (First-runner)",
+              "reward": "Học bổng 50% chương trình cử nhân tại Đại học Fulbright Việt Nam",
+              "estimated_value_vnd": null,
+              "is_scholarship": true
+            },
+            {
+              "tier": "Á quân 2 (Second-runner)",
+              "reward": "Học bổng 40% chương trình cử nhân tại Đại học Fulbright Việt Nam",
+              "estimated_value_vnd": null,
+              "is_scholarship": true
+            },
+            {
+              "tier": "Top 10 teams",
+              "reward": "Đặc quyền cố vấn độc quyền (Exclusive mentoring) với các chuyên gia đầu ngành",
+              "estimated_value_vnd": null,
+              "is_scholarship": false
+            },
+            {
+              "tier": "Top 50 teams",
+              "reward": "Cơ hội tham gia các buổi đào tạo chuyên sâu (Training sessions) với các huấn luyện viên",
+              "estimated_value_vnd": null,
+              "is_scholarship": false
+            }
+          ],
+          "registration_start": "30/11/2025",
+          "registration_deadline": "13/02/2026",
+          "registration_status": "closed",
+          "event_start": "14/02/2026",
+          "event_end": "19/04/2026",
+          "timeline_stages": [
+            {
+              "stage_name": "Open for registration",
+              "start_date": "30/11/2025",
+              "end_date": "13/02/2026",
+              "description": "Mở cổng đăng ký trực tuyến"
+            },
+            {
+              "stage_name": "Screening Round",
+              "start_date": "14/02/2026",
+              "end_date": "25/02/2026",
+              "description": "Nộp video sơ loại, chọn ra 50 đội đi tiếp"
+            },
+            {
+              "stage_name": "Training Series",
+              "start_date": "12/03/2026",
+              "end_date": "26/03/2026",
+              "description": "Chuỗi đào tạo về Kinh doanh, Đổi mới, Phát triển bền vững, Lãnh đạo và Quản lý"
+            },
+            {
+              "stage_name": "Qualifying Round",
+              "start_date": "09/03/2026",
+              "end_date": "06/04/2026",
+              "description": "Thuyết trình trực tuyến, chọn ra 10 đội vào vòng chung kết"
+            },
+            {
+              "stage_name": "Mentoring",
+              "start_date": "07/04/2026",
+              "end_date": "18/04/2026",
+              "description": "Các buổi cố vấn 1-1 với chuyên gia"
+            },
+            {
+              "stage_name": "Final Round",
+              "start_date": "19/04/2026",
+              "end_date": "19/04/2026",
+              "description": "Thuyết trình trực tiếp (Offline) và trao giải cho các đội chiến thắng"
+            }
+          ],
+          "challenge_overview": "Giải quyết các bài toán kinh doanh thực tế từ các doanh nghiệp hàng đầu tại Việt Nam và khu vực (ví dụ: đổi mới trải nghiệm bảo tàng, giải pháp phát triển bền vững,...)",
+          "submission_platform": "Google Forms / Website chính thức"
+        }
+      ]
+    },
+    {
+      "_metadata": {
+        "source_domain": "vietnamdatathon.com",
+        "source_key": "bronze/vietnamdatathon.com/year=2026/month=11/day=15/1794717373",
+        "crawl_date": "2026-11-15",
+        "crawl_timestamp": 1794717373,
+        "extracted_at": "2026-11-15T12:30:59.307734",
+        "raw_markdown_length": 33839,
+        "cleaned_markdown_length": 16000
+      },
+      "is_competition": true,
+      "reasoning": "Trang web cung cấp thông tin chi tiết về cuộc thi Vietnam Datathon - DataStorm 2025 dành cho sinh viên đại học với các vòng thi, cơ cấu giải thưởng và thể lệ đầy đủ.",
+      "competitions": [
+        {
+          "name": "Vietnam Datathon - DataStorm 2025",
+          "tagline": "Revolutionize the future of data-driven Retail",
+          "url": "https://vietnamdatathon.com/",
+          "summary": "Cuộc thi Data Science thường niên 24 giờ thử thách sinh viên đại học giải quyết các bài toán thực tế của doanh nghiệp bán lẻ thông qua khai thác dữ liệu và xây dựng giải pháp.",
+          "organizers": [
+            "Faculty of Information Technology - Ton Duc Thang University",
+            "Saigon Business School (SBS)"
+          ],
+          "partners_and_sponsors": [
+            "Kyanon Digital",
+            "EQuest Education"
+          ],
+          "category": [
+            "Data Science",
+            "Artificial Intelligence",
+            "Data Analytics"
+          ],
+          "target_audience": "Sinh viên các trường đại học đam mê Trí tuệ Nhân tạo và Khoa học Dữ liệu",
+          "team_size_min": 3,
+          "team_size_max": 5,
+          "team_description": "Mỗi đội gồm từ 3 đến 5 thành viên",
+          "mode": "offline",
+          "location": "Việt Nam",
+          "participation_fee": "Miễn phí",
+          "total_prize_pool": "Hơn 50.000.000++ VND",
+          "prizes": [
+            {
+              "tier": "1st Prize",
+              "reward": "25,000,000++ VND (bao gồm $1,000 tiền mặt và quà đặc biệt từ nhà tài trợ)",
+              "estimated_value_vnd": 25000000.0,
+              "is_scholarship": false
+            },
+            {
+              "tier": "2nd Prize",
+              "reward": "10,000,000++ VND (tiền mặt và quà từ nhà tài trợ)",
+              "estimated_value_vnd": 10000000.0,
+              "is_scholarship": false
+            },
+            {
+              "tier": "3rd Prize",
+              "reward": "5,000,000++ VND (tiền mặt và quà từ nhà tài trợ)",
+              "estimated_value_vnd": 5000000.0,
+              "is_scholarship": false
+            },
+            {
+              "tier": "Consolation",
+              "reward": "2,000,000 VND (tiền mặt và quà từ nhà tài trợ)",
+              "estimated_value_vnd": 2000000.0,
+              "is_scholarship": false
+            }
+          ],
+          "registration_start": "15/09/2025",
+          "registration_deadline": "19/10/2025",
+          "registration_status": "open",
+          "event_start": "17/01/2026",
+          "event_end": "18/01/2026",
+          "timeline_stages": [
+            {
+              "stage_name": "Online Registration",
+              "start_date": "15/09/2025",
+              "end_date": "19/10/2025",
+              "description": "Đăng ký thành lập đội thi qua form trực tuyến"
+            },
+            {
+              "stage_name": "Qualifying Round 1 (Online Selection)",
+              "start_date": "20/10/2025",
+              "end_date": "16/11/2025",
+              "description": "Đề xuất và trình bày ý tưởng dự án dựa trên chủ đề tổng thể"
+            },
+            {
+              "stage_name": "Qualifying Round 2",
+              "start_date": "01/12/2025",
+              "end_date": "28/12/2025",
+              "description": "Phát triển sâu hơn giải pháp dựa trên tập dữ liệu được cung cấp"
+            },
+            {
+              "stage_name": "Trainings",
+              "start_date": null,
+              "end_date": null,
+              "description": "Chuỗi 3 workshop định hướng và huấn luyện kỹ năng"
+            },
+            {
+              "stage_name": "Vietnam Datathon - DataStorm 2025 Days",
+              "start_date": "17/01/2026",
+              "end_date": "18/01/2026",
+              "description": "Vòng chung kết 24 giờ xây dựng MVP và thuyết trình trước ban giám khảo"
+            }
+          ],
+          "challenge_overview": "Tận dụng dữ liệu để tăng cường sự tương tác và trải nghiệm của khách hàng trong lĩnh vực bán lẻ (Retail)",
+          "submission_platform": "Google Forms / Website ban tổ chức"
+        }
+      ]
+    },
+    {
+      "_metadata": {
+        "source_domain": "vnquantum.org",
+        "source_key": "bronze/vnquantum.org/year=2026/month=11/day=15/1794718581",
+        "crawl_date": "2026-11-15",
+        "crawl_timestamp": 1794718581,
+        "extracted_at": "2026-11-15T12:31:02.223100",
+        "raw_markdown_length": 73361,
+        "cleaned_markdown_length": 16000
+      },
+      "is_competition": true,
+      "reasoning": "Tài liệu chứa thông tin chi tiết về cuộc thi QC4SG Vietnam 2026 (The 2nd SEA Quantathon), bao gồm đối tượng, thời gian, các thử thách và hình thức tổ chức.",
+      "competitions": [
+        {
+          "name": "QC4SG Vietnam 2026 – The 2nd SEA Quantathon",
+          "tagline": "Quantum Hackathon for Social Good",
+          "url": "https://vnquantum.org/events/quantum-hackathon-qc4sg/",
+          "summary": "Cuộc thi lập trình tích hợp Điện toán lượng tử (QC), Trí tuệ nhân tạo (AI) và Học máy (ML) nhằm giải quyết các bài toán phát triển bền vững của Liên Hợp Quốc.",
+          "organizers": [
+            "VNQuantum",
+            "CQT",
+            "Quapp"
+          ],
+          "partners_and_sponsors": [
+            "QWorld",
+            "QPakistan",
+            "Quandela"
+          ],
+          "category": [
+            "Quantum Computing",
+            "Artificial Intelligence",
+            "Machine Learning",
+            "DeepTech"
+          ],
+          "target_audience": "Sinh viên, nhà nghiên cứu, doanh nhân và các startup giai đoạn đầu quan tâm đến QC, AI và công nghệ mới",
+          "team_size_min": null,
+          "team_size_max": null,
+          "team_description": "Khuyến khích các đội đa lĩnh vực tham gia giải quyết bài toán xã hội",
+          "mode": "hybrid",
+          "location": "Trực tuyến qua QWorld và Trực tiếp tại Gia Lai, Việt Nam",
+          "participation_fee": "Miễn phí",
+          "total_prize_pool": null,
+          "prizes": [],
+          "registration_start": null,
+          "registration_deadline": "31/03/2026",
+          "registration_status": "closed",
+          "event_start": "24/07/2026",
+          "event_end": "28/07/2026",
+          "timeline_stages": [
+            {
+              "stage_name": "Đăng ký trực tuyến",
+              "start_date": null,
+              "end_date": "31/03/2026",
+              "description": "Hạn chót đăng ký tham gia chương trình trên website"
+            },
+            {
+              "stage_name": "Đào tạo trực tuyến QWorld",
+              "start_date": "15/05/2026",
+              "end_date": "24/05/2026",
+              "description": "Hoàn thành chứng chỉ QBronze và QCobalt qua nền tảng tự học"
+            },
+            {
+              "stage_name": "Đào tạo kỹ thuật từ đối tác",
+              "start_date": "01/05/2026",
+              "end_date": "30/06/2026",
+              "description": "Các khóa học trực tuyến từ nhà cung cấp phần cứng lượng tử"
+            },
+            {
+              "stage_name": "Bootcamp trực tiếp tại Gia Lai",
+              "start_date": "24/07/2026",
+              "end_date": "28/07/2026",
+              "description": "Vòng chung kết trực tiếp và phát triển nguyên mẫu sản phẩm"
+            },
+            {
+              "stage_name": "Demo Day",
+              "start_date": "28/07/2026",
+              "end_date": "28/07/2026",
+              "description": "Thuyết trình dự án trước chuyên gia và ban giám khảo"
+            }
+          ],
+          "challenge_overview": "Giải quyết các bài toán thực tế về quản lý chất lượng nước/đất, nông nghiệp thông minh, học máy lượng tử phân tán (Photonic QCNNs), dự báo thảm họa khí hậu, tối ưu hóa lưới điện, an ninh mạng hậu lượng tử và an ninh lương thực.",
+          "submission_platform": "Website ban tổ chức và Quapp"
+        }
+      ]
+    },
+    {
+      "_metadata": {
+        "source_domain": "web3hackfest.org",
+        "source_key": "bronze/web3hackfest.org/year=2026/month=11/day=15/1794719709",
+        "crawl_date": "2026-11-15",
+        "crawl_timestamp": 1794719709,
+        "extracted_at": "2026-11-15T12:31:08.628288",
+        "raw_markdown_length": 130101,
+        "cleaned_markdown_length": 16000
+      },
+      "is_competition": true,
+      "reasoning": "Trang web chứa thông tin về Web3 HackFest 2025 và Web3 Ideathon 2025, bao gồm các track hackathon và sự kiện công nghệ.",
+      "competitions": [
+        {
+          "name": "Web3 HackFest 2025",
+          "tagline": "Blockchain – AI – Game Convergence",
+          "url": "https://web3hackfest.org",
+          "summary": "Đại hội công nghệ và hackathon quy mô lớn tại Đông Nam Á, quy tụ hàng nghìn nhà phát triển Web3, AI và Game.",
+          "organizers": [
+            "Ho Chi Minh City People's Committee",
+            "VBI Academy"
+          ],
+          "partners_and_sponsors": [
+            "NEAR Protocol",
+            "HSC",
+            "Dragon Capital",
+            "BitMart",
+            "Sogni AI",
+            "TRIVE Digital",
+            "BSX Exchange",
+            "Offchain Labs",
+            "Tether",
+            "TRMLabs",
+            "Ascend Venture Vietnam"
+          ],
+          "category": [
+            "Blockchain",
+            "Artificial Intelligence",
+            "Gaming",
+            "Hackathon",
+            "Web3"
+          ],
+          "target_audience": "Nhà phát triển công nghệ, lập trình viên, startup và lãnh đạo doanh nghiệp",
+          "team_size_min": null,
+          "team_size_max": null,
+          "team_description": null,
+          "mode": "offline",
+          "location": "Đường đi bộ Nguyễn Huệ, TP. Hồ Chí Minh",
+          "participation_fee": "Miễn phí",
+          "total_prize_pool": null,
+          "prizes": [],
+          "registration_start": null,
+          "registration_deadline": null,
+          "registration_status": "upcoming",
+          "event_start": "08/11/2025",
+          "event_end": "09/11/2025",
+          "timeline_stages": [
+            {
+              "stage_name": "Official Press Conference",
+              "start_date": "15/10/2025",
+              "end_date": "15/10/2025",
+              "description": "Họp báo chính thức giới thiệu Web3 HackFest 2025"
+            },
+            {
+              "stage_name": "Main Event & Hackathon",
+              "start_date": "08/11/2025",
+              "end_date": "09/11/2025",
+              "description": "Sự kiện chính, hội nghị, triển lãm công nghệ và thi đấu hackathon"
+            }
+          ],
+          "challenge_overview": "Giải các bài toán về Layer, DeFi, NFT, Gaming, DAO, Tool & Infrastructure và Web2 to Web3",
+          "submission_platform": "Website ban tổ chức"
+        },
+        {
+          "name": "Web3 Ideathon 2025",
+          "tagline": "Empowering Vietnam's Web3 Startup Journey",
+          "url": "https://web3hackfest.org/web3-ideathon",
+          "summary": "Cuộc thi ý tưởng khởi nghiệp Web3 và AI dành cho thế hệ trẻ Việt Nam, kéo dài 4 tháng với vòng chung kết tổ chức vào tháng 3/2025.",
+          "organizers": [
+            "Web3 HackFest Organizing Committee"
+          ],
+          "partners_and_sponsors": [
+            "UniTrain",
+            "Fonos",
+            "PMAX",
+            "BSSC"
+          ],
+          "category": [
+            "Web3",
+            "Artificial Intelligence",
+            "Startup",
+            "Ideathon"
+          ],
+          "target_audience": "Thanh niên, sinh viên và các nhà sáng lập trẻ đam mê khởi nghiệp công nghệ",
+          "team_size_min": null,
+          "team_size_max": null,
+          "team_description": null,
+          "mode": "offline",
+          "location": "TP. Hồ Chí Minh",
+          "participation_fee": "Miễn phí",
+          "total_prize_pool": null,
+          "prizes": [],
+          "registration_start": null,
+          "registration_deadline": null,
+          "registration_status": "closed",
+          "event_start": null,
+          "event_end": "28/03/2025",
+          "timeline_stages": [
+            {
+              "stage_name": "Chung kết và Lễ trao giải",
+              "start_date": "28/03/2025",
+              "end_date": "28/03/2025",
+              "description": "Đêm chung kết và vinh danh các dự án xuất sắc nhất"
+            }
+          ],
+          "challenge_overview": "Xây dựng ý tưởng và dự án khởi nghiệp trong lĩnh vực Web3 và AI",
+          "submission_platform": "Website ban tổ chức"
+        }
+      ]
+    },
+    {
+      "_metadata": {
+        "source_domain": "www.datathon.site",
+        "source_key": "bronze/www.datathon.site/year=2026/month=11/day=15/1794717525",
+        "crawl_date": "2026-11-15",
+        "crawl_timestamp": 1794717525,
+        "extracted_at": "2026-11-15T12:31:11.875526",
+        "raw_markdown_length": 7758,
+        "cleaned_markdown_length": 7129
+      },
+      "is_competition": true,
+      "reasoning": "Văn bản chứa thông tin chi tiết về cuộc thi DATATHON 2026 - THE GRIDBREAKER do VinTelligence - VinUni Data Science & AI Club tổ chức.",
+      "competitions": [
+        {
+          "name": "DATATHON 2026 - THE GRIDBREAKER",
+          "tagline": "Breaking Business Boundaries",
+          "url": "https://www.datathon.site",
+          "summary": "Cuộc thi học thuật về Khoa học Dữ liệu và Trí tuệ Nhân tạo do VinTelligence - CLB Khoa học Dữ liệu và Trí tuệ nhân tạo trường Đại học VinUni tổ chức, giúp biến dữ liệu thành giải pháp cho doanh nghiệp.",
+          "organizers": [
+            "VinTelligence - VinUni Data Science & AI Club"
+          ],
+          "partners_and_sponsors": [],
+          "category": [
+            "Data Science",
+            "Artificial Intelligence",
+            "Data Analytics",
+            "Business Analytics"
+          ],
+          "target_audience": "Sinh viên từ 18-22 tuổi đang theo học chương trình Cử nhân tại các trường Đại học, Cao đẳng trên toàn quốc",
+          "team_size_min": 1,
+          "team_size_max": 4,
+          "team_description": "Mỗi đội tối đa 4 người, bao gồm 1 trưởng nhóm",
+          "mode": "hybrid",
+          "location": "Vòng chung kết tổ chức trực tiếp tại Hà Nội",
+          "participation_fee": "Miễn phí",
+          "total_prize_pool": "100M VNĐ",
+          "prizes": [
+            {
+              "tier": "Quán Quân",
+              "reward": "50.000.000 VNĐ, Cúp vàng, Giấy chứng nhận",
+              "estimated_value_vnd": 50000000.0,
+              "is_scholarship": false
+            },
+            {
+              "tier": "Á Quân",
+              "reward": "35.000.000 VNĐ, Huy chương bạc, Giấy chứng nhận",
+              "estimated_value_vnd": 35000000.0,
+              "is_scholarship": false
+            },
+            {
+              "tier": "Quý Quân",
+              "reward": "12.500.000 VNĐ, Huy chương đồng, Giấy chứng nhận",
+              "estimated_value_vnd": 12500000.0,
+              "is_scholarship": false
+            }
+          ],
+          "registration_start": "20/03/2026",
+          "registration_deadline": "14/04/2026",
+          "registration_status": "closed",
+          "event_start": "17/04/2026",
+          "event_end": "23/05/2026",
+          "timeline_stages": [
+            {
+              "stage_name": "Mở đơn đăng kí",
+              "start_date": "20/03/2026",
+              "end_date": "14/04/2026",
+              "description": "Các đội đăng ký tham gia cuộc thi"
+            },
+            {
+              "stage_name": "Vòng Sơ loại",
+              "start_date": "17/04/2026",
+              "end_date": "01/05/2026",
+              "description": "Phân tích dữ liệu, trả lời câu hỏi trắc nghiệm, xây dựng mô hình dự báo và nộp báo cáo kỹ thuật"
+            },
+            {
+              "stage_name": "Kết quả Vòng Sơ loại",
+              "start_date": "09/05/2026",
+              "end_date": "09/05/2026",
+              "description": "Công bố Top 8 đội thi xuất sắc nhất bước vào vòng Chung kết"
+            },
+            {
+              "stage_name": "Vòng Chung kết",
+              "start_date": "23/05/2026",
+              "end_date": "23/05/2026",
+              "description": "Thuyết trình và phản biện trực tiếp trước Ban Giám khảo"
+            }
+          ],
+          "challenge_overview": "Giải quyết các bài toán dữ liệu gắn với bối cảnh kinh doanh thực tế, phân tích hệ thống dữ liệu phức tạp, xây dựng mô hình dự báo và chuyển hóa insight thành giải pháp hỗ trợ ra quyết định cho doanh nghiệp.",
+          "submission_platform": "Website chính thức của cuộc thi"
+        }
+      ]
+    },
+    {
+      "_metadata": {
+        "source_domain": "www.lotushack.org",
+        "source_key": "bronze/www.lotushack.org/year=2026/month=11/day=15/1794716508",
+        "crawl_date": "2026-11-15",
+        "crawl_timestamp": 1794716508,
+        "extracted_at": "2026-11-15T12:31:14.416959",
+        "raw_markdown_length": 10804,
+        "cleaned_markdown_length": 4874
+      },
+      "is_competition": true,
+      "reasoning": "Trang web chứa đầy đủ thông tin về cuộc thi hackathon LotusHacks x HackHarvard Vietnam 2026 với thời gian, địa điểm, các tracks và giải thưởng.",
+      "competitions": [
+        {
+          "name": "LotusHacks x HackHarvard Vietnam 2026",
+          "tagline": "The largest 36-hour hackathon in Vietnam",
+          "url": "https://www.lotushack.org",
+          "summary": "Cuộc thi hackathon kéo dài 36 giờ quy tụ hơn 800 nhà sáng tạo và lập trình viên từ khắp nơi trên thế giới tại TP.HCM để xây dựng các giải pháp đột phá.",
+          "organizers": [
+            "LotusHacks",
+            "HackHarvard",
+            "GenAI Fund"
+          ],
+          "partners_and_sponsors": [
+            "TinyFish",
+            "AWS",
+            "TASCO",
+            "ETEST",
+            "OpenAI"
+          ],
+          "category": [
+            "Hackathon",
+            "Software Engineering",
+            "Enterprise",
+            "EdTech"
+          ],
+          "target_audience": "Builders, creators, hackers, sinh viên và lập trình viên toàn cầu",
+          "team_size_min": null,
+          "team_size_max": null,
+          "team_description": "Làm việc theo nhóm tham gia xây dựng trong 36 giờ",
+          "mode": "offline",
+          "location": "VNG Campus, Quận 7, TP. Hồ Chí Minh",
+          "participation_fee": "Miễn phí",
+          "total_prize_pool": "250M+ VND",
+          "prizes": [
+            {
+              "tier": "Track Enterprise",
+              "reward": "Giải thưởng tiền mặt, cloud credits và đặc quyền từ TinyFish",
+              "estimated_value_vnd": null,
+              "is_scholarship": false
+            },
+            {
+              "tier": "Track Technology & Consumer",
+              "reward": "Giải thưởng và tài nguyên từ AWS",
+              "estimated_value_vnd": null,
+              "is_scholarship": false
+            }
+          ],
+          "registration_start": null,
+          "registration_deadline": null,
+          "registration_status": "open",
+          "event_start": "20/03/2026",
+          "event_end": "22/03/2026",
+          "timeline_stages": [
+            {
+              "stage_name": "36-hour Hacking",
+              "start_date": "20/03/2026",
+              "end_date": "22/03/2026",
+              "description": "Lập trình phi lợi nhuận liên tục từ 8 PM thứ Sáu đến 8 AM Chủ Nhật"
+            }
+          ],
+          "challenge_overview": "Xây dựng các giải pháp thực tế qua 4 chủ đề: Enterprise, Technology & Consumer, Social & Mobility, và EdTech.",
+          "submission_platform": "Luma / Website chính thức"
+        }
+      ]
+    },
+    {
+      "_metadata": {
+        "source_domain": "www.rmithackaventure.com",
+        "source_key": "bronze/www.rmithackaventure.com/year=2026/month=11/day=15/1794718212",
+        "crawl_date": "2026-11-15",
+        "crawl_timestamp": 1794718212,
+        "extracted_at": "2026-11-15T12:31:17.723907",
+        "raw_markdown_length": 24919,
+        "cleaned_markdown_length": 13170
+      },
+      "is_competition": true,
+      "reasoning": "Tài liệu chứa đầy đủ thông tin về cuộc thi Hack-A-Venture 2026 do RMIT Vietnam FinTech Club tổ chức, bao gồm thể lệ, các vòng thi, cơ cấu giải thưởng và lịch trình chi tiết.",
+      "competitions": [
+        {
+          "name": "Hack-A-Venture 2026",
+          "tagline": "Open Innovation for a Resilient and Sustainable Financial System in Vietnam",
+          "url": "https://www.rmithackaventure.com",
+          "summary": "Cuộc thi đổi mới sáng tạo theo phong cách hackathon dành cho sinh viên khối ngành Kinh tế và Công nghệ trên toàn quốc, giải quyết các bài toán thực tế trong hệ thống tài chính Việt Nam kết hợp tiêu chuẩn ESG.",
+          "organizers": [
+            "RMIT Vietnam FinTech Club"
+          ],
+          "partners_and_sponsors": [],
+          "category": [
+            "FinTech",
+            "Artificial Intelligence",
+            "Data Analytics",
+            "Blockchain",
+            "Distributed Systems",
+            "Hackathon"
+          ],
+          "target_audience": "Sinh viên các trường đại học trên toàn quốc, đặc biệt là khối ngành Kinh tế và Công nghệ",
+          "team_size_min": 3,
+          "team_size_max": 4,
+          "team_description": "Mỗi đội gồm từ 3 đến 4 thành viên",
+          "mode": "hybrid",
+          "location": "Trực tiếp tại RMIT Vietnam Saigon South Campus và trực tuyến các vòng đầu",
+          "participation_fee": "Miễn phí",
+          "total_prize_pool": "817,291,840 VND",
+          "prizes": [
+            {
+              "tier": "Champion (Quán quân)",
+              "reward": "Tiền mặt, Got It Vouchers, học bổng Starttrain, Big-O Coding, FES Academy CFA, ApTech Data & AI, và UniTrain ACCA/Power BI",
+              "estimated_value_vnd": 316258440.0,
+              "is_scholarship": true
+            },
+            {
+              "tier": "1st Runner-Up (Á quân 1)",
+              "reward": "Tiền mặt, Got It Vouchers, và các suất học bổng công nghệ, tài chính",
+              "estimated_value_vnd": 202454960.0,
+              "is_scholarship": true
+            },
+            {
+              "tier": "2nd Runner-Up (Á quân 2)",
+              "reward": "Tiền mặt, Got It Vouchers, và các suất học bổng",
+              "estimated_value_vnd": 121579480.0,
+              "is_scholarship": true
+            },
+            {
+              "tier": "Consolidation (Giải khuyến khích x2)",
+              "reward": "Học bổng các khóa học CFA, Data & AI, ACCA/Power BI",
+              "estimated_value_vnd": 176998960.0,
+              "is_scholarship": true
+            }
+          ],
+          "registration_start": "28/09/2026",
+          "registration_deadline": "01/11/2026",
+          "registration_status": "closed",
+          "event_start": "20/01/2027",
+          "event_end": "21/01/2027",
+          "timeline_stages": [
+            {
+              "stage_name": "Registration & Form Your Squad",
+              "start_date": "28/09/2026",
+              "end_date": "01/11/2026",
+              "description": "Mở cổng đăng ký đội thi từ 3-4 thành viên"
+            },
+            {
+              "stage_name": "Round 1: Idea Proposal",
+              "start_date": "02/11/2026",
+              "end_date": "15/11/2026",
+              "description": "Nộp đề xuất ý tưởng tối đa 2000 từ giải quyết bài toán tài chính tích hợp công nghệ mới và ESG"
+            },
+            {
+              "stage_name": "Round 3: HackDay & Presentation",
+              "start_date": "20/01/2027",
+              "end_date": "21/01/2027",
+              "description": "Top 5 đội thi phát triển MVP trong 24 giờ và thuyết trình, demo trực tiếp trước ban giám khảo tại cơ sở Nam Sài Gòn"
+            }
+          ],
+          "challenge_overview": "Phát triển giải pháp công nghệ (AI, Data Analytics, Blockchain, Distributed Systems) giải quyết các thách thức cụ thể trong hệ thống tài chính Việt Nam đi kèm tiêu chuẩn ESG.",
+          "submission_platform": "Google Forms / Microsoft Word / Nộp qua website"
+        }
+      ]
+    },
+    {
+      "_metadata": {
+        "source_domain": "www.vietnamaichallenge.com",
+        "source_key": "bronze/www.vietnamaichallenge.com/year=2026/month=11/day=15/1794715421",
+        "crawl_date": "2026-11-15",
+        "crawl_timestamp": 1794715421,
+        "extracted_at": "2026-11-15T12:31:23.031412",
+        "raw_markdown_length": 19262,
+        "cleaned_markdown_length": 9021
+      },
+      "is_competition": true,
+      "reasoning": "Trang web cung cấp thông tin chi tiết về sự kiện 'Vietnam AI Innovation Challenge 2026' (Hackathon 100% AI-native), bao gồm thể lệ, lịch trình từ bootcamp đến đấu trường AI 48h, giải thưởng hơn 2 tỷ VNĐ và thông tin đăng ký.",
+      "competitions": [
+        {
+          "name": "Vietnam AI Innovation Challenge 2026",
+          "tagline": "\"TRAIN\"SFORMATION - Một sứ mệnh. 48 giờ kiến tạo tương lai.",
+          "url": "https://www.vietnamaichallenge.com",
+          "summary": "Hackathon 100% AI-native đầu tiên tại Việt Nam, quy tụ các builder trên quy mô toàn quốc để giải quyết các bài toán thực tế từ doanh nghiệp trong 48 giờ.",
+          "organizers": [
+            "Trung tâm Đổi mới sáng tạo Quốc gia (NIC)",
+            "Tập đoàn Meta",
+            "Tổ chức AI for Vietnam (AIV)"
+          ],
+          "partners_and_sponsors": [
+            "SHB",
+            "AI Singapore",
+            "FPT AI Factory",
+            "SOTATEK",
+            "AVSE Global"
+          ],
+          "category": [
+            "Artificial Intelligence",
+            "Generative AI",
+            "Hackathon",
+            "Data Science"
+          ],
+          "target_audience": "Sinh viên, lập trình viên, chuyên viên khoa học dữ liệu và các nhà khởi nghiệp đầy tham vọng",
+          "team_size_min": null,
+          "team_size_max": null,
+          "team_description": "Chào đón cả cá nhân chưa có đội (sẽ được hỗ trợ ghép đội) hoặc tham gia theo đội ngũ.",
+          "mode": "offline",
+          "location": "Toà nhà FPT Tower, 10 Phạm Văn Bạch, Phường Cầu Giấy, Hà Nội",
+          "participation_fee": "Miễn phí",
+          "total_prize_pool": "Hơn 2 tỷ VNĐ",
+          "prizes": [
+            {
+              "tier": "Giải nhất",
+              "reward": "$10,000 Tiền mặt, Bằng khen của TW Đoàn TNCS Hồ Chí Minh, và cơ hội tham gia chương trình nghiên cứu tại Thụy Điển.",
+              "estimated_value_vnd": 250000000.0,
+              "is_scholarship": false
+            },
+            {
+              "tier": "Giải nhì",
+              "reward": "$5,000 Tiền mặt, Bằng khen TW Đoàn.",
+              "estimated_value_vnd": 125000000.0,
+              "is_scholarship": false
+            },
+            {
+              "tier": "Giải ba",
+              "reward": "$1,000 Tiền mặt, Bằng khen TW Đoàn.",
+              "estimated_value_vnd": 25000000.0,
+              "is_scholarship": false
+            },
+            {
+              "tier": "PyTorch Award",
+              "reward": "$5,000 Cash",
+              "estimated_value_vnd": 125000000.0,
+              "is_scholarship": false
+            },
+            {
+              "tier": "Best Banking & Finance Solution",
+              "reward": "$5,000 Cash",
+              "estimated_value_vnd": 125000000.0,
+              "is_scholarship": false
+            },
+            {
+              "tier": "FPT Award",
+              "reward": "$2,000 Credit",
+              "estimated_value_vnd": 50000000.0,
+              "is_scholarship": false
+            },
+            {
+              "tier": "AI Singapore Award",
+              "reward": "$5,000 Credit",
+              "estimated_value_vnd": 125000000.0,
+              "is_scholarship": false
+            },
+            {
+              "tier": "AVSE Track Award",
+              "reward": "25,000,000 VND",
+              "estimated_value_vnd": 25000000.0,
+              "is_scholarship": false
+            }
+          ],
+          "registration_start": "28/05/2026",
+          "registration_deadline": "17/07/2026",
+          "registration_status": "open",
+          "event_start": "17/07/2026",
+          "event_end": "19/07/2026",
+          "timeline_stages": [
+            {
+              "stage_name": "Giai đoạn 1: Khởi động",
+              "start_date": "28/05/2026",
+              "end_date": "17/07/2026",
+              "description": "Ra mắt website, mở đơn đăng ký và bắt đầu chuỗi workshop chuyên sâu cùng chuyên gia AI."
+            },
+            {
+              "stage_name": "Giai đoạn 2: Đấu trường AI",
+              "start_date": "17/07/2026",
+              "end_date": "19/07/2026",
+              "description": "Lễ khai mạc, 48 giờ phát triển sản phẩm liên tục, nộp bài và Demo Day & Lễ Trao Giải."
+            },
+            {
+              "stage_name": "Giai đoạn 3: Bệ phóng",
+              "start_date": "01/08/2026",
+              "end_date": null,
+              "description": "Phát triển sản phẩm cùng doanh nghiệp đối tác và cơ hội vinh danh trên đấu trường quốc gia/khu vực."
+            }
+          ],
+          "challenge_overview": "Giải quyết các bài toán thực tế thuộc các lĩnh vực: Ngân hàng & Tài chính, Y tế & Sức khỏe, Giáo dục & Đào tạo, Phòng chống thiên tai, Đổi mới sáng tạo, Năng suất SME, Chính phủ thông minh và Nông nghiệp.",
+          "submission_platform": "Nộp qua website chính thức của chương trình"
+        }
+      ]
+    }
+  ]
+}

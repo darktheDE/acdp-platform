@@ -1,0 +1,54 @@
+{
+  "_metadata": {
+    "source_domain": "datadna.onyxdata.co.uk",
+    "source_key": "bronze/datadna.onyxdata.co.uk/year=2026/month=11/day=15/1794715692",
+    "crawl_date": "2026-11-15",
+    "crawl_timestamp": 1794715692,
+    "extracted_at": "2026-11-15T12:30:27.121773",
+    "raw_markdown_length": 97693,
+    "cleaned_markdown_length": 15996
+  },
+  "is_competition": true,
+  "reasoning": "Trang web chứa danh sách các cuộc thi phân tích dữ liệu hàng tháng của DataDNA Onyx Data, tiêu biểu là cuộc thi Health System Performance Analytics Challenge tháng 11/2026.",
+  "competitions": [
+    {
+      "name": "November 2026 DataDNA – Health System Performance Analytics Challenge",
+      "tagline": "Health System Performance Analytics Challenge",
+      "url": "https://datadna.onyxdata.co.uk/challenges/november-2026-datadna-health-system-performance-analytics-challenge/",
+      "summary": "Phân tích bộ dữ liệu y tế toàn cầu và Vương quốc Anh từ 2018-2024 để đánh giá hiệu suất hệ thống y tế, chi tiêu, kết quả chăm sóc bệnh nhân và tác động của đại dịch COVID-19.",
+      "organizers": [
+        "Onyx Data"
+      ],
+      "partners_and_sponsors": [],
+      "category": [
+        "Data Science",
+        "Business Intelligence",
+        "Healthcare Analytics"
+      ],
+      "target_audience": "Data enthusiasts and professionals",
+      "team_size_min": 1,
+      "team_size_max": null,
+      "team_description": "Có thể tham gia cá nhân hoặc theo đội",
+      "mode": "online",
+      "location": "Online",
+      "participation_fee": "Miễn phí",
+      "total_prize_pool": null,
+      "prizes": [],
+      "registration_start": "01/11/2026",
+      "registration_deadline": null,
+      "registration_status": "open",
+      "event_start": "01/11/2026",
+      "event_end": null,
+      "timeline_stages": [
+        {
+          "stage_name": "Challenge Launch",
+          "start_date": "01/11/2026",
+          "end_date": null,
+          "description": "Bắt đầu phát hành dữ liệu và mở cổng nhận bài phân tích"
+        }
+      ],
+      "challenge_overview": "Phân tích các chỉ số y tế cốt lõi bao gồm công suất ICU, thời gian chờ tại phòng cấp cứu, tình trạng thiếu hụt nhân sự và tỷ lệ mắc bệnh để tối ưu hóa chính sách y tế và chăm sóc bệnh nhân.",
+      "submission_platform": "DataDNA Platform / LinkedIn"
+    }
+  ]
+}

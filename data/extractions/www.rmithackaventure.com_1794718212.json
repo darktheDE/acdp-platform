@@ -1,0 +1,94 @@
+{
+  "_metadata": {
+    "source_domain": "www.rmithackaventure.com",
+    "source_key": "bronze/www.rmithackaventure.com/year=2026/month=11/day=15/1794718212",
+    "crawl_date": "2026-11-15",
+    "crawl_timestamp": 1794718212,
+    "extracted_at": "2026-11-15T12:31:17.723907",
+    "raw_markdown_length": 24919,
+    "cleaned_markdown_length": 13170
+  },
+  "is_competition": true,
+  "reasoning": "Tài liệu chứa đầy đủ thông tin về cuộc thi Hack-A-Venture 2026 do RMIT Vietnam FinTech Club tổ chức, bao gồm thể lệ, các vòng thi, cơ cấu giải thưởng và lịch trình chi tiết.",
+  "competitions": [
+    {
+      "name": "Hack-A-Venture 2026",
+      "tagline": "Open Innovation for a Resilient and Sustainable Financial System in Vietnam",
+      "url": "https://www.rmithackaventure.com",
+      "summary": "Cuộc thi đổi mới sáng tạo theo phong cách hackathon dành cho sinh viên khối ngành Kinh tế và Công nghệ trên toàn quốc, giải quyết các bài toán thực tế trong hệ thống tài chính Việt Nam kết hợp tiêu chuẩn ESG.",
+      "organizers": [
+        "RMIT Vietnam FinTech Club"
+      ],
+      "partners_and_sponsors": [],
+      "category": [
+        "FinTech",
+        "Artificial Intelligence",
+        "Data Analytics",
+        "Blockchain",
+        "Distributed Systems",
+        "Hackathon"
+      ],
+      "target_audience": "Sinh viên các trường đại học trên toàn quốc, đặc biệt là khối ngành Kinh tế và Công nghệ",
+      "team_size_min": 3,
+      "team_size_max": 4,
+      "team_description": "Mỗi đội gồm từ 3 đến 4 thành viên",
+      "mode": "hybrid",
+      "location": "Trực tiếp tại RMIT Vietnam Saigon South Campus và trực tuyến các vòng đầu",
+      "participation_fee": "Miễn phí",
+      "total_prize_pool": "817,291,840 VND",
+      "prizes": [
+        {
+          "tier": "Champion (Quán quân)",
+          "reward": "Tiền mặt, Got It Vouchers, học bổng Starttrain, Big-O Coding, FES Academy CFA, ApTech Data & AI, và UniTrain ACCA/Power BI",
+          "estimated_value_vnd": 316258440.0,
+          "is_scholarship": true
+        },
+        {
+          "tier": "1st Runner-Up (Á quân 1)",
+          "reward": "Tiền mặt, Got It Vouchers, và các suất học bổng công nghệ, tài chính",
+          "estimated_value_vnd": 202454960.0,
+          "is_scholarship": true
+        },
+        {
+          "tier": "2nd Runner-Up (Á quân 2)",
+          "reward": "Tiền mặt, Got It Vouchers, và các suất học bổng",
+          "estimated_value_vnd": 121579480.0,
+          "is_scholarship": true
+        },
+        {
+          "tier": "Consolidation (Giải khuyến khích x2)",
+          "reward": "Học bổng các khóa học CFA, Data & AI, ACCA/Power BI",
+          "estimated_value_vnd": 176998960.0,
+          "is_scholarship": true
+        }
+      ],
+      "registration_start": "28/09/2026",
+      "registration_deadline": "01/11/2026",
+      "registration_status": "closed",
+      "event_start": "20/01/2027",
+      "event_end": "21/01/2027",
+      "timeline_stages": [
+        {
+          "stage_name": "Registration & Form Your Squad",
+          "start_date": "28/09/2026",
+          "end_date": "01/11/2026",
+          "description": "Mở cổng đăng ký đội thi từ 3-4 thành viên"
+        },
+        {
+          "stage_name": "Round 1: Idea Proposal",
+          "start_date": "02/11/2026",
+          "end_date": "15/11/2026",
+          "description": "Nộp đề xuất ý tưởng tối đa 2000 từ giải quyết bài toán tài chính tích hợp công nghệ mới và ESG"
+        },
+        {
+          "stage_name": "Round 3: HackDay & Presentation",
+          "start_date": "20/01/2027",
+          "end_date": "21/01/2027",
+          "description": "Top 5 đội thi phát triển MVP trong 24 giờ và thuyết trình, demo trực tiếp trước ban giám khảo tại cơ sở Nam Sài Gòn"
+        }
+      ],
+      "challenge_overview": "Phát triển giải pháp công nghệ (AI, Data Analytics, Blockchain, Distributed Systems) giải quyết các thách thức cụ thể trong hệ thống tài chính Việt Nam đi kèm tiêu chuẩn ESG.",
+      "submission_platform": "Google Forms / Microsoft Word / Nộp qua website"
+    }
+  ]
+}

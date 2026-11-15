@@ -1,0 +1,104 @@
+{
+  "_metadata": {
+    "source_domain": "challenge.zalo.ai",
+    "source_key": "bronze/challenge.zalo.ai/year=2026/month=11/day=15/1794720141",
+    "crawl_date": "2026-11-15",
+    "crawl_timestamp": 1794720141,
+    "extracted_at": "2026-11-15T12:30:22.274652",
+    "raw_markdown_length": 17164,
+    "cleaned_markdown_length": 14251
+  },
+  "is_competition": true,
+  "reasoning": "Trang web chứa thông tin chi tiết về cuộc thi Zalo AI Challenge 2026 với các thử thách LifeMate và DataMate, lịch trình, cơ cấu giải thưởng và quy chế tham gia.",
+  "competitions": [
+    {
+      "name": "Zalo AI Challenge 2026",
+      "tagline": "Empower Vietnamese AI engineers' capacity and explore AI technologies to impact Vietnamese lives",
+      "url": "https://challenge.zalo.ai",
+      "summary": "Cuộc thi AI thường niên lớn tại Việt Nam nhằm nâng cao năng lực kỹ sư AI, tìm kiếm các giải pháp thực tế giải quyết các bài toán đời sống thông qua Agentic AI với 2 track LifeMate và DataMate.",
+      "organizers": [
+        "Zalo AI"
+      ],
+      "partners_and_sponsors": [],
+      "category": [
+        "Artificial Intelligence",
+        "Agentic AI",
+        "Natural Language Processing",
+        "Data Science"
+      ],
+      "target_audience": "Vietnamese AI enthusiasts, lập trình viên và kỹ sư AI",
+      "team_size_min": 1,
+      "team_size_max": 5,
+      "team_description": "Tối đa 5 thành viên mỗi đội, mỗi thành viên chỉ tham gia 1 đội duy nhất",
+      "mode": "online",
+      "location": null,
+      "participation_fee": "Miễn phí",
+      "total_prize_pool": "USD 12,000 in cash plus in-kind gift package",
+      "prizes": [
+        {
+          "tier": "First Prize",
+          "reward": "USD 3,500 in cash plus ZAIC gift package",
+          "estimated_value_vnd": 87500000.0,
+          "is_scholarship": false
+        },
+        {
+          "tier": "Second Prize",
+          "reward": "USD 2,500 in cash plus ZAIC gift package",
+          "estimated_value_vnd": 62500000.0,
+          "is_scholarship": false
+        },
+        {
+          "tier": "Top 5 per track",
+          "reward": "ZAIC gift package",
+          "estimated_value_vnd": null,
+          "is_scholarship": false
+        }
+      ],
+      "registration_start": null,
+      "registration_deadline": "2026-11-16",
+      "registration_status": "open",
+      "event_start": "2026-10-26",
+      "event_end": "2026-12-12",
+      "timeline_stages": [
+        {
+          "stage_name": "Start the challenge",
+          "start_date": "2026-10-26",
+          "end_date": "2026-10-26",
+          "description": "Phát hành bộ công cụ phát triển, dữ liệu huấn luyện và phần mềm đánh giá"
+        },
+        {
+          "stage_name": "Submit solutions",
+          "start_date": null,
+          "end_date": "2026-11-16",
+          "description": "Các đội nộp giải pháp bao gồm mã huấn luyện, mã kiểm tra và mô hình"
+        },
+        {
+          "stage_name": "Release private test",
+          "start_date": "2026-11-20",
+          "end_date": "2026-11-20",
+          "description": "Công bố bảng xếp hạng tạm thời dựa trên kết quả đã nộp"
+        },
+        {
+          "stage_name": "Submit the final result",
+          "start_date": null,
+          "end_date": "2026-11-23",
+          "description": "Các đội nộp kết quả cuối cùng cho tập dữ liệu kiểm tra riêng tư"
+        },
+        {
+          "stage_name": "Announce the finalists",
+          "start_date": "2026-12-02",
+          "end_date": "2026-12-02",
+          "description": "Công bố top 2 đội mỗi bảng"
+        },
+        {
+          "stage_name": "Announce the final standing",
+          "start_date": "2026-12-12",
+          "end_date": "2026-12-12",
+          "description": "Công bố kết quả chung cuộc dựa trên tập kiểm tra riêng tư khác"
+        }
+      ],
+      "challenge_overview": "Xây dựng các Agentic AI thông minh cho phép chuyển đổi yêu cầu giọng nói tiếng Việt thành hành động qua các ứng dụng (LifeMate) hoặc khai thác dữ liệu bảng phức tạp, lộn xộn trong đời sống thực tế (DataMate).",
+      "submission_platform": "Zalo AI Challenge Portal"
+    }
+  ]
+}

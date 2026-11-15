@@ -1,0 +1,85 @@
+{
+  "_metadata": {
+    "source_domain": "vnquantum.org",
+    "source_key": "bronze/vnquantum.org/year=2026/month=11/day=15/1794718581",
+    "crawl_date": "2026-11-15",
+    "crawl_timestamp": 1794718581,
+    "extracted_at": "2026-11-15T12:31:02.223100",
+    "raw_markdown_length": 73361,
+    "cleaned_markdown_length": 16000
+  },
+  "is_competition": true,
+  "reasoning": "Tài liệu chứa thông tin chi tiết về cuộc thi QC4SG Vietnam 2026 (The 2nd SEA Quantathon), bao gồm đối tượng, thời gian, các thử thách và hình thức tổ chức.",
+  "competitions": [
+    {
+      "name": "QC4SG Vietnam 2026 – The 2nd SEA Quantathon",
+      "tagline": "Quantum Hackathon for Social Good",
+      "url": "https://vnquantum.org/events/quantum-hackathon-qc4sg/",
+      "summary": "Cuộc thi lập trình tích hợp Điện toán lượng tử (QC), Trí tuệ nhân tạo (AI) và Học máy (ML) nhằm giải quyết các bài toán phát triển bền vững của Liên Hợp Quốc.",
+      "organizers": [
+        "VNQuantum",
+        "CQT",
+        "Quapp"
+      ],
+      "partners_and_sponsors": [
+        "QWorld",
+        "QPakistan",
+        "Quandela"
+      ],
+      "category": [
+        "Quantum Computing",
+        "Artificial Intelligence",
+        "Machine Learning",
+        "DeepTech"
+      ],
+      "target_audience": "Sinh viên, nhà nghiên cứu, doanh nhân và các startup giai đoạn đầu quan tâm đến QC, AI và công nghệ mới",
+      "team_size_min": null,
+      "team_size_max": null,
+      "team_description": "Khuyến khích các đội đa lĩnh vực tham gia giải quyết bài toán xã hội",
+      "mode": "hybrid",
+      "location": "Trực tuyến qua QWorld và Trực tiếp tại Gia Lai, Việt Nam",
+      "participation_fee": "Miễn phí",
+      "total_prize_pool": null,
+      "prizes": [],
+      "registration_start": null,
+      "registration_deadline": "31/03/2026",
+      "registration_status": "closed",
+      "event_start": "24/07/2026",
+      "event_end": "28/07/2026",
+      "timeline_stages": [
+        {
+          "stage_name": "Đăng ký trực tuyến",
+          "start_date": null,
+          "end_date": "31/03/2026",
+          "description": "Hạn chót đăng ký tham gia chương trình trên website"
+        },
+        {
+          "stage_name": "Đào tạo trực tuyến QWorld",
+          "start_date": "15/05/2026",
+          "end_date": "24/05/2026",
+          "description": "Hoàn thành chứng chỉ QBronze và QCobalt qua nền tảng tự học"
+        },
+        {
+          "stage_name": "Đào tạo kỹ thuật từ đối tác",
+          "start_date": "01/05/2026",
+          "end_date": "30/06/2026",
+          "description": "Các khóa học trực tuyến từ nhà cung cấp phần cứng lượng tử"
+        },
+        {
+          "stage_name": "Bootcamp trực tiếp tại Gia Lai",
+          "start_date": "24/07/2026",
+          "end_date": "28/07/2026",
+          "description": "Vòng chung kết trực tiếp và phát triển nguyên mẫu sản phẩm"
+        },
+        {
+          "stage_name": "Demo Day",
+          "start_date": "28/07/2026",
+          "end_date": "28/07/2026",
+          "description": "Thuyết trình dự án trước chuyên gia và ban giám khảo"
+        }
+      ],
+      "challenge_overview": "Giải quyết các bài toán thực tế về quản lý chất lượng nước/đất, nông nghiệp thông minh, học máy lượng tử phân tán (Photonic QCNNs), dự báo thảm họa khí hậu, tối ưu hóa lưới điện, an ninh mạng hậu lượng tử và an ninh lương thực.",
+      "submission_platform": "Website ban tổ chức và Quapp"
+    }
+  ]
+}

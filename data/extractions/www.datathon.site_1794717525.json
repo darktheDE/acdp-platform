@@ -1,0 +1,92 @@
+{
+  "_metadata": {
+    "source_domain": "www.datathon.site",
+    "source_key": "bronze/www.datathon.site/year=2026/month=11/day=15/1794717525",
+    "crawl_date": "2026-11-15",
+    "crawl_timestamp": 1794717525,
+    "extracted_at": "2026-11-15T12:31:11.875526",
+    "raw_markdown_length": 7758,
+    "cleaned_markdown_length": 7129
+  },
+  "is_competition": true,
+  "reasoning": "Văn bản chứa thông tin chi tiết về cuộc thi DATATHON 2026 - THE GRIDBREAKER do VinTelligence - VinUni Data Science & AI Club tổ chức.",
+  "competitions": [
+    {
+      "name": "DATATHON 2026 - THE GRIDBREAKER",
+      "tagline": "Breaking Business Boundaries",
+      "url": "https://www.datathon.site",
+      "summary": "Cuộc thi học thuật về Khoa học Dữ liệu và Trí tuệ Nhân tạo do VinTelligence - CLB Khoa học Dữ liệu và Trí tuệ nhân tạo trường Đại học VinUni tổ chức, giúp biến dữ liệu thành giải pháp cho doanh nghiệp.",
+      "organizers": [
+        "VinTelligence - VinUni Data Science & AI Club"
+      ],
+      "partners_and_sponsors": [],
+      "category": [
+        "Data Science",
+        "Artificial Intelligence",
+        "Data Analytics",
+        "Business Analytics"
+      ],
+      "target_audience": "Sinh viên từ 18-22 tuổi đang theo học chương trình Cử nhân tại các trường Đại học, Cao đẳng trên toàn quốc",
+      "team_size_min": 1,
+      "team_size_max": 4,
+      "team_description": "Mỗi đội tối đa 4 người, bao gồm 1 trưởng nhóm",
+      "mode": "hybrid",
+      "location": "Vòng chung kết tổ chức trực tiếp tại Hà Nội",
+      "participation_fee": "Miễn phí",
+      "total_prize_pool": "100M VNĐ",
+      "prizes": [
+        {
+          "tier": "Quán Quân",
+          "reward": "50.000.000 VNĐ, Cúp vàng, Giấy chứng nhận",
+          "estimated_value_vnd": 50000000.0,
+          "is_scholarship": false
+        },
+        {
+          "tier": "Á Quân",
+          "reward": "35.000.000 VNĐ, Huy chương bạc, Giấy chứng nhận",
+          "estimated_value_vnd": 35000000.0,
+          "is_scholarship": false
+        },
+        {
+          "tier": "Quý Quân",
+          "reward": "12.500.000 VNĐ, Huy chương đồng, Giấy chứng nhận",
+          "estimated_value_vnd": 12500000.0,
+          "is_scholarship": false
+        }
+      ],
+      "registration_start": "20/03/2026",
+      "registration_deadline": "14/04/2026",
+      "registration_status": "closed",
+      "event_start": "17/04/2026",
+      "event_end": "23/05/2026",
+      "timeline_stages": [
+        {
+          "stage_name": "Mở đơn đăng kí",
+          "start_date": "20/03/2026",
+          "end_date": "14/04/2026",
+          "description": "Các đội đăng ký tham gia cuộc thi"
+        },
+        {
+          "stage_name": "Vòng Sơ loại",
+          "start_date": "17/04/2026",
+          "end_date": "01/05/2026",
+          "description": "Phân tích dữ liệu, trả lời câu hỏi trắc nghiệm, xây dựng mô hình dự báo và nộp báo cáo kỹ thuật"
+        },
+        {
+          "stage_name": "Kết quả Vòng Sơ loại",
+          "start_date": "09/05/2026",
+          "end_date": "09/05/2026",
+          "description": "Công bố Top 8 đội thi xuất sắc nhất bước vào vòng Chung kết"
+        },
+        {
+          "stage_name": "Vòng Chung kết",
+          "start_date": "23/05/2026",
+          "end_date": "23/05/2026",
+          "description": "Thuyết trình và phản biện trực tiếp trước Ban Giám khảo"
+        }
+      ],
+      "challenge_overview": "Giải quyết các bài toán dữ liệu gắn với bối cảnh kinh doanh thực tế, phân tích hệ thống dữ liệu phức tạp, xây dựng mô hình dự báo và chuyển hóa insight thành giải pháp hỗ trợ ra quyết định cho doanh nghiệp.",
+      "submission_platform": "Website chính thức của cuộc thi"
+    }
+  ]
+}

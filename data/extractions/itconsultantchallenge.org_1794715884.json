@@ -1,0 +1,104 @@
+{
+  "_metadata": {
+    "source_domain": "itconsultantchallenge.org",
+    "source_key": "bronze/itconsultantchallenge.org/year=2026/month=11/day=15/1794715884",
+    "crawl_date": "2026-11-15",
+    "crawl_timestamp": 1794715884,
+    "extracted_at": "2026-11-15T12:30:42.170782",
+    "raw_markdown_length": 11374,
+    "cleaned_markdown_length": 9507
+  },
+  "is_competition": true,
+  "reasoning": "Tài liệu chứa thông tin chi tiết về cuộc thi IT Consultant Challenge 2026, bao gồm chủ đề, đơn vị tổ chức, thể lệ các vòng thi, mốc thời gian và cơ cấu giải thưởng.",
+  "competitions": [
+    {
+      "name": "IT Consultant Challenge 2026",
+      "tagline": "Prompt to Production",
+      "url": "https://itconsultantchallenge.org/vi",
+      "summary": "Cuộc thi dành cho sinh viên và lập trình viên trẻ đóng vai trò chuyên gia tư vấn công nghệ, giải quyết bài toán kinh doanh thực tế và ứng dụng AI có trách nhiệm để xây dựng MVP.",
+      "organizers": [
+        "Code MeLy",
+        "Netcompany Vietnam"
+      ],
+      "partners_and_sponsors": [],
+      "category": [
+        "IT Consulting",
+        "Software Engineering",
+        "Artificial Intelligence"
+      ],
+      "target_audience": "Sinh viên đại học và các bạn trẻ yêu công nghệ, lập trình viên mới (IT Freshers)",
+      "team_size_min": 3,
+      "team_size_max": 3,
+      "team_description": "Mỗi đội bắt buộc gồm 3 thành viên",
+      "mode": "hybrid",
+      "location": "Vòng loại online, Vòng chung kết trực tiếp tại văn phòng Netcompany TP.HCM và trực tuyến cho khu vực khác",
+      "participation_fee": "Miễn phí",
+      "total_prize_pool": "Hơn 300 triệu VNĐ",
+      "prizes": [
+        {
+          "tier": "Quán quân",
+          "reward": "60 triệu VNĐ (trao dưới dạng e-voucher Got It)",
+          "estimated_value_vnd": 60000000.0,
+          "is_scholarship": false
+        },
+        {
+          "tier": "Á quân 1",
+          "reward": "30 triệu VNĐ (trao dưới dạng e-voucher Got It)",
+          "estimated_value_vnd": 30000000.0,
+          "is_scholarship": false
+        },
+        {
+          "tier": "Á quân 2",
+          "reward": "15 triệu VNĐ (trao dưới dạng e-voucher Got It)",
+          "estimated_value_vnd": 15000000.0,
+          "is_scholarship": false
+        },
+        {
+          "tier": "Top 20 - Engineer Pro",
+          "reward": "30% học bổng tất cả các khóa học",
+          "estimated_value_vnd": 51000000.0,
+          "is_scholarship": true
+        },
+        {
+          "tier": "Top 10 - DuaEdu",
+          "reward": "50% học bổng khóa học Data Analyst",
+          "estimated_value_vnd": 61000000.0,
+          "is_scholarship": true
+        },
+        {
+          "tier": "Top 5 - DuaEdu",
+          "reward": "70% học bổng khóa học Data Analyst",
+          "estimated_value_vnd": 85000000.0,
+          "is_scholarship": true
+        }
+      ],
+      "registration_start": "01/10/2026",
+      "registration_deadline": "26/10/2026",
+      "registration_status": "closed",
+      "event_start": "19/10/2026",
+      "event_end": "21/11/2026",
+      "timeline_stages": [
+        {
+          "stage_name": "Vòng 1: Discover",
+          "start_date": "19/10/2026",
+          "end_date": "26/10/2026",
+          "description": "Ban tổ chức đánh giá các proposal để tìm ra những ý tưởng sáng tạo và khả thi nhất."
+        },
+        {
+          "stage_name": "Vòng 2: Build",
+          "start_date": "02/11/2026",
+          "end_date": "09/11/2026",
+          "description": "Các đội phát triển ý tưởng thành MVP và nộp sản phẩm kèm AI journal."
+        },
+        {
+          "stage_name": "Vòng 3: Deliver (Chung kết & Demo)",
+          "start_date": "16/11/2026",
+          "end_date": "21/11/2026",
+          "description": "Các đội được chọn hoàn thiện giải pháp, demo sản phẩm và thuyết trình trực tiếp trước hội đồng giám khảo."
+        }
+      ],
+      "challenge_overview": "Giải quyết tình huống lấy cảm hứng từ dự án thực tế, phân tích nhu cầu kinh doanh, thiết kế giải pháp công nghệ và ứng dụng AI có trách nhiệm để xây dựng MVP.",
+      "submission_platform": "Google Forms / Website chính thức của cuộc thi"
+    }
+  ]
+}

@@ -1,0 +1,98 @@
+{
+  "_metadata": {
+    "source_domain": "dataforlife.vn",
+    "source_key": "bronze/dataforlife.vn/year=2026/month=11/day=15/1794717031",
+    "crawl_date": "2026-11-15",
+    "crawl_timestamp": 1794717031,
+    "extracted_at": "2026-11-15T12:30:30.815346",
+    "raw_markdown_length": 61186,
+    "cleaned_markdown_length": 15998
+  },
+  "is_competition": true,
+  "reasoning": "Tài liệu chứa thông tin chi tiết về cuộc thi quốc tế 'Data for Life' - Mùa 4 (2026) với chủ đề 'Build Together', bao gồm đơn vị tổ chức, thể lệ, các vòng thi và cơ cấu giải thưởng.",
+  "competitions": [
+    {
+      "name": "Data for Life - Mùa 4 (2026)",
+      "tagline": "Build Together",
+      "url": "https://dataforlife.vn/",
+      "summary": "Cuộc thi quốc tế do Bộ Công an tổ chức nhằm thúc đẩy đổi mới sáng tạo dựa trên dữ liệu và công nghệ số, kết nối Nhà nước – Nhà trường – Nhà doanh nghiệp để giải quyết các bài toán thực tiễn.",
+      "organizers": [
+        "Bộ Công an"
+      ],
+      "partners_and_sponsors": [],
+      "category": [
+        "Data Science",
+        "Artificial Intelligence",
+        "Digital Transformation",
+        "Software Engineering"
+      ],
+      "target_audience": "Cá nhân, học sinh, sinh viên, người đi làm, nhóm nghiên cứu, doanh nghiệp khởi nghiệp và chuyên gia trong/ngoài nước",
+      "team_size_min": 1,
+      "team_size_max": 10,
+      "team_description": "Mỗi đội thi có tối đa 10 thành viên. Cá nhân có thể đăng ký độc lập để Ban Tổ chức hỗ trợ ghép đội.",
+      "mode": "hybrid",
+      "location": "Việt Nam",
+      "participation_fee": "Miễn phí",
+      "total_prize_pool": null,
+      "prizes": [
+        {
+          "tier": "Giải Nhất",
+          "reward": "Vinh danh và nhận giải thưởng từ Ban Tổ chức",
+          "estimated_value_vnd": null,
+          "is_scholarship": false
+        },
+        {
+          "tier": "Giải Nhì",
+          "reward": "Vinh danh và nhận giải thưởng từ Ban Tổ chức",
+          "estimated_value_vnd": null,
+          "is_scholarship": false
+        },
+        {
+          "tier": "Giải Ba",
+          "reward": "Vinh danh và nhận giải thưởng từ Ban Tổ chức",
+          "estimated_value_vnd": null,
+          "is_scholarship": false
+        },
+        {
+          "tier": "Giải thưởng phụ",
+          "reward": "Giải pháp sáng tạo nhất, tác động xã hội lớn nhất, công nghệ ấn tượng nhất, cộng đồng bình chọn nhiều nhất",
+          "estimated_value_vnd": null,
+          "is_scholarship": false
+        }
+      ],
+      "registration_start": "15/08/2026",
+      "registration_deadline": "20/09/2026",
+      "registration_status": "open",
+      "event_start": "15/08/2026",
+      "event_end": "25/11/2026",
+      "timeline_stages": [
+        {
+          "stage_name": "Vòng 1 - Tuyển chọn hồ sơ",
+          "start_date": "15/08/2026",
+          "end_date": "20/09/2026",
+          "description": "Tiếp nhận và đánh giá hồ sơ, lựa chọn khoảng 60 đội vào vòng tiếp theo."
+        },
+        {
+          "stage_name": "Vòng 2 - Chinh phục, phát triển giải pháp",
+          "start_date": "25/09/2026",
+          "end_date": "06/11/2026",
+          "description": "Các đội được hỗ trợ cố vấn và điều kiện thử nghiệm để hoàn thiện sản phẩm khả dụng tối thiểu; lựa chọn khoảng 30 đội."
+        },
+        {
+          "stage_name": "Vòng 3 - Triển lãm",
+          "start_date": "01/11/2026",
+          "end_date": "07/11/2026",
+          "description": "Trưng bày, giới thiệu giải pháp, kết nối cộng đồng và nhà đầu tư; lựa chọn 06 đội vào chung kết."
+        },
+        {
+          "stage_name": "Vòng 4 - Chung kết",
+          "start_date": "20/11/2026",
+          "end_date": "25/11/2026",
+          "description": "Các đội thuyết trình, phản biện trước Hội đồng Giám khảo; chương trình phát sóng trên Đài Truyền hình Việt Nam."
+        }
+      ],
+      "challenge_overview": "Giải quyết các bài toán thực tiễn về Chính phủ số, đô thị thông minh, y tế, giáo dục, môi trường, an ninh trật tự và kinh tế số thông qua dữ liệu.",
+      "submission_platform": "Website chính thức www.dataforlife.vn"
+    }
+  ]
+}

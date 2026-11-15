@@ -1,0 +1,74 @@
+{
+  "_metadata": {
+    "source_domain": "rmit-hackathon.com",
+    "source_key": "bronze/rmit-hackathon.com/year=2026/month=11/day=15/1794716149",
+    "crawl_date": "2026-11-15",
+    "crawl_timestamp": 1794716149,
+    "extracted_at": "2026-11-15T12:30:47.812329",
+    "raw_markdown_length": 29858,
+    "cleaned_markdown_length": 16000
+  },
+  "is_competition": true,
+  "reasoning": "Tài liệu chứa thông tin chi tiết về cuộc thi RMIT Hackathon 2026 bao gồm chủ đề, thể lệ, đơn vị tổ chức, địa điểm và kết quả chung cuộc tại các campus.",
+  "competitions": [
+    {
+      "name": "RMIT Hackathon 2026",
+      "tagline": "Security × Generative AI × Low-Resource Languages. Secure. Generate. Include.",
+      "url": "https://rmit-hackathon.com",
+      "summary": "Cuộc thi hackathon quốc tế quy tụ sinh viên đại học và sau đại học giải quyết các thách thức về An toàn bảo mật, Trí tuệ nhân tạo tạo sinh và Ngôn ngữ ít tài nguyên tại 4 cơ sở ở Úc, Việt Nam và Malaysia.",
+      "organizers": [
+        "School of Computing Technologies, RMIT University"
+      ],
+      "partners_and_sponsors": [
+        "Taylor’s University",
+        "Tide",
+        "DesignLive (Compnow)",
+        "Katalon",
+        "Orange Logic Vietnam"
+      ],
+      "category": [
+        "Cybersecurity",
+        "Generative AI",
+        "Software Engineering",
+        "Hackathon"
+      ],
+      "target_audience": "Sinh viên đại học và sau đại học đang theo học",
+      "team_size_min": 4,
+      "team_size_max": 4,
+      "team_description": "Mỗi đội bắt buộc gồm đúng 4 sinh viên",
+      "mode": "offline",
+      "location": "RMIT Melbourne, RMIT Saigon South, RMIT Hanoi, Taylor's University Lakeside Campus",
+      "participation_fee": "Miễn phí",
+      "total_prize_pool": "Up to VND 100M",
+      "prizes": [
+        {
+          "tier": "National / Campus Champions",
+          "reward": "Giải thưởng vinh danh các đội vô địch quốc gia và tại các campus Úc, Việt Nam, Malaysia",
+          "estimated_value_vnd": 100000000.0,
+          "is_scholarship": false
+        }
+      ],
+      "registration_start": null,
+      "registration_deadline": "13/10/2026",
+      "registration_status": "closed",
+      "event_start": "22/10/2026",
+      "event_end": "23/10/2026",
+      "timeline_stages": [
+        {
+          "stage_name": "Warm-up & Preparation",
+          "start_date": null,
+          "end_date": "21/10/2026",
+          "description": "Làm quen với nền tảng nguồn mở và diễn đàn thảo luận"
+        },
+        {
+          "stage_name": "Main Hackathon Event",
+          "start_date": "22/10/2026",
+          "end_date": "23/10/2026",
+          "description": "Thi đấu trực tiếp 2 ngày tại các cơ sở trường với 1 bài khởi động và 2 thử thách chính"
+        }
+      ],
+      "challenge_overview": "Tìm và vá lỗi hệ thống AI (prompt injection, data poisoning), cải thiện độ chính xác của LLM và giải quyết vấn đề của các ngôn ngữ ít tài nguyên.",
+      "submission_platform": "Kaggle (SkywardAI Labs)"
+    }
+  ]
+}

@@ -1,0 +1,117 @@
+{
+  "_metadata": {
+    "source_domain": "httt.uit.edu.vn",
+    "source_key": "bronze/httt.uit.edu.vn/year=2026/month=11/day=15/1794718032",
+    "crawl_date": "2026-11-15",
+    "crawl_timestamp": 1794718032,
+    "extracted_at": "2026-11-15T12:30:38.981142",
+    "raw_markdown_length": 88057,
+    "cleaned_markdown_length": 16000
+  },
+  "is_competition": true,
+  "reasoning": "Tài liệu cung cấp thông tin chi tiết về cuộc thi Advanced Information Systems Contest (AISC) 2026 do Khoa Hệ thống Thông tin - Trường Đại học Công nghệ Thông tin ĐHQG-HCM tổ chức, bao gồm cơ cấu giải thưởng, lịch trình 4 vòng thi, và các đơn vị tài trợ.",
+  "competitions": [
+    {
+      "name": "Advanced Information Systems Contest 2026",
+      "tagline": "Sân chơi học thuật thường niên về kinh doanh và công nghệ",
+      "url": "https://httt.uit.edu.vn/aisc/",
+      "summary": "Advanced Information Systems Contest (AISC) là cuộc thi học thuật thường niên do Khoa Hệ thống Thông tin, Trường Đại học Công nghệ Thông tin – ĐHQG-HCM tổ chức, hướng đến sinh viên yêu thích lĩnh vực Hệ thống Thông tin và Thương mại điện tử.",
+      "organizers": [
+        "Khoa Hệ thống Thông tin, Trường Đại học Công nghệ Thông tin – ĐHQG-HCM",
+        "Đoàn Thanh niên Khoa Hệ thống Thông tin",
+        "Liên Chi Hội Khoa Hệ thống Thông tin"
+      ],
+      "partners_and_sponsors": [
+        "Công ty Cổ phần Quốc tế Phong Phú",
+        "CloudGO",
+        "FPT Software",
+        "Axon Active"
+      ],
+      "category": [
+        "Data Driven Business",
+        "Digital Business Ideas",
+        "Information Systems",
+        "E-Commerce"
+      ],
+      "target_audience": "Sinh viên yêu thích Hệ thống Thông tin & Thương mại Điện tử tại các trường đại học ở TP.HCM",
+      "team_size_min": null,
+      "team_size_max": null,
+      "team_description": null,
+      "mode": "offline",
+      "location": "Trường Đại học Công nghệ Thông tin - ĐHQG TP.HCM",
+      "participation_fee": "Miễn phí",
+      "total_prize_pool": "100.000.000đ",
+      "prizes": [
+        {
+          "tier": "Giải nhất",
+          "reward": "10.000.000đ (áp dụng cho mỗi chủ đề), kèm kỷ niệm chương và giấy chứng nhận",
+          "estimated_value_vnd": 10000000.0,
+          "is_scholarship": false
+        },
+        {
+          "tier": "Giải nhì",
+          "reward": "7.000.000đ (áp dụng cho mỗi chủ đề), kèm kỷ niệm chương và giấy chứng nhận",
+          "estimated_value_vnd": 7000000.0,
+          "is_scholarship": false
+        },
+        {
+          "tier": "Giải ba",
+          "reward": "5.000.000đ (áp dụng cho mỗi chủ đề), kèm kỷ niệm chương và giấy chứng nhận",
+          "estimated_value_vnd": 5000000.0,
+          "is_scholarship": false
+        },
+        {
+          "tier": "Giải khuyến khích",
+          "reward": "2.000.000đ",
+          "estimated_value_vnd": 2000000.0,
+          "is_scholarship": false
+        },
+        {
+          "tier": "Đề tài được yêu thích",
+          "reward": "2.000.000đ",
+          "estimated_value_vnd": 2000000.0,
+          "is_scholarship": false
+        },
+        {
+          "tier": "Thuyết minh ấn tượng",
+          "reward": "1.000.000đ",
+          "estimated_value_vnd": 1000000.0,
+          "is_scholarship": false
+        }
+      ],
+      "registration_start": "01/08/2026",
+      "registration_deadline": "15/09/2026",
+      "registration_status": "closed",
+      "event_start": "01/08/2026",
+      "event_end": "10/12/2026",
+      "timeline_stages": [
+        {
+          "stage_name": "Vòng 1: Đăng ký & nộp hồ sơ",
+          "start_date": "01/08/2026",
+          "end_date": "15/09/2026",
+          "description": "Đăng ký online và nộp hồ sơ dự thi trên website"
+        },
+        {
+          "stage_name": "Vòng 2: Thuyết trình ý tưởng",
+          "start_date": "22/10/2026",
+          "end_date": "22/10/2026",
+          "description": "Thuyết trình ý tưởng và nộp poster trước hội đồng giám khảo"
+        },
+        {
+          "stage_name": "Vòng 3: Bình chọn & mentor tư vấn",
+          "start_date": "01/11/2026",
+          "end_date": "10/11/2026",
+          "description": "Cộng đồng bình chọn trên Fanpage, mentor doanh nghiệp tư vấn hoàn thiện đề tài"
+        },
+        {
+          "stage_name": "Vòng 4: Chung kết & trao giải",
+          "start_date": "10/12/2026",
+          "end_date": "10/12/2026",
+          "description": "Trình bày, demo sản phẩm và vinh danh đội thi xuất sắc nhất tại UIT"
+        }
+      ],
+      "challenge_overview": "Giải quyết các bài toán kinh doanh - công nghệ thực tế thuộc lĩnh vực Hệ thống Thông tin và Thương mại Điện tử",
+      "submission_platform": "Website chính thức của cuộc thi (httt.uit.edu.vn/aisc)"
+    }
+  ]
+}

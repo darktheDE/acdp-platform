@@ -1,0 +1,110 @@
+{
+  "_metadata": {
+    "source_domain": "thucchien.ai",
+    "source_key": "bronze/thucchien.ai/year=2026/month=11/day=15/1794716359",
+    "crawl_date": "2026-11-15",
+    "crawl_timestamp": 1794716359,
+    "extracted_at": "2026-11-15T12:30:52.103425",
+    "raw_markdown_length": 42155,
+    "cleaned_markdown_length": 15996
+  },
+  "is_competition": true,
+  "reasoning": "Văn bản chứa thông tin chi tiết về cuộc thi 'A.I Thực Chiến' (Thực Chiến AI) năm 2026, bao gồm mục tiêu, đối tượng, thể lệ, các vòng thi và cơ cấu giải thưởng.",
+  "competitions": [
+    {
+      "name": "A.I Thực Chiến 2026",
+      "tagline": "Cuộc thi về Trí tuệ Nhân tạo ĐẦU TIÊN trên sóng truyền hình Quốc gia",
+      "url": "https://thucchien.ai",
+      "summary": "Cuộc thi tìm kiếm nhân tài AI quốc gia, xây dựng mô hình Multimodal/LLM/SLM tiếng Việt và hệ sinh thái ứng dụng Make in Vietnam, phát sóng trên VTV.",
+      "organizers": [
+        "Hiệp hội Dữ liệu Quốc gia (NDA)",
+        "Trung tâm Dữ liệu Quốc gia (NDC)",
+        "Đài Truyền hình Việt Nam (VTV)"
+      ],
+      "partners_and_sponsors": [
+        "Các trường đại học",
+        "Viện nghiên cứu",
+        "Doanh nghiệp công nghệ"
+      ],
+      "category": [
+        "Artificial Intelligence",
+        "Large Language Models",
+        "Small Language Models",
+        "Multimodal"
+      ],
+      "target_audience": "Công dân từ 18-35 tuổi gồm startup, sinh viên, nhà nghiên cứu trẻ và chuyên gia ứng dụng AI liên ngành",
+      "team_size_min": 1,
+      "team_size_max": 3,
+      "team_description": "Mỗi đội thi bao gồm từ 1 đến 3 thành viên, không phân biệt ngành nghề",
+      "mode": "hybrid",
+      "location": "Trường quay VTV, Hà Nội và các nền tảng trực tuyến",
+      "participation_fee": "Miễn phí",
+      "total_prize_pool": "Hàng tỷ VNĐ",
+      "prizes": [
+        {
+          "tier": "Hệ thống giải chính",
+          "reward": "Vinh danh các đội thi xuất sắc nhất tại truyền hình và nền tảng số",
+          "estimated_value_vnd": null,
+          "is_scholarship": false
+        },
+        {
+          "tier": "Ứng dụng dữ liệu xuất sắc",
+          "reward": "Giải thưởng phụ vinh danh giải pháp xuất sắc",
+          "estimated_value_vnd": null,
+          "is_scholarship": false
+        },
+        {
+          "tier": "Startup A.I toàn năng",
+          "reward": "Giải thưởng phụ vinh danh startup tiềm năng",
+          "estimated_value_vnd": null,
+          "is_scholarship": false
+        },
+        {
+          "tier": "Khán giả bình chọn",
+          "reward": "Giải thưởng dành cho đội thi được khán giả yêu thích nhất",
+          "estimated_value_vnd": null,
+          "is_scholarship": false
+        }
+      ],
+      "registration_start": "07/2026",
+      "registration_deadline": "09/2026",
+      "registration_status": "closed",
+      "event_start": "07/2026",
+      "event_end": "01/2027",
+      "timeline_stages": [
+        {
+          "stage_name": "Vòng 1 – Đăng ký & Sơ loại",
+          "start_date": "07/2026",
+          "end_date": "09/2026",
+          "description": "Nộp hồ sơ trực tuyến, video giới thiệu và hồ sơ năng lực. Chọn 100 đội vào vòng trong."
+        },
+        {
+          "stage_name": "Vòng 2 – Chung khảo – Thử thách tạo sản phẩm AI",
+          "start_date": "09/2026",
+          "end_date": "10/2026",
+          "description": "100 đội chia 10 bảng thi đấu tạo sản phẩm AI với API và công cụ."
+        },
+        {
+          "stage_name": "Vòng 3 – Bán Kết – Phát triển & Tối ưu các mô hình nền tảng",
+          "start_date": "10/2026",
+          "end_date": "12/2026",
+          "description": "Tập trung tại trường quay phát triển và tối ưu mô hình Multimodal/LLM/SLM tiếng Việt."
+        },
+        {
+          "stage_name": "Vòng 4 – Chung kết",
+          "start_date": "12/2026",
+          "end_date": "12/2026",
+          "description": "4 đội xây dựng MVP và pitching trực tiếp trước BGK và nhà đầu tư tại trường quay VTV."
+        },
+        {
+          "stage_name": "Gala trao giải",
+          "start_date": "01/2027",
+          "end_date": "01/2027",
+          "description": "Công bố và trao giải thưởng chính thức."
+        }
+      ],
+      "challenge_overview": "Xây dựng mô hình Multimodal/LLM/SLM tiếng Việt và hệ sinh thái ứng dụng Make in Vietnam phục vụ quản lý, kinh tế và xã hội.",
+      "submission_platform": "Website thucchien.ai và kho lưu trữ Git/ZIP"
+    }
+  ]
+}

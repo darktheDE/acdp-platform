@@ -1,0 +1,103 @@
+{
+  "_metadata": {
+    "source_domain": "event.navercorp.vn",
+    "source_key": "bronze/event.navercorp.vn/year=2026/month=11/day=15/1794720295",
+    "crawl_date": "2026-11-15",
+    "crawl_timestamp": 1794720295,
+    "extracted_at": "2026-11-15T12:30:35.084411",
+    "raw_markdown_length": 13770,
+    "cleaned_markdown_length": 11541
+  },
+  "is_competition": true,
+  "reasoning": "Văn bản cung cấp thông tin chi tiết về cuộc thi NAVER Vietnam AI Hackathon, bao gồm cơ cấu giải thưởng, các vòng thi, điều kiện tham gia và lịch trình.",
+  "competitions": [
+    {
+      "name": "NAVER Vietnam AI Hackathon",
+      "tagline": "Navigate the Future with NAVER AI",
+      "url": "https://event.navercorp.vn",
+      "summary": "Cuộc thi trực tuyến dành cho sinh viên và lập trình viên Việt Nam nhằm xây dựng các nguyên mẫu dịch vụ AI ứng dụng thực tiễn trên hạ tầng NAVER Cloud Platform.",
+      "organizers": [
+        "NAVER Vietnam"
+      ],
+      "partners_and_sponsors": [],
+      "category": [
+        "Artificial Intelligence",
+        "Software Engineering",
+        "Hackathon"
+      ],
+      "target_audience": "Công dân Việt Nam đang cư trú tại Việt Nam, là sinh viên đại học hoặc đã tốt nghiệp năm 2025 và hiện không làm việc tại bất kỳ công ty nào",
+      "team_size_min": 1,
+      "team_size_max": null,
+      "team_description": "Hồ sơ nộp cá nhân ban đầu, các nhóm sẽ được thành lập sau vòng sơ loại",
+      "mode": "online",
+      "location": "Trực tuyến toàn quốc, Lễ trao giải trực tiếp tại Trung tâm Lập trình NAVER Việt Nam, TP.HCM",
+      "participation_fee": "Miễn phí",
+      "total_prize_pool": "75.000.000 VNĐ",
+      "prizes": [
+        {
+          "tier": "Giải Nhất",
+          "reward": "40.000.000 VNĐ, cơ hội thực tập tại NAVER Việt Nam",
+          "estimated_value_vnd": 40000000.0,
+          "is_scholarship": false
+        },
+        {
+          "tier": "Giải Nhì",
+          "reward": "15.000.000 VNĐ, cơ hội thực tập tại NAVER Việt Nam",
+          "estimated_value_vnd": 15000000.0,
+          "is_scholarship": false
+        },
+        {
+          "tier": "Giải Ba",
+          "reward": "10.000.000 VNĐ",
+          "estimated_value_vnd": 10000000.0,
+          "is_scholarship": false
+        },
+        {
+          "tier": "Giải Khuyến khích",
+          "reward": "5.000.000 VNĐ / giải (2 đội)",
+          "estimated_value_vnd": 5000000.0,
+          "is_scholarship": false
+        }
+      ],
+      "registration_start": "07/08/2025",
+      "registration_deadline": "15/09/2025",
+      "registration_status": "closed",
+      "event_start": "08/09/2025",
+      "event_end": "05/12/2025",
+      "timeline_stages": [
+        {
+          "stage_name": "Đăng ký",
+          "start_date": "07/08/2025",
+          "end_date": "15/09/2025",
+          "description": "Mở cổng đăng ký trực tuyến cá nhân"
+        },
+        {
+          "stage_name": "Vòng sơ loại",
+          "start_date": "08/09/2025",
+          "end_date": "15/09/2025",
+          "description": "Thực hiện nhiệm vụ sơ loại và nộp qua email"
+        },
+        {
+          "stage_name": "Đào tạo",
+          "start_date": "01/10/2025",
+          "end_date": "28/10/2025",
+          "description": "Khóa đào tạo thực hành kéo dài 4 tuần về phát triển ứng dụng và dịch vụ AI"
+        },
+        {
+          "stage_name": "Vòng chung kết",
+          "start_date": "10/11/2025",
+          "end_date": "24/11/2025",
+          "description": "Phát triển Prototype Dịch vụ AI và thuyết trình trực tuyến"
+        },
+        {
+          "stage_name": "Lễ trao giải",
+          "start_date": "05/12/2025",
+          "end_date": "05/12/2025",
+          "description": "Buổi thuyết trình chung kết trực tiếp và trao giải tại TP.HCM"
+        }
+      ],
+      "challenge_overview": "Tạo ra các dịch vụ AI thiết thực giúp giải quyết các vấn đề thực tế và nâng cao năng suất sử dụng Web Track (React) hoặc Mobile Android Track (Kotlin)",
+      "submission_platform": "NAVER Cloud Platform & Website ban tổ chức"
+    }
+  ]
+}

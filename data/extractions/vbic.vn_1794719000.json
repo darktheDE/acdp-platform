@@ -1,0 +1,126 @@
+{
+  "_metadata": {
+    "source_domain": "vbic.vn",
+    "source_key": "bronze/vbic.vn/year=2026/month=11/day=15/1794719000",
+    "crawl_date": "2026-11-15",
+    "crawl_timestamp": 1794719000,
+    "extracted_at": "2026-11-15T12:30:55.825695",
+    "raw_markdown_length": 17017,
+    "cleaned_markdown_length": 10536
+  },
+  "is_competition": true,
+  "reasoning": "Trang web cung cấp thông tin chi tiết về cuộc thi 'Vietnam Business Innovation Challenge (VBIC)' dành cho học sinh trung học phổ thông, bao gồm cơ cấu giải thưởng, lịch trình, tiêu chí và đối tượng tham gia.",
+  "competitions": [
+    {
+      "name": "Vietnam Business Innovation Challenge (VBIC)",
+      "tagline": "A Case Study Competition for High School Students",
+      "url": "https://vbic.vn",
+      "summary": "Vietnam Business Innovation Challenge (VBIC) là cuộc thi giải case study kinh doanh dành cho học sinh THPT tại Việt Nam và Đông Nam Á, nhằm nuôi dưỡng tư duy phản biện, đổi mới sáng tạo và năng lực kinh doanh.",
+      "organizers": [
+        "Fulbright University Vietnam",
+        "Vietnam Business Innovation Challenge Team"
+      ],
+      "partners_and_sponsors": [
+        "Fulbright University Vietnam",
+        "IEG Global",
+        "Golden Gate Ventures",
+        "APUS Vietnam",
+        "C+P Consulting Asia",
+        "Viet Dragon Securities Corporation",
+        "DH Foods",
+        "ClassIn",
+        "British Council Vietnam"
+      ],
+      "category": [
+        "Business Case Study",
+        "Innovation",
+        "Economics and Finance"
+      ],
+      "target_audience": "Học sinh THPT từ 14 tuổi trở lên tại khu vực Đông Nam Á, thông thạo tiếng Anh",
+      "team_size_min": 3,
+      "team_size_max": 3,
+      "team_description": "Mỗi đội bắt buộc có đúng 3 học sinh",
+      "mode": "hybrid",
+      "location": "Thành phố Hồ Chí Minh, Việt Nam",
+      "participation_fee": "Miễn phí",
+      "total_prize_pool": "Học bổng đại học và các suất huấn luyện độc quyền",
+      "prizes": [
+        {
+          "tier": "Quán quân (Champion)",
+          "reward": "Học bổng 60% chương trình cử nhân tại Đại học Fulbright Việt Nam, miễn phí tham gia Fulbright Innovation Bootcamp tại TP.HCM",
+          "estimated_value_vnd": null,
+          "is_scholarship": true
+        },
+        {
+          "tier": "Á quân 1 (First-runner)",
+          "reward": "Học bổng 50% chương trình cử nhân tại Đại học Fulbright Việt Nam",
+          "estimated_value_vnd": null,
+          "is_scholarship": true
+        },
+        {
+          "tier": "Á quân 2 (Second-runner)",
+          "reward": "Học bổng 40% chương trình cử nhân tại Đại học Fulbright Việt Nam",
+          "estimated_value_vnd": null,
+          "is_scholarship": true
+        },
+        {
+          "tier": "Top 10 teams",
+          "reward": "Đặc quyền cố vấn độc quyền (Exclusive mentoring) với các chuyên gia đầu ngành",
+          "estimated_value_vnd": null,
+          "is_scholarship": false
+        },
+        {
+          "tier": "Top 50 teams",
+          "reward": "Cơ hội tham gia các buổi đào tạo chuyên sâu (Training sessions) với các huấn luyện viên",
+          "estimated_value_vnd": null,
+          "is_scholarship": false
+        }
+      ],
+      "registration_start": "30/11/2025",
+      "registration_deadline": "13/02/2026",
+      "registration_status": "closed",
+      "event_start": "14/02/2026",
+      "event_end": "19/04/2026",
+      "timeline_stages": [
+        {
+          "stage_name": "Open for registration",
+          "start_date": "30/11/2025",
+          "end_date": "13/02/2026",
+          "description": "Mở cổng đăng ký trực tuyến"
+        },
+        {
+          "stage_name": "Screening Round",
+          "start_date": "14/02/2026",
+          "end_date": "25/02/2026",
+          "description": "Nộp video sơ loại, chọn ra 50 đội đi tiếp"
+        },
+        {
+          "stage_name": "Training Series",
+          "start_date": "12/03/2026",
+          "end_date": "26/03/2026",
+          "description": "Chuỗi đào tạo về Kinh doanh, Đổi mới, Phát triển bền vững, Lãnh đạo và Quản lý"
+        },
+        {
+          "stage_name": "Qualifying Round",
+          "start_date": "09/03/2026",
+          "end_date": "06/04/2026",
+          "description": "Thuyết trình trực tuyến, chọn ra 10 đội vào vòng chung kết"
+        },
+        {
+          "stage_name": "Mentoring",
+          "start_date": "07/04/2026",
+          "end_date": "18/04/2026",
+          "description": "Các buổi cố vấn 1-1 với chuyên gia"
+        },
+        {
+          "stage_name": "Final Round",
+          "start_date": "19/04/2026",
+          "end_date": "19/04/2026",
+          "description": "Thuyết trình trực tiếp (Offline) và trao giải cho các đội chiến thắng"
+        }
+      ],
+      "challenge_overview": "Giải quyết các bài toán kinh doanh thực tế từ các doanh nghiệp hàng đầu tại Việt Nam và khu vực (ví dụ: đổi mới trải nghiệm bảo tàng, giải pháp phát triển bền vững,...)",
+      "submission_platform": "Google Forms / Website chính thức"
+    }
+  ]
+}

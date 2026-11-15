@@ -1,0 +1,76 @@
+{
+  "_metadata": {
+    "source_domain": "www.lotushack.org",
+    "source_key": "bronze/www.lotushack.org/year=2026/month=11/day=15/1794716508",
+    "crawl_date": "2026-11-15",
+    "crawl_timestamp": 1794716508,
+    "extracted_at": "2026-11-15T12:31:14.416959",
+    "raw_markdown_length": 10804,
+    "cleaned_markdown_length": 4874
+  },
+  "is_competition": true,
+  "reasoning": "Trang web chứa đầy đủ thông tin về cuộc thi hackathon LotusHacks x HackHarvard Vietnam 2026 với thời gian, địa điểm, các tracks và giải thưởng.",
+  "competitions": [
+    {
+      "name": "LotusHacks x HackHarvard Vietnam 2026",
+      "tagline": "The largest 36-hour hackathon in Vietnam",
+      "url": "https://www.lotushack.org",
+      "summary": "Cuộc thi hackathon kéo dài 36 giờ quy tụ hơn 800 nhà sáng tạo và lập trình viên từ khắp nơi trên thế giới tại TP.HCM để xây dựng các giải pháp đột phá.",
+      "organizers": [
+        "LotusHacks",
+        "HackHarvard",
+        "GenAI Fund"
+      ],
+      "partners_and_sponsors": [
+        "TinyFish",
+        "AWS",
+        "TASCO",
+        "ETEST",
+        "OpenAI"
+      ],
+      "category": [
+        "Hackathon",
+        "Software Engineering",
+        "Enterprise",
+        "EdTech"
+      ],
+      "target_audience": "Builders, creators, hackers, sinh viên và lập trình viên toàn cầu",
+      "team_size_min": null,
+      "team_size_max": null,
+      "team_description": "Làm việc theo nhóm tham gia xây dựng trong 36 giờ",
+      "mode": "offline",
+      "location": "VNG Campus, Quận 7, TP. Hồ Chí Minh",
+      "participation_fee": "Miễn phí",
+      "total_prize_pool": "250M+ VND",
+      "prizes": [
+        {
+          "tier": "Track Enterprise",
+          "reward": "Giải thưởng tiền mặt, cloud credits và đặc quyền từ TinyFish",
+          "estimated_value_vnd": null,
+          "is_scholarship": false
+        },
+        {
+          "tier": "Track Technology & Consumer",
+          "reward": "Giải thưởng và tài nguyên từ AWS",
+          "estimated_value_vnd": null,
+          "is_scholarship": false
+        }
+      ],
+      "registration_start": null,
+      "registration_deadline": null,
+      "registration_status": "open",
+      "event_start": "20/03/2026",
+      "event_end": "22/03/2026",
+      "timeline_stages": [
+        {
+          "stage_name": "36-hour Hacking",
+          "start_date": "20/03/2026",
+          "end_date": "22/03/2026",
+          "description": "Lập trình phi lợi nhuận liên tục từ 8 PM thứ Sáu đến 8 AM Chủ Nhật"
+        }
+      ],
+      "challenge_overview": "Xây dựng các giải pháp thực tế qua 4 chủ đề: Enterprise, Technology & Consumer, Social & Mobility, và EdTech.",
+      "submission_platform": "Luma / Website chính thức"
+    }
+  ]
+}

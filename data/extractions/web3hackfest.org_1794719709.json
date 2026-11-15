@@ -1,0 +1,120 @@
+{
+  "_metadata": {
+    "source_domain": "web3hackfest.org",
+    "source_key": "bronze/web3hackfest.org/year=2026/month=11/day=15/1794719709",
+    "crawl_date": "2026-11-15",
+    "crawl_timestamp": 1794719709,
+    "extracted_at": "2026-11-15T12:31:08.628288",
+    "raw_markdown_length": 130101,
+    "cleaned_markdown_length": 16000
+  },
+  "is_competition": true,
+  "reasoning": "Trang web chứa thông tin về Web3 HackFest 2025 và Web3 Ideathon 2025, bao gồm các track hackathon và sự kiện công nghệ.",
+  "competitions": [
+    {
+      "name": "Web3 HackFest 2025",
+      "tagline": "Blockchain – AI – Game Convergence",
+      "url": "https://web3hackfest.org",
+      "summary": "Đại hội công nghệ và hackathon quy mô lớn tại Đông Nam Á, quy tụ hàng nghìn nhà phát triển Web3, AI và Game.",
+      "organizers": [
+        "Ho Chi Minh City People's Committee",
+        "VBI Academy"
+      ],
+      "partners_and_sponsors": [
+        "NEAR Protocol",
+        "HSC",
+        "Dragon Capital",
+        "BitMart",
+        "Sogni AI",
+        "TRIVE Digital",
+        "BSX Exchange",
+        "Offchain Labs",
+        "Tether",
+        "TRMLabs",
+        "Ascend Venture Vietnam"
+      ],
+      "category": [
+        "Blockchain",
+        "Artificial Intelligence",
+        "Gaming",
+        "Hackathon",
+        "Web3"
+      ],
+      "target_audience": "Nhà phát triển công nghệ, lập trình viên, startup và lãnh đạo doanh nghiệp",
+      "team_size_min": null,
+      "team_size_max": null,
+      "team_description": null,
+      "mode": "offline",
+      "location": "Đường đi bộ Nguyễn Huệ, TP. Hồ Chí Minh",
+      "participation_fee": "Miễn phí",
+      "total_prize_pool": null,
+      "prizes": [],
+      "registration_start": null,
+      "registration_deadline": null,
+      "registration_status": "upcoming",
+      "event_start": "08/11/2025",
+      "event_end": "09/11/2025",
+      "timeline_stages": [
+        {
+          "stage_name": "Official Press Conference",
+          "start_date": "15/10/2025",
+          "end_date": "15/10/2025",
+          "description": "Họp báo chính thức giới thiệu Web3 HackFest 2025"
+        },
+        {
+          "stage_name": "Main Event & Hackathon",
+          "start_date": "08/11/2025",
+          "end_date": "09/11/2025",
+          "description": "Sự kiện chính, hội nghị, triển lãm công nghệ và thi đấu hackathon"
+        }
+      ],
+      "challenge_overview": "Giải các bài toán về Layer, DeFi, NFT, Gaming, DAO, Tool & Infrastructure và Web2 to Web3",
+      "submission_platform": "Website ban tổ chức"
+    },
+    {
+      "name": "Web3 Ideathon 2025",
+      "tagline": "Empowering Vietnam's Web3 Startup Journey",
+      "url": "https://web3hackfest.org/web3-ideathon",
+      "summary": "Cuộc thi ý tưởng khởi nghiệp Web3 và AI dành cho thế hệ trẻ Việt Nam, kéo dài 4 tháng với vòng chung kết tổ chức vào tháng 3/2025.",
+      "organizers": [
+        "Web3 HackFest Organizing Committee"
+      ],
+      "partners_and_sponsors": [
+        "UniTrain",
+        "Fonos",
+        "PMAX",
+        "BSSC"
+      ],
+      "category": [
+        "Web3",
+        "Artificial Intelligence",
+        "Startup",
+        "Ideathon"
+      ],
+      "target_audience": "Thanh niên, sinh viên và các nhà sáng lập trẻ đam mê khởi nghiệp công nghệ",
+      "team_size_min": null,
+      "team_size_max": null,
+      "team_description": null,
+      "mode": "offline",
+      "location": "TP. Hồ Chí Minh",
+      "participation_fee": "Miễn phí",
+      "total_prize_pool": null,
+      "prizes": [],
+      "registration_start": null,
+      "registration_deadline": null,
+      "registration_status": "closed",
+      "event_start": null,
+      "event_end": "28/03/2025",
+      "timeline_stages": [
+        {
+          "stage_name": "Chung kết và Lễ trao giải",
+          "start_date": "28/03/2025",
+          "end_date": "28/03/2025",
+          "description": "Đêm chung kết và vinh danh các dự án xuất sắc nhất"
+        }
+      ],
+      "challenge_overview": "Xây dựng ý tưởng và dự án khởi nghiệp trong lĩnh vực Web3 và AI",
+      "submission_platform": "Website ban tổ chức"
+    }
+  ]
+}

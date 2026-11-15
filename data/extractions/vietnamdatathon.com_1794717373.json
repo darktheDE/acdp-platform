@@ -1,0 +1,107 @@
+{
+  "_metadata": {
+    "source_domain": "vietnamdatathon.com",
+    "source_key": "bronze/vietnamdatathon.com/year=2026/month=11/day=15/1794717373",
+    "crawl_date": "2026-11-15",
+    "crawl_timestamp": 1794717373,
+    "extracted_at": "2026-11-15T12:30:59.307734",
+    "raw_markdown_length": 33839,
+    "cleaned_markdown_length": 16000
+  },
+  "is_competition": true,
+  "reasoning": "Trang web cung cấp thông tin chi tiết về cuộc thi Vietnam Datathon - DataStorm 2025 dành cho sinh viên đại học với các vòng thi, cơ cấu giải thưởng và thể lệ đầy đủ.",
+  "competitions": [
+    {
+      "name": "Vietnam Datathon - DataStorm 2025",
+      "tagline": "Revolutionize the future of data-driven Retail",
+      "url": "https://vietnamdatathon.com/",
+      "summary": "Cuộc thi Data Science thường niên 24 giờ thử thách sinh viên đại học giải quyết các bài toán thực tế của doanh nghiệp bán lẻ thông qua khai thác dữ liệu và xây dựng giải pháp.",
+      "organizers": [
+        "Faculty of Information Technology - Ton Duc Thang University",
+        "Saigon Business School (SBS)"
+      ],
+      "partners_and_sponsors": [
+        "Kyanon Digital",
+        "EQuest Education"
+      ],
+      "category": [
+        "Data Science",
+        "Artificial Intelligence",
+        "Data Analytics"
+      ],
+      "target_audience": "Sinh viên các trường đại học đam mê Trí tuệ Nhân tạo và Khoa học Dữ liệu",
+      "team_size_min": 3,
+      "team_size_max": 5,
+      "team_description": "Mỗi đội gồm từ 3 đến 5 thành viên",
+      "mode": "offline",
+      "location": "Việt Nam",
+      "participation_fee": "Miễn phí",
+      "total_prize_pool": "Hơn 50.000.000++ VND",
+      "prizes": [
+        {
+          "tier": "1st Prize",
+          "reward": "25,000,000++ VND (bao gồm $1,000 tiền mặt và quà đặc biệt từ nhà tài trợ)",
+          "estimated_value_vnd": 25000000.0,
+          "is_scholarship": false
+        },
+        {
+          "tier": "2nd Prize",
+          "reward": "10,000,000++ VND (tiền mặt và quà từ nhà tài trợ)",
+          "estimated_value_vnd": 10000000.0,
+          "is_scholarship": false
+        },
+        {
+          "tier": "3rd Prize",
+          "reward": "5,000,000++ VND (tiền mặt và quà từ nhà tài trợ)",
+          "estimated_value_vnd": 5000000.0,
+          "is_scholarship": false
+        },
+        {
+          "tier": "Consolation",
+          "reward": "2,000,000 VND (tiền mặt và quà từ nhà tài trợ)",
+          "estimated_value_vnd": 2000000.0,
+          "is_scholarship": false
+        }
+      ],
+      "registration_start": "15/09/2025",
+      "registration_deadline": "19/10/2025",
+      "registration_status": "open",
+      "event_start": "17/01/2026",
+      "event_end": "18/01/2026",
+      "timeline_stages": [
+        {
+          "stage_name": "Online Registration",
+          "start_date": "15/09/2025",
+          "end_date": "19/10/2025",
+          "description": "Đăng ký thành lập đội thi qua form trực tuyến"
+        },
+        {
+          "stage_name": "Qualifying Round 1 (Online Selection)",
+          "start_date": "20/10/2025",
+          "end_date": "16/11/2025",
+          "description": "Đề xuất và trình bày ý tưởng dự án dựa trên chủ đề tổng thể"
+        },
+        {
+          "stage_name": "Qualifying Round 2",
+          "start_date": "01/12/2025",
+          "end_date": "28/12/2025",
+          "description": "Phát triển sâu hơn giải pháp dựa trên tập dữ liệu được cung cấp"
+        },
+        {
+          "stage_name": "Trainings",
+          "start_date": null,
+          "end_date": null,
+          "description": "Chuỗi 3 workshop định hướng và huấn luyện kỹ năng"
+        },
+        {
+          "stage_name": "Vietnam Datathon - DataStorm 2025 Days",
+          "start_date": "17/01/2026",
+          "end_date": "18/01/2026",
+          "description": "Vòng chung kết 24 giờ xây dựng MVP và thuyết trình trước ban giám khảo"
+        }
+      ],
+      "challenge_overview": "Tận dụng dữ liệu để tăng cường sự tương tác và trải nghiệm của khách hàng trong lĩnh vực bán lẻ (Retail)",
+      "submission_platform": "Google Forms / Website ban tổ chức"
+    }
+  ]
+}

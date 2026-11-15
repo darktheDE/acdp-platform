@@ -1,0 +1,79 @@
+{
+  "_metadata": {
+    "source_domain": "codetour.org",
+    "source_key": "bronze/codetour.org/year=2026/month=11/day=15/1794715241",
+    "crawl_date": "2026-11-15",
+    "crawl_timestamp": 1794715241,
+    "extracted_at": "2026-11-15T12:30:24.880153",
+    "raw_markdown_length": 46817,
+    "cleaned_markdown_length": 16000
+  },
+  "is_competition": true,
+  "reasoning": "Trang web cung cấp thông tin chi tiết về chuỗi sự kiện và cuộc thi lập trình thi đấu Code Tour 2026 do VNG tổ chức với các vòng thi đấu thuật toán trực tuyến và chung kết trực tiếp.",
+  "competitions": [
+    {
+      "name": "Code Tour 2026",
+      "tagline": "Thử thách tư duy thuật toán, nâng cao kỹ năng giải quyết vấn đề",
+      "url": "https://codetour.org/",
+      "summary": "Cuộc thi lập trình thi đấu quy mô toàn quốc do VNG tổ chức dành cho người trẻ từ 15 đến 24 tuổi, nhằm phát triển tư duy thuật toán và kết nối cộng đồng công nghệ Việt Nam.",
+      "organizers": [
+        "VNG Corporation"
+      ],
+      "partners_and_sponsors": [],
+      "category": [
+        "Competitive Programming",
+        "Software Engineering",
+        "Algorithms"
+      ],
+      "target_audience": "Học sinh, sinh viên và lập trình viên trẻ từ 15 đến 24 tuổi",
+      "team_size_min": 1,
+      "team_size_max": 1,
+      "team_description": "Cuộc thi cá nhân",
+      "mode": "hybrid",
+      "location": "Vòng loại trực tuyến trên nền tảng oj.io.vn, Vòng chung kết trực tiếp tại VNG Campus, TP.HCM",
+      "participation_fee": "Miễn phí",
+      "total_prize_pool": "100 triệu VNĐ",
+      "prizes": [
+        {
+          "tier": "Top 50 Final Round",
+          "reward": "Quyền lợi tham gia vòng chung kết trực tiếp và các phần quà từ ban tổ chức",
+          "estimated_value_vnd": null,
+          "is_scholarship": false
+        }
+      ],
+      "registration_start": null,
+      "registration_deadline": null,
+      "registration_status": "closed",
+      "event_start": "26/09/2026",
+      "event_end": "31/10/2026",
+      "timeline_stages": [
+        {
+          "stage_name": "Warm-up Code Challenge",
+          "start_date": "26/09/2026",
+          "end_date": "26/09/2026",
+          "description": "Vòng khởi động giúp thí sinh làm quen với hệ thống và hình thức thi"
+        },
+        {
+          "stage_name": "Code Challenge #1",
+          "start_date": "03/10/2026",
+          "end_date": "03/10/2026",
+          "description": "Vòng loại trực tuyến đầu tiên tranh tài giành suất vào Final Round"
+        },
+        {
+          "stage_name": "Code Challenge #2",
+          "start_date": "10/10/2026",
+          "end_date": "10/10/2026",
+          "description": "Vòng loại trực tuyến thứ hai mở thêm cơ hội vào chung kết"
+        },
+        {
+          "stage_name": "Final Round",
+          "start_date": "31/10/2026",
+          "end_date": "31/10/2026",
+          "description": "Vòng chung kết trực tiếp tại VNG Campus quy tụ các thí sinh xuất sắc nhất"
+        }
+      ],
+      "challenge_overview": "Giải các bài toán thuật toán và cấu trúc dữ liệu trên hệ thốngấm chấm điểm tự động trong thời gian quy định.",
+      "submission_platform": "codetour26.oj.io.vn"
+    }
+  ]
+}
