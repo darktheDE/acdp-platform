@@ -20,9 +20,9 @@ This skill guides the AI agent in designing, executing, and analyzing empirical 
   - Designing evaluation frameworks for the RAG competition regulation assistant.
   - Benchmarking query throughput and latency across DuckDB (Silver tier) vs. PostgreSQL (Gold tier).
   - Measuring crawler extraction resilience and schema parsing error rates across different LLM backends.
-  - Generating evaluation scorecards and ablation study logs in [`docs/experiments/`](../../docs/experiments/).
+  - Generating evaluation scorecards and ablation study logs in [`docs/experiments/`](../../../docs/experiments/).
 - **DO NOT activate when**:
-  - Building Next.js 15 frontend components (`apps/web/`).
+  - Building Next.js 16 frontend components (`apps/web/`).
   - Writing thesis narrative chapters without numerical data.
   - Designing presentation slide animations.
 

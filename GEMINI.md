@@ -30,6 +30,7 @@ All agents operating in this workspace must strictly abide by the rules and adap
    - Scientific Prose & Anti-Slop: `.agents/skills/anti-slop-scientific-writer/SKILL.md`
    - Visual Dossiers & HTML Reports: `.agents/skills/visual-dossier-reporter/SKILL.md`
    - Ollama Orchestration: `.agents/skills/ollama-bridge/SKILL.md`
+   - Decision Sync & Doc Governance: `.agents/skills/doc-decision-sync/SKILL.md`
 
 3. **Notion Synchronization**: Record deliverables in `docs/deliverables/` and maintain `docs/tasks/notion-task-mapping.md`.
 4. **Skill Engineering Specification**: When creating or upgrading any skill, strictly adhere to [`docs/frameworks/AGENT_SKILL_ENGINEERING_SPEC.md`](./docs/frameworks/AGENT_SKILL_ENGINEERING_SPEC.md). Never create cosmetic or prompt-only skills; always provide structured frontmatter with negative triggers, deterministic scripts (`scripts/`), deep references (`references/`), and verification suites.
@@ -70,7 +71,12 @@ All agents operating in this workspace must strictly abide by the rules and adap
     - Route output to `.scratchpad/<name>.html` (on-demand personal analysis) or `docs/deliverables/<name>.html` (formal project deliverable).
 16. **Lean TLCN Scope (5–10 Competitions) & Minimalist Tech Stack (DIR-015)**:
     - Phase 1 (TLCN) strictly targets **5–10 curated competition links** crawled on-demand to prove pipeline feasibility. High-volume and automated realtime/batch crawling belong to Phase 2 (KLTN).
-    - Use the minimalist stack for TLCN: `Crawl4AI` $\rightarrow$ raw Markdown on `Cloudflare R2` / `Local` $\rightarrow$ `Instructor` + `Pydantic v2` (`SilverCompetitionRecord`) $\rightarrow$ `Parquet/JSON` queried directly by `DuckDB` (no `zstandard` payload compression).
+    - Use the minimalist stack for TLCN Bronze-to-Gold ETL: `Crawl4AI` $\rightarrow$ raw Markdown on `Cloudflare R2` / `Local` $\rightarrow$ `Instructor` + `Pydantic v2` (`SilverCompetitionRecord`) $\rightarrow$ `Parquet/JSON` queried directly by `DuckDB` (no `zstandard` payload compression, `SeaweedFS`, or `dbt`).
+17. **Final Web & OLTP/OLAP Split Stack (DIR-016)**:
+    - Backend App DB (OLTP): **PostgreSQL 18** (`postgres:18-alpine`, 17+ min) for user accounts, sessions, bookmarks, and chat history; keep **DuckDB** (`read_only=True`) for Gold OLAP Star Schema and **Qdrant** for RAG vector search.
+    - Serving & Frontend: **FastAPI** (`fastapi[standard]`, Python 3.11+/3.13+, Pydantic v2) + **Next.js 16** (Active LTS `16.4.x`, or `15.5.x` Maintenance LTS) + TypeScript + Tailwind CSS v4 + Recharts.
+18. **Atomic Decision Propagation & Zero Doc Drift (DIR-017)**:
+    - Whenever any architectural decision, `DIR-XXX`, `ADR`, `SPEC`, tech version, or module path changes, scan impact with `audit_doc_drift.py --impact <keyword>`, update all Tier 0–3 documents atomically, and verify `python .agents/skills/doc-decision-sync/scripts/audit_doc_drift.py --strict` passes with `0` violations.
 
 
 

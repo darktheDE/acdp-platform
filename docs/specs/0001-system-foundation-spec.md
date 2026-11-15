@@ -19,9 +19,10 @@ In accordance with **DIR-015**, Phase 1 (Tiểu luận chuyên ngành - TLCN) si
 
 To match the 5–10 competition dataset scale ($\sim 1\text{ MB}$) without infrastructure bloat:
 - **Ingestion**: `Crawl4AI` + `Playwright` executed on-demand via Python scripts (`src/acdp/1_crawl_to_bronze.py`).
-- **Storage**: Raw UTF-8 Markdown/HTML objects stored on **Local Files (`data/raw/`)** and **Cloudflare R2 (`boto3` / S3 API)**. Unnecessary intermediate binary compression (`zstandard`) and heavy container daemons (`SeaweedFS`, `PostgreSQL`, `dbt-core`) are excluded from the mandatory TLCN execution path.
-- **Structured Extraction**: `Instructor` + `LiteLLM` constrained by `Pydantic v2` (`SilverCompetitionRecord` in `src/acdp/lakehouse/schema.py`).
-- **Analytical Engine**: `DuckDB` in-process SQL engine querying Parquet/JSON directly from Local or Cloudflare R2.
+- **Storage**: Raw UTF-8 Markdown/HTML objects stored on **Local Files (`data/raw/`)** and **Cloudflare R2 (`boto3` / S3 API)**. Unnecessary intermediate binary compression (`zstandard`) and heavy ETL daemons (`SeaweedFS`, `dbt-core`) are excluded from the mandatory TLCN Bronze-to-Gold execution path.
+- **Structured Extraction**: `Instructor` + `LiteLLM` constrained by `Pydantic v2` (`Competition` and `CompetitionExtractionResult` in [`src/acdp/schemas.py`](../../src/acdp/schemas.py)).
+- **Analytical Engine**: `DuckDB` in-process SQL engine querying Gold Star Schema Parquet/JSON (`4 dim_*`, `3 fact_*`, `2 bridge_*`, `6 mart_*` per [`SPEC-0003`](./0003-gold-dimensional-modeling-spec.md)).
+- **Serving & Web Portal (`DIR-016` / `SPEC-0004`–`0006`)**: **FastAPI** serving gateway + **PostgreSQL 18** (OLTP App DB for accounts, bookmarks, and chat history) + **Qdrant** (RAG vector store) + **Next.js 16** (App Router, Tailwind CSS v4, Recharts).
 
 ---
 

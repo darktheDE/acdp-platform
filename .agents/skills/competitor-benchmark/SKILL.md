@@ -18,7 +18,7 @@ This skill guides the AI agent in evaluating existing academic competition platf
 
 - **Activate when**:
   - Benchmarking platforms like Devpost, Unstop (Dare2Compete), Kaggle Community, StudentCompetitions, VietChallenge.
-  - Formulating or updating the 5-dimensional feature matrix in [`docs/research/competitor-benchmarks.md`](../../docs/research/competitor-benchmarks.md).
+  - Formulating or updating the 5-dimensional feature matrix in [`docs/research/competitor-benchmarks.md`](../../../docs/research/competitor-benchmarks.md).
   - Writing the SWOT analysis for project proposals, thesis chapters, or defense slides.
   - Defining ACDP's Unique Value Proposition (UVP) against Vietnamese status-quo social media channels.
 - **DO NOT activate when**:

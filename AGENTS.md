@@ -30,11 +30,12 @@ Detect user intent and activate the corresponding modular skill playbook:
 | **Mode 3: Engineering & Code** | **Spec-Driven Protocol** (`docs/specs/`) | Production data pipelines, REST APIs |
 | **Mode 4: Experiments & Metrics** | [`.agents/skills/experiment-evaluator/SKILL.md`](./.agents/skills/experiment-evaluator/SKILL.md) | Ragas scorecards, latency benchmarks |
 | **Mode 5: Thesis & Presentation** | [`.agents/skills/thesis-writer/SKILL.md`](./.agents/skills/thesis-writer/SKILL.md)<br>[`.agents/skills/defense-pitch-builder/SKILL.md`](./.agents/skills/defense-pitch-builder/SKILL.md) | HCMUTE thesis chapters, defense slides |
-| **Mode 6: Frontend & UI/UX** | [`.agents/skills/frontend-designer/SKILL.md`](./.agents/skills/frontend-designer/SKILL.md) | Visual UI mockups, Next.js 15 components |
+| **Mode 6: Frontend & UI/UX** | [`.agents/skills/frontend-designer/SKILL.md`](./.agents/skills/frontend-designer/SKILL.md) | Visual UI mockups, Next.js 16 components |
 | **Mode 7: Quality & Link Verification** | [`.agents/skills/url-link-verifier/SKILL.md`](./.agents/skills/url-link-verifier/SKILL.md) | Reachability audit, dead link detection |
 | **Mode 8: Scientific Prose & Anti-Slop** | [`.agents/skills/anti-slop-scientific-writer/SKILL.md`](./.agents/skills/anti-slop-scientific-writer/SKILL.md) | Concise responses, zero AI slop/tropes, doc audit |
 | **Mode 9: Visual Dossiers & HTML Reports** | [`.agents/skills/visual-dossier-reporter/SKILL.md`](./.agents/skills/visual-dossier-reporter/SKILL.md) | Single-File HTML reports, Tailwind/Mermaid/Chart dashboards |
 | **Mode 10: Open Models & Ollama** | [`.agents/skills/ollama-bridge/SKILL.md`](./.agents/skills/ollama-bridge/SKILL.md) | Ollama orchestration, local SLM/embedding, Cloud API bridge |
+| **Mode 11: Decision Sync & Doc Governance** | [`.agents/skills/doc-decision-sync/SKILL.md`](./.agents/skills/doc-decision-sync/SKILL.md) | 4-Tier decision propagation, drift & internal link audit |
 
 
 *Implicit Intent & Auto-Activation*: Every skill in this repository must automatically activate based on the user's intent and prompt context. Never demand or expect the user to explicitly call skills by name.
@@ -106,7 +107,12 @@ All agents operating in this repository must strictly adhere to the continuous d
    - Route output to `.scratchpad/<name>.html` (on-demand personal analysis) or `docs/deliverables/<name>.html` (formal project deliverable).
 10. ⚡ **Lean TLCN Scope (5–10 Competitions) & Minimalist Tech Stack (DIR-015)**:
    - Phase 1 (TLCN) strictly targets a small, curated set of **5–10 competition links** executed on-demand to simulate the data pipeline and validate technical feasibility. Large-scale crawling and automated batch/realtime scheduling are deferred to Phase 2 (KLTN).
-   - Maintain the leanest possible stack matching this scale: raw UTF-8 Markdown/HTML objects on Local/Cloudflare R2 (`Crawl4AI` + `boto3`), structured extraction via `Instructor` + `LiteLLM` + `Pydantic v2`, and direct analytical querying via `DuckDB` over Parquet/JSON (eliminating unnecessary `zstandard` binary payload compression, `SeaweedFS`, `dbt`, or `PostgreSQL` overhead in TLCN).
+   - Maintain the leanest possible stack matching this scale: raw UTF-8 Markdown/HTML objects on Local/Cloudflare R2 (`Crawl4AI` + `boto3`), structured extraction via `Instructor` + `LiteLLM` + `Pydantic v2`, and direct analytical querying via `DuckDB` over Parquet/JSON (eliminating unnecessary `zstandard` binary payload compression, `SeaweedFS`, or `dbt` overhead in the Bronze-to-Gold ETL path).
+11. 🌐 **Final Web & OLTP/OLAP Split Stack (DIR-016)**:
+   - Separate transactional and analytical workloads cleanly: **PostgreSQL 18** (`postgres:18-alpine`, 17+ min) for Web OLTP App DB (user accounts, auth sessions, bookmarks, chat history), **DuckDB** (`read_only=True`) for Gold Star Schema OLAP, and **Qdrant** for RAG vector search.
+   - Serving & Frontend baseline: **FastAPI** (`fastapi[standard]`, Python 3.11+/3.13+, Pydantic v2) and **Next.js 16** (Active LTS `16.4.x`, or `15.5.x` Maintenance LTS) + TypeScript + Tailwind CSS v4 + Recharts.
+12. 🔄 **Atomic Decision Propagation & Zero Doc Drift (DIR-017)**:
+   - Whenever any directive (`DIR-XXX`), `ADR`, `SPEC`, tech version, or file path changes, scan blast radius via `audit_doc_drift.py --impact <keyword>`, propagate edits across Tiers 0–3 in the same turn, and verify `python .agents/skills/doc-decision-sync/scripts/audit_doc_drift.py --strict` returns `0` violations.
 
 
 

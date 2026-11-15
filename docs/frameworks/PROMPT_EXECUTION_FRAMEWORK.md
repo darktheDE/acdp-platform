@@ -72,7 +72,7 @@ Full Academic & Spec     Rapid Prototyping        Direct Knowledge
 1. **Never Guess or Assume**: Do not blindly execute high-impact code changes based on vague instructions.
 2. **Propose 2–3 Actionable Options**:
    - *Option 1 (Minimal / MVP)*: E.g., standalone HTML visual prototype.
-   - *Option 2 (Production Component)*: E.g., Next.js 15 App Router component with mock state.
+   - *Option 2 (Production Component)*: E.g., Next.js 16 App Router component with mock state.
    - *Option 3 (Full Integration)*: E.g., complete frontend hooked into FastAPI endpoints.
 3. **Awaiting User Selection**: Proceed only after the user indicates their preferred trajectory.
 

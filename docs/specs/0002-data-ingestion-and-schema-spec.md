@@ -48,8 +48,8 @@ flowchart LR
     with `ContentType="text/markdown; charset=utf-8"` and metadata `{"source": domain_name, "layer": "bronze"}`.
   - **Local Reproducible Fixtures**:
     Stored in `data/raw/markdown/{domain_name}.md` and `data/raw/html/{domain_name}.html` for offline testing.
-  - **Tabular Bronze Contract (`BronzeRecord`)**:
-    When persisted as a table via [`src/acdp/lakehouse/schema.py`](../../src/acdp/lakehouse/schema.py), payloads are stored in `raw_content: str` (UTF-8) alongside `content_hash: str` (SHA-256).
+  - **Tabular Silver Contract (`Competition`)**:
+    Standardized Pydantic v2 data contracts are defined in [`src/acdp/schemas.py`](../../src/acdp/schemas.py), storing extracted content alongside `content_hash: str` (SHA-256) and `dedup_fingerprint: str`.
 
 ---
 

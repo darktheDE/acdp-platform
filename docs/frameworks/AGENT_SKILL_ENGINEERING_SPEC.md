@@ -92,7 +92,7 @@ compatibility: Next.js 15+, React 19, Tailwind CSS v4, TypeScript 5.6+
 ### Quy tắc 4: Bộ nhớ Ngoài Một Tầng (Externalized References Rule)
 - Đưa toàn bộ bảng mã lỗi, danh sách token màu sắc, đặc tả OpenAPI chi tiết vào thư mục `references/`.
 - Trong `SKILL.md`, chỉ dẫn rõ liên kết tương đối:  
-  *Ví dụ: "Khi gặp lỗi liên quan đến hydrat hóa React, xem hướng dẫn xử lý tại [`references/hydration-troubleshooting.md`](./references/hydration-troubleshooting.md)"*.
+  *Ví dụ: "Khi gặp lỗi liên quan đến hydrat hóa React, xem hướng dẫn xử lý tại `[references/hydration-troubleshooting.md](./references/hydration-troubleshooting.md)`"*.
 - **Giới hạn độ sâu**: Thư mục `references/` chỉ sâu đúng 1 cấp thư mục, không tạo cấu trúc lồng nhau phức tạp làm agent bị lạc đường dẫn.
 
 ### Quy tắc 5: Đánh giá & Kiểm thử Ngược (Evaluation-Driven Quality Gate)

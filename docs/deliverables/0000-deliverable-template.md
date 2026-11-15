@@ -36,6 +36,6 @@ How do these results influence the project's architecture, specs, or thesis writ
 
 ## 4. Associated Artifacts & Code Links
 
-- **Repository Files**: [`path/to/file`](../../path/to/file)
+- **Repository Files**: `[path/to/file](../../path/to/file)`
 - **External Notion Page**: [Notion URL / Page Title]
 - **Raw Data / Logs**: (Location of cached logs or test datasets)

@@ -12,7 +12,7 @@ compatibility: Ollama v0.40+, LangChain v1.0+, langchain-ollama v1.1+, Python 3.
 # Ollama Bridge: Open Models & Embeddings Orchestration Playbook
 
 > **Repository**: `acdp-platform` | Faculty of Information Technology, HCMUTE  
-> **Target Module**: [`src/acdp/3_chatbot_mvp.py`](../../src/acdp/3_chatbot_mvp.py)  
+> **Target Module**: [`src/acdp/3_chatbot_mvp.py`](../../../src/acdp/3_chatbot_mvp.py)  
 > **Hardware Boundary**: AMD Ryzen 5 PRO 4650U (6C/12T) | Integrated AMD Radeon Graphics (512MB VRAM) | 12GB RAM  
 > **Authoritative References**: [Ollama Quickstart](https://docs.ollama.com/quickstart.md) | [Ollama GPU Support](https://docs.ollama.com/gpu.md) | [Ollama Cloud](https://docs.ollama.com/cloud.md)
 

@@ -19,7 +19,7 @@ This skill equips the AI agent to operate as a rigorous academic researcher in C
 - **Activate when**:
   - Searching for peer-reviewed literature across arXiv, IEEE Xplore, ACM DL, DBLP, and Google Scholar.
   - Synthesizing comparative literature matrices for thesis chapters or proposals.
-  - Adding, validating, or formatting BibTeX citations in [`docs/academic/references.bib`](../../docs/academic/references.bib).
+  - Adding, validating, or formatting BibTeX citations in [`docs/academic/references.bib`](../../../docs/academic/references.bib).
   - Benchmarking ACDP’s architectural claims against published academic papers.
 - **DO NOT activate when**:
   - Writing code implementations (FastAPI, Next.js).
