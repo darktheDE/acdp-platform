@@ -81,8 +81,8 @@ The `Competition` and `CompetitionExtractionResult` Pydantic v2 models transform
 ## 6. Verification & Engineering TODO Tasks
 
 - [x] 7 sample competitions crawled and stored in `data/raw/markdown/` and uploaded to Cloudflare R2 via `src/acdp/1_crawl_to_bronze.py`.
-- [x] Standardized `Competition` Pydantic v2 contract implemented in `src/acdp/schemas.py` and verified in `tests/test_silver_schema.py` (14/14 tests passed).
+- [x] Standardized `Competition` Pydantic v2 contract implemented in `src/acdp/schemas.py` and verified in `tests/test_silver_schema.py` (8/8 tests passed).
 - [x] **TODO-CODE-01 (Refactor Bronze Code)**: Removed legacy `zstandard` compression and pruned deprecated `src/acdp/lakehouse/` folder in favor of clean `src/acdp/schemas.py` and raw UTF-8 text.
-- [ ] **TODO-CODE-02 (Sync R2 Env Config)**: Add `BUCKET_NAME`, `SILVER_STORAGE_URI`, and `GOLD_STORAGE_URI` to `src/acdp/config.py` and `.env.example`.
-- [ ] **TODO-CODE-03 (Implement Extraction Pipeline)**: Complete `src/acdp/2_instruction.py` output connector to persist extracted records into Silver Parquet queryable by DuckDB.
+- [x] **TODO-CODE-02 (Sync R2 Env Config)**: Added `BUCKET_NAME`, `BRONZE_STORAGE_URI`, `SILVER_STORAGE_URI`, and `GOLD_STORAGE_URI` to `src/acdp/config.py` and `.env.example`, and unified `1_crawl_to_bronze.py` / `2_instruction.py`.
+- [x] **TODO-CODE-03 (Implement Extraction Pipeline)**: Completed `src/acdp/2_instruction.py` `--save-parquet` output connector delegating to `export_silver_parquet` so Silver Parquet records are directly queryable by DuckDB.
 

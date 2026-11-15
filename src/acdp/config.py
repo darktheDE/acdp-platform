@@ -25,10 +25,10 @@ class AppConfig(BaseSettings):
         description="Runtime environment (development, staging, production)",
     )
 
-    # Relational Database (PostgreSQL)
-    postgres_user: str = Field(default="postgres")
-    postgres_password: str = Field(default="postgres")
-    postgres_db: str = Field(default="acdp_db")
+    # Relational Database (PostgreSQL 18 OLTP - SPEC-0004 & SPEC-0006)
+    postgres_user: str = Field(default="acdp")
+    postgres_password: str = Field(default="acdp_local_dev_only")
+    postgres_db: str = Field(default="acdp_app")
     postgres_host: str = Field(default="localhost")
     postgres_port: int = Field(default=5432)
 
@@ -36,6 +36,10 @@ class AppConfig(BaseSettings):
     duckdb_database_path: str = Field(
         default="./data/lakehouse/acdp.duckdb",
         description="Path to local DuckDB lakehouse database file",
+    )
+    usd_to_vnd_rate: int = Field(
+        default=25400,
+        description="Reference USD to VND exchange rate for Gold prize normalization",
     )
 
     # Lakehouse Storage Configuration
@@ -95,8 +99,35 @@ class AppConfig(BaseSettings):
     openai_api_key: str = Field(default="")
     gemini_api_key: str = Field(default="")
 
+    # Serving API & Auth (SPEC-0004)
+    jwt_secret_key: str = Field(default="acdp-local-dev-secret-change-in-prod-32bytes")
+    jwt_algorithm: str = Field(default="HS256")
+    access_token_expire_minutes: int = Field(default=15)
+    refresh_token_expire_days: int = Field(default=7)
+    cors_origins: str = Field(default="http://localhost:3000")
+    internal_api_url: str = Field(default="http://localhost:8000")
+
+    def get_database_url(self) -> str:
+        """Build asyncpg SQLAlchemy connection URI for PostgreSQL 18 OLTP."""
+        return (
+            f"postgresql+asyncpg://{self.postgres_user}:{self.postgres_password}"
+            f"@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"
+        )
+
+    def create_r2_client(self):
+        """Create a configured boto3 S3/R2 client from unified settings."""
+        import boto3
+
+        return boto3.client(
+            service_name="s3",
+            endpoint_url=self.aws_endpoint_url or None,
+            aws_access_key_id=self.aws_access_key_id or None,
+            aws_secret_access_key=self.aws_secret_access_key or None,
+            region_name=self.aws_region or "auto",
+        )
+
     def get_storage_options(self) -> dict[str, str]:
-        """Generate storage options dictionary for deltalake and pyarrow."""
+        """Generate S3/R2 storage options dictionary for PyArrow and boto3."""
         if self.bronze_storage_backend == "local" and not self.bronze_storage_uri.startswith(("s3://", "r2://")):
             return {}
 

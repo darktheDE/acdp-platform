@@ -1,65 +1,57 @@
 import asyncio
+from datetime import datetime
+from pathlib import Path
+from urllib.parse import urlparse
+
 from crawl4ai import (
-    AsyncWebCrawler,
     AdaptiveConfig,
     AdaptiveCrawler,
+    AsyncWebCrawler,
     BrowserConfig,
     CrawlerRunConfig,
     LLMConfig,
 )
 from crawl4ai.adaptive_crawler import LinkPreviewConfig
-from dotenv import load_dotenv
-import os
-import boto3
-from datetime import datetime
-from urllib.parse import urlparse
 
-# TẢI BIẾN MÔI TRƯỜNG
-load_dotenv()
+from acdp.config import settings
 
-BUCKET_NAME = os.getenv("BUCKET_NAME")
-ENDPOINT_URL = os.getenv("AWS_ENDPOINT_URL")
-ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
-SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
-
-s3_client = boto3.client(
-    service_name="s3",
-    endpoint_url=ENDPOINT_URL,
-    aws_access_key_id=ACCESS_KEY_ID,
-    aws_secret_access_key=SECRET_ACCESS_KEY,
-    region_name="auto"
-)
-
-###
 
 def upload_to_bronze(md_content: str, dm_name: str) -> None:
-    """Upload nội dung Markdown lên tầng Bronze trên R2.
+    """Upload nội dung Markdown lên tầng Bronze trên R2 hoặc lưu cục bộ theo cấu hình.
 
     FIX: Chặn upload file rỗng — nếu nội dung trống (crawl thất bại / bị anti-bot),
     in cảnh báo và thoát ngay; không tạo object 0-byte trên bucket.
     """
+    domain = urlparse(dm_name).netloc or dm_name
     if not md_content or not md_content.strip():
-        domain = urlparse(dm_name).netloc or dm_name
         print(f"[SKIP] {domain}: Nội dung rỗng sau crawl (có thể bị anti-bot hoặc lỗi fetch). Bỏ qua upload lên Bronze.")
         return
 
     now = datetime.now()
-    dm_name = urlparse(dm_name).netloc
+    ts = int(now.timestamp())
+
+    if settings.bronze_storage_backend == "local" and not settings.bronze_storage_uri.startswith(("s3://", "r2://")):
+        local_dir = Path(settings.bronze_storage_uri) / domain / f"year={now.year}" / f"month={now.strftime('%m')}" / f"day={now.strftime('%d')}"
+        local_dir.mkdir(parents=True, exist_ok=True)
+        local_path = local_dir / f"{ts}.md"
+        local_path.write_text(md_content, encoding="utf-8")
+        print(f"Saved {domain} content to local bronze layer! ({len(md_content):,} chars -> {local_path})")
+        return
 
     bronze_key = (
-        f"bronze/{dm_name}"
+        f"bronze/{domain}"
         f"/year={now.year}/month={now.strftime('%m')}/day={now.strftime('%d')}/"
-        f"{int(now.timestamp())}"
+        f"{ts}"
     )
-
+    s3_client = settings.create_r2_client()
     s3_client.put_object(
-        Bucket=BUCKET_NAME,
+        Bucket=settings.bucket_name,
         Key=bronze_key,
         Body=md_content.encode("utf-8"),
         ContentType="text/markdown; charset=utf-8",
-        Metadata={"source": dm_name, "layer": "bronze"},
+        Metadata={"source": domain, "layer": "bronze"},
     )
-    print(f"Upload {dm_name} content to bronze layer successfully! ({len(md_content):,} chars -> {bronze_key})")
+    print(f"Upload {domain} content to bronze layer successfully! ({len(md_content):,} chars -> {bronze_key})")
 
 async def main():
     urls = [
@@ -76,7 +68,6 @@ async def main():
         "https://www.datathon.site/",
         "https://httt.uit.edu.vn/aisc/",
         "https://www.rmithackaventure.com/",
-        "https://vnquantum.org/events/quantum-hackathon-qc4sg/",
         "https://www.vjaihackathon.com/",
         "https://qvic.vn/",
         "https://vbic.vn/",

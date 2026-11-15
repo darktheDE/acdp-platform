@@ -10,6 +10,7 @@ Incorporates:
   for the target crawl date, keeping older crawl snapshots preserved as historical archives.
 """
 
+import importlib
 import json
 import os
 import re
@@ -17,10 +18,9 @@ import sys
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
-from urllib.parse import urlparse
-import boto3
-from dotenv import find_dotenv, load_dotenv
+
 import instructor
+from dotenv import find_dotenv, load_dotenv
 
 # Ensure UTF-8 output encoding on Windows consoles
 if sys.stdout and hasattr(sys.stdout, "reconfigure"):
@@ -30,24 +30,13 @@ if sys.stdout and hasattr(sys.stdout, "reconfigure"):
 load_dotenv(find_dotenv(usecwd=True))
 
 try:
-    from acdp.schemas import (
-        Competition,
-        CompetitionExtractionResult,
-        PrizeTier,
-        TimelineStage,
-    )
+    from acdp.config import settings
+    from acdp.schemas import Competition, CompetitionExtractionResult
 except ModuleNotFoundError:
-    from schemas import (  # type: ignore
-        Competition,
-        CompetitionExtractionResult,
-        PrizeTier,
-        TimelineStage,
-    )
+    from config import settings  # type: ignore
+    from schemas import Competition, CompetitionExtractionResult  # type: ignore
 
-BUCKET_NAME = os.getenv("BUCKET_NAME")
-ENDPOINT_URL = os.getenv("AWS_ENDPOINT_URL")
-ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
-SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+BUCKET_NAME = settings.bucket_name
 LLM_PROVIDER = os.getenv("LLM_PROVIDER", "ollama/qwen2.5:7b")
 # Cấu hình context window cho Ollama (mặc định 8192 token để đủ chứa prompt ~5k token mà vẫn tối ưu tốc độ CPU)
 OLLAMA_NUM_CTX = int(os.getenv("OLLAMA_NUM_CTX", "8192"))
@@ -55,14 +44,6 @@ OLLAMA_NUM_CTX = int(os.getenv("OLLAMA_NUM_CTX", "8192"))
 # Thư mục gốc dự án và thư mục mặc định lưu trữ file JSON trích xuất
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_OUTPUT_DIR = PROJECT_ROOT / "data" / "extractions"
-
-s3_client = boto3.client(
-    service_name="s3",
-    endpoint_url=ENDPOINT_URL,
-    aws_access_key_id=ACCESS_KEY_ID,
-    aws_secret_access_key=SECRET_ACCESS_KEY,
-    region_name="auto",
-)
 
 SYSTEM_PROMPT = """Bạn là chuyên gia Kỹ thuật Dữ liệu (Data Engineer) phụ trách bóc tách thông tin có cấu trúc từ tài liệu Markdown của các cuộc thi học thuật, tin học, AI và khoa học dữ liệu.
 
@@ -431,6 +412,7 @@ def process_bronze_bucket(
     process_all_dates: bool = False,
     output_dir: str | Path | None = None,
     output_file: str | Path | None = None,
+    save_silver_parquet: bool = False,
 ):
     """Quét dữ liệu tầng Bronze trên R2 theo cơ chế Scoped Latest Snapshot và xuất file JSON.
     
@@ -477,6 +459,7 @@ def process_bronze_bucket(
     if not BUCKET_NAME:
         raise RuntimeError("BUCKET_NAME is not configured in .env. Cloudflare R2 bucket connection is required.")
 
+    s3_client = settings.create_r2_client()
     print(f"Connecting to Cloudflare R2 Bucket: {BUCKET_NAME} (Strict Cloud Mode - Zero Fallback)")
     paginator = s3_client.get_paginator("list_objects_v2")
     pages = paginator.paginate(Bucket=BUCKET_NAME, Prefix="bronze/")
@@ -660,6 +643,18 @@ def process_bronze_bucket(
                 json.dump(batch_payload, f, ensure_ascii=False, indent=2)
             print(f">> [CUSTOM JSON SAVED] Đã lưu kết quả theo tham số --output vào: {custom_path}")
 
+        # Xuất trực tiếp Silver Parquet phục vụ DuckDB nếu được bật (--save-parquet)
+        if save_silver_parquet:
+            extracted_comps = [
+                Competition.model_validate(c)
+                for rec in successful_extractions
+                for c in rec.get("competitions", [])
+            ]
+            if extracted_comps:
+                analytics_gold = importlib.import_module("acdp.4_analytics_gold")
+                silver_out = PROJECT_ROOT / "data" / "lakehouse" / "silver"
+                analytics_gold.export_silver_parquet(extracted_comps, silver_out)
+
     print("\n" + "=" * 60)
     print(
         f"Extraction Batch Summary: Processed {processed_count} latest files, "
@@ -674,6 +669,7 @@ def process_bronze_bucket(
 if __name__ == "__main__":
     execute_extraction = "--extract" in sys.argv or os.getenv("EXECUTE_LLM", "0") == "1"
     process_all = "--all" in sys.argv
+    save_parquet_flag = "--save-parquet" in sys.argv
 
     # Trích xuất tham số dòng lệnh
     target_date_arg = None
@@ -700,4 +696,5 @@ if __name__ == "__main__":
         process_all_dates=process_all,
         output_dir=target_output_dir,
         output_file=target_output_file,
+        save_silver_parquet=save_parquet_flag,
     )

@@ -27,8 +27,9 @@ This document maintains the immediate context, active tasks, and session state f
 
 ## Task Board
 
-### In Progress & Code Refactoring TODOs (Lean MVP Alignment - DIR-015)
-- [ ] **TODO-CODE-02 (Unify R2 Storage Config)**: Synchronize `BUCKET_NAME`, `BRONZE_STORAGE_URI`, `SILVER_STORAGE_URI`, and `GOLD_STORAGE_URI` across `.env.example`, `src/acdp/config.py`, and `src/acdp/1_crawl_to_bronze.py`.
+### Completed & Code Refactoring Updates (Đợt 1 - DIR-015 / SPEC-0003)
+- [x] **TODO-CODE-02 (Unify R2 Storage Config)**: Synchronized `BUCKET_NAME`, `BRONZE_STORAGE_URI`, `SILVER_STORAGE_URI`, `GOLD_STORAGE_URI`, and app/JWT/DB config across `.env.example`, `src/acdp/config.py`, `src/acdp/1_crawl_to_bronze.py`, and `src/acdp/2_instruction.py`.
+- [x] **TODO-CODE-03 & Gold Star Schema (SPEC-0003)**: Added Silver Parquet export (`--save-parquet`) to `src/acdp/2_instruction.py`, removed deprecated `src/acdp/2-1_instruction.py` and `zstandard`/`deltalake` packages, and refactored `src/acdp/4_analytics_gold.py` to Kimball Star Schema + 6 `mart_*` marts (`tests/test_gold_star_schema.py`).
 
 ### Next Up (Backlog for Upcoming Weeks)
 - [ ] **TASK-0502**: Run formal Ragas evaluation over `src/acdp/3_chatbot_mvp.py` (faithfulness, answer relevancy, context precision) and document results in `docs/experiments/0001-rag-baseline-evaluation.md`.
