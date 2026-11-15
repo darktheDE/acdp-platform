@@ -69,6 +69,21 @@ async def main():
         "https://datadna.onyxdata.co.uk/challenges/",
         "https://itconsultantchallenge.org/vi",
         "https://rmit-hackathon.com",
+        "https://thucchien.ai/",
+        "https://www.lotushack.org/",
+        "https://dataforlife.vn/",
+        "https://vietnamdatathon.com/",
+        "https://www.datathon.site/",
+        "https://httt.uit.edu.vn/aisc/",
+        "https://www.rmithackaventure.com/",
+        "https://vnquantum.org/events/quantum-hackathon-qc4sg/",
+        "https://www.vjaihackathon.com/",
+        "https://qvic.vn/",
+        "https://vbic.vn/",
+        "https://web3hackfest.org/",
+        "https://marketingarena.vn/",
+        "https://challenge.zalo.ai/",
+        "https://event.navercorp.vn/event/naver-vietnam-ai-hackathon-2025/"
         #"https://hackaithon.vsds.vn/"
     ]
 
