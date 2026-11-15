@@ -28,6 +28,12 @@ This document establishes the bidirectional mapping between tasks managed on the
 | **NT-020** | Silver Layer Competition Schema & Data Contracts Implementation | Hung & Duy | Phase 1 (W7–W10) | [`src/acdp/schemas.py`](../../src/acdp/schemas.py) | ✅ Complete |
 | **NT-021** | Comprehensive FIT-HCMUTE Specialized Topic Project Report Manuscript | Hung & Duy | Phase 1 (W7–W15) | [`docs/academic/BaoCao_TieuLuan_ChuyenNganh_KTDL.md`](../academic/BaoCao_TieuLuan_ChuyenNganh_KTDL.md) | 🔄 In Progress |
 | **NT-022** | Lakehouse Cloudflare R2 Sync Technical Guide (Lean 5–10 Competition Scale) | Hung & Duy | Phase 1 (W8–W9) | [`docs/deliverables/HUONG_DAN_MIGRATE_R2_LAKEHOUSE.md`](../deliverables/HUONG_DAN_MIGRATE_R2_LAKEHOUSE.md) | ✅ Complete |
+| **NT-023** | Web & Gold Tech Stack Benchmarking (2026–2027 LTS Matrix) | Hung & Duy | Web Sprint 01 (W11–W12) | [`docs/rd-tasks/T14_web_and_gold_stack_evaluation.md`](../rd-tasks/T14_web_and_gold_stack_evaluation.md) (`TASK-W101`) | ✅ Complete |
+| **NT-024** | Gold Layer Kimball Star Schema & Analytical Data Marts Design | Hung & Duy | Web Sprint 01 (W11–W12) | [`docs/specs/0003-gold-dimensional-modeling-spec.md`](../specs/0003-gold-dimensional-modeling-spec.md) (`TASK-W102`) | ✅ Complete |
+| **NT-025** | FastAPI Serving Gateway, PostgreSQL 18 OLTP & Spec-Driven OpenAPI Contract | Hung & Duy | Web Sprint 01 (W11–W12) | [`docs/specs/0004-serving-api-and-oltp-spec.md`](../specs/0004-serving-api-and-oltp-spec.md) (`TASK-W103`) | ✅ Complete |
+| **NT-026** | Frontend Brand Identity (SVG Logo), WCAG 2.2 Color Tokens & UI/UX Spec | Hung & Duy | Web Sprint 01 (W11–W12) | [`docs/specs/0005-frontend-design-system-and-ux-spec.md`](../specs/0005-frontend-design-system-and-ux-spec.md) (`TASK-W104`) | ✅ Complete |
+| **NT-027** | Docker Infrastructure, Version Pinning & 16GB RAM Resource Budget | Hung & Duy | Web Sprint 01 (W11–W12) | [`docs/specs/0006-docker-infrastructure-and-resource-spec.md`](../specs/0006-docker-infrastructure-and-resource-spec.md) (`TASK-W105`) | ✅ Complete |
+| **NT-028** | 4-Tier Testing Strategy, 8 Edge Cases & Manual Test / CLI Playbook | Hung & Duy | Web Sprint 01 (W11–W12) | [`docs/tasks/sprint-web-01-research-plan.md`](../tasks/sprint-web-01-research-plan.md) (`TASK-W106`) | ✅ Complete |
 
 ---
 

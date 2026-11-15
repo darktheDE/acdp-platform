@@ -4,7 +4,22 @@ This document maintains the immediate context, active tasks, and session state f
 
 ---
 
-## Current Sprint: Sprint 04 (Weeks 9–10) - Lean MVP Scope Alignment & Bronze-to-Silver Extraction
+## Current Sprint: Web Sprint 01 / Sprint 05 (Weeks 11–12) - Research, Gold Star Schema & Web Architecture Inception
+- **Sprint Goal**: Research and document 2026–2027 tech benchmarks, Kimball Star Schema for Gold Layer (19 competitions), FastAPI + PostgreSQL 18 (OLTP) Spec-Driven Architecture, Next.js 16 + Tailwind v4 UI/UX design system, Docker resource budget (`<= 2.0 GB` core profile), and 4-tier testing procedures before coding the Web application.
+- **Master Playbook**: [`docs/tasks/sprint-web-01-research-plan.md`](./sprint-web-01-research-plan.md)
+- **Master Product Spec**: [`docs/specs/SPEC.md`](../specs/SPEC.md) (Business value, user personas, dashboard ROI, and end-to-end user flows)
+
+### Web Sprint 01 Task Board (Research & Architecture Only)
+- [x] **TASK-W101 (`NT-023`)**: Nghiên cứu đối sánh & bảo vệ lựa chọn Tech Stack 2026–2027 (`Next.js 16`, `Recharts`, `FastAPI`, `PostgreSQL 18`, `DuckDB`) $\rightarrow$ [`docs/rd-tasks/T14_web_and_gold_stack_evaluation.md`](../rd-tasks/T14_web_and_gold_stack_evaluation.md).
+- [x] **TASK-W102 (`NT-024`)**: Thiết kế chuẩn hóa Kimball Star Schema Lớp Vàng (`4 dim_*`, `3 fact_*`, `2 bridge_*`, `6 mart_*`) khắc phục 5 lỗi của `4_analytics_gold.py` $\rightarrow$ [`docs/specs/0003-gold-dimensional-modeling-spec.md`](../specs/0003-gold-dimensional-modeling-spec.md).
+- [x] **TASK-W103 (`NT-025`)**: Đặc tả Backend FastAPI, PostgreSQL 18 OLTP schema và luồng Spec-Driven Development (`OpenAPI 3.1` $\rightarrow$ `openapi-typescript`) $\rightarrow$ [`docs/specs/0004-serving-api-and-oltp-spec.md`](../specs/0004-serving-api-and-oltp-spec.md).
+- [x] **TASK-W104 (`NT-026`)**: Nghiên cứu Logo SVG (3 biến thể), bảng màu Tailwind CSS v4 WCAG 2.2 AA, bố cục 3 phân hệ UI/UX và bộ Skills Frontend $\rightarrow$ [`docs/specs/0005-frontend-design-system-and-ux-spec.md`](../specs/0005-frontend-design-system-and-ux-spec.md).
+- [x] **TASK-W105 (`NT-027`)**: Thiết kế Hạ tầng Docker (khóa tag phiên bản, Docker Compose profiles `core`/`bi`/`pipeline`, giới hạn RAM/CPU cho máy 16GB RAM) $\rightarrow$ [`docs/specs/0006-docker-infrastructure-and-resource-spec.md`](../specs/0006-docker-infrastructure-and-resource-spec.md).
+- [x] **TASK-W106 (`NT-028`)**: Chuẩn hóa quy trình kiểm thử tự động 4 tầng, 8 edge cases bắt buộc, hướng dẫn Manual Test & sổ tay lệnh CLI $\rightarrow$ [`docs/tasks/sprint-web-01-research-plan.md`](./sprint-web-01-research-plan.md).
+
+---
+
+## Previous Sprint: Sprint 04 (Weeks 9–10) - Lean MVP Scope Alignment & Bronze-to-Silver Extraction
 - **Sprint Goal**: Verify end-to-end feasibility on the curated 5–10 competition dataset (7 sample competitions) using the minimalist tech stack (`Crawl4AI` $\rightarrow$ `Cloudflare R2 / Local` raw Markdown $\rightarrow$ `Instructor + LiteLLM` + `Pydantic v2 SilverCompetitionRecord` $\rightarrow$ `DuckDB`).
 - **Target Completion**: Week 10 (November 8, 2026)
 
