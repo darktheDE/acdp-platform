@@ -14,7 +14,7 @@ In accordance with **DIR-015**, Phase 1 (TLCN) focuses on simulating the end-to-
 | **M2: On-Demand Ingestion & Bronze R2** | Weeks 4–6 | Crawling 5–10 curated sources (`7 sample competitions`) via `Crawl4AI` to Local & Cloudflare R2 | `data/raw/` fixtures, `src/acdp/1_crawl_to_bronze.py`, Bronze R2 sync (`NT-009`, `NT-019`) | ✅ Completed |
 | **M3: Silver Extraction & DuckDB Marts** | Weeks 7–10 | Pydantic v2 `src/acdp/schemas.py`, `instructor` extraction (`src/acdp/2_instruction.py`), and DuckDB OLAP queries | `src/acdp/schemas.py`, `src/acdp/2_instruction.py`, Silver Parquet, DuckDB queries | 🔄 In Progress (Extraction Done) |
 | **M4: RAG Regulation Engine** | Weeks 11–12 | Qdrant vector storage, Semantic chunking, Gradio ChatInterface, and Ragas evaluation | `src/acdp/3_chatbot_mvp.py`, RAG evaluation scorecard (Ragas) | 🔄 In Progress (MVP Deployed) |
-| **M5: Serving & Web Portal** | Weeks 13–14 | FastAPI backend endpoints and Next.js 15 student portal & faculty dashboard | Interactive competition explorer, RAG chat assistant, DuckDB analytics charts | ⏳ Planned |
+| **M5: Serving & Web Portal** | Weeks 13–14 | FastAPI backend endpoints (PostgreSQL 18 OLTP + DuckDB Gold OLAP) and Next.js 16 student portal & faculty dashboard | Interactive competition explorer, RAG chat assistant, DuckDB analytics charts | ⏳ Planned |
 | **M6: Testing & Final Defense** | Week 15 | End-to-end integration, full academic report, defense slide deck | Final TLCN manuscript (`BaoCao_TieuLuan_ChuyenNganh_KTDL.md`), committee defense | ⏳ Planned |
 
 ---

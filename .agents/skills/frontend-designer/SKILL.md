@@ -2,10 +2,10 @@
 name: frontend-designer
 description: >-
   Design and build accessible, responsive UI/UX mockups, Tailwind CSS components,
-  and Next.js 15 pages for the student competition portal and faculty analytics dashboard.
+  and Next.js 16 pages for the student competition portal and faculty analytics dashboard.
   Use when the user asks for: UI previews, wireframes, Next.js components, Tailwind styling, Recharts widgets, or frontend prototypes.
   DO NOT use for: Backend FastAPI REST routes, database migrations, lakehouse dbt transformations, or crawler pipeline implementation.
-compatibility: Next.js 15+, React 19, Tailwind CSS v4, TypeScript 5.6+
+compatibility: Next.js 16+, React 19, Tailwind CSS v4, TypeScript 5.6+
 ---
 
 # Frontend Designer & UI/UX Prototyper Skill
@@ -19,7 +19,7 @@ This skill equips the AI agent to operate as a Senior Frontend Engineer & UI/UX 
 - **Activate when**:
   - Designing visual wireframes, prototypes, or user flows for competition discovery.
   - Generating self-contained preview prototypes in `docs/deliverables/ui-mockups/`.
-  - Writing production Next.js 15 (App Router), React 19, TypeScript, and Tailwind CSS components.
+  - Writing production Next.js 16 (App Router), React 19, TypeScript, and Tailwind CSS components.
   - Designing data visualization widgets with Recharts for faculty analytics.
 - **DO NOT activate when**:
   - Writing FastAPI REST endpoints (`apps/api/`).

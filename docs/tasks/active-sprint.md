@@ -17,7 +17,7 @@ This document maintains the immediate context, active tasks, and session state f
 
 ### Next Up (Backlog for Upcoming Weeks)
 - [ ] **TASK-0502**: Run formal Ragas evaluation over `src/acdp/3_chatbot_mvp.py` (faithfulness, answer relevancy, context precision) and document results in `docs/experiments/0001-rag-baseline-evaluation.md`.
-- [ ] **TASK-0601**: Expose FastAPI endpoints and Next.js 15 student portal MVP for final TLCN defense.
+- [ ] **TASK-0601**: Expose FastAPI endpoints (with PostgreSQL 18 OLTP app DB + DuckDB Gold OLAP) and Next.js 16 (Active LTS) student portal MVP for final TLCN defense.
 
 ### Completed
 - [x] **TASK-0001**: Initialize GitHub repository (`acdp-platform`) with `.gitignore`, `LICENSE` (MIT), and `.env.example`.

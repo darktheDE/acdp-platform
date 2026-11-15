@@ -172,7 +172,7 @@ Dù nhóm tác giả đã nỗ lực nghiên cứu và cài đặt hệ thống 
 2. Xây dựng đường ống thu thập web động (`Crawl4AI`, `Playwright`) kiểm thử khả thi trên 5–10 cuộc thi mẫu.
 3. Thiết lập kho dữ liệu Medallion Lakehouse tinh gọn trên Cloudflare R2 và DuckDB (Bronze UTF-8, Silver Pydantic v2/Parquet, Gold OLAP).
 4. Triển khai dịch vụ tra cứu thể lệ Hybrid RAG (BM25 + Qdrant + Cross-Encoder) đảm bảo độ tin cậy trích dẫn.
-5. Xây dựng giao diện Web MVP (Next.js 15) phục vụ sinh viên tra cứu và hỗ trợ Khoa phân tích dữ liệu phong trào.
+5. Xây dựng giao diện Web MVP (Next.js 16) phục vụ sinh viên tra cứu và hỗ trợ Khoa phân tích dữ liệu phong trào.
 
 ### Đề Cương Viết Luận Văn :
 
@@ -206,7 +206,7 @@ Tiến độ thực hiện học phần Tiểu luận chuyên ngành tính đế
 | 11 | Tuần 11 (9/11 - 15/11) | Kết nối lưu trữ tệp Parquet tầng Silver; xây dựng các câu truy vấn phân tích SQL OLAP (Tầng Gold) bằng DuckDB; đánh giá chất lượng RAG bằng khung Ragas. | *Trọng tâm tuần tới*: Tệp Silver Parquet; Truy vấn DuckDB; Bảng đo lường Ragas (Hưng, Duy). |
 | 12 | Tuần 12 (16/11 - 22/11) | Triển khai kiến trúc Hybrid RAG kết hợp thuật toán tìm kiếm từ khóa BM25 và tìm kiếm vector ngữ nghĩa; tích hợp mô hình tái xếp hạng Cross-Encoder nhằm loại bỏ hiện tượng sinh thông tin sai lệch. | *Dự kiến*: Pipeline Hybrid Search; Module hỏi đáp quy chế RAG (Duy). |
 | 13 | Tuần 13 (23/11 - 29/11) | Xây dựng Backend REST API bằng FastAPI cung cấp các endpoint tra cứu dữ liệu cuộc thi từ DuckDB, phân tích thống kê và hỏi đáp quy chế. | *Dự kiến*: Mã nguồn FastAPI backend; Bộ tài liệu OpenAPI Swagger (Hưng). |
-| 14 | Tuần 14 (30/11 - 6/12) | Xây dựng ứng dụng Web Portal cho sinh viên (Next.js 15, Tailwind CSS) và Bảng điều khiển phân tích số liệu mùa vụ cho Ban Chủ nhiệm Khoa (Faculty Analytics Dashboard). | *Dự kiến*: Giao diện Web Portal sinh viên; Màn hình Dashboard quản trị (Hưng, Duy). |
+| 14 | Tuần 14 (30/11 - 6/12) | Xây dựng ứng dụng Web Portal cho sinh viên (Next.js 16, Tailwind CSS) và Bảng điều khiển phân tích số liệu mùa vụ cho Ban Chủ nhiệm Khoa (Faculty Analytics Dashboard). | *Dự kiến*: Giao diện Web Portal sinh viên; Màn hình Dashboard quản trị (Hưng, Duy). |
 | 15 | Tuần 15 (7/12 - 13/12) | Kiểm thử toàn diện hệ thống (End-to-End Testing); hoàn thiện toàn văn báo cáo Tiểu luận chuyên ngành theo quy chuẩn FIT-HCMUTE; slide báo cáo nghiệm thu và chuẩn bị bảo vệ. | *Dự kiến*: Toàn văn Báo cáo TLCN; Slide báo cáo nghiệm thu (Hưng, Duy). |
 
 <br>
@@ -422,7 +422,7 @@ Từ thực tế đó, khoảng trống nghiên cứu mà đề tài ACDP trực
 1. Đường ống thu thập dữ liệu (Ingestion Pipeline): Bộ mã nguồn hoàn chỉnh vận hành trên `Crawl4AI` và `Playwright` (`src/acdp/1_crawl_to_bronze.py`), thu thập và làm sạch bài viết từ 5–10 nguồn cuộc thi học thuật trọng điểm.
 2. Kho lưu trữ Lakehouse phân tầng trên đám mây: Kho dữ liệu trên Cloudflare R2 và ổ cứng cục bộ lưu trữ văn bản gốc tầng Bronze và tệp Parquet tầng Silver đã chuẩn hóa hơn 10 trường thuộc tính định lượng (`src/acdp/2_instruction.py`), truy vấn phân tích trực tiếp qua DuckDB và khử trùng lặp sự kiện đa nguồn.
 3. Dịch vụ AI và REST API: Hệ thống backend FastAPI cung cấp các API tra cứu dữ liệu sự kiện từ DuckDB và API hỏi đáp thể lệ qua Hybrid RAG.
-4. Ứng dụng Web người dùng và Dashboard (MVP): Giao diện Web xây dựng bằng Next.js 15 cho sinh viên tra cứu và tương tác với trợ lý AI; bảng điều khiển phân tích số liệu mùa vụ và phân loại cuộc thi cho Khoa CNTT.
+4. Ứng dụng Web người dùng và Dashboard (MVP): Giao diện Web xây dựng bằng Next.js 16 cho sinh viên tra cứu và tương tác với trợ lý AI; bảng điều khiển phân tích số liệu mùa vụ và phân loại cuộc thi cho Khoa CNTT.
 5. Hồ sơ tài liệu học thuật: Bản báo cáo toàn văn Tiểu luận chuyên ngành tuân thủ quy định hình thức của Khoa CNTT - HCM-UTE [9], bộ kiểm thử đơn vị tự động và bộ slide báo cáo nghiệm thu trước Hội đồng chuyên môn.
 
 \newpage
@@ -515,7 +515,7 @@ Nhằm đảm bảo tính chính xác của thông tin tư vấn, đề tài xâ
 Do đó, đề tài lựa chọn **DuckDB** làm động cơ truy vấn phân tích trực tuyến (OLAP) duy nhất tại tầng Gold. DuckDB là hệ quản trị cơ sở dữ liệu hướng cột (columnar vectorized engine) chạy nhúng trực tiếp bên trong tiến trình Python của ứng dụng backend. Công cụ này hỗ trợ đọc trực tiếp (zero-copy) các tệp Apache Parquet và bảng Delta Lake trên ổ cứng cục bộ hoặc từ kho đám mây Cloudflare R2 thông qua giao thức HTTP/S3, cho phép thực thi các câu truy vấn tổng hợp SQL phức tạp mà không tốn chi phí nạp dữ liệu trung gian (zero-ETL overhead).
 
 #### 1.4.2. Nền tảng phục vụ ứng dụng (Serving Stack)
-Tầng giao tiếp người dùng được thiết kế tách biệt giữa dịch vụ xử lý dữ liệu phía máy chủ và giao diện hiển thị phía trình duyệt. Ở phía máy chủ, khung làm việc **FastAPI (Python 3.13)** cung cấp các giao diện lập trình ứng dụng RESTful bất đồng bộ (`asyncio`), kết nối trực tiếp tới động cơ DuckDB để trả về danh sách cuộc thi đã chuẩn hóa và kết nối tới Qdrant để xử lý các truy vấn hỏi đáp quy chế. Ở phía giao diện người dùng, ứng dụng web được xây dựng trên **Next.js 15, React 19 và Tailwind CSS**, tích hợp các thư viện biểu đồ trực quan để hiển thị cổng tra cứu sự kiện cho sinh viên cũng như bảng điều khiển phân tích số liệu mùa vụ cho Ban Chủ nhiệm Khoa.
+Tầng giao tiếp người dùng được thiết kế tách biệt giữa dịch vụ xử lý dữ liệu phía máy chủ và giao diện hiển thị phía trình duyệt. Ở phía máy chủ, khung làm việc **FastAPI (Python 3.13)** cung cấp các giao diện lập trình ứng dụng RESTful bất đồng bộ (`asyncio`), kết nối trực tiếp tới động cơ DuckDB để trả về danh sách cuộc thi đã chuẩn hóa và kết nối tới Qdrant để xử lý các truy vấn hỏi đáp quy chế. Ở phía giao diện người dùng, ứng dụng web được xây dựng trên **Next.js 16, React 19 và Tailwind CSS**, tích hợp các thư viện biểu đồ trực quan để hiển thị cổng tra cứu sự kiện cho sinh viên cũng như bảng điều khiển phân tích số liệu mùa vụ cho Ban Chủ nhiệm Khoa.
 
 ---
 
@@ -565,7 +565,7 @@ flowchart TD
         G_LAYER --> DUCK_API["Động Cơ Truy Vấn DuckDB SQL"]
         LLM_GEN --> FAST_API["Hệ Thống REST API Backend (FastAPI Python 3.13)"]
         DUCK_API --> FAST_API
-        FAST_API --> WEB_APP["Cổng Tra Cứu Sự Kiện Sinh Viên (Next.js 15)"]
+        FAST_API --> WEB_APP["Cổng Tra Cứu Sự Kiện Sinh Viên (Next.js 16)"]
         FAST_API --> DASHBOARD["Bảng Điều Khiển Quản Trị Học Thuật Khoa CNTT"]
     end
 ```
@@ -628,7 +628,7 @@ Tầng xử lý ngữ nghĩa được thiết kế để vận hành song song v
 
 Tầng phục vụ đóng vai trò là giao diện tương tác trực tiếp với người dùng cuối thông qua kiến trúc tách biệt Backend API và Frontend Portal. Ở tầng dịch vụ Backend, hệ thống FastAPI được thiết kế với 4 nhóm đường dẫn REST API chính. Cụ thể, đường dẫn `/api/v1/competitions` phục vụ tra cứu danh sách cuộc thi kèm bộ lọc đa chiều (lĩnh vực, thời hạn, quy mô đội), trong khi `/api/v1/competitions/{id}` trả về toàn văn chi tiết thể lệ, cơ cấu giải thưởng và các mốc thời gian của từng cuộc thi. Song song đó, đường dẫn `/api/v1/rag/query` tiếp nhận câu hỏi ngôn ngữ tự nhiên về quy chế thi đấu để trả về câu trả lời có gắn trích dẫn điều khoản gốc, và `/api/v1/analytics/seasonality` xuất dữ liệu tổng hợp từ DuckDB phục vụ hiển thị biểu đồ thống kê.
 
-Ở phía giao diện hiển thị, ứng dụng Web Portal dành cho sinh viên (xây dựng trên Next.js 15) hỗ trợ người học tìm kiếm nhanh các giải đấu đang mở cổng đăng ký và tương tác trực tiếp với trợ lý hỏi đáp quy chế. Song song đó, màn hình Bảng điều khiển phân tích số liệu (Faculty Analytics Dashboard) dành cho Ban Chủ nhiệm Khoa CNTT hiển thị trực quan bản đồ nhiệt mùa vụ thi đấu trong năm học, biểu đồ phân bổ tổng giá trị giải thưởng theo từng mảng chuyên môn và tỷ lệ các cuộc thi yêu cầu kỹ năng phối hợp làm việc nhóm.
+Ở phía giao diện hiển thị, ứng dụng Web Portal dành cho sinh viên (xây dựng trên Next.js 16) hỗ trợ người học tìm kiếm nhanh các giải đấu đang mở cổng đăng ký và tương tác trực tiếp với trợ lý hỏi đáp quy chế. Song song đó, màn hình Bảng điều khiển phân tích số liệu (Faculty Analytics Dashboard) dành cho Ban Chủ nhiệm Khoa CNTT hiển thị trực quan bản đồ nhiệt mùa vụ thi đấu trong năm học, biểu đồ phân bổ tổng giá trị giải thưởng theo từng mảng chuyên môn và tỷ lệ các cuộc thi yêu cầu kỹ năng phối hợp làm việc nhóm.
 
 ---
 
