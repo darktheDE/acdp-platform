@@ -990,7 +990,10 @@ def build_gold_star_schema(
     if tmp_db_path.exists():
         tmp_db_path.unlink()
 
-    con = duckdb.connect(str(tmp_db_path))
+    con = duckdb.connect(":memory:")
+    escaped_tmp_path = str(tmp_db_path).replace("'", "''")
+    con.execute(f"ATTACH '{escaped_tmp_path}' AS gold_compat (STORAGE_VERSION 'v1.5.0')")
+    con.execute("USE gold_compat")
     try:
         _create_star_schema_ddl(con)
 
