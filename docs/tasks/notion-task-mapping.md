@@ -34,6 +34,7 @@ This document establishes the bidirectional mapping between tasks managed on the
 | **NT-026** | Frontend Brand Identity (SVG Logo), WCAG 2.2 Color Tokens & UI/UX Spec | Hung & Duy | Web Sprint 01 (W11–W12) | [`docs/specs/0005-frontend-design-system-and-ux-spec.md`](../specs/0005-frontend-design-system-and-ux-spec.md) (`TASK-W104`) | ✅ Complete |
 | **NT-027** | Docker Infrastructure, Version Pinning & 16GB RAM Resource Budget | Hung & Duy | Web Sprint 01 (W11–W12) | [`docs/specs/0006-docker-infrastructure-and-resource-spec.md`](../specs/0006-docker-infrastructure-and-resource-spec.md) (`TASK-W105`) | ✅ Complete |
 | **NT-028** | 4-Tier Testing Strategy, 8 Edge Cases & Manual Test / CLI Playbook | Hung & Duy | Web Sprint 01 (W11–W12) | [`docs/tasks/sprint-web-01-research-plan.md`](../tasks/sprint-web-01-research-plan.md) (`TASK-W106`) | ✅ Complete |
+| **NT-029** | Web Sprint 02 Full-Stack Implementation (Docker, FastAPI + PG18, Next.js 16) | Hung | Web Sprint 02 (W12–W13) | [`src/acdp/api/`](../../src/acdp/api/), [`apps/web/`](../../apps/web/), [`docker-compose.yml`](../../docker-compose.yml) (`TASK-0601`) | ✅ Complete |
 
 ---
 

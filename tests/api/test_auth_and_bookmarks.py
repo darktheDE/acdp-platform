@@ -45,16 +45,19 @@ async def test_auth_register_login_refresh_rotation_and_reuse_detection(api_clie
     assert me.json()["student_or_staff_id"] == "23110086"
 
     # Refresh rotates token
-    ref = await api_client.post("/api/v1/auth/refresh", cookies={"acdp_refresh_token": old_refresh_cookie})
+    api_client.cookies.set("acdp_refresh_token", old_refresh_cookie)
+    ref = await api_client.post("/api/v1/auth/refresh")
     assert ref.status_code == 200
     new_refresh_cookie = ref.cookies.get("acdp_refresh_token")
     assert new_refresh_cookie and new_refresh_cookie != old_refresh_cookie
 
     # Reusing the revoked old refresh cookie must fail (401) and revoke active sessions
-    reused = await api_client.post("/api/v1/auth/refresh", cookies={"acdp_refresh_token": old_refresh_cookie})
+    api_client.cookies.set("acdp_refresh_token", old_refresh_cookie)
+    reused = await api_client.post("/api/v1/auth/refresh")
     assert reused.status_code == 401
 
-    revoked_new = await api_client.post("/api/v1/auth/refresh", cookies={"acdp_refresh_token": new_refresh_cookie})
+    api_client.cookies.set("acdp_refresh_token", new_refresh_cookie)
+    revoked_new = await api_client.post("/api/v1/auth/refresh")
     assert revoked_new.status_code == 401
 
 

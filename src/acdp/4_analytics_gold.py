@@ -962,6 +962,21 @@ def _create_data_marts_and_aliases(con: duckdb.DuckDBPyConnection) -> None:
     """)
 
 
+def resolve_effective_registration_status(
+    raw_status: str | None,
+    registration_deadline: str | None,
+    reference_date: date | None = None,
+) -> str:
+    """Normalize registration_status and auto-close 'open' contests past their deadline."""
+    normalized = (raw_status or "unknown").strip().lower() or "unknown"
+    if normalized == "open":
+        deadline_dt = parse_date_value(registration_deadline)
+        today_dt = reference_date or date.today()
+        if deadline_dt is not None and deadline_dt < today_dt:
+            return "closed"
+    return normalized
+
+
 def build_gold_star_schema(
     db_path: Path,
     competitions: list[Competition],
@@ -1113,6 +1128,7 @@ def build_gold_star_schema(
             is_free = is_participation_free(c.participation_fee)
             mode_canonical = normalize_mode(c.mode)
             team_profile = classify_team_profile(c.team_size_min, c.team_size_max)
+            effective_status = resolve_effective_registration_status(c.registration_status, c.registration_deadline)
 
             dim_comp_rows.append(
                 (
@@ -1133,7 +1149,7 @@ def build_gold_star_schema(
                     c.participation_fee,
                     is_free,
                     c.total_prize_pool,
-                    c.registration_status,
+                    effective_status,
                     c.submission_platform,
                     c.challenge_overview,
                     c.category,

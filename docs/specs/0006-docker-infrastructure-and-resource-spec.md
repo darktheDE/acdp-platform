@@ -1,7 +1,7 @@
 # SPEC-0006: Docker Infrastructure, Version Pinning & 16GB RAM Resource Budget
 
 > **Task ID**: `TASK-W105` | **Notion Mapping**: [`NT-027`](../tasks/notion-task-mapping.md)
-> **Status**: Proposed (Web Sprint 01 Specification)
+> **Status**: Implemented (Web Sprint 02)
 > **Dependencies**: [`SPEC-0004`](./0004-serving-api-and-oltp-spec.md), [`SPEC-0005`](./0005-frontend-design-system-and-ux-spec.md), [`docker-compose.yml`](../../docker-compose.yml)
 > **Target Files (Sprint 02 Implementation)**: `docker-compose.yml`, `Dockerfile.api`, `apps/web/Dockerfile`, `.dockerignore`
 

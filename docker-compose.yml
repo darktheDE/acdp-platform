@@ -126,6 +126,7 @@ services:
     image: ghcr.io/motherduckdb/metabase-duckdb:0.63.17-duckdb1.5.6.0
     container_name: acdp-metabase
     profiles: ["bi"]
+    user: root
     restart: unless-stopped
     environment:
       JAVA_TOOL_OPTIONS: "-Xmx768m -Xms256m"

@@ -54,7 +54,7 @@ def get_duckdb_conn() -> Iterator[duckdb.DuckDBPyConnection]:
     last_exc: Exception | None = None
 
     if db_path.exists():
-        for attempt in range(3):
+        for _attempt in range(3):
             try:
                 con = duckdb.connect(str(db_path), read_only=True)
                 con.execute(f"SET memory_limit='{settings.duckdb_memory_limit}'")

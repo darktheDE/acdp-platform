@@ -213,3 +213,12 @@ def test_real_18_competitions_star_schema_integrity(tmp_path: Path) -> None:
             assert cnt > 0
     finally:
         con.close()
+
+
+def test_expired_open_status_normalizes_to_closed() -> None:
+    """Verify open contests with past registration deadlines normalize to closed."""
+    ref = date(2026, 11, 21)
+    assert gold.resolve_effective_registration_status("open", "16/11/2026", reference_date=ref) == "closed"
+    assert gold.resolve_effective_registration_status("open", "2026-12-01", reference_date=ref) == "open"
+    assert gold.resolve_effective_registration_status("open", "TBD", reference_date=ref) == "open"
+    assert gold.resolve_effective_registration_status("upcoming", "10/11/2026", reference_date=ref) == "upcoming"

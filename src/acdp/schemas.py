@@ -4,11 +4,12 @@ Designed for LLM extraction via Instructor (Ollama, Gemini, OpenAI, Claude).
 Conforms to ACDP Data Engineering standards (Pydantic v2, OLAP dimensions for DuckDB/Delta Lake).
 """
 
-from typing import Literal, Optional, Union
+from typing import Any, Literal
+
 from pydantic import BaseModel, Field, field_validator
 
 
-def clean_placeholder(v: any) -> any:
+def clean_placeholder(v: Any) -> Any:
     """Chuyển đổi các chuỗi giả định của LLM thành None chuẩn."""
     if isinstance(v, str):
         v_strip = v.strip()
@@ -32,7 +33,7 @@ class PrizeTier(BaseModel):
         ...,
         description="Mô tả phần thưởng (tiền mặt, quà tặng, voucher, học bổng, phần mềm)",
     )
-    estimated_value_vnd: Optional[float] = Field(
+    estimated_value_vnd: float | None = Field(
         default=None,
         description="Ước tính giá trị quy đổi sang VNĐ (nếu có để phục vụ phân tích định lượng)",
     )
@@ -55,15 +56,15 @@ class TimelineStage(BaseModel):
         ...,
         description="Tên vòng thi / giai đoạn (vd: Vòng 1: Discover, Vòng 2: Build, Chung kết & Demo, Warm-up)",
     )
-    start_date: Optional[str] = Field(
+    start_date: str | None = Field(
         default=None,
         description="Ngày bắt đầu vòng thi (định dạng DD/MM/YYYY hoặc YYYY-MM-DD)",
     )
-    end_date: Optional[str] = Field(
+    end_date: str | None = Field(
         default=None,
         description="Hạn nộp bài hoặc ngày kết thúc vòng thi (định dạng DD/MM/YYYY hoặc YYYY-MM-DD)",
     )
-    description: Optional[str] = Field(
+    description: str | None = Field(
         default=None,
         description="Mục tiêu hoặc yêu cầu của vòng thi (vd: nộp proposal, xây dựng MVP, demo pitching)",
     )
@@ -84,11 +85,11 @@ class Competition(BaseModel):
         ...,
         description="Tên chính thức của cuộc thi (vd: IT Consultant Challenge 2026, RMIT Hackathon 2026)",
     )
-    tagline: Optional[str] = Field(
+    tagline: str | None = Field(
         default=None,
         description="Khẩu hiệu, chủ đề hoặc theme của mùa thi (vd: Prompt to Production, Secure. Generate. Include.)",
     )
-    url: Optional[str] = Field(
+    url: str | None = Field(
         default=None,
         description="Đường dẫn URL chính thức của cuộc thi hoặc trang đích đăng ký",
     )
@@ -108,19 +109,19 @@ class Competition(BaseModel):
         default_factory=list,
         description="Lĩnh vực / chuyên môn (vd: Artificial Intelligence, Data Science, Software Engineering, IT Consulting, Cybersecurity, Competitive Programming)",
     )
-    target_audience: Optional[Union[str, list[str]]] = Field(
+    target_audience: str | list[str] | None = Field(
         default=None,
         description="Đối tượng dự thi hướng tới (vd: Sinh viên ĐH/CĐ, Tech Freshers, Data Enthusiasts)",
     )
-    team_size_min: Optional[int] = Field(
+    team_size_min: int | None = Field(
         default=None,
         description="Số lượng thành viên tối thiểu mỗi đội (1 nếu cho phép thi cá nhân)",
     )
-    team_size_max: Optional[int] = Field(
+    team_size_max: int | None = Field(
         default=None,
         description="Số lượng thành viên tối đa mỗi đội (1 nếu chỉ thi cá nhân)",
     )
-    team_description: Optional[str] = Field(
+    team_description: str | None = Field(
         default=None,
         description="Mô tả quy định về thành viên hoặc đội thi (vd: Mỗi đội 3 thành viên, Đội 4 sinh viên)",
     )
@@ -128,15 +129,15 @@ class Competition(BaseModel):
         default="unknown",
         description="Hình thức tổ chức cuộc thi: 'online', 'offline', 'hybrid', hoặc 'unknown'",
     )
-    location: Optional[str] = Field(
+    location: str | None = Field(
         default=None,
         description="Địa điểm tổ chức nếu diễn ra offline/hybrid (vd: Trực tiếp tại RMIT TP.HCM & Hà Nội, Netcompany HCMC)",
     )
-    participation_fee: Optional[str] = Field(
+    participation_fee: str | None = Field(
         default="Miễn phí",
         description="Lệ phí tham gia (Miễn phí / Free, hoặc chi tiết số tiền)",
     )
-    total_prize_pool: Optional[str] = Field(
+    total_prize_pool: str | None = Field(
         default=None,
         description="Tổng giá trị giải thưởng công bố (vd: Hơn 300 triệu VNĐ, Up to VND 100M)",
     )
@@ -144,11 +145,11 @@ class Competition(BaseModel):
         default_factory=list,
         description="Danh sách cơ cấu giải thưởng chi tiết và học bổng",
     )
-    registration_start: Optional[str] = Field(
+    registration_start: str | None = Field(
         default=None,
         description="Ngày bắt đầu mở cổng đăng ký",
     )
-    registration_deadline: Optional[str] = Field(
+    registration_deadline: str | None = Field(
         default=None,
         description="Hạn chót nộp hồ sơ hoặc đăng ký dự thi",
     )
@@ -156,11 +157,11 @@ class Competition(BaseModel):
         default="unknown",
         description="Tình trạng đăng ký hiện tại (open, upcoming, closed, unknown)",
     )
-    event_start: Optional[str] = Field(
+    event_start: str | None = Field(
         default=None,
         description="Ngày khai mạc hoặc bắt đầu sự kiện",
     )
-    event_end: Optional[str] = Field(
+    event_end: str | None = Field(
         default=None,
         description="Ngày kết thúc hoặc vòng chung kết",
     )
@@ -168,11 +169,11 @@ class Competition(BaseModel):
         default_factory=list,
         description="Danh sách các vòng thi, mốc thời gian hoặc chặng đua",
     )
-    challenge_overview: Optional[str] = Field(
+    challenge_overview: str | None = Field(
         default=None,
         description="Mô tả tóm tắt đề bài, thử thách kỹ thuật hoặc bài toán cần giải quyết",
     )
-    submission_platform: Optional[str] = Field(
+    submission_platform: str | None = Field(
         default=None,
         description="Nền tảng hoặc hình thức nộp bài (vd: Kaggle, Google Forms, GitHub, Nộp qua website)",
     )
@@ -250,7 +251,7 @@ class CompetitionExtractionResult(BaseModel):
         default=True,
         description="True nếu văn bản chứa thông tin về cuộc thi học thuật/kỹ thuật hợp lệ; False nếu văn bản trống, lỗi 404, hoặc không liên quan.",
     )
-    reasoning: Optional[str] = Field(
+    reasoning: str | None = Field(
         default=None,
         description="Giải thích ngắn gọn lý do tài liệu có hoặc không chứa cuộc thi",
     )

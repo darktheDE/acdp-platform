@@ -1,7 +1,7 @@
 # SPEC-0004: FastAPI Serving Gateway, PostgreSQL 18 OLTP & OpenAPI Contract
 
 > **Task ID**: `TASK-W103` | **Notion Mapping**: [`NT-025`](../tasks/notion-task-mapping.md)
-> **Status**: Proposed (Web Sprint 01 Specification)
+> **Status**: Implemented (Web Sprint 02)
 > **Dependencies**: [`SPEC-0003`](./0003-gold-dimensional-modeling-spec.md), [`T14`](./../rd-tasks/T14_web_and_gold_stack_evaluation.md)
 > **Target Modules (Sprint 02 Implementation)**: `src/acdp/api/`, `apps/web/types/api.d.ts`
 
@@ -142,6 +142,7 @@ class KpiOverviewDTO(BaseModel):
     total_prize_pool_vnd: int
     free_participation_pct: float
     scholarship_competitions: int
+    avg_team_size_max: float = 0.0
     unique_domains: int
     unique_organizers: int
 

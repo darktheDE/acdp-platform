@@ -58,8 +58,11 @@ def test_dockerignore_and_dockerfile_api_hardening() -> None:
     assert "acdp.api.main:app" in dockerfile_api
 
 
-def test_app_config_qdrant_resolution_and_env_example() -> None:
+def test_app_config_qdrant_resolution_and_env_example(monkeypatch) -> None:
     """Verify AppConfig Qdrant endpoint priority and .env.example compatibility."""
+    monkeypatch.delenv("POSTGRES_DB", raising=False)
+    monkeypatch.delenv("DUCKDB_MEMORY_LIMIT", raising=False)
+
     cloud_cfg = AppConfig(
         _env_file=None,
         qdrant_cluster_endpoint="https://cloud.qdrant.example:6333",

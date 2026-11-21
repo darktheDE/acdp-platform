@@ -524,7 +524,7 @@ def process_bronze_bucket(
     final_queue = []
     historical_skipped_count = len(valid_crawl_items) - len(domain_groups)
 
-    for dom, items in sorted(domain_groups.items()):
+    for _dom, items in sorted(domain_groups.items()):
         # Lấy file có timestamp lớn nhất
         latest_item = max(items, key=lambda x: x["timestamp"])
         final_queue.append(latest_item)
@@ -547,7 +547,7 @@ def process_bronze_bucket(
         fkey = item["key"]
         file_size = item["size"]
 
-        print(f"\n--------------------------------------------------")
+        print("\n--------------------------------------------------")
         print(f"Processing Target: {item['domain']} ({fkey})")
         print(f">> File Size: {file_size} bytes | Date: {item['date']} | Timestamp: {item['timestamp']}")
 

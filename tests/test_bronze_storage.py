@@ -110,3 +110,23 @@ def test_empty_content_check_logic() -> None:
     assert not empty_md or not empty_md.strip()
     assert not whitespace_md or not whitespace_md.strip()
     assert not (not valid_md or not valid_md.strip())
+
+
+def test_upload_to_bronze_local_and_empty_skip(tmp_path: Path, monkeypatch) -> None:
+    """Verify real upload_to_bronze skips empty content and writes UTF-8 Markdown locally."""
+    import importlib
+
+    bronze_mod = importlib.import_module("acdp.1_crawl_to_bronze")
+    monkeypatch.setattr(bronze_mod.settings, "bronze_storage_backend", "local")
+    monkeypatch.setattr(bronze_mod.settings, "bronze_storage_uri", str(tmp_path))
+
+    # Empty / whitespace should not create any files
+    bronze_mod.upload_to_bronze("   \n\t ", "https://example.org/empty")
+    assert list(tmp_path.rglob("*.md")) == []
+
+    # Valid UTF-8 Markdown should be persisted under domain partition
+    sample = "# Cuộc thi AI HCM-UTE\n\nGiải thưởng: 50 triệu VNĐ"
+    bronze_mod.upload_to_bronze(sample, "https://example.org/contest")
+    written = list((tmp_path / "example.org").rglob("*.md"))
+    assert len(written) == 1
+    assert written[0].read_text(encoding="utf-8") == sample
