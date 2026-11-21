@@ -455,7 +455,7 @@ def classify_organizer_tier(name: str) -> str:
         )
     ):
         return "Enterprise"
-    if any(tok in lower for tok in ("club", "clb", "team", "community", "liên chi", "hội", "gdg", "vnquantum", "vbi")):
+    if any(tok in lower for tok in ("club", "clb", "team", "community", "liên chi", "hội", "gdg", "vbi")):
         return "Community"
     return "Unknown"
 
@@ -967,6 +967,7 @@ def build_gold_star_schema(
     competitions: list[Competition],
     source_batch_file: str = "manual_input",
     gold_dir: Path | None = None,
+    sync_r2: bool = False,
 ) -> list[Path]:
     """Build full Kimball Star Schema into DuckDB via atomic swap and export Gold Parquet."""
     db_path.parent.mkdir(parents=True, exist_ok=True)
@@ -1207,7 +1208,7 @@ def build_gold_star_schema(
 
         exported_files: list[Path] = []
         if gold_dir is not None:
-            exported_files = export_gold_parquet_and_sync_r2(con, gold_dir)
+            exported_files = export_gold_parquet_and_sync_r2(con, gold_dir, sync_r2=sync_r2)
     finally:
         con.close()
 
@@ -1216,7 +1217,11 @@ def build_gold_star_schema(
     return exported_files
 
 
-def export_gold_parquet_and_sync_r2(con: duckdb.DuckDBPyConnection, gold_dir: Path) -> list[Path]:
+def export_gold_parquet_and_sync_r2(
+    con: duckdb.DuckDBPyConnection,
+    gold_dir: Path,
+    sync_r2: bool = False,
+) -> list[Path]:
     """Export all Star Schema tables, Data Marts, and aliases to Parquet and optionally sync R2."""
     gold_dir.mkdir(parents=True, exist_ok=True)
     gold_entities = [
@@ -1251,7 +1256,8 @@ def export_gold_parquet_and_sync_r2(con: duckdb.DuckDBPyConnection, gold_dir: Pa
     print(f">> [GOLD PARQUET EXPORTED] {len(exported_files)} tables/views -> {gold_dir}")
 
     if (
-        settings.bronze_storage_backend == "cloudflare_r2"
+        sync_r2
+        and settings.bronze_storage_backend == "cloudflare_r2"
         and settings.bucket_name
         and settings.aws_endpoint_url
         and settings.aws_access_key_id
@@ -1310,7 +1316,7 @@ def run_gold_pipeline() -> None:
 
     competitions, source_batch = load_silver_competitions_with_source(extractions_dir)
     export_silver_parquet(competitions, silver_dir)
-    build_gold_star_schema(duckdb_file, competitions, source_batch_file=source_batch, gold_dir=gold_dir)
+    build_gold_star_schema(duckdb_file, competitions, source_batch_file=source_batch, gold_dir=gold_dir, sync_r2=True)
 
     con = duckdb.connect(str(duckdb_file), read_only=True)
     try:

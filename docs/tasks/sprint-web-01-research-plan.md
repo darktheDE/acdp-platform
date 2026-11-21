@@ -5,7 +5,7 @@
 | Mã Sprint | Web-Sprint-01 (Giai đoạn Khởi tạo Nghiên cứu & Kiến trúc) |
 | Đơn vị thực hiện | Khoa Công nghệ Thông tin, Trường Đại học Công nghệ Kỹ thuật TP.HCM (HCM-UTE) |
 | Chuyên ngành | Kỹ thuật Dữ liệu (Data Engineering) |
-| Phạm vi dữ liệu nền | 18 domains / 19 cuộc thi thực tế tại [`data/extractions/`](../../data/extractions/extractions_2026-11-15_1794720683.json) |
+| Phạm vi dữ liệu nền | 17 domains / 18 cuộc thi thực tế tại [`data/extractions/`](../../data/extractions/extractions_2026-11-15_1794720683.json) |
 | Mốc thời gian tham chiếu | Tháng 11/2026 (Chuẩn LTS & Best Practices 2026–2027) |
 | Nguyên tắc vận hành | Tập trung 100% vào nghiên cứu đối sánh, chuẩn hóa lược đồ dữ liệu, thiết kế đặc tả (Spec-Driven Development) và khóa hạ tầng trước khi viết mã ứng dụng Web. |
 
@@ -125,7 +125,7 @@ Thay vì viết API và UI rời rạc rồi sửa tay khi lệch kiểu dữ li
 ```mermaid
 flowchart TB
     subgraph L1["1. Data Platform (Bronze -> Silver -> Gold)"]
-        R2["Cloudflare R2 / Local Markdown<br>(18 domains / 19 contests)"] -->|"2_instruction.py"| SILVER["Silver Parquet<br>(Pydantic v2 Validated)"]
+        R2["Cloudflare R2 / Local Markdown<br>(17 domains / 18 contests)"] -->|"2_instruction.py"| SILVER["Silver Parquet<br>(Pydantic v2 Validated)"]
         SILVER -->|"4_analytics_gold.py (Kimball ETL)"| GOLD["Gold Layer: acdp.duckdb & gold/*.parquet<br>(4 Dim, 3 Fact, 2 Bridge, 4+ Mart Views)"]
         R2 -->|"3_chatbot_mvp.py (Semantic Chunker)"| QDRANT["Qdrant Vector DB<br>(Port 6333)"]
     end
@@ -367,7 +367,7 @@ Các quy chuẩn tiết kiệm dung lượng ổ đĩa (ROM/Disk):
 ### 6.1. Chiến lược kiểm thử tự động 4 tầng (Agent thực thi sau mỗi bước)
 
 Mỗi khi triển khai xong một module trong Sprint 02 trở đi, quá trình nghiệm thu phải vượt qua 4 tầng kiểm thử sau:
-1. Tầng 1 (Kiểm thử Kho dữ liệu Lớp Vàng `tests/test_gold_star_schema.py`). Xác nhận tổng số bản ghi trong `dim_competition` và `fact_competitions` khớp đúng 19 cuộc thi (0 trùng lặp), xác nhận tổng `SUM(allocation_weight)` cho mỗi cuộc thi trong `bridge_competition_domain` bằng `1.0 ± 0.001`, xác nhận không tồn tại khóa ngoại mồ côi giữa `fact_*` và `dim_*`, và kiểm tra hàm chuẩn hóa ngày tháng đa định dạng.
+1. Tầng 1 (Kiểm thử Kho dữ liệu Lớp Vàng `tests/test_gold_star_schema.py`). Xác nhận tổng số bản ghi trong `dim_competition` và `fact_competitions` khớp đúng 18 cuộc thi (0 trùng lặp), xác nhận tổng `SUM(allocation_weight)` cho mỗi cuộc thi trong `bridge_competition_domain` bằng `1.0 ± 0.001`, xác nhận không tồn tại khóa ngoại mồ côi giữa `fact_*` và `dim_*`, và kiểm tra hàm chuẩn hóa ngày tháng đa định dạng.
 2. Tầng 2 (Kiểm thử Hợp đồng Backend API & OLTP `tests/test_api_endpoints.py`). Dùng `pytest` + `httpx.AsyncClient` kiểm tra các mã trạng thái (`200`, `201`, `401`, `404`, `422`), kiểm tra phản hồi JSON khớp lược đồ OpenAPI 3.1 bằng `openapi-spec-validator`, và dùng cơ chế `dependency_overrides` hoặc DB test tách biệt cho PostgreSQL 18.
 3. Tầng 3 (Kiểm thử Tĩnh Frontend & A11y). Chạy `npx tsc --noEmit` kiểm tra kiểu TypeScript sinh từ OpenAPI, chạy `python .agents/skills/frontend-designer/scripts/validate_ui_component.py --file <component>`, và chạy `npm run build` để bảo đảm build standalone thành công không lỗi Server/Client boundary.
 4. Tầng 4 (Kiểm thử Luồng Tích hợp E2E Smoke Test). Khởi chạy cả Backend + Frontend, kiểm tra đường dẫn `/api/v1/analytics/overview`, `/api/v1/competitions`, đăng nhập/bookmark và gọi thử `/api/v1/rag/chat`.
@@ -395,9 +395,9 @@ Phần này dành riêng cho bạn tự kiểm tra, vận hành và giải thíc
 
 | Bước | Thành phần kiểm tra | Thao tác thực hiện bằng tay | Kết quả đạt chuẩn cần thấy |
 | :---: | :--- | :--- | :--- |
-| **1** | **Tầng Vàng (DuckDB)** | Chạy lệnh build Gold và kiểm tra số dòng các bảng `dim_*`, `fact_*`, `mart_*`. | `dim_competition` có đúng 19 dòng; `SUM(total_prize_vnd)` trong `mart_domain_analytics` khớp với `mart_kpi_overview`. |
+| **1** | **Tầng Vàng (DuckDB)** | Chạy lệnh build Gold và kiểm tra số dòng các bảng `dim_*`, `fact_*`, `mart_*`. | `dim_competition` có đúng 18 dòng; `SUM(total_prize_vnd)` trong `mart_domain_analytics` khớp với `mart_kpi_overview`. |
 | **2** | **Hạ tầng Docker (`core`)** | Khởi động PostgreSQL 18 + Qdrant, kiểm tra trạng thái `healthy` và mức RAM thực tế. | Tất cả container ở trạng thái `healthy`; tổng RAM tiêu thụ dưới `1.5 GB`. |
-| **3** | **Backend Swagger UI** | Mở trình duyệt tại `http://localhost:8000/docs`, thử gọi `GET /api/v1/analytics/overview` và `GET /api/v1/competitions`. | Trả về `200 OK`, dữ liệu JSON đúng 19 cuộc thi, thời gian phản hồi dưới `50 ms` trên tab Network. |
+| **3** | **Backend Swagger UI** | Mở trình duyệt tại `http://localhost:8000/docs`, thử gọi `GET /api/v1/analytics/overview` và `GET /api/v1/competitions`. | Trả về `200 OK`, dữ liệu JSON đúng 18 cuộc thi, thời gian phản hồi dưới `50 ms` trên tab Network. |
 | **4** | **Luồng Auth & Bookmark** | Trên Swagger hoặc UI, đăng ký/đăng nhập 1 tài khoản sinh viên, lưu 1 cuộc thi rồi tải lại trang (`F5`). | Cookie phiên đăng nhập được giữ nguyên sau `F5`; trạng thái `Đã lưu` không biến mất (dữ liệu nằm trong bảng `saved_competitions` của PostgreSQL 18). |
 | **5** | **Dashboard & Explorer UI** | Mở `http://localhost:3000/dashboard` và `/competitions`; bật DevTools (`F12`) kiểm tra tab Console và Network ở kích thước `1280px` và `375px`. | Không có lỗi đỏ Console/Hydration; 5 KPI cards và các biểu đồ Recharts hiển thị đúng số liệu từ DuckDB; bấm lọc cập nhật đúng danh sách. |
 | **6** | **RAG Copilot UI** | Mở `/copilot`, chọn 1 cuộc thi cụ thể (ví dụ Zalo AI Challenge) và hỏi *"Tổng giải thưởng và hạn nộp bài?"*. | Trả về đúng con số từ Markdown gốc kèm thẻ link nguồn `https://challenge.zalo.ai` và ngày cào. |

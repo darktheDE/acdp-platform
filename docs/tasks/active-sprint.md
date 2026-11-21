@@ -5,7 +5,7 @@ This document maintains the immediate context, active tasks, and session state f
 ---
 
 ## Current Sprint: Web Sprint 01 / Sprint 05 (Weeks 11–12) - Research, Gold Star Schema & Web Architecture Inception
-- **Sprint Goal**: Research and document 2026–2027 tech benchmarks, Kimball Star Schema for Gold Layer (19 competitions), FastAPI + PostgreSQL 18 (OLTP) Spec-Driven Architecture, Next.js 16 + Tailwind v4 UI/UX design system, Docker resource budget (`<= 2.0 GB` core profile), and 4-tier testing procedures before coding the Web application.
+- **Sprint Goal**: Research and document 2026–2027 tech benchmarks, Kimball Star Schema for Gold Layer (18 competitions), FastAPI + PostgreSQL 18 (OLTP) Spec-Driven Architecture, Next.js 16 + Tailwind v4 UI/UX design system, Docker resource budget (`<= 2.0 GB` core profile), and 4-tier testing procedures before coding the Web application.
 - **Master Playbook**: [`docs/tasks/sprint-web-01-research-plan.md`](./sprint-web-01-research-plan.md)
 - **Master Product Spec**: [`docs/specs/SPEC.md`](../specs/SPEC.md) (Business value, user personas, dashboard ROI, and end-to-end user flows)
 

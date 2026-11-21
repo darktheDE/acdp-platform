@@ -255,7 +255,7 @@ Mọi giá trị tiền tệ (`total_prize_vnd`, `allocated_prize_vnd`, `estimat
 | **EC-F1: Giải thưởng bằng `0 VND` hoặc chưa công bố số tiền** | Nhiều cuộc thi học thuật chỉ trao học bổng hoặc giấy chứng nhận | Nếu `total_prize_vnd === 0` và `has_scholarship === true`, hiển thị badge `"Học bổng / Tài trợ"`; nếu không, hiển thị `"Theo thể lệ BTC"` thay vì in `0 đ` gây hiểu nhầm |
 | **EC-F2: Tên cuộc thi tiếng Việt dài > 80 ký tự** | Dễ làm xô lệch chiều cao thẻ Grid ở `/competitions` | Áp dụng `line-clamp-2` cho tiêu đề thẻ kèm `title={competition.name}`, chỉ hiển thị toàn bộ chuỗi trên `/competitions/[key]` |
 | **EC-F3: Lọc đa chiều trả về 0 cuộc thi** | Danh sách trống trơn nếu thiếu trạng thái Empty State | Hiển thị thành phần Empty State kèm thông báo bộ lọc đang kích hoạt và 1 nút `"Xóa toàn bộ bộ lọc"` để đưa người dùng về danh sách gốc ngay |
-| **EC-F4: Phản hồi RAG chưa có nguồn (`grounded === false`)** | Chatbot bị hỏi câu ngoài phạm vi 19 cuộc thi | Hiển thị thẻ cảnh báo màu Amber (`#B45309`) ghi rõ chưa tìm thấy điều khoản trong dữ liệu thu thập và ẩn danh sách trích dẫn rỗng |
+| **EC-F4: Phản hồi RAG chưa có nguồn (`grounded === false`)** | Chatbot bị hỏi câu ngoài phạm vi 18 cuộc thi | Hiển thị thẻ cảnh báo màu Amber (`#B45309`) ghi rõ chưa tìm thấy điều khoản trong dữ liệu thu thập và ẩn danh sách trích dẫn rỗng |
 | **EC-F5: FastAPI tạm ngưng hoặc mất kết nối ở Docker** | Server Component ném lỗi `ECONNREFUSED` khi build hoặc render | Không làm sập toàn trang (`Application error`): tạo tệp `error.tsx` và `loading.tsx` cho từng phân hệ để hiển thị khung trạng thái tải (Skeleton) và nút `"Thử kết nối lại"` |
 
 ---

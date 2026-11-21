@@ -172,11 +172,12 @@ def test_star_schema_bridge_allocation_and_edge_cases(tmp_path: Path) -> None:
         con.close()
 
 
-def test_real_19_competitions_star_schema_integrity(tmp_path: Path) -> None:
+def test_real_18_competitions_star_schema_integrity(tmp_path: Path) -> None:
     """Verify full Kimball Star Schema build against real repository Silver extractions."""
     extractions_dir = Path("data/extractions")
     competitions, source_label = gold.load_silver_competitions_with_source(extractions_dir)
-    assert len(competitions) == 19
+    assert len(competitions) == 18
+    assert all("vnquantum" not in (c.url or "").lower() for c in competitions)
 
     db_path = tmp_path / "real_gold.duckdb"
     gold.build_gold_star_schema(db_path, competitions, source_batch_file=source_label, gold_dir=None)
@@ -186,7 +187,7 @@ def test_real_19_competitions_star_schema_integrity(tmp_path: Path) -> None:
         kpi = con.execute(
             "SELECT total_competitions, total_prize_pool_vnd, unique_domains, unique_organizers FROM mart_kpi_overview"
         ).fetchone()
-        assert kpi[0] == 19
+        assert kpi[0] == 18
         assert kpi[1] > 0
         assert kpi[2] == 5
         assert kpi[3] > 20

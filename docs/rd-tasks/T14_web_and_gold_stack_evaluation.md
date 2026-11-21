@@ -9,7 +9,7 @@
 
 ## 1. Why this task exists ?
 
-Giai đoạn 1 của dự án ACDP (Tiểu luận Chuyên ngành, TLCN) đã hoàn thiện chuỗi xử lý Bronze và Silver với 18 nguồn mục tiêu thu thập được 19 bản ghi cuộc thi học thuật hợp lệ tại `data/extractions/extractions_2026-11-15_1794720683.json` và lớp tìm kiếm ngữ nghĩa RAG trên Qdrant (`src/acdp/3_chatbot_mvp.py`). Tuy nhiên, lớp phục vụ người dùng cuối (Web Application) và tầng phân tích dữ liệu (Gold Layer) vẫn tồn tại 4 điểm nghẽn kỹ thuật cần nghiên cứu và chuẩn hóa trước khi viết mã nguồn ứng dụng (`apps/web/`, `src/acdp/api/`):
+Giai đoạn 1 của dự án ACDP (Tiểu luận Chuyên ngành, TLCN) đã hoàn thiện chuỗi xử lý Bronze và Silver với 17 nguồn mục tiêu thu thập được 18 bản ghi cuộc thi học thuật hợp lệ tại `data/extractions/extractions_2026-11-15_1794720683.json` và lớp tìm kiếm ngữ nghĩa RAG trên Qdrant (`src/acdp/3_chatbot_mvp.py`). Tuy nhiên, lớp phục vụ người dùng cuối (Web Application) và tầng phân tích dữ liệu (Gold Layer) vẫn tồn tại 4 điểm nghẽn kỹ thuật cần nghiên cứu và chuẩn hóa trước khi viết mã nguồn ứng dụng (`apps/web/`, `src/acdp/api/`):
 
 1. **Tầng Gold (`src/acdp/4_analytics_gold.py`) chưa đạt chuẩn Data Engineering.** Mã nguồn hiện tại tạo các bảng phẳng mang tính mô phỏng Silver, thiếu tách biệt Dimension/Fact theo mô hình Kimball Star Schema, làm mất dữ liệu `timeline_stages` và `partners_and_sponsors`, đồng thời dính lỗi nhân đôi tổng giá trị giải thưởng khi thực hiện `unnest(category)`.
 2. **Thiếu ranh giới OLTP và OLAP.** Việc ghép dữ liệu đăng nhập thí sinh, phiên trò chuyện RAG hoặc bookmark cuộc thi trực tiếp vào DuckDB sẽ gây khóa ghi file (single-writer lock) và xung đột mô hình giao dịch.
@@ -22,7 +22,7 @@ Giai đoạn 1 của dự án ACDP (Tiểu luận Chuyên ngành, TLCN) đã ho�
 
 ### PHẦN I: Đối sánh Kỹ thuật Lớp Vàng (Kimball Star Schema vs Flat/OBT)
 
-Ở quy mô TLCN (19 cuộc thi, mở rộng lên hàng trăm cuộc thi ở KLTN), bảng phẳng One Big Table (OBT) tuy viết truy vấn đơn giản cho một số biểu đồ đơn lẻ nhưng phát sinh hai khuyết tật nghiêm trọng trong ngữ cảnh ngành Kỹ thuật Dữ liệu:
+Ở quy mô TLCN (18 cuộc thi, mở rộng lên hàng trăm cuộc thi ở KLTN), bảng phẳng One Big Table (OBT) tuy viết truy vấn đơn giản cho một số biểu đồ đơn lẻ nhưng phát sinh hai khuyết tật nghiêm trọng trong ngữ cảnh ngành Kỹ thuật Dữ liệu:
 
 1. **Lỗi Fan-out Aggregation trên quan hệ N-N.** Một cuộc thi thuộc nhiều lĩnh vực (`category` là danh sách) hoặc có nhiều nhà tổ chức (`organizers`). Khi `unnest()` trực tiếp trên OBT rồi tính `SUM(total_prize_vnd)` theo nhóm ngành, tổng giá trị giải thưởng bị cộng lặp theo số lượng danh mục.
 2. **Thiếu cấu trúc chuẩn hóa cho hội đồng KTDL.** Đánh giá đồ án chuyên ngành Kỹ thuật Dữ liệu yêu cầu minh họa rõ Grain của bảng Fact, Surrogate Keys (`*_sk`), Slow/Fast Attributes ở Dimension và Bridge Table với trọng số phân bổ (`allocation_weight`).
@@ -95,7 +95,7 @@ Hệ thống vận hành theo nguyên lý **Profile-based Docker Compose** để
 | Profile / Dịch vụ | Vai trò | Memory Limit | Dự kiến RAM thực tế | Ghi chú vận hành |
 | :--- | :--- | :---: | :---: | :--- |
 | `core`: `postgres` (`18.7-alpine3.21`) | OLTP App DB | `256 MB` | `~90 MB` | Bật `-c shared_buffers=128MB -c work_mem=4MB` |
-| `core`: `qdrant` (`v1.13.4`) | Vector Store RAG | `512 MB` | `~180 MB` | Tập dữ liệu TLCN ~19 cuộc thi tốn rất ít RAM |
+| `core`: `qdrant` (`v1.13.4`) | Vector Store RAG | `512 MB` | `~180 MB` | Tập dữ liệu TLCN ~18 cuộc thi tốn rất ít RAM |
 | `core`: `api` (`FastAPI + DuckDB RO`) | Serving Gateway | `640 MB` | `~220 MB` | DuckDB ép `memory_limit='256MB'`, `threads=2` |
 | `core`: `web` (`Next.js 16 standalone`) | Frontend UI/UX | `512 MB` | `~160 MB` | Node heap giới hạn `--max-old-space-size=384` |
 | **Tổng Profile `core` (Chạy Web hàng ngày)** | **4 container lõi** | **`1.92 GB`** | **`~650 MB – 1.1 GB`** | **An toàn cho máy 16GB RAM (dư >12GB cho IDE & OS)** |

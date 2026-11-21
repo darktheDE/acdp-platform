@@ -22,7 +22,7 @@
 
 ```text
 Raw Web Pages (Bronze)
-  -> Structured Pydantic Extraction (Silver: 18 nguồn mục tiêu, 19 cuộc thi)
+  -> Structured Pydantic Extraction (Silver: 17 nguồn mục tiêu, 18 cuộc thi)
   -> Kimball Star Schema + Data Marts (Gold: DuckDB 1.5.x) + Vector Index (Qdrant v1.13.4)
   -> Serving Gateway (FastAPI OpenAPI 3.1 + PostgreSQL 18.7 OLTP)
   -> Giao diện Ra quyết định (Next.js 16 + Recharts)
@@ -53,7 +53,7 @@ Theo phạm vi đã rà soát tại [`NT-013`](../deliverables/NT-013-business-t
 ### 3.1. Phân hệ 1: Academic Competition Explorer (`/competitions` & `/competitions/[key]`)
 
 1. **Người dùng thao tác gì?** Tìm kiếm theo tên/từ khóa, lọc kết hợp theo 5 nhóm lĩnh vực chuẩn (`AI & Data Science`, `Web3, Blockchain & FinTech`, `Software, Web & Mobile`, `Security, IoT & Embedded`, `Startup, Design & Interdisciplinary`), hình thức tổ chức (`Online`, `Offline`, `Hybrid`), trạng thái miễn phí (`Miễn phí`), sau đó mở hồ sơ chi tiết của một cuộc thi.
-2. **Dữ liệu đứng sau là gì?** View [`mart_competition_explorer`](file:///d:/Code/final-thesis/acdp-platform/docs/specs/0003-gold-dimensional-modeling-spec.md) cung cấp danh sách đã khử trùng 19 cuộc thi từ 18 nguồn mục tiêu; trang chi tiết ghép thêm `fact_prize_tiers` (từng hạng giải thưởng kèm giá trị quy đổi VNĐ) và `fact_timeline_stages` (các mốc sơ loại, nộp sản phẩm, chung kết).
+2. **Dữ liệu đứng sau là gì?** View [`mart_competition_explorer`](file:///d:/Code/final-thesis/acdp-platform/docs/specs/0003-gold-dimensional-modeling-spec.md) cung cấp danh sách đã khử trùng 18 cuộc thi từ 17 nguồn mục tiêu; trang chi tiết ghép thêm `fact_prize_tiers` (từng hạng giải thưởng kèm giá trị quy đổi VNĐ) và `fact_timeline_stages` (các mốc sơ loại, nộp sản phẩm, chung kết).
 3. **Người dùng nhận được gì?** Một bản hồ sơ cô đọng thay thế việc đọc nhiều trang web rời rạc: biết ngay tổng giải thưởng (hoặc học bổng), lệ phí, yêu cầu số thành viên đội, nền tảng nộp bài, đơn vị tổ chức/tài trợ và nút bấm mở ngay trang đăng ký chính thức của Ban tổ chức.
 
 ### 3.2. Phân hệ 2: Faculty & Student Analytics Dashboard (`/dashboard`)

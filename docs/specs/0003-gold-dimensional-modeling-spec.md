@@ -9,7 +9,7 @@
 
 ## 1. Objective & Scope
 
-Tài liệu này đặc tả cấu trúc kho dữ liệu phân tích Lớp Vàng (Gold Layer) theo chuẩn **Kimball Star Schema** trên DuckDB `1.5.x` để phục vụ đồng thời cổng tra cứu FastAPI/Next.js và công cụ BI Metabase. Mục tiêu trọng tâm là khắc phục triệt để 5 khiếm khuyết hiện hữu trong `src/acdp/4_analytics_gold.py` trên tập dữ liệu Silver gồm 18 nguồn mục tiêu và 19 cuộc thi (`data/extractions/extractions_2026-11-15_1794720683.json`).
+Tài liệu này đặc tả cấu trúc kho dữ liệu phân tích Lớp Vàng (Gold Layer) theo chuẩn **Kimball Star Schema** trên DuckDB `1.5.x` để phục vụ đồng thời cổng tra cứu FastAPI/Next.js và công cụ BI Metabase. Mục tiêu trọng tâm là khắc phục triệt để 5 khiếm khuyết hiện hữu trong `src/acdp/4_analytics_gold.py` trên tập dữ liệu Silver gồm 17 nguồn mục tiêu và 18 cuộc thi (`data/extractions/extractions_2026-11-15_1794720683.json`).
 
 ### 1.1. Chẩn đoán 5 Lỗi của `src/acdp/4_analytics_gold.py` Hiện tại
 
