@@ -32,23 +32,29 @@ Academic hackathons, coding contests, and research challenges are crucial for st
 
 ```text
 acdp-platform/
-├── src/acdp/               # Core data pipeline and application modules
-│   ├── 1_crawl_to_bronze.py    # Crawl4AI ingestion to Cloudflare R2 Bronze
-│   ├── 2_instruction.py        # Instructor few-shot extraction to Silver JSON & Parquet
-│   ├── 3_chatbot_mvp.py        # RAG Regulation Chatbot with Qdrant & Gradio
-│   ├── 4_analytics_gold.py     # DuckDB Kimball Star Schema & Gold Data Marts
-│   ├── config.py               # Application & storage configuration (AppConfig)
-│   └── schemas.py              # Pydantic v2 data contracts (Competition, PrizeTier)
+├── apps/web/                 # Next.js 16 + Tailwind v4 + Recharts web portal
+├── src/acdp/                 # Core data pipeline and serving API modules
+│   ├── api/                  # FastAPI gateway (PostgreSQL 18 OLTP + DuckDB RO + Qdrant)
+│   ├── flows/                # Prefect 3.x Medallion orchestration flows
+│   ├── 1_crawl_to_bronze.py  # Crawl4AI ingestion to Cloudflare R2 Bronze
+│   ├── 2_instruction.py      # Instructor few-shot extraction to Silver JSON & Parquet
+│   ├── 3_chatbot_mvp.py      # RAG Regulation Chatbot with Qdrant & Gradio
+│   ├── 4_analytics_gold.py   # DuckDB Kimball Star Schema & Gold Data Marts
+│   ├── config.py             # Application & storage configuration (AppConfig)
+│   └── schemas.py            # Pydantic v2 data contracts (Competition, PrizeTier)
 ├── data/
-│   ├── raw/markdown/       # Curated fixtures for reproducible sample competitions
-│   └── lakehouse/          # Local Medallion tiers (Bronze, Silver, Gold, DuckDB)
-├── tests/                  # Unit and integration test suites (100% Passed)
-├── docs/                   # Academic manuscripts, architecture specs, ADRs, roadmap
-│   ├── assets/             # Architecture diagrams, figures, and static media
-│   ├── academic/           # TLCN report draft, registration & NCKH proposal
-│   ├── specs/              # Master SPEC.md & technical specs (SPEC-0001..0006)
-│   └── tasks/              # Active sprint context, Notion mapping & 15-week roadmap
-├── pyproject.toml          # Python dependencies & build specification (uv)
+│   ├── raw/markdown/         # Curated fixtures for reproducible sample competitions
+│   └── lakehouse/            # Local Medallion tiers (Bronze, Silver, Gold, DuckDB)
+├── tests/                    # Unit & API integration test suites (32/32 Passed)
+├── docs/                     # Academic manuscripts, architecture specs, ADRs, roadmap
+│   ├── assets/               # Architecture diagrams, figures, and static media
+│   ├── academic/             # TLCN report draft, registration & NCKH proposal
+│   ├── specs/                # Master SPEC.md & technical specs (SPEC-0001..0006)
+│   └── tasks/                # Active sprint context, Notion mapping & 15-week roadmap
+├── docker-compose.yml        # Docker profiles: core (Web+API+PG18+Qdrant), bi (Metabase)
+├── Dockerfile.api            # Slim FastAPI production image (985 MB)
+├── openapi.json              # Exported OpenAPI 3.1 contract for Frontend codegen
+├── pyproject.toml            # Python dependencies & optional extras (uv)
 └── README.md
 ```
 
@@ -58,7 +64,8 @@ acdp-platform/
 
 ### Step 1: Install Dependencies
 ```bash
-uv sync
+# Full host environment (API + Crawl4AI + Gradio + Prefect)
+uv sync --all-extras
 ```
 
 ### Step 2: Configure Environment
@@ -81,6 +88,9 @@ uv run python src/acdp/2_instruction.py --extract
 
 # 4. Launch RAG Regulation Chatbot (Gradio UI)
 uv run python src/acdp/3_chatbot_mvp.py --chat
+
+# 5. Launch Full-Stack Web Portal & API (Docker core profile: :3000 & :8000)
+docker compose --profile core up -d
 ```
 
 ---
