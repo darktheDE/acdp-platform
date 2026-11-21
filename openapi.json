@@ -1,0 +1,2030 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "ACDP Serving Gateway",
+    "description": "Unified FastAPI Gateway over DuckDB Gold Star Schema, PostgreSQL 18 OLTP, and Qdrant RAG.",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/v1/health": {
+      "get": {
+        "tags": [
+          "System"
+        ],
+        "summary": "Health Check",
+        "description": "Check PostgreSQL 18, DuckDB Gold Star Schema, and Qdrant readiness.",
+        "operationId": "health_check_api_v1_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/analytics/overview": {
+      "get": {
+        "tags": [
+          "Analytics"
+        ],
+        "summary": "Get Analytics Overview",
+        "description": "Return full Gold Star Schema dashboard metrics for /dashboard.",
+        "operationId": "get_analytics_overview_api_v1_analytics_overview_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalyticsDashboardDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/analytics/seasonality": {
+      "get": {
+        "tags": [
+          "Analytics"
+        ],
+        "summary": "Get Analytics Seasonality",
+        "description": "Return academic-term & monthly competition seasonality.",
+        "operationId": "get_analytics_seasonality_api_v1_analytics_seasonality_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SeasonalityMetricDTO"
+                  },
+                  "type": "array",
+                  "title": "Response Get Analytics Seasonality Api V1 Analytics Seasonality Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/competitions": {
+      "get": {
+        "tags": [
+          "Competitions"
+        ],
+        "summary": "List Competitions",
+        "description": "List, search, and filter academic competitions from Gold mart_competition_explorer.",
+        "operationId": "list_competitions_api_v1_competitions_get",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 200
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            }
+          },
+          {
+            "name": "domain",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 100
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Domain"
+            }
+          },
+          {
+            "name": "mode",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 32
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Mode"
+            }
+          },
+          {
+            "name": "is_free",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Is Free"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 32
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^(prize_desc|prize_asc|name_asc|deadline_asc)$",
+              "default": "prize_desc",
+              "title": "Sort"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "title": "Page"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Page Size"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedCompetitionsDTO"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/competitions/{competition_key}": {
+      "get": {
+        "tags": [
+          "Competitions"
+        ],
+        "summary": "Get Competition Detail",
+        "description": "Return full competition profile with prize tiers and timeline stages.",
+        "operationId": "get_competition_detail_api_v1_competitions__competition_key__get",
+        "parameters": [
+          {
+            "name": "competition_key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Competition Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompetitionDetailDTO"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/register": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Register",
+        "description": "Register a new student account in PostgreSQL 18.",
+        "operationId": "register_api_v1_auth_register_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserProfileDTO"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Login",
+        "description": "Authenticate credentials and issue Access JWT + HttpOnly Refresh Token cookie.",
+        "operationId": "login_api_v1_auth_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/refresh": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Refresh Tokens",
+        "description": "Rotate Refresh Token and issue a fresh Access JWT; revoke all sessions on reuse.",
+        "operationId": "refresh_tokens_api_v1_auth_refresh_post",
+        "parameters": [
+          {
+            "name": "acdp_refresh_token",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Acdp Refresh Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/logout": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Logout",
+        "description": "Revoke the current refresh session and clear the refresh cookie.",
+        "operationId": "logout_api_v1_auth_logout_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "acdp_refresh_token",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Acdp Refresh Token"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/me": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Get Me",
+        "description": "Return the authenticated user's profile.",
+        "operationId": "get_me_api_v1_auth_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserProfileDTO"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/bookmarks": {
+      "get": {
+        "tags": [
+          "Bookmarks"
+        ],
+        "summary": "List Bookmarks",
+        "description": "List current user's saved competitions enriched with Gold status (EC-A2 archived safe).",
+        "operationId": "list_bookmarks_api_v1_bookmarks_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/BookmarkDTO"
+                  },
+                  "type": "array",
+                  "title": "Response List Bookmarks Api V1 Bookmarks Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Bookmarks"
+        ],
+        "summary": "Save Bookmark",
+        "description": "Save or idempotently update a competition bookmark (SPEC-0004 EC-A3).",
+        "operationId": "save_bookmark_api_v1_bookmarks_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BookmarkCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookmarkDTO"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/bookmarks/{competition_key}": {
+      "delete": {
+        "tags": [
+          "Bookmarks"
+        ],
+        "summary": "Delete Bookmark",
+        "description": "Delete a saved competition belonging to the authenticated user.",
+        "operationId": "delete_bookmark_api_v1_bookmarks__competition_key__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "competition_key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Competition Key"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/rag/chat": {
+      "post": {
+        "tags": [
+          "RAG Copilot"
+        ],
+        "summary": "Rag Chat",
+        "description": "Query competition rules via Qdrant + LLM with grounded URL citations.",
+        "operationId": "rag_chat_api_v1_rag_chat_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RagChatRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RagChatResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/rag/sessions": {
+      "get": {
+        "tags": [
+          "RAG Copilot"
+        ],
+        "summary": "List Chat Sessions",
+        "description": "List saved RAG chat sessions owned by the current user.",
+        "operationId": "list_chat_sessions_api_v1_rag_sessions_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ChatSessionDTO"
+                  },
+                  "type": "array",
+                  "title": "Response List Chat Sessions Api V1 Rag Sessions Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/rag/sessions/{session_id}/messages": {
+      "get": {
+        "tags": [
+          "RAG Copilot"
+        ],
+        "summary": "List Session Messages",
+        "description": "List messages and citations for a chat session owned by the current user.",
+        "operationId": "list_session_messages_api_v1_rag_sessions__session_id__messages_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ChatMessageDTO"
+                  },
+                  "title": "Response List Session Messages Api V1 Rag Sessions  Session Id  Messages Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/rag/sessions/{session_id}": {
+      "delete": {
+        "tags": [
+          "RAG Copilot"
+        ],
+        "summary": "Delete Chat Session",
+        "description": "Delete a chat session owned by the current user.",
+        "operationId": "delete_chat_session_api_v1_rag_sessions__session_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AnalyticsDashboardDTO": {
+        "properties": {
+          "kpi": {
+            "$ref": "#/components/schemas/KpiOverviewDTO"
+          },
+          "domains": {
+            "items": {
+              "$ref": "#/components/schemas/DomainMetricDTO"
+            },
+            "type": "array",
+            "title": "Domains"
+          },
+          "seasonality": {
+            "items": {
+              "$ref": "#/components/schemas/SeasonalityMetricDTO"
+            },
+            "type": "array",
+            "title": "Seasonality"
+          },
+          "mode_team_matrix": {
+            "items": {
+              "$ref": "#/components/schemas/ModeTeamMetricDTO"
+            },
+            "type": "array",
+            "title": "Mode Team Matrix"
+          },
+          "top_organizers": {
+            "items": {
+              "$ref": "#/components/schemas/OrganizerMetricDTO"
+            },
+            "type": "array",
+            "title": "Top Organizers"
+          }
+        },
+        "type": "object",
+        "required": [
+          "kpi",
+          "domains",
+          "seasonality",
+          "mode_team_matrix",
+          "top_organizers"
+        ],
+        "title": "AnalyticsDashboardDTO"
+      },
+      "BookmarkCreateRequest": {
+        "properties": {
+          "competition_key": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 64,
+            "pattern": "^[a-fA-F0-9]{64}$",
+            "title": "Competition Key"
+          },
+          "personal_note": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 1000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Personal Note"
+          },
+          "notify_before_deadline": {
+            "type": "boolean",
+            "title": "Notify Before Deadline",
+            "default": true
+          }
+        },
+        "type": "object",
+        "required": [
+          "competition_key"
+        ],
+        "title": "BookmarkCreateRequest"
+      },
+      "BookmarkDTO": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "competition_key": {
+            "type": "string",
+            "title": "Competition Key"
+          },
+          "competition_name": {
+            "type": "string",
+            "title": "Competition Name"
+          },
+          "personal_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Personal Note"
+          },
+          "notify_before_deadline": {
+            "type": "boolean",
+            "title": "Notify Before Deadline"
+          },
+          "is_archived": {
+            "type": "boolean",
+            "title": "Is Archived",
+            "default": false
+          },
+          "mode_canonical": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mode Canonical"
+          },
+          "total_prize_vnd": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Total Prize Vnd"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "competition_key",
+          "competition_name",
+          "notify_before_deadline",
+          "created_at"
+        ],
+        "title": "BookmarkDTO"
+      },
+      "ChatMessageDTO": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "user",
+              "assistant"
+            ],
+            "title": "Role"
+          },
+          "content": {
+            "type": "string",
+            "title": "Content"
+          },
+          "citations": {
+            "items": {
+              "$ref": "#/components/schemas/RagCitationDTO"
+            },
+            "type": "array",
+            "title": "Citations"
+          },
+          "latency_ms": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latency Ms"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "role",
+          "content",
+          "citations",
+          "created_at"
+        ],
+        "title": "ChatMessageDTO"
+      },
+      "ChatSessionDTO": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "ChatSessionDTO"
+      },
+      "CompetitionDetailDTO": {
+        "properties": {
+          "competition_key": {
+            "type": "string",
+            "title": "Competition Key"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "tagline": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tagline"
+          },
+          "canonical_url": {
+            "type": "string",
+            "title": "Canonical Url"
+          },
+          "mode_canonical": {
+            "type": "string",
+            "title": "Mode Canonical"
+          },
+          "is_free": {
+            "type": "boolean",
+            "title": "Is Free"
+          },
+          "total_prize_vnd": {
+            "type": "integer",
+            "title": "Total Prize Vnd"
+          },
+          "has_scholarship": {
+            "type": "boolean",
+            "title": "Has Scholarship",
+            "default": false
+          },
+          "registration_status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Registration Status"
+          },
+          "registration_deadline_raw": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Registration Deadline Raw"
+          },
+          "domain_groups": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Domain Groups"
+          },
+          "domain_slugs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Domain Slugs",
+            "default": []
+          },
+          "team_size_min": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Team Size Min"
+          },
+          "team_size_max": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Team Size Max"
+          },
+          "team_profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Team Profile"
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary"
+          },
+          "target_audience": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Audience"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location"
+          },
+          "submission_platform": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Submission Platform"
+          },
+          "challenge_overview": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Challenge Overview"
+          },
+          "organizers": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Organizers"
+          },
+          "partners_and_sponsors": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Partners And Sponsors"
+          },
+          "prizes": {
+            "items": {
+              "$ref": "#/components/schemas/PrizeTierDTO"
+            },
+            "type": "array",
+            "title": "Prizes"
+          },
+          "timeline_stages": {
+            "items": {
+              "$ref": "#/components/schemas/TimelineStageDTO"
+            },
+            "type": "array",
+            "title": "Timeline Stages"
+          }
+        },
+        "type": "object",
+        "required": [
+          "competition_key",
+          "name",
+          "canonical_url",
+          "mode_canonical",
+          "is_free",
+          "total_prize_vnd",
+          "domain_groups",
+          "organizers",
+          "partners_and_sponsors",
+          "prizes",
+          "timeline_stages"
+        ],
+        "title": "CompetitionDetailDTO"
+      },
+      "CompetitionSummaryDTO": {
+        "properties": {
+          "competition_key": {
+            "type": "string",
+            "title": "Competition Key"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "tagline": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tagline"
+          },
+          "canonical_url": {
+            "type": "string",
+            "title": "Canonical Url"
+          },
+          "mode_canonical": {
+            "type": "string",
+            "title": "Mode Canonical"
+          },
+          "is_free": {
+            "type": "boolean",
+            "title": "Is Free"
+          },
+          "total_prize_vnd": {
+            "type": "integer",
+            "title": "Total Prize Vnd"
+          },
+          "has_scholarship": {
+            "type": "boolean",
+            "title": "Has Scholarship",
+            "default": false
+          },
+          "registration_status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Registration Status"
+          },
+          "registration_deadline_raw": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Registration Deadline Raw"
+          },
+          "domain_groups": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Domain Groups"
+          },
+          "domain_slugs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Domain Slugs",
+            "default": []
+          },
+          "team_size_min": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Team Size Min"
+          },
+          "team_size_max": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Team Size Max"
+          },
+          "team_profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Team Profile"
+          }
+        },
+        "type": "object",
+        "required": [
+          "competition_key",
+          "name",
+          "canonical_url",
+          "mode_canonical",
+          "is_free",
+          "total_prize_vnd",
+          "domain_groups"
+        ],
+        "title": "CompetitionSummaryDTO"
+      },
+      "DomainMetricDTO": {
+        "properties": {
+          "domain_slug": {
+            "type": "string",
+            "title": "Domain Slug"
+          },
+          "domain_group": {
+            "type": "string",
+            "title": "Domain Group"
+          },
+          "competition_count": {
+            "type": "integer",
+            "title": "Competition Count"
+          },
+          "allocated_prize_vnd": {
+            "type": "integer",
+            "title": "Allocated Prize Vnd"
+          },
+          "free_count": {
+            "type": "integer",
+            "title": "Free Count"
+          }
+        },
+        "type": "object",
+        "required": [
+          "domain_slug",
+          "domain_group",
+          "competition_count",
+          "allocated_prize_vnd",
+          "free_count"
+        ],
+        "title": "DomainMetricDTO"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HealthResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ok",
+              "degraded"
+            ],
+            "title": "Status"
+          },
+          "postgres": {
+            "type": "string",
+            "enum": [
+              "up",
+              "down"
+            ],
+            "title": "Postgres"
+          },
+          "duckdb": {
+            "type": "string",
+            "enum": [
+              "up",
+              "down"
+            ],
+            "title": "Duckdb"
+          },
+          "qdrant": {
+            "type": "string",
+            "enum": [
+              "up",
+              "degraded",
+              "down"
+            ],
+            "title": "Qdrant"
+          },
+          "gold_competitions_count": {
+            "type": "integer",
+            "title": "Gold Competitions Count",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "postgres",
+          "duckdb",
+          "qdrant"
+        ],
+        "title": "HealthResponse"
+      },
+      "KpiOverviewDTO": {
+        "properties": {
+          "total_competitions": {
+            "type": "integer",
+            "title": "Total Competitions"
+          },
+          "open_competitions": {
+            "type": "integer",
+            "title": "Open Competitions"
+          },
+          "total_prize_pool_vnd": {
+            "type": "integer",
+            "title": "Total Prize Pool Vnd"
+          },
+          "free_participation_pct": {
+            "type": "number",
+            "title": "Free Participation Pct"
+          },
+          "scholarship_competitions": {
+            "type": "integer",
+            "title": "Scholarship Competitions"
+          },
+          "avg_team_size_max": {
+            "type": "number",
+            "title": "Avg Team Size Max",
+            "default": 0.0
+          },
+          "unique_domains": {
+            "type": "integer",
+            "title": "Unique Domains"
+          },
+          "unique_organizers": {
+            "type": "integer",
+            "title": "Unique Organizers"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total_competitions",
+          "open_competitions",
+          "total_prize_pool_vnd",
+          "free_participation_pct",
+          "scholarship_competitions",
+          "unique_domains",
+          "unique_organizers"
+        ],
+        "title": "KpiOverviewDTO"
+      },
+      "LoginRequest": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1,
+            "title": "Password"
+          }
+        },
+        "type": "object",
+        "required": [
+          "email",
+          "password"
+        ],
+        "title": "LoginRequest"
+      },
+      "ModeTeamMetricDTO": {
+        "properties": {
+          "mode_canonical": {
+            "type": "string",
+            "enum": [
+              "Online",
+              "Offline",
+              "Hybrid",
+              "Unknown"
+            ],
+            "title": "Mode Canonical"
+          },
+          "team_profile": {
+            "type": "string",
+            "title": "Team Profile"
+          },
+          "competition_count": {
+            "type": "integer",
+            "title": "Competition Count"
+          },
+          "total_prize_vnd": {
+            "type": "integer",
+            "title": "Total Prize Vnd"
+          }
+        },
+        "type": "object",
+        "required": [
+          "mode_canonical",
+          "team_profile",
+          "competition_count",
+          "total_prize_vnd"
+        ],
+        "title": "ModeTeamMetricDTO"
+      },
+      "OrganizerMetricDTO": {
+        "properties": {
+          "organizer_slug": {
+            "type": "string",
+            "title": "Organizer Slug"
+          },
+          "organizer_name": {
+            "type": "string",
+            "title": "Organizer Name"
+          },
+          "organizer_tier": {
+            "type": "string",
+            "title": "Organizer Tier"
+          },
+          "role_type": {
+            "type": "string",
+            "enum": [
+              "organizer",
+              "partner_sponsor"
+            ],
+            "title": "Role Type"
+          },
+          "competition_count": {
+            "type": "integer",
+            "title": "Competition Count"
+          },
+          "allocated_prize_vnd": {
+            "type": "integer",
+            "title": "Allocated Prize Vnd"
+          }
+        },
+        "type": "object",
+        "required": [
+          "organizer_slug",
+          "organizer_name",
+          "organizer_tier",
+          "role_type",
+          "competition_count",
+          "allocated_prize_vnd"
+        ],
+        "title": "OrganizerMetricDTO"
+      },
+      "PaginatedCompetitionsDTO": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/CompetitionSummaryDTO"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "page": {
+            "type": "integer",
+            "title": "Page"
+          },
+          "page_size": {
+            "type": "integer",
+            "title": "Page Size"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "total",
+          "page",
+          "page_size"
+        ],
+        "title": "PaginatedCompetitionsDTO"
+      },
+      "PrizeTierDTO": {
+        "properties": {
+          "tier_rank": {
+            "type": "integer",
+            "title": "Tier Rank"
+          },
+          "tier_name": {
+            "type": "string",
+            "title": "Tier Name"
+          },
+          "reward_description": {
+            "type": "string",
+            "title": "Reward Description"
+          },
+          "estimated_value_vnd": {
+            "type": "integer",
+            "title": "Estimated Value Vnd"
+          },
+          "is_scholarship": {
+            "type": "boolean",
+            "title": "Is Scholarship"
+          }
+        },
+        "type": "object",
+        "required": [
+          "tier_rank",
+          "tier_name",
+          "reward_description",
+          "estimated_value_vnd",
+          "is_scholarship"
+        ],
+        "title": "PrizeTierDTO"
+      },
+      "RagChatRequest": {
+        "properties": {
+          "session_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Session Id"
+          },
+          "message": {
+            "type": "string",
+            "maxLength": 2000,
+            "minLength": 2,
+            "title": "Message"
+          },
+          "domain_filter": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Domain Filter"
+          }
+        },
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "title": "RagChatRequest"
+      },
+      "RagChatResponse": {
+        "properties": {
+          "session_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Session Id"
+          },
+          "answer": {
+            "type": "string",
+            "title": "Answer"
+          },
+          "citations": {
+            "items": {
+              "$ref": "#/components/schemas/RagCitationDTO"
+            },
+            "type": "array",
+            "title": "Citations"
+          },
+          "grounded": {
+            "type": "boolean",
+            "title": "Grounded"
+          },
+          "latency_ms": {
+            "type": "integer",
+            "title": "Latency Ms"
+          }
+        },
+        "type": "object",
+        "required": [
+          "session_id",
+          "answer",
+          "citations",
+          "grounded",
+          "latency_ms"
+        ],
+        "title": "RagChatResponse"
+      },
+      "RagCitationDTO": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "url": {
+            "type": "string",
+            "title": "Url"
+          },
+          "domain": {
+            "type": "string",
+            "title": "Domain"
+          },
+          "snippet": {
+            "type": "string",
+            "title": "Snippet"
+          }
+        },
+        "type": "object",
+        "required": [
+          "title",
+          "url",
+          "domain",
+          "snippet"
+        ],
+        "title": "RagCitationDTO"
+      },
+      "RegisterRequest": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          },
+          "full_name": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 2,
+            "title": "Full Name"
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 8,
+            "title": "Password"
+          },
+          "student_or_staff_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 32
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Student Or Staff Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "email",
+          "full_name",
+          "password"
+        ],
+        "title": "RegisterRequest"
+      },
+      "SeasonalityMetricDTO": {
+        "properties": {
+          "year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Year"
+          },
+          "month": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Month"
+          },
+          "academic_year": {
+            "type": "string",
+            "title": "Academic Year"
+          },
+          "academic_term": {
+            "type": "string",
+            "enum": [
+              "HK1",
+              "HK2",
+              "Hè",
+              "Không xác định"
+            ],
+            "title": "Academic Term"
+          },
+          "competition_count": {
+            "type": "integer",
+            "title": "Competition Count"
+          },
+          "total_prize_vnd": {
+            "type": "integer",
+            "title": "Total Prize Vnd"
+          }
+        },
+        "type": "object",
+        "required": [
+          "year",
+          "month",
+          "academic_year",
+          "academic_term",
+          "competition_count",
+          "total_prize_vnd"
+        ],
+        "title": "SeasonalityMetricDTO"
+      },
+      "TimelineStageDTO": {
+        "properties": {
+          "stage_order": {
+            "type": "integer",
+            "title": "Stage Order"
+          },
+          "stage_name": {
+            "type": "string",
+            "title": "Stage Name"
+          },
+          "start_date_raw": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start Date Raw"
+          },
+          "end_date_raw": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Date Raw"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          }
+        },
+        "type": "object",
+        "required": [
+          "stage_order",
+          "stage_name"
+        ],
+        "title": "TimelineStageDTO"
+      },
+      "TokenResponse": {
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "title": "Access Token"
+          },
+          "token_type": {
+            "type": "string",
+            "title": "Token Type",
+            "default": "bearer"
+          },
+          "expires_in": {
+            "type": "integer",
+            "title": "Expires In"
+          },
+          "user": {
+            "$ref": "#/components/schemas/UserProfileDTO"
+          }
+        },
+        "type": "object",
+        "required": [
+          "access_token",
+          "expires_in",
+          "user"
+        ],
+        "title": "TokenResponse"
+      },
+      "UserProfileDTO": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "email": {
+            "type": "string",
+            "title": "Email"
+          },
+          "full_name": {
+            "type": "string",
+            "title": "Full Name"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "student",
+              "lecturer",
+              "admin"
+            ],
+            "title": "Role"
+          },
+          "student_or_staff_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Student Or Staff Id"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "email",
+          "full_name",
+          "role",
+          "created_at"
+        ],
+        "title": "UserProfileDTO"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}
