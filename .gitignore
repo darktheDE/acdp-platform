@@ -48,14 +48,7 @@ htmlcov/
 _delta_log/
 
 # Data Directory Tracking Policy:
-# 1. Ignore runtime Lakehouse data generated in local development
-data/lakehouse/**
-!data/lakehouse/**/
-!data/lakehouse/**/.gitkeep
-
-# 2. Track test fixtures in data/raw/ and documentation
-!data/raw/**
-!data/README.md
+data/
 
 
 # Vector Store local mounts
