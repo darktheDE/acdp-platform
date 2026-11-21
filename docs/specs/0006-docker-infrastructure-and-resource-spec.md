@@ -25,7 +25,7 @@ Bốn mục tiêu bắt buộc của đặc tả hạ tầng gồm:
 
 | Dịch vụ | Trạng thái hiện tại (`docker-compose.yml`) | Thẻ khóa phiên bản chuẩn (`SPEC-0006`) | Vai trò & Lý do chọn |
 | :--- | :--- | :--- | :--- |
-| `postgres` | Chưa có | `postgres:18.7-alpine3.21` | OLTP App DB; biến thể Alpine giảm ~65% kích thước so với Debian |
+| `postgres` | Chưa có | `postgres:18.7-alpine3.23` | OLTP App DB; biến thể Alpine giảm ~65% kích thước so với Debian |
 | `qdrant` | `qdrant/qdrant:latest` | `qdrant/qdrant:v1.13.4` | Vector Store cho RAG; khóa minor cố định tương thích `qdrant-client>=1.20` |
 | `api` (Runtime) | Chưa có | `python:3.13-slim-bookworm` | Thực thi FastAPI & DuckDB `1.5.x`; dùng `ghcr.io/astral-sh/uv:0.6` ở stage build |
 | `web` (Runtime) | Chưa có | `node:22.14-alpine3.21` | Chạy Next.js 16 `output: "standalone"` tối giản dung lượng RAM & ổ đĩa |
@@ -151,7 +151,7 @@ apps/web/.next
 ```yaml
 services:
   postgres:
-    image: postgres:18.7-alpine3.21
+    image: postgres:18.7-alpine3.23
     container_name: acdp-postgres
     profiles: ["core"]
     restart: unless-stopped
@@ -172,7 +172,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-acdp} -d ${POSTGRES_DB:-acdp_app}"]
       interval: 10s
@@ -197,7 +197,7 @@ services:
     volumes:
       - qdrant_data:/qdrant/storage
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:6333/healthz || exit 1"]
+      test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/127.0.0.1/6333 && printf \"GET /healthz HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n\" >&3 && grep -q \"200 OK\" <&3'"]
       interval: 15s
       timeout: 5s
       retries: 5

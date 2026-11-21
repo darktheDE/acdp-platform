@@ -1,58 +1,168 @@
 services:
-  # ============================================================================
-  # Metabase BI Dashboard with MotherDuck DuckDB Driver
-  # Web UI: http://localhost:3000
-  # ============================================================================
-  metabase:
-    image: ghcr.io/motherduckdb/metabase-duckdb:latest
-    container_name: acdp_metabase
+  postgres:
+    image: postgres:18.7-alpine3.23
+    container_name: acdp-postgres
+    profiles: ["core"]
     restart: unless-stopped
-    user: root
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-acdp}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-acdp_local_dev_only}
+      POSTGRES_DB: ${POSTGRES_DB:-acdp_app}
+    command:
+      - "postgres"
+      - "-c"
+      - "shared_buffers=128MB"
+      - "-c"
+      - "work_mem=4MB"
+      - "-c"
+      - "maintenance_work_mem=32MB"
+      - "-c"
+      - "max_connections=40"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: "0.50"
+
+  qdrant:
+    image: qdrant/qdrant:v1.13.4
+    container_name: acdp-qdrant
+    profiles: ["core"]
+    restart: unless-stopped
+    environment:
+      QDRANT__STORAGE__PERFORMANCE__MAX_SEARCH_THREADS: "2"
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/127.0.0.1/6333 && printf \"GET /healthz HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n\" >&3 && grep -q \"200 OK\" <&3'"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.75"
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: acdp-api
+    profiles: ["core"]
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      qdrant:
+        condition: service_healthy
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-acdp}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-acdp_local_dev_only}
+      POSTGRES_DB: ${POSTGRES_DB:-acdp_app}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "5432"
+      DUCKDB_DATABASE_PATH: /app/data/lakehouse/acdp.duckdb
+      QDRANT_URL: http://qdrant:6333
+      QDRANT_CLUSTER_ENDPOINT: ${QDRANT_CLUSTER_ENDPOINT:-}
+      QDRANT_API_KEY: ${QDRANT_API_KEY:-}
+      QDRANT_COLLECTION: ${QDRANT_COLLECTION:-acdp_competitions}
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-acdp-local-dev-secret-change-in-prod-32bytes}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000}
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data/lakehouse:/app/data/lakehouse:ro
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/health')\""]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 640M
+          cpus: "1.00"
+
+  web:
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile
+    container_name: acdp-web
+    profiles: ["core"]
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
+    environment:
+      INTERNAL_API_URL: http://api:8000
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+      NODE_OPTIONS: "--max-old-space-size=384"
     ports:
       - "3000:3000"
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.75"
+
+  metabase:
+    image: ghcr.io/motherduckdb/metabase-duckdb:0.63.17-duckdb1.5.6.0
+    container_name: acdp-metabase
+    profiles: ["bi"]
+    restart: unless-stopped
+    environment:
+      JAVA_TOOL_OPTIONS: "-Xmx768m -Xms256m"
+      MB_DB_FILE: /metabase-data/metabase.db
+      MB_ANON_TRACKING_ENABLED: "false"
+    ports:
+      - "3001:3000"
     volumes:
       - ./data/lakehouse:/data/lakehouse:ro
       - metabase_data:/metabase-data
-    environment:
-      - MB_DB_FILE=/metabase-data/metabase.db
-      - MB_ANON_TRACKING_ENABLED=false
-      - JAVA_OPTS=-XX:+UseG1GC -Xms256m -Xmx512m
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
+          cpus: "1.00"
 
-  # ============================================================================
-  # Prefect 3.x Server: Orchestration Dashboard & Pipeline State Tracking
-  # Web UI: http://localhost:4200
-  # ============================================================================
   prefect-server:
     image: prefecthq/prefect:3-python3.11
-    container_name: acdp_prefect
+    container_name: acdp-prefect
+    profiles: ["pipeline"]
     restart: unless-stopped
+    command: prefect server start --host 0.0.0.0
     ports:
       - "4200:4200"
-    command: prefect server start --host 0.0.0.0
     volumes:
       - prefect_data:/root/.prefect
     environment:
-      - PREFECT_SERVER_API_HOST=0.0.0.0
-      - PREFECT_UI_API_URL=http://localhost:4200/api
-
-  # ============================================================================
-  # Qdrant: Vector Database for RAG Regulation Copilot
-  # Web Dashboard & REST API: http://localhost:6333
-  # ============================================================================
-  qdrant:
-    image: qdrant/qdrant:latest
-    container_name: acdp_qdrant
-    restart: unless-stopped
-    ports:
-      - "6333:6333"
-      - "6334:6334" # gRPC
-    volumes:
-      - qdrant_data:/qdrant/storage
+      PREFECT_SERVER_API_HOST: 0.0.0.0
+      PREFECT_UI_API_URL: http://localhost:4200/api
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.50"
 
 volumes:
-  metabase_data:
-    driver: local
-  prefect_data:
-    driver: local
+  postgres_data:
   qdrant_data:
-    driver: local
+  metabase_data:
+  prefect_data:

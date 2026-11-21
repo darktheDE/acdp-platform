@@ -37,6 +37,14 @@ class AppConfig(BaseSettings):
         default="./data/lakehouse/acdp.duckdb",
         description="Path to local DuckDB lakehouse database file",
     )
+    duckdb_memory_limit: str = Field(
+        default="256MB",
+        description="Per-connection DuckDB memory cap for read-only API queries",
+    )
+    duckdb_threads: int = Field(
+        default=2,
+        description="Per-connection DuckDB thread cap for read-only API queries",
+    )
     usd_to_vnd_rate: int = Field(
         default=25400,
         description="Reference USD to VND exchange rate for Gold prize normalization",
@@ -93,19 +101,36 @@ class AppConfig(BaseSettings):
     # Vector Search (Qdrant)
     qdrant_host: str = Field(default="localhost")
     qdrant_port: int = Field(default=6333)
+    qdrant_url: str = Field(default="")
+    qdrant_cluster_endpoint: str = Field(default="")
     qdrant_api_key: str = Field(default="")
+    qdrant_collection: str = Field(default="acdp_competitions")
 
-    # LLM Providers
+    # LLM & Embedding Providers
+    ollama_base_url: str = Field(default="http://localhost:11434")
+    embedding_model: str = Field(default="qwen3-embedding:4b")
+    chat_model: str = Field(default="gemini-2.5-flash-lite")
+    llm_provider: str = Field(default="")
     openai_api_key: str = Field(default="")
     gemini_api_key: str = Field(default="")
 
     # Serving API & Auth (SPEC-0004)
+    api_host: str = Field(default="0.0.0.0")
+    api_port: int = Field(default=8000)
     jwt_secret_key: str = Field(default="acdp-local-dev-secret-change-in-prod-32bytes")
     jwt_algorithm: str = Field(default="HS256")
     access_token_expire_minutes: int = Field(default=15)
     refresh_token_expire_days: int = Field(default=7)
     cors_origins: str = Field(default="http://localhost:3000")
     internal_api_url: str = Field(default="http://localhost:8000")
+
+    def get_qdrant_url(self) -> str:
+        """Resolve Qdrant endpoint: Cloud endpoint first, then explicit URL, then host:port."""
+        if self.qdrant_cluster_endpoint:
+            return self.qdrant_cluster_endpoint
+        if self.qdrant_url:
+            return self.qdrant_url
+        return f"http://{self.qdrant_host}:{self.qdrant_port}"
 
     def get_database_url(self) -> str:
         """Build asyncpg SQLAlchemy connection URI for PostgreSQL 18 OLTP."""
