@@ -51,7 +51,7 @@
       "task_type": "Research & Theory",
       "is_no_code": false,
       "owner": "Hung & Duy",
-      "status": "todo",
+      "status": "done",
       "priority": "high",
       "problem_statement": "Hiện tại link cuộc thi đang lấy thủ công cho TLCN. Cần nghiên cứu xem Search Pattern trên Search Engine (Google, Serper, Tavily, DuckDuckGo, RSS/Sitemap) đã tối ưu chưa, có lựa chọn Free Tier nào tốt hơn không, trade-off ra sao để chuẩn hóa kỹ thuật cào chất lượng cao ở quy mô nhỏ.",
       "research_questions": [
@@ -62,7 +62,10 @@
         "Có ma trận so sánh ít nhất 4 phương pháp discovery trên Free Tier kèm chi phí/rate-limit/độ chính xác.",
         "Chốt kỹ thuật cào mẫu chất lượng cao cho quy mô TLCN."
       ],
-      "deliverables": ["docs/deliverables/TASK-ING-01-search-pattern-and-crawling-tradeoffs.md"],
+      "deliverables": [
+        "docs/deliverables/TASK-ING-01-search-pattern-and-crawling-tradeoffs.md",
+        "docs/deliverables/TASK-ING-01-search-pattern-and-crawling-tradeoffs-visual-dossier.html"
+      ],
       "notes": "Trích từ .scratchpad/22112026.md — ưu tiên giải quyết ở mức cơ bản trong TLCN.",
       "updated_at": "2026-11-22"
     },

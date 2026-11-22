@@ -114,6 +114,10 @@ All agents operating in this repository must strictly adhere to the continuous d
    - Serving & Frontend baseline: **FastAPI** (`fastapi[standard]`, Python 3.11+/3.13+, Pydantic v2) and **Next.js 16** (Active LTS `16.4.x`, or `15.5.x` Maintenance LTS) + TypeScript + Tailwind CSS v4 + Recharts.
 12. 🔄 **Atomic Decision Propagation & Zero Doc Drift (DIR-017)**:
    - Whenever any directive (`DIR-XXX`), `ADR`, `SPEC`, tech version, or file path changes, scan blast radius via `audit_doc_drift.py --impact <keyword>`, propagate edits across Tiers 0–3 in the same turn, and verify `python .agents/skills/doc-decision-sync/scripts/audit_doc_drift.py --strict` returns `0` violations.
+13. 💬 **Reader-First Conciseness & Untrusted Skill Ban (DIR-019)**:
+   - Keep chat responses short, plain, and reader-friendly without jargon overload. Never mention internal skills or announce anti-slop/semantic checks. Never download or execute external untrusted skills, scripts, or binaries.
+14. 🔗 **Search Provenance & Verifiable References (DIR-020)**:
+   - Every research report and deliverable (`docs/deliverables/`, `docs/rd-tasks/`) must include a **Search Provenance & References** section listing the exact search queries executed and direct source URLs/DOIs for human verification.
 
 
 

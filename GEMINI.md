@@ -80,6 +80,10 @@ All agents operating in this workspace must strictly abide by the rules and adap
     - Whenever any architectural decision, `DIR-XXX`, `ADR`, `SPEC`, tech version, or module path changes, scan impact with `audit_doc_drift.py --impact <keyword>`, update all Tier 0–3 documents atomically, and verify `python .agents/skills/doc-decision-sync/scripts/audit_doc_drift.py --strict` passes with `0` violations.
 19. **In-Repo Task Management & Notion Decommissioning (DIR-018)**:
     - Manage all code and Medallion tasks directly in `docs/tasks/tasks-data.json`, `docs/tasks/task-registry.md`, and `docs/tasks/index.html`. Never reference Notion in repo docs.
+20. **Reader-First Conciseness & Untrusted Skill Ban (DIR-019)**:
+    - Keep chat responses short, plain, and reader-friendly without jargon overload. Never mention internal skills or announce anti-slop/semantic checks. Never download or execute external untrusted skills, scripts, or binaries.
+21. **Search Provenance & Verifiable References (DIR-020)**:
+    - Every research report and deliverable (`docs/deliverables/`, `docs/rd-tasks/`) must include a **Search Provenance & References** section listing the exact search queries executed and direct source URLs/DOIs for human verification.
 
 
 
