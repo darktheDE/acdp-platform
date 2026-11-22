@@ -6,7 +6,7 @@
 
 ## 1. Skills Directory Overview
 
-Thư mục `.agents/skills/` chứa các gói kỹ năng chuyên biệt (Modular Agent Skills) được nạp theo cơ chế **Progressive Disclosure** (Nạp lũy tiến theo nhu cầu). Toàn bộ 11 kỹ năng trong kho lưu trữ đã được nâng cấp toàn diện và chứng nhận đạt chuẩn kỹ thuật:
+Thư mục `.agents/skills/` chứa các gói kỹ năng chuyên biệt (Modular Agent Skills) được nạp theo cơ chế **Progressive Disclosure** (Nạp lũy tiến theo nhu cầu). Toàn bộ 12 kỹ năng trong kho lưu trữ đã được nâng cấp toàn diện và chứng nhận đạt chuẩn kỹ thuật:
 👉 **[`docs/frameworks/AGENT_SKILL_ENGINEERING_SPEC.md`](../../docs/frameworks/AGENT_SKILL_ENGINEERING_SPEC.md)**
 
 ---
@@ -26,6 +26,7 @@ Thư mục `.agents/skills/` chứa các gói kỹ năng chuyên biệt (Modular
 | **`visual-dossier-reporter`** | [`visual-dossier-reporter/`](./visual-dossier-reporter/)<br>• `scripts/validate_visual_report.py`<br>• `resources/template.html` | Tạo báo cáo trực quan HTML đơn tệp (Tailwind CSS, Mermaid.js, Chart.js) theo cấu trúc 3 tầng (DIR-014). | ✅ **ĐẠT CHUẨN (10/10)**<br>Script test PASS |
 | **`ollama-bridge`** | [`ollama-bridge/`](./ollama-bridge/)<br>• `scripts/validate_ollama.py`<br>• `references/ollama_hardware_and_models.md`<br>• `examples/chatbot_ollama_integration.py` | Điều phối Ollama local/cloud, embedding (`qwen3-embedding:4b`, `bge-m3`), cấu hình endpoint OpenAI-compatible cho RAG Chatbot MVP (`3_chatbot_mvp.py`). | ✅ **ĐẠT CHUẨN (10/10)**<br>Script test PASS |
 | **`doc-decision-sync`** | [`doc-decision-sync/`](./doc-decision-sync/)<br>• `scripts/audit_doc_drift.py`<br>• `references/decision_rules.json`<br>• `references/decision_dependency_graph.md`<br>• `examples/sample_drift_audit_report.md` | Đồng bộ quyết định (`DIR-XXX`, `ADR`, `SPEC`) nguyên tử qua 4 tầng tài liệu, quét vùng ảnh hưởng (`--impact`), kiểm tra trôi dạt sự thật và liên kết nội bộ (`DIR-017`). | ✅ **ĐẠT CHUẨN (10/10)**<br>Script test PASS |
+| **`repo-task-manager`** | [`repo-task-manager/`](./repo-task-manager/)<br>• `scripts/sync_tasks.py`<br>• `scripts/test_sync_tasks.py`<br>• `references/task_schema.md`<br>• `examples/sample_task_entry.json` | Quản lý task kỹ thuật trực tiếp trong repo (`tasks-data.json`, `task-registry.md`, `index.html`) và đồng bộ liên kết deliverables (`DIR-018`). | ✅ **ĐẠT CHUẨN (10/10)**<br>Script test PASS |
 
 
 ---

@@ -1,6 +1,6 @@
    # DELIVERABLE: Business Requirements, Technical Feasibility, and Architectural Review (T01 Review)
 
-   - **Notion Task ID**: `NT-013`
+   - **Task ID**: `NT-013`
    - **Related Sprint**: Sprint 01 (Week 1–Week 3: Foundation, Harness & Ingestion Design)
    - **Primary Owner**: Do Kien Hung & Nguyen Van Quang Duy
    - **Date Completed**: 2026-09-11

@@ -1,25 +1,25 @@
-# Notion Deliverables & Research Results Repository
+# Project Deliverables & Research Results Repository
 
-This directory serves as the centralized repository for **deliverables, research findings, technical spikes, and experiment results** produced by the team (Do Kien Hung & Nguyen Van Quang Duy), corresponding directly to task boards maintained on **Notion**.
+This directory serves as the centralized repository for **deliverables, research findings, technical spikes, and experiment results** produced by the team (Do Kien Hung & Nguyen Van Quang Duy), linked directly to the **In-Repo Task Registry** (`DIR-018`).
 
 ---
 
-## Workflow: Connecting Notion to Repository Deliverables
+## Workflow: Connecting In-Repo Tasks to Deliverables
 
 ```
 ┌─────────────────────────┐          ┌───────────────────────────────────┐
-│   NOTION TASK BOARD     │          │    GIT REPOSITORY DELIVERABLES    │
-│  Task ID: NT-012        │ ───────> │  File: docs/deliverables/         │
-│  Title: Crawl4AI Spike  │          │        NT-012-crawl4ai-spike.md   │
+│  IN-REPO TASK REGISTRY  │          │    GIT REPOSITORY DELIVERABLES    │
+│  Task ID: TASK-ING-01   │ ───────> │  File: docs/deliverables/         │
+│  Portal: index.html     │          │        TASK-ING-01-[slug].md      │
 │  Owner: Hung / Duy      │          │  Status: Verified & Versioned     │
 └─────────────────────────┘          └───────────────────────────────────┘
 ```
 
-1. **Task Execution on Notion**: When a research or engineering task is executed on Notion (e.g. *Literature analysis*, *Tech stack benchmarking*, *UI prototype review*, *Prompt engineering experiments*), record findings using [`0000-deliverable-template.md`](./0000-deliverable-template.md).
-2. **File Naming Standard**: Name deliverable files with their corresponding Notion Task ID:
-   `docs/deliverables/[NOTION_TASK_ID]-[short-kebab-slug].md`
-   *(Example: `NT-001-crawling-feasibility-study.md`)*.
-3. **Master Ledger Update**: Add an entry into the master tracking table in [`docs/tasks/notion-task-mapping.md`](../tasks/notion-task-mapping.md).
+1. **Task Execution**: When a research or engineering task is executed, record findings using [`0000-deliverable-template.md`](./0000-deliverable-template.md).
+2. **File Naming Standard**: Name deliverable files with their corresponding Task ID:
+   `docs/deliverables/[TASK_ID]-[short-kebab-slug].md`
+   *(Example: `TASK-ING-01-search-pattern-and-crawling-tradeoffs.md`)*.
+3. **Master Ledger Update**: Add or update the entry in [`docs/tasks/tasks-data.json`](../tasks/tasks-data.json) and run `uv run python .agents/skills/repo-task-manager/scripts/sync_tasks.py --sync` to update [`docs/tasks/task-registry.md`](../tasks/task-registry.md) and [`docs/tasks/index.html`](../tasks/index.html).
 
 ---
 

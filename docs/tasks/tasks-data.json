@@ -1,0 +1,424 @@
+{
+  "version": "1.0.0",
+  "project": "ACDP (Academic Competition Discovery Platform)",
+  "last_updated": "2026-11-22",
+  "cycles": [
+    {"id": "Cycle 01", "name": "Foundation, R&D & Governance (W1-W3)", "scope": "TLCN (Phase 1)", "goal": "Establish academic grounding, competitor benchmarks, ADR-0001, and multi-agent harness."},
+    {"id": "Cycle 02", "name": "Bronze & Silver Ingestion MVP (W4-W9)", "scope": "TLCN (Phase 1)", "goal": "Validate Crawl4AI to Cloudflare R2 Bronze and Instructor Pydantic v2 Silver extraction."},
+    {"id": "Cycle 03", "name": "Gold Analytics & RAG Baseline (W10-W11)", "scope": "TLCN (Phase 1)", "goal": "Materialize DuckDB analytics and Gradio RAG chatbot MVP."},
+    {"id": "Cycle 04", "name": "Web & Gold Architecture Inception (W11-W12)", "scope": "TLCN (Phase 1)", "goal": "Benchmark 2026-2027 stack and author SPEC-0003..0006."},
+    {"id": "Cycle 05", "name": "Full-Stack Web & Serving API (W12-W13)", "scope": "TLCN (Phase 1)", "goal": "Implement Docker core profile, FastAPI + PG18 OLTP, DuckDB RO, and Next.js 16 portal."},
+    {"id": "Cycle 06", "name": "Medallion Theory & Justification Audit", "scope": "TLCN (Phase 1)", "goal": "Establish rigorous theoretical justification for Search/Crawl, Bronze purity, Silver DE vs LLM, and Gold Kimball Star Schema."},
+    {"id": "Cycle 07", "name": "Cloud-Native Free-Tier Unification", "scope": "TLCN -> KLTN", "goal": "Eliminate hybrid local/cloud friction: unify Qdrant Cloud, clarify Metabase role, and design 100% Cloud Free-Tier architecture."},
+    {"id": "Cycle 08", "name": "Student Profile, Non-AI Team Builder & RAG Fit", "scope": "TLCN (Phase 1)", "goal": "Deliver /profile Mini-CV, OLTP team creation/joining, Advisor Pitch One-Pager screen, and personalized RAG."},
+    {"id": "Cycle 09", "name": "KLTN Automation & Notification", "scope": "KLTN (Phase 2)", "goal": "Automate discovery/crawling via GitHub Actions and deploy new-contest email notifications."},
+    {"id": "Cycle 10", "name": "KLTN Branding, Community & No-Code Ops", "scope": "KLTN (Phase 2)", "goal": "Roll out media branding, Fanpage, and external No-Code feedback/ticketing platform."}
+  ],
+  "tasks": [
+    {"id": "NT-001", "title": "Thesis Registration Form & Topic Proposal Formulation", "cycle": "Cycle 01", "scope": "TLCN (Phase 1)", "layer": "Academic & Ops", "task_type": "Academic", "is_no_code": false, "owner": "Hung & Duy", "status": "done", "priority": "high", "problem_statement": "Formalize TLCN topic registration.", "deliverables": ["docs/academic/DangKy_DeTai_TLCN.md"], "updated_at": "2026-09-15"},
+    {"id": "NT-002", "title": "Scientific Research Proposal (NCKH) Manuscript Drafting", "cycle": "Cycle 01", "scope": "TLCN (Phase 1)", "layer": "Academic & Ops", "task_type": "Academic", "is_no_code": false, "owner": "Hung & Duy", "status": "done", "priority": "high", "problem_statement": "Draft NCKH scientific proposal.", "deliverables": ["docs/academic/Proposal_NCKH_TLCN.md"], "updated_at": "2026-09-15"},
+    {"id": "NT-003", "title": "Proposal Defense Presentation Deck Construction", "cycle": "Cycle 01", "scope": "TLCN (Phase 1)", "layer": "Academic & Ops", "task_type": "Academic", "is_no_code": false, "owner": "Hung & Duy", "status": "done", "priority": "high", "problem_statement": "Build HTML defense slides.", "deliverables": ["docs/academic/Slide_Proposal_TLCN.html"], "updated_at": "2026-09-15"},
+    {"id": "NT-004", "title": "Literature Review & SOTA Matrix Synthesis", "cycle": "Cycle 01", "scope": "TLCN (Phase 1)", "layer": "Academic & Ops", "task_type": "Research & Theory", "is_no_code": false, "owner": "Hung", "status": "done", "priority": "high", "problem_statement": "Synthesize SOTA literature.", "deliverables": ["docs/academic/literature-review.md"], "updated_at": "2026-09-15"},
+    {"id": "NT-005", "title": "BibTeX Citation Library Setup", "cycle": "Cycle 01", "scope": "TLCN (Phase 1)", "layer": "Academic & Ops", "task_type": "Academic", "is_no_code": false, "owner": "Duy", "status": "done", "priority": "medium", "problem_statement": "Establish central BibTeX library.", "deliverables": ["docs/academic/references.bib"], "updated_at": "2026-09-15"},
+    {"id": "NT-006", "title": "Platform Competitor Benchmarking (Devpost, Unstop)", "cycle": "Cycle 01", "scope": "TLCN (Phase 1)", "layer": "Academic & Ops", "task_type": "Research & Theory", "is_no_code": false, "owner": "Hung", "status": "done", "priority": "medium", "problem_statement": "Benchmark global competition platforms.", "deliverables": ["docs/research/competitor-benchmarks.md"], "updated_at": "2026-09-15"},
+    {"id": "NT-007", "title": "Foundational Architecture Decision Formulation (ADR-0001)", "cycle": "Cycle 01", "scope": "TLCN (Phase 1)", "layer": "Cloud & Infra", "task_type": "Architecture", "is_no_code": false, "owner": "Hung & Duy", "status": "done", "priority": "high", "problem_statement": "Lock foundational Medallion + RAG stack.", "deliverables": ["docs/adr/0001-medallion-lakehouse-and-rag-stack.md"], "updated_at": "2026-09-15"},
+    {"id": "NT-008", "title": "Multi-Agent Harness & Skills Suite Deployment", "cycle": "Cycle 01", "scope": "TLCN (Phase 1)", "layer": "Academic & Ops", "task_type": "Engineering", "is_no_code": false, "owner": "Hung & Duy", "status": "done", "priority": "high", "problem_statement": "Deploy AGENTS.md and modular skills.", "deliverables": ["AGENTS.md", ".agents/skills/README.md"], "updated_at": "2026-09-15"},
+    {"id": "NT-009", "title": "On-Demand Crawl4AI Feasibility Spike on Curated Competitions & R2 Upload", "cycle": "Cycle 02", "scope": "TLCN (Phase 1)", "layer": "Bronze", "task_type": "Engineering", "is_no_code": false, "owner": "Hung & Duy", "status": "done", "priority": "high", "problem_statement": "Prove Crawl4AI + R2 ingestion feasibility.", "deliverables": ["src/acdp/1_crawl_to_bronze.py", "data/raw/markdown"], "updated_at": "2026-10-15"},
+    {"id": "NT-010", "title": "Pydantic Event Schema & Lean Extraction Spec (SPEC-0002)", "cycle": "Cycle 02", "scope": "TLCN (Phase 1)", "layer": "Silver", "task_type": "Architecture", "is_no_code": false, "owner": "Hung & Duy", "status": "done", "priority": "high", "problem_statement": "Define Silver Pydantic v2 contracts.", "deliverables": ["docs/specs/0002-data-ingestion-and-schema-spec.md", "src/acdp/schemas.py"], "updated_at": "2026-10-15"},
+    {"id": "NT-011", "title": "Bronze-to-Silver LLM Extraction & DuckDB Gold OLAP Querying", "cycle": "Cycle 03", "scope": "TLCN (Phase 1)", "layer": "Silver", "task_type": "Engineering", "is_no_code": false, "owner": "Hung & Duy", "status": "done", "priority": "high", "problem_statement": "Implement Instructor extraction and DuckDB queries.", "deliverables": ["src/acdp/2_instruction.py", "src/acdp/4_analytics_gold.py"], "updated_at": "2026-11-08"},
+    {"id": "NT-012", "title": "Hybrid Search (BM25 + Qdrant) RAG Prototype & Ragas Scorecard", "cycle": "Cycle 03", "scope": "TLCN (Phase 1)", "layer": "Serving & Web", "task_type": "Engineering", "is_no_code": false, "owner": "Hung & Duy", "status": "in_progress", "priority": "high", "problem_statement": "Evaluate RAG chatbot MVP with Ragas.", "deliverables": ["src/acdp/3_chatbot_mvp.py", "docs/experiments/0001-rag-baseline-evaluation.md"], "updated_at": "2026-11-15"},
+    {"id": "NT-013", "title": "Business Requirements, Technical Feasibility & Architectural Review (T01)", "cycle": "Cycle 01", "scope": "TLCN (Phase 1)", "layer": "Discovery", "task_type": "Research & Theory", "is_no_code": false, "owner": "Hung & Duy", "status": "done", "priority": "high", "problem_statement": "Resolve 5 business dilemmas.", "deliverables": ["docs/deliverables/NT-013-business-technical-feasibility-review.md"], "updated_at": "2026-09-11"},
+    {"id": "NT-014", "title": "Academic Competition Landscape Survey & Ingestion Scaling Roadmap (T02)", "cycle": "Cycle 01", "scope": "TLCN (Phase 1)", "layer": "Discovery", "task_type": "Research & Theory", "is_no_code": false, "owner": "Hung & Duy", "status": "done", "priority": "high", "problem_statement": "Survey competition landscape and 4-pillar ingestion.", "deliverables": ["docs/deliverables/NT-014-competition-landscape-survey.md"], "updated_at": "2026-09-11"},
+    {"id": "NT-017", "title": "Problem Formulation & Thesis Introduction Drafting (T08_v2)", "cycle": "Cycle 01", "scope": "TLCN (Phase 1)", "layer": "Academic & Ops", "task_type": "Academic", "is_no_code": false, "owner": "Hung & Duy", "status": "done", "priority": "medium", "problem_statement": "Draft Chapter 1 thesis introduction.", "deliverables": ["docs/rd-tasks/T08_v2.md"], "updated_at": "2026-09-20"},
+    {"id": "NT-018", "title": "Bronze Layer Storage & Open Table Format Tech Stack Evaluation (T13)", "cycle": "Cycle 02", "scope": "TLCN (Phase 1)", "layer": "Bronze", "task_type": "Research & Theory", "is_no_code": false, "owner": "Hung & Duy", "status": "done", "priority": "high", "problem_statement": "Evaluate Object Storage & Open Table Formats.", "deliverables": ["docs/deliverables/NT-018-bronze-storage-and-table-format-evaluation.md"], "updated_at": "2026-09-27"},
+    {"id": "NT-019", "title": "Bronze Lakehouse Engine Implementation & Lean Refactoring", "cycle": "Cycle 02", "scope": "TLCN (Phase 1)", "layer": "Bronze", "task_type": "Engineering", "is_no_code": false, "owner": "Hung & Duy", "status": "done", "priority": "high", "problem_statement": "Remove zstandard and legacy lakehouse/.", "deliverables": ["src/acdp/1_crawl_to_bronze.py"], "updated_at": "2026-10-31"},
+    {"id": "NT-020", "title": "Silver Layer Competition Schema & Data Contracts Implementation", "cycle": "Cycle 02", "scope": "TLCN (Phase 1)", "layer": "Silver", "task_type": "Engineering", "is_no_code": false, "owner": "Hung & Duy", "status": "done", "priority": "high", "problem_statement": "Implement Pydantic v2 Silver schema.", "deliverables": ["src/acdp/schemas.py"], "updated_at": "2026-10-31"},
+    {"id": "NT-021", "title": "Comprehensive FIT-HCMUTE Specialized Topic Project Report Manuscript", "cycle": "Cycle 03", "scope": "TLCN (Phase 1)", "layer": "Academic & Ops", "task_type": "Academic", "is_no_code": false, "owner": "Hung & Duy", "status": "in_progress", "priority": "high", "problem_statement": "Write complete TLCN thesis manuscript.", "deliverables": ["docs/academic/BaoCao_TieuLuan_ChuyenNganh_KTDL.md"], "updated_at": "2026-11-15"},
+    {"id": "NT-022", "title": "Lakehouse Cloudflare R2 Sync Technical Guide", "cycle": "Cycle 02", "scope": "TLCN (Phase 1)", "layer": "Bronze", "task_type": "Engineering", "is_no_code": false, "owner": "Hung & Duy", "status": "done", "priority": "medium", "problem_statement": "Document Cloudflare R2 sync setup.", "deliverables": ["docs/deliverables/HUONG_DAN_MIGRATE_R2_LAKEHOUSE.md"], "updated_at": "2026-10-20"},
+    {"id": "NT-023", "title": "Web & Gold Tech Stack Benchmarking (2026-2027 LTS Matrix)", "cycle": "Cycle 04", "scope": "TLCN (Phase 1)", "layer": "Serving & Web", "task_type": "Research & Theory", "is_no_code": false, "owner": "Hung & Duy", "status": "done", "priority": "high", "problem_statement": "Benchmark Next.js 16, FastAPI, PG18, DuckDB.", "deliverables": ["docs/rd-tasks/T14_web_and_gold_stack_evaluation.md"], "updated_at": "2026-11-15"},
+    {"id": "NT-024", "title": "Gold Layer Kimball Star Schema & Analytical Data Marts Design", "cycle": "Cycle 04", "scope": "TLCN (Phase 1)", "layer": "Gold", "task_type": "Architecture", "is_no_code": false, "owner": "Hung & Duy", "status": "done", "priority": "high", "problem_statement": "Design 4 dim, 3 fact, 2 bridge, 6 mart.", "deliverables": ["docs/specs/0003-gold-dimensional-modeling-spec.md"], "updated_at": "2026-11-15"},
+    {"id": "NT-025", "title": "FastAPI Serving Gateway, PostgreSQL 18 OLTP & Spec-Driven OpenAPI Contract", "cycle": "Cycle 04", "scope": "TLCN (Phase 1)", "layer": "Serving & Web", "task_type": "Architecture", "is_no_code": false, "owner": "Hung & Duy", "status": "done", "priority": "high", "problem_statement": "Specify FastAPI + PG18 OLTP + OpenAPI 3.1.", "deliverables": ["docs/specs/0004-serving-api-and-oltp-spec.md"], "updated_at": "2026-11-15"},
+    {"id": "NT-026", "title": "Frontend Brand Identity (SVG Logo), WCAG 2.2 Color Tokens & UI/UX Spec", "cycle": "Cycle 04", "scope": "TLCN (Phase 1)", "layer": "Serving & Web", "task_type": "Architecture", "is_no_code": false, "owner": "Hung & Duy", "status": "done", "priority": "high", "problem_statement": "Design SVG Logo and Tailwind v4 tokens.", "deliverables": ["docs/specs/0005-frontend-design-system-and-ux-spec.md"], "updated_at": "2026-11-15"},
+    {"id": "NT-027", "title": "Docker Infrastructure, Version Pinning & 16GB RAM Resource Budget", "cycle": "Cycle 04", "scope": "TLCN (Phase 1)", "layer": "Cloud & Infra", "task_type": "Architecture", "is_no_code": false, "owner": "Hung & Duy", "status": "done", "priority": "high", "problem_statement": "Pin Docker tags and cap core RAM <= 2.0 GB.", "deliverables": ["docs/specs/0006-docker-infrastructure-and-resource-spec.md"], "updated_at": "2026-11-15"},
+    {"id": "NT-028", "title": "4-Tier Testing Strategy, 8 Edge Cases & Manual Test / CLI Playbook", "cycle": "Cycle 04", "scope": "TLCN (Phase 1)", "layer": "Serving & Web", "task_type": "Architecture", "is_no_code": false, "owner": "Hung & Duy", "status": "done", "priority": "high", "problem_statement": "Standardize 4-tier testing and 8 edge cases.", "deliverables": ["docs/tasks/sprint-web-01-research-plan.md"], "updated_at": "2026-11-15"},
+    {"id": "NT-029", "title": "Web Sprint 02 Full-Stack Implementation (Docker, FastAPI + PG18, Next.js 16)", "cycle": "Cycle 05", "scope": "TLCN (Phase 1)", "layer": "Serving & Web", "task_type": "Engineering", "is_no_code": false, "owner": "Hung", "status": "done", "priority": "high", "problem_statement": "Implement full-stack Web Portal & Serving API.", "deliverables": ["src/acdp/api", "apps/web", "docker-compose.yml"], "updated_at": "2026-11-21"},
+    {
+      "id": "TASK-ING-01",
+      "title": "Nghiên cứu Search Pattern & Kỹ thuật Cào Tối ưu trên Free Tier (Scale nhỏ)",
+      "cycle": "Cycle 06",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Discovery",
+      "task_type": "Research & Theory",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "high",
+      "problem_statement": "Hiện tại link cuộc thi đang lấy thủ công cho TLCN. Cần nghiên cứu xem Search Pattern trên Search Engine (Google, Serper, Tavily, DuckDuckGo, RSS/Sitemap) đã tối ưu chưa, có lựa chọn Free Tier nào tốt hơn không, trade-off ra sao để chuẩn hóa kỹ thuật cào chất lượng cao ở quy mô nhỏ.",
+      "research_questions": [
+        "Search Pattern trên Google/Search Engine có phải giải pháp tối ưu cho Free Tier không?",
+        "Trade-off giữa Google Dorking, Serper/Tavily Free Tier, DuckDuckGo và Sitemap/RSS là gì?"
+      ],
+      "acceptance_criteria": [
+        "Có ma trận so sánh ít nhất 4 phương pháp discovery trên Free Tier kèm chi phí/rate-limit/độ chính xác.",
+        "Chốt kỹ thuật cào mẫu chất lượng cao cho quy mô TLCN."
+      ],
+      "deliverables": ["docs/deliverables/TASK-ING-01-search-pattern-and-crawling-tradeoffs.md"],
+      "notes": "Trích từ .scratchpad/22112026.md — ưu tiên giải quyết ở mức cơ bản trong TLCN.",
+      "updated_at": "2026-11-22"
+    },
+    {
+      "id": "TASK-BRZ-01",
+      "title": "Kiểm định Lý thuyết Lớp Đồng (Bronze Purity: Raw HTML vs Pre-processed Markdown)",
+      "cycle": "Cycle 06",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Bronze",
+      "task_type": "Research & Theory",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "high",
+      "problem_statement": "Tại lớp Đồng đang dùng Crawl4AI cào theo trường, tiền xử lý rồi xuất ra file .md. Cần kiểm chứng xem việc lưu dữ liệu đã qua tiền xử lý tại lớp Đồng có đúng lý thuyết Medallion Architecture không.",
+      "research_questions": [
+        "Lớp Đồng chứa Markdown đã tiền xử lý của Crawl4AI có vi phạm nguyên lý Immutable Raw Landing không?",
+        "Nên giữ nguyên .md, hay lưu song song Raw HTML + Clean Markdown + HTTP Metadata?"
+      ],
+      "acceptance_criteria": [
+        "Có báo cáo đối chiếu lý thuyết Medallion (Databricks/Lakehouse papers) và quyết định thiết kế rõ ràng cho lớp Đồng."
+      ],
+      "deliverables": ["docs/deliverables/TASK-BRZ-01-bronze-raw-vs-markdown-justification.md"],
+      "notes": "Mọi quyết định phải có lý thuyết và căn cứ rõ ràng để bảo vệ trước Hội đồng.",
+      "updated_at": "2026-11-22"
+    },
+    {
+      "id": "TASK-SLV-01",
+      "title": "Bảo vệ Tính chất Data Engineering & Tối ưu Tỷ lệ Sử dụng LLM ở Lớp Bạc",
+      "cycle": "Cycle 06",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Silver",
+      "task_type": "Research & Theory",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "high",
+      "problem_statement": "Lớp Bạc hiện dùng Pydantic + LLM liên tục để bóc tách JSON/Parquet. Cần làm rõ việc phụ thuộc LLM liên tục có làm giảm đi tính chất của ngành Kỹ thuật Dữ liệu (DE) hay không, và thiết kế hướng kết hợp kỹ thuật DE tất định.",
+      "research_questions": [
+        "Việc dùng LLM liên tục ở Lớp Bạc có làm mờ vai trò kỹ thuật Data Engineering không?",
+        "Làm sao kết hợp Deterministic Parsing (JSON-LD/Schema.org, Regex, DOM) + Data Quality Rules với LLM Fallback?"
+      ],
+      "acceptance_criteria": [
+        "Xây dựng kiến trúc Hybrid DE + LLM Extraction có căn cứ khoa học và tỷ lệ fallback định lượng."
+      ],
+      "deliverables": ["docs/deliverables/TASK-SLV-01-hybrid-de-vs-llm-extraction-study.md"],
+      "notes": "",
+      "updated_at": "2026-11-22"
+    },
+    {
+      "id": "TASK-SLV-02",
+      "title": "Kiểm chứng Schema Lớp Bạc (Competition + PrizeTier) & Lưu trữ Parquet",
+      "cycle": "Cycle 06",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Silver",
+      "task_type": "Architecture",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "medium",
+      "problem_statement": "Kiểm chứng schema key-value cuộc thi và prizes ở Lớp Bạc đã thực sự đúng, đầy đủ và phục vụ mục tiêu cuối cùng của sản phẩm (Explorer, Ghép đội, Màn hình gửi Giảng viên, Analytics) hay chưa.",
+      "research_questions": [
+        "Schema Lớp Bạc hiện tại đã đáp ứng đủ dữ liệu cho sản phẩm cuối chưa?",
+        "Cách tổ chức lưu trữ Parquet ở Lớp Bạc đã hợp lý về mặt kỹ thuật chưa?"
+      ],
+      "acceptance_criteria": [
+        "Hoàn thành bảng đối soát Schema Coverage Matrix từ Silver -> Gold -> Serving UI."
+      ],
+      "deliverables": ["docs/deliverables/TASK-SLV-02-silver-schema-and-parquet-validation.md"],
+      "notes": "",
+      "updated_at": "2026-11-22"
+    },
+    {
+      "id": "TASK-GLD-01",
+      "title": "Phản biện & Bảo vệ Mô hình Lớp Vàng (Kimball Star Schema vs OBT / Alternatives)",
+      "cycle": "Cycle 06",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Gold",
+      "task_type": "Research & Theory",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "high",
+      "problem_statement": "Lớp Vàng đang lưu Parquet Kimball Star Schema (4 dim, 3 fact, 2 bridge, 6 mart). Cần kiểm chứng xem đã đúng chuẩn Kimball chưa, và liệu có bắt buộc phải dùng Kimball hay nên dùng loại schema khác (OBT, Data Vault) cho mục tiêu sản phẩm.",
+      "research_questions": [
+        "Thiết kế 4 dim, 3 fact, 2 bridge, 6 mart hiện tại đã tuân thủ đúng quy chuẩn Kimball Star Schema chưa?",
+        "So sánh Kimball Star Schema với One Big Table (OBT) ở quy mô hiện tại và lộ trình KLTN?"
+      ],
+      "acceptance_criteria": [
+        "Có hồ sơ kiểm định chuẩn Kimball (Grain, Surrogate Keys, Conformed Dimensions, Bridge Weight) và luận cứ bảo vệ."
+      ],
+      "deliverables": ["docs/deliverables/TASK-GLD-01-kimball-star-schema-audit-and-alternatives.md"],
+      "notes": "",
+      "updated_at": "2026-11-22"
+    },
+    {
+      "id": "TASK-CLD-01",
+      "title": "Đồng nhất Qdrant Cloud & Xác định Vai trò Qdrant Docker Local",
+      "cycle": "Cycle 07",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Cloud & Infra",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "high",
+      "problem_statement": "Duy đã có Qdrant Online (Qdrant Cloud) hoạt động, nên cần làm rõ Qdrant Docker trong docker-compose.yml đang làm gì và chuyển mặc định hoàn toàn sang Qdrant Cloud.",
+      "research_questions": [
+        "Có nên đưa Qdrant Docker vào profile dự phòng local-offline và dùng mặc định Qdrant Cloud?"
+      ],
+      "acceptance_criteria": [
+        "Cập nhật docker-compose.yml và config.py ưu tiên Qdrant Cloud, giảm RAM container core."
+      ],
+      "deliverables": ["docker-compose.yml", "src/acdp/config.py"],
+      "notes": "",
+      "updated_at": "2026-11-22"
+    },
+    {
+      "id": "TASK-CLD-02",
+      "title": "Phân định Ranh giới Vai trò giữa Web Dashboard và Metabase",
+      "cycle": "Cycle 07",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Cloud & Infra",
+      "task_type": "Architecture",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "medium",
+      "problem_statement": "Trên Web Portal đã có Dashboard phân tích bằng Recharts, nên cần làm rõ vai trò thực sự của Metabase là gì hoặc có nên loại bỏ hoàn toàn.",
+      "research_questions": [
+        "Vai trò của Metabase khi Web Portal đã có Dashboard là gì?"
+      ],
+      "acceptance_criteria": [
+        "Chốt quyết định chính thức trong T15 và đồng bộ tài liệu kiến trúc."
+      ],
+      "deliverables": ["docs/rd-tasks/T15_metabase_and_prefect_lightweight_architecture.md"],
+      "notes": "",
+      "updated_at": "2026-11-22"
+    },
+    {
+      "id": "TASK-CLD-03",
+      "title": "Kiến trúc Đồng bộ Full Cloud Free-Tier (Giải quyết Hybrid Local vs Cloud)",
+      "cycle": "Cycle 07",
+      "scope": "TLCN -> KLTN",
+      "layer": "Cloud & Infra",
+      "task_type": "Architecture",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "high",
+      "problem_statement": "Theo góp ý của Giảng viên, dữ liệu cuộc thi không quá bảo mật như doanh nghiệp nên để Hybrid (DuckDB + Metabase ở local kết hợp Cloud) sẽ khó quản lý và thiếu đồng bộ. Cần thiết kế kiến trúc đồng bộ lên Cloud Free Tier (Next.js, Supabase, TailwindCSS, R2, Cloudflare BGE-M3, Qdrant Cloud, Prefect/GitHub Actions).",
+      "research_questions": [
+        "Làm sao chuyển toàn bộ ngăn xếp sang Cloud Free Tier đồng bộ mà không vượt hạn mức miễn phí?"
+      ],
+      "acceptance_criteria": [
+        "Hoàn thành bản thiết kế kiến trúc Full Cloud Free-Tier kèm bảng quota và lộ trình chuyển đổi từ TLCN sang KLTN."
+      ],
+      "deliverables": ["docs/deliverables/TASK-CLD-03-full-cloud-free-tier-architecture.md"],
+      "notes": "",
+      "updated_at": "2026-11-22"
+    },
+    {
+      "id": "TASK-CLD-04",
+      "title": "Triển khai Kết nối Supabase OLTP & DuckDB Direct-on-R2 (s3://)",
+      "cycle": "Cycle 07",
+      "scope": "TLCN -> KLTN",
+      "layer": "Cloud & Infra",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung",
+      "status": "todo",
+      "priority": "medium",
+      "problem_statement": "Kết nối FastAPI/Next.js với Supabase PostgreSQL và cấu hình DuckDB đọc trực tiếp Gold Parquet trên Cloudflare R2.",
+      "research_questions": [
+        "Độ trễ truy vấn DuckDB httpfs qua R2 so với local SSD là bao nhiêu?"
+      ],
+      "acceptance_criteria": [
+        "API chạy thông suốt với Supabase và R2 không phụ thuộc ổ đĩa local."
+      ],
+      "deliverables": ["src/acdp/config.py", "src/acdp/api"],
+      "notes": "",
+      "updated_at": "2026-11-22"
+    },
+    {
+      "id": "TASK-SRV-01",
+      "title": "Xây dựng Trang Hồ sơ Cá nhân Sinh viên (/profile — Định dạng Mini-CV)",
+      "cycle": "Cycle 08",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Serving & Web",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung",
+      "status": "todo",
+      "priority": "high",
+      "problem_statement": "Khi tạo tài khoản, sinh viên cần trang /profile để điền MSSV, Email, ngành học, kỹ năng (Skills) và đính kèm CV làm cơ sở cho việc lập đội thi.",
+      "research_questions": [
+        "Schema bảng user_profiles trên OLTP cần những trường nào để đủ xuất ra màn hình gửi giảng viên?"
+      ],
+      "acceptance_criteria": [
+        "Người dùng tạo/cập nhật được /profile và lưu thành công vào PostgreSQL OLTP."
+      ],
+      "deliverables": ["apps/web/app/profile/page.tsx", "src/acdp/api"],
+      "notes": "",
+      "updated_at": "2026-11-22"
+    },
+    {
+      "id": "TASK-SRV-02",
+      "title": "Hệ thống Tạo Đội & Xin Tham Gia Đội trên từng Cuộc thi (Thuần OLTP — Không AI)",
+      "cycle": "Cycle 08",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Serving & Web",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung",
+      "status": "todo",
+      "priority": "high",
+      "problem_statement": "Giải quyết nhu cầu sinh viên thường phải đăng bài lên group học tập để tìm đồng đội: cho phép tạo đội và tham gia đội trực tiếp trên từng cuộc thi, lưu trên OLTP và không dùng AI.",
+      "research_questions": [
+        "Luồng duyệt/tham gia thành viên và giới hạn team_size_max từ Gold Layer hoạt động ra sao?"
+      ],
+      "acceptance_criteria": [
+        "Sinh viên tạo đội và tham gia đội trên /competitions/[key], lưu dữ liệu chuẩn ACID trên OLTP."
+      ],
+      "deliverables": ["apps/web/app/competitions", "src/acdp/api"],
+      "notes": "Không triển khai AI matchmaking ở tính năng này — thuần OLTP CRUD.",
+      "updated_at": "2026-11-22"
+    },
+    {
+      "id": "TASK-SRV-03",
+      "title": "Màn hình Tổng hợp Thông tin Cuộc thi & Đội thi (Team Summary để gửi Giảng viên)",
+      "cycle": "Cycle 08",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Serving & Web",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung",
+      "status": "todo",
+      "priority": "high",
+      "problem_statement": "Xuất ra 1 màn hình tổng hợp đầy đủ thông tin ngắn gọn về cuộc thi, danh sách thành viên và hồ sơ năng lực của họ để sinh viên đại diện dùng gửi mail xin giảng viên hướng dẫn hoặc tự liên hệ nhau.",
+      "research_questions": [
+        "Bố cục One-Pager nào giúp giảng viên nắm bắt nhanh thông tin đội và cuộc thi trong 30 giây?"
+      ],
+      "acceptance_criteria": [
+        "Có route /teams/[teamId] hiển thị thông tin cuộc thi + danh sách thành viên + kỹ năng/CV, hỗ trợ in/copy."
+      ],
+      "deliverables": ["apps/web/app/teams"],
+      "notes": "Việc gửi mail hoặc liên hệ trực tiếp do sinh viên tự thực hiện ngoài hệ thống.",
+      "updated_at": "2026-11-22"
+    },
+    {
+      "id": "TASK-SRV-04",
+      "title": "Nâng cấp RAG Chatbot Tư vấn Cuộc thi Phù hợp theo Hồ sơ Sinh viên",
+      "cycle": "Cycle 08",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Serving & Web",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Duy & Hung",
+      "status": "todo",
+      "priority": "medium",
+      "problem_statement": "Cho phép sinh viên hỏi AI Chatbot RAG các câu hỏi tư vấn cá nhân hóa như 'Cuộc thi nào phù hợp với tôi?' dựa trên ngữ cảnh cuộc thi và thông tin ngành học/kỹ năng.",
+      "research_questions": [
+        "Cách kết hợp ngữ cảnh /profile vào prompt RAG mà vẫn đảm bảo nguyên tắc Zero Hallucination (DIR-004)?"
+      ],
+      "acceptance_criteria": [
+        "Chatbot trả lời câu hỏi gợi ý cuộc thi phù hợp kèm trích dẫn URL chính thức."
+      ],
+      "deliverables": ["src/acdp/api/services/rag_service.py"],
+      "notes": "",
+      "updated_at": "2026-11-22"
+    },
+    {
+      "id": "TASK-ING-02",
+      "title": "Tự động hóa Khám phá & Cào Cuộc thi Định kỳ bằng GitHub Actions",
+      "cycle": "Cycle 09",
+      "scope": "KLTN (Phase 2)",
+      "layer": "Discovery",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "medium",
+      "problem_statement": "Tự động hóa hoàn toàn việc tìm kiếm và cào cuộc thi mới theo lịch định kỳ bằng GitHub Actions trong giai đoạn Khóa luận tốt nghiệp.",
+      "research_questions": [
+        "Cấu hình cron GitHub Actions và đẩy dữ liệu lên R2 + Qdrant Cloud an toàn qua Secrets?"
+      ],
+      "acceptance_criteria": [
+        "Workflow GitHub Actions chạy định kỳ thành công và cập nhật dữ liệu mới lên Cloud."
+      ],
+      "deliverables": [".github/workflows"],
+      "notes": "",
+      "updated_at": "2026-11-22"
+    },
+    {
+      "id": "TASK-SRV-05",
+      "title": "Hệ thống Thông báo & Mail Service Tự động khi có Cuộc thi Mới",
+      "cycle": "Cycle 09",
+      "scope": "KLTN (Phase 2)",
+      "layer": "Serving & Web",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung",
+      "status": "todo",
+      "priority": "medium",
+      "problem_statement": "Bổ sung thông báo người dùng và triển khai dịch vụ gửi email tự động khi hệ thống thu thập được cuộc thi mới.",
+      "research_questions": [
+        "Chọn Resend hay Cloudflare Email Workers Free Tier cho thông báo định kỳ?"
+      ],
+      "acceptance_criteria": [
+        "Gửi email thông báo tự động khi có bản ghi cuộc thi mới khớp đăng ký."
+      ],
+      "deliverables": ["src/acdp/api/services"],
+      "notes": "",
+      "updated_at": "2026-11-22"
+    },
+    {
+      "id": "TASK-OPS-01",
+      "title": "Triển khai Truyền thông Bài bản, Bộ Nhận diện Thương hiệu & Fanpage",
+      "cycle": "Cycle 10",
+      "scope": "KLTN (Phase 2)",
+      "layer": "Academic & Ops",
+      "task_type": "No-Code / External Integration",
+      "is_no_code": true,
+      "owner": "Duy & Hung",
+      "status": "todo",
+      "priority": "low",
+      "problem_statement": "Xây dựng truyền thông bài bản (Logo, Fanpage) để thu hút sinh viên sử dụng nền tảng trong giai đoạn KLTN.",
+      "research_questions": [],
+      "acceptance_criteria": [
+        "Hoàn thiện bộ nhận diện truyền thông và kênh Fanpage chính thức."
+      ],
+      "deliverables": ["docs/tasks/task-registry.md"],
+      "notes": "No-Code / Ops task.",
+      "updated_at": "2026-11-22"
+    },
+    {
+      "id": "TASK-OPS-02",
+      "title": "Nền tảng Quản lý Ticket & Phản hồi Người dùng (External No-Code Platform)",
+      "cycle": "Cycle 10",
+      "scope": "KLTN (Phase 2)",
+      "layer": "Academic & Ops",
+      "task_type": "No-Code / External Integration",
+      "is_no_code": true,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "low",
+      "problem_statement": "Quản lý ticket/feedback người dùng trong giai đoạn KLTN thông qua nền tảng ngoài (Google Forms hoặc Plane/external ticket form), không tự triển khai code hệ thống ticketing.",
+      "research_questions": [
+        "Sử dụng Google Forms hay Plane làm cổng tiếp nhận ticket/feedback gắn vào Web Portal?"
+      ],
+      "acceptance_criteria": [
+        "Thiết lập biểu mẫu tiếp nhận phản hồi trên nền tảng ngoài và gắn liên kết trên giao diện Web."
+      ],
+      "deliverables": ["docs/tasks/task-registry.md"],
+      "notes": "Marked as No-Code task: không viết code backend/frontend ticketing.",
+      "updated_at": "2026-11-22"
+    }
+  ]
+}

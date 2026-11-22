@@ -1,6 +1,6 @@
 # DELIVERABLE: [Short Title of Task Result]
 
-- **Notion Task ID**: `NT-XXXX`
+- **Task ID**: `TASK-XXXX`
 - **Related Sprint**: Sprint XX (Week XX)
 - **Primary Owner**: [Do Kien Hung / Nguyen Van Quang Duy]
 - **Date Completed**: [YYYY-MM-DD]
@@ -11,7 +11,7 @@
 
 ## 1. Executive Summary & Objective
 
-What specific question or objective did this task address on Notion? What was the primary finding or outcome?
+What specific question or objective did this task address? What was the primary finding or outcome?
 
 ---
 
@@ -37,5 +37,5 @@ How do these results influence the project's architecture, specs, or thesis writ
 ## 4. Associated Artifacts & Code Links
 
 - **Repository Files**: `[path/to/file](../../path/to/file)`
-- **External Notion Page**: [Notion URL / Page Title]
+- **Task Registry Entry**: [`docs/tasks/task-registry.md`](../tasks/task-registry.md)
 - **Raw Data / Logs**: (Location of cached logs or test datasets)

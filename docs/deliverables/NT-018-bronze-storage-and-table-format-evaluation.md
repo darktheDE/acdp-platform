@@ -1,6 +1,6 @@
 # DELIVERABLE: Đánh Giá & Tuyển Chọn Tech Stack Lớp Bronze (Object Storage & Open Table Format)
 
-- **Notion Task ID**: `NT-018`
+- **Task ID**: `NT-018`
 - **Related Sprint**: Sprint 01 (Week 03) / R&D Inception
 - **R&D Task**: [`T13.md`](../rd-tasks/T13.md)
 - **Primary Owner**: Nguyễn Văn Quang Duy (`@QuangDuyReal`) & Đỗ Kiến Hưng (`@darktheDE`)
@@ -14,7 +14,7 @@
 
 ## 1. Executive Summary & Objective
 
-### Tóm tắt cô đọng (Executive Summary dùng cho Notion)
+### Tóm tắt cô đọng (Executive Summary)
 > Nghiên cứu này đánh giá toàn diện các công nghệ lớp Bronze cho nền tảng ACDP theo nguyên tắc Tabula Rasa (DIR-011) nhằm tháo gỡ nghịch lý "Small-File Problem" từ hàng vạn trang web crawl và bảo đảm tính toàn vẹn dữ liệu (ACID, Auditability, Time-Travel) trên môi trường giới hạn 16GB RAM. Dựa trên các công trình hội nghị đỉnh cao (SIGMOD 2024 LST-Bench, VLDB 2025 Ursa, CIDR 2023 LHBench, OSDI 2010 Haystack), nhóm kết luận:
 > 1. **Về Object Storage**: Ở giai đoạn MVP/Dev cục bộ, sử dụng **Local POSIX Filesystem** hoặc **SeaweedFS** (Apache 2.0, kiến trúc Haystack đọc/ghi O(1) file nhỏ, RAM < 150MB) vượt trội hoàn toàn so với MinIO (bị rào cản AGPLv3 và ngốn 1–2GB RAM). Khi triển khai production đám mây, **Cloudflare R2** là giải pháp tối ưu nhờ chính sách **Zero-Egress Fees**.
 > 2. **Về Open Table Format**: **Delta Lake** (thực thi qua thư viện Rust `delta-rs` / `deltalake` 0.25+ và `delta-kernel-rs`) là lựa chọn khả thi nhất cho ACDP nhờ khả năng ghi, append, upsert và chạy `OPTIMIZE` (bin-packing) hoàn toàn không phụ thuộc JVM/Spark, tích hợp mượt mà với DuckDB 1.2+. Hơn nữa, tính năng **Delta UniForm** và tầng dịch siêu dữ liệu **Apache XTable (incubating 2026)** cho phép sinh tự động metadata **Apache Iceberg**, giúp hệ thống đạt mô hình *"Ghi nạp một lần bằng Python/Rust, đọc trên mọi engine"* mà không bị khóa chặt nhà cung cấp.

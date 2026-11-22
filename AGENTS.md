@@ -36,6 +36,7 @@ Detect user intent and activate the corresponding modular skill playbook:
 | **Mode 9: Visual Dossiers & HTML Reports** | [`.agents/skills/visual-dossier-reporter/SKILL.md`](./.agents/skills/visual-dossier-reporter/SKILL.md) | Single-File HTML reports, Tailwind/Mermaid/Chart dashboards |
 | **Mode 10: Open Models & Ollama** | [`.agents/skills/ollama-bridge/SKILL.md`](./.agents/skills/ollama-bridge/SKILL.md) | Ollama orchestration, local SLM/embedding, Cloud API bridge |
 | **Mode 11: Decision Sync & Doc Governance** | [`.agents/skills/doc-decision-sync/SKILL.md`](./.agents/skills/doc-decision-sync/SKILL.md) | 4-Tier decision propagation, drift & internal link audit |
+| **Mode 12: In-Repo Task Management** | [`.agents/skills/repo-task-manager/SKILL.md`](./.agents/skills/repo-task-manager/SKILL.md) | `tasks-data.json`, `task-registry.md`, `index.html` sync |
 
 
 *Implicit Intent & Auto-Activation*: Every skill in this repository must automatically activate based on the user's intent and prompt context. Never demand or expect the user to explicitly call skills by name.
@@ -43,12 +44,12 @@ Detect user intent and activate the corresponding modular skill playbook:
 
 ---
 
-## 3. Notion Task Deliverables Protocol
+## 3. In-Repo Task & Deliverables Management Protocol (`DIR-018`)
 
-The team coordinates daily work on **Notion**.
-1. Inspect [`docs/tasks/notion-task-mapping.md`](./docs/tasks/notion-task-mapping.md) for active task IDs (`NT-XXXX`).
+All code, Medallion architecture, and R&D tasks are managed directly inside the repository.
+1. Inspect [`docs/tasks/task-registry.md`](./docs/tasks/task-registry.md) or open [`docs/tasks/index.html`](./docs/tasks/index.html) for active task IDs (`TASK-*`, `NT-*`).
 2. Record research outputs, spikes, and UI previews under `docs/deliverables/` using [`docs/deliverables/0000-deliverable-template.md`](./docs/deliverables/0000-deliverable-template.md).
-3. Keep the master mapping ledger synchronized.
+3. Keep `docs/tasks/tasks-data.json`, `docs/tasks/task-registry.md`, and `docs/tasks/index.html` synchronized via `uv run python .agents/skills/repo-task-manager/scripts/sync_tasks.py --sync`.
 
 ---
 

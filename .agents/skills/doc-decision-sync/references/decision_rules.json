@@ -15,7 +15,8 @@
     "DIR-014",
     "DIR-015",
     "DIR-016",
-    "DIR-017"
+    "DIR-017",
+    "DIR-018"
   ],
   "scoped_directives": [
     "DIR-001",
@@ -113,6 +114,26 @@
         "trước đây"
       ],
       "message": "Legacy university name used without historical rename context; use 'Trường Đại học Công nghệ Kỹ thuật TP.HCM (HCM-UTE)' per DIR-001."
+    },
+    {
+      "id": "DRIFT-006",
+      "description": "In-Repo Task Management replaces Notion per DIR-018",
+      "targets": [
+        "AGENTS.md",
+        "GEMINI.md",
+        "CLAUDE.md",
+        "README.md",
+        "docs/**/*.md",
+        ".agents/skills/**/*.md"
+      ],
+      "pattern": "\\bNotion\\b|notion-task-mapping\\.md",
+      "exclude_if_line_contains": [
+        "Decommissioning",
+        "Phi-Notion",
+        "Never reference Notion",
+        "loại bỏ"
+      ],
+      "message": "Deprecated 'Notion' reference found; manage code tasks in docs/tasks/task-registry.md and docs/tasks/index.html per DIR-018."
     }
   ],
   "tier_classification": {

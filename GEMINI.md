@@ -31,8 +31,9 @@ All agents operating in this workspace must strictly abide by the rules and adap
    - Visual Dossiers & HTML Reports: `.agents/skills/visual-dossier-reporter/SKILL.md`
    - Ollama Orchestration: `.agents/skills/ollama-bridge/SKILL.md`
    - Decision Sync & Doc Governance: `.agents/skills/doc-decision-sync/SKILL.md`
+   - In-Repo Task Management: `.agents/skills/repo-task-manager/SKILL.md`
 
-3. **Notion Synchronization**: Record deliverables in `docs/deliverables/` and maintain `docs/tasks/notion-task-mapping.md`.
+3. **In-Repo Task Synchronization (`DIR-018`)**: Record deliverables in `docs/deliverables/` and maintain `docs/tasks/tasks-data.json`, `docs/tasks/task-registry.md`, and `docs/tasks/index.html`.
 4. **Skill Engineering Specification**: When creating or upgrading any skill, strictly adhere to [`docs/frameworks/AGENT_SKILL_ENGINEERING_SPEC.md`](./docs/frameworks/AGENT_SKILL_ENGINEERING_SPEC.md). Never create cosmetic or prompt-only skills; always provide structured frontmatter with negative triggers, deterministic scripts (`scripts/`), deep references (`references/`), and verification suites.
 5. **Git Policy (Read-Only Inspection Allowed)**:
    - Never execute mutating git commands (`git add`, `git commit`, `git push`, branch creation).
@@ -77,6 +78,8 @@ All agents operating in this workspace must strictly abide by the rules and adap
     - Serving & Frontend: **FastAPI** (`fastapi[standard]`, Python 3.11+/3.13+, Pydantic v2) + **Next.js 16** (Active LTS `16.4.x`, or `15.5.x` Maintenance LTS) + TypeScript + Tailwind CSS v4 + Recharts.
 18. **Atomic Decision Propagation & Zero Doc Drift (DIR-017)**:
     - Whenever any architectural decision, `DIR-XXX`, `ADR`, `SPEC`, tech version, or module path changes, scan impact with `audit_doc_drift.py --impact <keyword>`, update all Tier 0–3 documents atomically, and verify `python .agents/skills/doc-decision-sync/scripts/audit_doc_drift.py --strict` passes with `0` violations.
+19. **In-Repo Task Management & Notion Decommissioning (DIR-018)**:
+    - Manage all code and Medallion tasks directly in `docs/tasks/tasks-data.json`, `docs/tasks/task-registry.md`, and `docs/tasks/index.html`. Never reference Notion in repo docs.
 
 
 

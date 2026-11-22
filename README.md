@@ -50,7 +50,7 @@ acdp-platform/
 │   ├── assets/               # Architecture diagrams, figures, and static media
 │   ├── academic/             # TLCN report draft, registration & NCKH proposal
 │   ├── specs/                # Master SPEC.md & technical specs (SPEC-0001..0006)
-│   └── tasks/                # Active sprint context, Notion mapping & 15-week roadmap
+│   └── tasks/                # Active sprint context, In-Repo task registry (index.html) & 15-week roadmap
 ├── docker-compose.yml        # Docker profiles: core (Web+API+PG18+Qdrant), bi (Metabase)
 ├── Dockerfile.api            # Slim FastAPI production image (985 MB)
 ├── openapi.json              # Exported OpenAPI 3.1 contract for Frontend codegen

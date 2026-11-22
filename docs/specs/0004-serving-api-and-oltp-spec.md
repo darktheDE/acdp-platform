@@ -1,6 +1,6 @@
 # SPEC-0004: FastAPI Serving Gateway, PostgreSQL 18 OLTP & OpenAPI Contract
 
-> **Task ID**: `TASK-W103` | **Notion Mapping**: [`NT-025`](../tasks/notion-task-mapping.md)
+> **Task ID**: `TASK-W103` | **Task Registry**: [`NT-025`](../tasks/task-registry.md)
 > **Status**: Implemented (Web Sprint 02)
 > **Dependencies**: [`SPEC-0003`](./0003-gold-dimensional-modeling-spec.md), [`T14`](./../rd-tasks/T14_web_and_gold_stack_evaluation.md)
 > **Target Modules (Sprint 02 Implementation)**: `src/acdp/api/`, `apps/web/types/api.d.ts`
