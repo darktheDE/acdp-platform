@@ -100,3 +100,89 @@ async def test_rag_chat_persistence_ungrounded_and_outage(api_client: AsyncClien
             json={"message": "Test timeout"},
         )
     assert r3.status_code == 503
+
+
+def test_cloudflare_bge_m3_rag_pipeline_and_config(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Verify RAG service uses Cloudflare BGE-M3 (1024d), acdp_competitions_bge_m3, and gemini-3.5-flash-lite."""
+    from types import SimpleNamespace
+    from unittest.mock import MagicMock
+
+    import httpx
+
+    from acdp.api.services import rag_service
+    from acdp.config import AppConfig
+
+    cfg = AppConfig(
+        _env_file=None,
+        aws_endpoint_url="https://acc999.r2.cloudflarestorage.com",
+        cloudflare_api_token="cf-test-token",
+        qdrant_collection="acdp_competitions",
+        embedding_model="qwen3-embedding:4b",
+        llm_provider="google/gemma-4-26b-a4b-it",
+    )
+    assert cfg.get_cloudflare_account_id() == "acc999"
+    assert cfg.get_qdrant_collection() == "acdp_competitions_bge_m3"
+    assert cfg.get_embedding_model() == "@cf/baai/bge-m3"
+    assert cfg.get_chat_model() == "gemini-3.5-flash-lite"
+
+    http_calls: list[tuple[str, dict]] = []
+
+    def fake_post(url: str, headers=None, json=None):
+        http_calls.append((url, json))
+        return MagicMock(
+            status_code=200,
+            raise_for_status=lambda: None,
+            json=lambda: {"success": True, "errors": [], "result": {"data": [[0.15] * 1024]}},
+        )
+
+    fake_http = MagicMock()
+    fake_http.post.side_effect = fake_post
+    embedder = rag_service.CloudflareBgeM3Embedder(
+        account_id="acc999",
+        api_token="cf-test-token",
+        http_client=fake_http,
+    )
+
+    fake_qdrant = MagicMock()
+    fake_qdrant.query_points.return_value = SimpleNamespace(
+        points=[
+            SimpleNamespace(
+                payload={
+                    "page_content": "Giải nhất trị giá $10,000 tiền mặt.",
+                    "metadata": {
+                        "domain": "www.vietnamaichallenge.com",
+                        "source_url": "https://www.vietnamaichallenge.com",
+                        "crawl_date": "2026-11-21",
+                    },
+                }
+            )
+        ]
+    )
+
+    fake_genai = MagicMock()
+    fake_genai.models.generate_content.return_value = SimpleNamespace(
+        text="Giải nhất là $10,000 (Nguồn: https://www.vietnamaichallenge.com)."
+    )
+
+    monkeypatch.setattr(rag_service, "_get_embeddings", lambda: embedder)
+    monkeypatch.setattr(rag_service, "_get_qdrant", lambda: fake_qdrant)
+    monkeypatch.setattr(rag_service, "_get_genai", lambda: fake_genai)
+    monkeypatch.setattr(rag_service, "settings", cfg)
+
+    res = rag_service._sync_query_rag("Giải thưởng Vietnam AI Challenge là bao nhiêu?")
+    assert res.grounded is True
+    assert len(res.citations) == 1
+    assert res.citations[0].domain == "www.vietnamaichallenge.com"
+    assert http_calls[0][0] == "https://api.cloudflare.com/client/v4/accounts/acc999/ai/run/@cf/baai/bge-m3"
+    assert http_calls[0][1]["truncate_inputs"] is True
+    assert fake_qdrant.query_points.call_args.kwargs["collection_name"] == "acdp_competitions_bge_m3"
+    assert len(fake_qdrant.query_points.call_args.kwargs["query"]) == 1024
+    assert fake_genai.models.generate_content.call_args.kwargs["model"] == "gemini-3.5-flash-lite"
+
+    # Verify HTTP 401 maps to RagUnavailableError
+    req = httpx.Request("POST", embedder.endpoint_url)
+    bad_http = MagicMock()
+    bad_http.post.return_value = httpx.Response(401, request=req, text="Unauthorized")
+    bad_embedder = rag_service.CloudflareBgeM3Embedder("acc999", "bad-tok", http_client=bad_http)
+    with pytest.raises(rag_service.RagUnavailableError):
+        bad_embedder.embed_query("test")

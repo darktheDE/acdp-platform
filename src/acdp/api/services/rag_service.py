@@ -1,12 +1,14 @@
-"""Lazy, non-blocking RAG Copilot service over Qdrant + Ollama/Gemini (SPEC-0004 §3.3)."""
+"""Lazy, non-blocking RAG Copilot service over Qdrant + Cloudflare BGE-M3 + Gemini (SPEC-0004 §3.3)."""
 
 from __future__ import annotations
 
 import asyncio
+import os
 import time
 from dataclasses import dataclass
 from typing import Any
 
+import httpx
 from qdrant_client import QdrantClient
 from qdrant_client.http.models import FieldCondition, Filter, MatchValue
 
@@ -23,12 +25,12 @@ Quy tắc bắt buộc:
 5. Lưu ý ngày cào dữ liệu khi nói về trạng thái đăng ký; thông tin có thể đã thay đổi."""
 
 _qdrant_client: QdrantClient | None = None
-_embeddings: Any = None
+_embeddings: CloudflareBgeM3Embedder | None = None
 _genai_client: Any = None
 
 
 class RagUnavailableError(RuntimeError):
-    """Raised when Qdrant, Ollama embeddings, or LLM generation fails or times out."""
+    """Raised when Qdrant, Cloudflare Workers AI embeddings, or Gemini generation fails or times out."""
 
 
 @dataclass
@@ -37,6 +39,68 @@ class RagResult:
     citations: list[RagCitationDTO]
     grounded: bool
     latency_ms: int
+
+
+class CloudflareBgeM3Embedder:
+    """Lightweight REST embedder for Cloudflare Workers AI (@cf/baai/bge-m3, 1024 dims)."""
+
+    def __init__(
+        self,
+        account_id: str,
+        api_token: str,
+        model: str = "@cf/baai/bge-m3",
+        http_client: httpx.Client | None = None,
+    ) -> None:
+        self.account_id = account_id.strip()
+        self.api_token = api_token.strip()
+        self.model = model.strip() or "@cf/baai/bge-m3"
+        self.http_client = http_client or httpx.Client(timeout=20.0)
+
+    @property
+    def endpoint_url(self) -> str:
+        return f"https://api.cloudflare.com/client/v4/accounts/{self.account_id}/ai/run/{self.model}"
+
+    def embed_query(self, text: str) -> list[float]:
+        """Embed a single query string into a 1024-dim dense vector."""
+        if not self.account_id or not self.api_token:
+            raise RagUnavailableError(
+                "Thiếu CLOUDFLARE_API_TOKEN hoặc CLOUDFLARE_ACCOUNT_ID (không tách được từ AWS_ENDPOINT_URL)."
+            )
+
+        payload = {
+            "text": [text if text and text.strip() else " "],
+            "truncate_inputs": True,
+        }
+        headers = {
+            "Authorization": f"Bearer {self.api_token}",
+            "Content-Type": "application/json",
+        }
+        for attempt in range(2):
+            try:
+                resp = self.http_client.post(self.endpoint_url, headers=headers, json=payload)
+                if resp.status_code in (401, 403):
+                    raise RagUnavailableError(
+                        f"Lỗi xác thực Cloudflare Workers AI (HTTP {resp.status_code}): kiểm tra CLOUDFLARE_API_TOKEN."
+                    )
+                if resp.status_code == 429:
+                    if attempt == 0:
+                        time.sleep(1.5)
+                        continue
+                    raise RagUnavailableError("Cloudflare Workers AI tạm chạm giới hạn 429.")
+                resp.raise_for_status()
+                body = resp.json()
+                if not body.get("success", False):
+                    raise RagUnavailableError(f"Cloudflare Workers AI error: {body.get('errors')}")
+                vectors = body["result"]["data"]
+                if not vectors or not vectors[0]:
+                    raise RagUnavailableError("Cloudflare Workers AI trả về vector rỗng.")
+                return [float(x) for x in vectors[0]]
+            except RagUnavailableError:
+                raise
+            except (httpx.HTTPError, KeyError, IndexError, TypeError, ValueError) as exc:
+                raise RagUnavailableError(f"Cloudflare embedding request failed: {exc}") from exc
+
+        raise RagUnavailableError("Cloudflare embedding failed after retry.")
 
 
 def _get_qdrant() -> QdrantClient:
@@ -48,14 +112,13 @@ def _get_qdrant() -> QdrantClient:
     return _qdrant_client
 
 
-def _get_embeddings():
+def _get_embeddings() -> CloudflareBgeM3Embedder:
     global _embeddings
     if _embeddings is None:
-        from langchain_ollama import OllamaEmbeddings
-
-        _embeddings = OllamaEmbeddings(
-            model=settings.embedding_model,
-            base_url=settings.ollama_base_url,
+        _embeddings = CloudflareBgeM3Embedder(
+            account_id=settings.get_cloudflare_account_id(),
+            api_token=settings.cloudflare_api_token,
+            model=settings.get_embedding_model(),
         )
     return _embeddings
 
@@ -65,7 +128,8 @@ def _get_genai():
     if _genai_client is None:
         from google import genai
 
-        _genai_client = genai.Client(api_key=settings.gemini_api_key or None)
+        api_key = settings.gemini_api_key or settings.google_api_key or os.getenv("GOOGLE_API_KEY") or None
+        _genai_client = genai.Client(api_key=api_key)
     return _genai_client
 
 
@@ -73,7 +137,7 @@ def check_qdrant_health() -> str:
     """Return 'up' if target Qdrant collection exists, 'degraded' if reachable without collection, else 'down'."""
     try:
         qc = _get_qdrant()
-        if qc.collection_exists(settings.qdrant_collection):
+        if qc.collection_exists(settings.get_qdrant_collection()):
             return "up"
         return "degraded"
     except Exception:
@@ -102,7 +166,7 @@ def _sync_query_rag(
             else None
         )
         res = qc.query_points(
-            collection_name=settings.qdrant_collection,
+            collection_name=settings.get_qdrant_collection(),
             query=query_vec,
             query_filter=q_filter,
             limit=6,
@@ -110,6 +174,8 @@ def _sync_query_rag(
             with_payload=True,
         )
         points = res.points
+    except RagUnavailableError:
+        raise
     except Exception as exc:
         raise RagUnavailableError(f"Vector retrieval failed: {exc}") from exc
 
@@ -163,9 +229,7 @@ def _sync_query_rag(
                 parts=[genai_types.Part(text=f"NGỮ CẢNH:\n{context_text}\n\nCÂU HỎI: {message}")],
             )
         )
-        model_name = settings.chat_model
-        if settings.llm_provider:
-            model_name = settings.llm_provider.split("/", 1)[-1]
+        model_name = settings.get_chat_model()
         response = client.models.generate_content(
             model=model_name,
             contents=contents,

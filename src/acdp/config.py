@@ -5,6 +5,7 @@ Local POSIX and Cloudflare R2 (Cloud S3).
 """
 
 from typing import Literal
+from urllib.parse import urlparse
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -104,15 +105,20 @@ class AppConfig(BaseSettings):
     qdrant_url: str = Field(default="")
     qdrant_cluster_endpoint: str = Field(default="")
     qdrant_api_key: str = Field(default="")
-    qdrant_collection: str = Field(default="acdp_competitions")
+    qdrant_collection: str = Field(default="acdp_competitions_bge_m3")
+    qdrant_bge_collection: str = Field(default="")
 
-    # LLM & Embedding Providers
+    # LLM & Embedding Providers (Cloudflare Workers AI + Google AI Studio)
+    cloudflare_api_token: str = Field(default="")
+    cloudflare_account_id: str = Field(default="")
+    cloudflare_embedding_model: str = Field(default="")
     ollama_base_url: str = Field(default="http://localhost:11434")
-    embedding_model: str = Field(default="qwen3-embedding:4b")
-    chat_model: str = Field(default="gemini-2.5-flash-lite")
+    embedding_model: str = Field(default="@cf/baai/bge-m3")
+    chat_model: str = Field(default="gemini-3.5-flash-lite")
     llm_provider: str = Field(default="")
     openai_api_key: str = Field(default="")
     gemini_api_key: str = Field(default="")
+    google_api_key: str = Field(default="")
 
     # Serving API & Auth (SPEC-0004)
     api_host: str = Field(default="0.0.0.0")
@@ -131,6 +137,41 @@ class AppConfig(BaseSettings):
         if self.qdrant_url:
             return self.qdrant_url
         return f"http://{self.qdrant_host}:{self.qdrant_port}"
+
+    def get_qdrant_collection(self) -> str:
+        """Resolve target Qdrant collection, redirecting legacy collections to BGE-M3."""
+        target = (self.qdrant_bge_collection or self.qdrant_collection or "acdp_competitions_bge_m3").strip()
+        if target in {"acdp_competitions", "acdp_competitions_gemini"}:
+            return "acdp_competitions_bge_m3"
+        return target
+
+    def get_cloudflare_account_id(self) -> str:
+        """Return Cloudflare Account ID directly or parse it from R2 AWS_ENDPOINT_URL."""
+        if self.cloudflare_account_id.strip():
+            return self.cloudflare_account_id.strip()
+        if self.aws_endpoint_url.strip():
+            host = urlparse(self.aws_endpoint_url.strip()).netloc
+            if host:
+                return host.split(".", 1)[0]
+        return ""
+
+    def get_embedding_model(self) -> str:
+        """Return active embedding model, redirecting deprecated Ollama/Gemini IDs to @cf/baai/bge-m3."""
+        raw = (self.cloudflare_embedding_model or self.embedding_model or "@cf/baai/bge-m3").strip()
+        if any(legacy in raw.lower() for legacy in ("qwen", "ollama", "gemini")):
+            return "@cf/baai/bge-m3"
+        return raw
+
+    def get_chat_model(self) -> str:
+        """Resolve active Gemini chat model for RAG generation, guarding against incompatible defaults."""
+        raw = self.chat_model.strip() or "gemini-3.5-flash-lite"
+        if self.llm_provider.strip():
+            candidate = self.llm_provider.strip().split("/", 1)[-1]
+            if "ollama" not in self.llm_provider.lower() and "gemma" not in candidate.lower():
+                raw = candidate
+        if any(legacy in raw.lower() for legacy in ("gemma", "ollama", "gemini-1.5", "gemini-2.5")):
+            return "gemini-3.5-flash-lite"
+        return raw
 
     def get_database_url(self) -> str:
         """Build asyncpg SQLAlchemy connection URI for PostgreSQL 18 OLTP."""
