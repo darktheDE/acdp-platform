@@ -1,7 +1,7 @@
 # Ollama Hardware Assessment & Model Selection Matrix (ACDP)
 
 > **Document Type**: Technical Reference & Hardware Feasibility Matrix  
-> **Target Service**: `src/acdp/3_chatbot_mvp.py` (RAG Chatbot MVP)  
+> **Target Service**: `src/acdp/3_ingest_to_qdrant.py` (RAG Chatbot MVP)  
 > **Source Grounding**: [Ollama GPU Documentation](https://docs.ollama.com/gpu.md) & [Ollama Cloud](https://docs.ollama.com/cloud.md)
 
 ---
@@ -29,7 +29,7 @@ Suitable for offline embeddings or lightweight summarization.
 
 | Task | Recommended Model | Disk Size | RAM Footprint | Expected Speed on CPU | Notes |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Text Embedding** | `qwen3-embedding:4b` | ~2.5 GB | ~3.0 GB | 15–30 chunks/s | Active default in `3_chatbot_mvp.py`. Keep batch size <= 16. |
+| **Text Embedding** | `qwen3-embedding:4b` | ~2.5 GB | ~3.0 GB | 15–30 chunks/s | Active default in `3_ingest_to_qdrant.py`. Keep batch size <= 16. |
 | **Text Embedding** | `bge-m3` | ~1.2 GB | ~1.8 GB | 25–50 chunks/s | Multilingual SOTA; very stable on 12GB RAM. |
 | **Text Embedding** | `nomic-embed-text` | ~274 MB | ~500 MB | 80–120 chunks/s | Ultra-lightweight fallback. |
 | **Local SLM Generation** | `qwen2.5:1.5b` | ~1.0 GB | ~1.8 GB | ~15–25 tokens/s | Fast, handles Vietnamese instructions reasonably well. |

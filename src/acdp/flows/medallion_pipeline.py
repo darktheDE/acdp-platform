@@ -1,12 +1,13 @@
-"""Module: Prefect 3.x Medallion Lakehouse Orchestration Pipeline.
+"""Module: Prefect 3.x Medallion Lakehouse Orchestration Pipeline (Cloudflare R2 Exclusive).
 
-Orchestrates the 3 tiers of the ACDP platform:
-1. Task 1: Bronze Layer Ingestion (Crawl4AI or offline Markdown fixtures).
-2. Task 2: Silver Layer Structured Extraction (Instructor + Pydantic v2).
-3. Task 3: Gold Layer Materialization & OLAP Aggregation (DuckDB + Parquet).
+Orchestrates the ACDP data tiers strictly on Cloudflare R2 (Zero Local Persistence):
+1. Task 1: Bronze Layer Verification (`s3://<bucket>/bronze/`).
+2. Task 2: Silver Layer Structured Extraction (`s3://<bucket>/silver/extractions/`).
+3. Task 3: Gold Layer Star Schema & Parquet Materialization (`s3://<bucket>/gold/`).
+4. Task 4 (Optional): Qdrant Vector Indexing (`src/acdp/3_ingest_to_qdrant.py`).
 
 Usage:
-    # Run pipeline directly via CLI
+    # Run pipeline directly via CLI (verify Bronze/Silver + rebuild Gold on R2)
     uv run python src/acdp/flows/medallion_pipeline.py
 
     # Start local Prefect UI server on port 4200
@@ -14,9 +15,8 @@ Usage:
 """
 
 import importlib
-from pathlib import Path
+import re
 
-import boto3
 from prefect import flow, task
 
 from acdp.config import settings
@@ -28,98 +28,102 @@ run_gold_pipeline = analytics_gold.run_gold_pipeline
 instruction_mod = importlib.import_module("acdp.2_instruction")
 process_bronze_bucket = instruction_mod.process_bronze_bucket
 
-
-@task(name="1. Ingest Bronze Markdown", retries=1, retry_delay_seconds=5)
-def task_ingest_bronze(target_urls: list[str] | None = None) -> int:
-    """Task 1: Ingests or verifies raw Markdown content in the Bronze layer."""
-    print(">> [PREFECT TASK 1] Checking Bronze Layer Markdown...")
-    if settings.bronze_storage_backend == "cloudflare_r2":
-        s3 = boto3.client(
-            "s3",
-            endpoint_url=settings.aws_endpoint_url,
-            aws_access_key_id=settings.aws_access_key_id,
-            aws_secret_access_key=settings.aws_secret_access_key,
-            region_name=settings.aws_region or "auto",
-        )
-        res = s3.list_objects_v2(Bucket=settings.bucket_name, Prefix="bronze/")
-        contents = [o for o in res.get("Contents", []) if not o["Key"].endswith("/")]
-        if not contents:
-            raise RuntimeError(f"No Bronze layer objects found in Cloudflare R2 bucket '{settings.bucket_name}'.")
-        print(f">> [PREFECT TASK 1] Verified {len(contents)} objects in Cloudflare R2 bucket '{settings.bucket_name}'.")
-        return len(contents)
-    else:
-        raw_md_dir = Path("data/raw/markdown")
-        if not raw_md_dir.exists():
-            raw_md_dir.mkdir(parents=True, exist_ok=True)
-        md_files = [f for f in raw_md_dir.glob("*.md") if f.name != ".gitkeep"]
-        if not md_files:
-            raise RuntimeError("No Bronze Markdown files found in data/raw/markdown/.")
-        print(f">> [PREFECT TASK 1] Verified {len(md_files)} Bronze Markdown files locally.")
-        return len(md_files)
+SILVER_KEY_PATTERN = re.compile(
+    r"^silver/extractions/([^/]+)/year=(\d{4})/month=(\d{2})/day=(\d{2})/(\d+)\.json$"
+)
 
 
-@task(name="2. Verify and Load Silver Layer", retries=0)
+def _list_r2_keys(prefix: str) -> list[str]:
+    """List non-directory object keys under an R2 prefix using pagination."""
+    if not settings.bucket_name:
+        raise RuntimeError("BUCKET_NAME is required in .env for Cloudflare R2 pipeline execution.")
+    s3 = settings.create_r2_client()
+    paginator = s3.get_paginator("list_objects_v2")
+    keys: list[str] = []
+    for page in paginator.paginate(Bucket=settings.bucket_name, Prefix=prefix):
+        for obj in page.get("Contents", []):
+            key = obj["Key"]
+            if not key.endswith("/") and obj.get("Size", 0) > 0:
+                keys.append(key)
+    return keys
+
+
+@task(name="1. Verify Bronze Markdown on R2", retries=1, retry_delay_seconds=5)
+def task_ingest_bronze() -> int:
+    """Task 1: Verifies raw Markdown snapshots exist in Cloudflare R2 Bronze layer."""
+    print(">> [PREFECT TASK 1] Checking Bronze Layer Markdown on Cloudflare R2...")
+    keys = _list_r2_keys("bronze/")
+    if not keys:
+        raise RuntimeError(f"No Bronze layer objects found in Cloudflare R2 bucket '{settings.bucket_name}'.")
+    print(f">> [PREFECT TASK 1] Verified {len(keys)} objects in s3://{settings.bucket_name}/bronze/.")
+    return len(keys)
+
+
+@task(name="2. Extract & Verify Silver JSON on R2", retries=0)
 def task_extract_silver(bronze_file_count: int, execute_llm: bool = False) -> int:
-    """Task 2: Verifies or extracts Silver layer schemas."""
-    print(">> [PREFECT TASK 2] Checking Silver Layer Parquet and Schema contracts...")
-    extractions_dir = Path("data/extractions")
-    silver_dir = Path("data/lakehouse/silver")
-    comp_parquet = silver_dir / "competitions.parquet"
-
+    """Task 2: Runs Instructor extraction (optional) and verifies Silver JSON objects on R2."""
+    print(f">> [PREFECT TASK 2] Checking Silver Layer on R2 (Bronze count={bronze_file_count})...")
     if execute_llm:
-        print(">> [PREFECT TASK 2] Executing live LLM schema extraction from Bronze...")
-        extractions_dir.mkdir(parents=True, exist_ok=True)
-        process_bronze_bucket(
-            run_llm=True,
-            output_dir=str(extractions_dir),
-        )
+        print(">> [PREFECT TASK 2] Executing live LLM schema extraction from Bronze -> Silver R2...")
+        process_bronze_bucket(run_llm=True)
 
-    # Verify Silver Parquet layer
-    if comp_parquet.exists():
-        import duckdb
-        escaped_path = str(comp_parquet).replace("\\", "/")
-        count = duckdb.execute(f"SELECT COUNT(*) FROM read_parquet('{escaped_path}')").fetchone()[0]
-        print(f">> [PREFECT TASK 2] Silver layer verified with {count} structured competitions at {comp_parquet}.")
-        return count
-
-    extracted_files = list(extractions_dir.glob("*.json")) if extractions_dir.exists() else []
-    if not extracted_files:
+    silver_keys = [k for k in _list_r2_keys("silver/extractions/") if SILVER_KEY_PATTERN.match(k)]
+    if not silver_keys:
         raise RuntimeError(
-            f"No Silver data found: Neither Silver Parquet '{comp_parquet}' nor JSON extractions in '{extractions_dir}' exist."
+            f"No Silver JSON extractions found in s3://{settings.bucket_name}/silver/extractions/. "
+            "Run with execute_llm=True or execute src/acdp/2_instruction.py --extract first."
         )
-    return len(extracted_files)
+    domains = {SILVER_KEY_PATTERN.match(k).group(1) for k in silver_keys}  # type: ignore[union-attr]
+    print(
+        f">> [PREFECT TASK 2] Verified {len(silver_keys)} Silver JSON objects "
+        f"({len(domains)} unique domains) on R2."
+    )
+    return len(domains)
 
 
-@task(name="3. Materialize Gold DuckDB Analytics", retries=0)
-def task_build_gold_duckdb(silver_count: int) -> str:
-    """Task 3: Exports Silver Parquet and builds DuckDB Gold views for Metabase BI."""
-    print(f">> [PREFECT TASK 3] Materializing Gold OLAP tables & views in DuckDB from {silver_count} Silver records...")
+@task(name="3. Materialize Gold Parquet on R2", retries=0)
+def task_build_gold_r2(silver_domain_count: int) -> str:
+    """Task 3: Builds Kimball Star Schema in-memory DuckDB and exports Parquet directly to R2."""
+    print(f">> [PREFECT TASK 3] Materializing Gold Star Schema Parquet on R2 from {silver_domain_count} domains...")
     run_gold_pipeline()
-    db_path = Path("data/lakehouse/acdp.duckdb")
-    print(f">> [PREFECT TASK 3] DuckDB Gold Layer updated successfully at {db_path}.")
-    return str(db_path)
+    gold_uri = f"s3://{settings.bucket_name}/gold/"
+    print(f">> [PREFECT TASK 3] Gold Layer Parquet updated on Cloudflare R2 at {gold_uri}.")
+    return gold_uri
+
+
+@task(name="4. Ingest Bronze to Qdrant Vector DB", retries=0)
+def task_ingest_qdrant(bronze_file_count: int) -> str:
+    """Task 4 (Optional): Chunks Bronze Markdown and upserts BGE-M3 vectors to Qdrant Cloud."""
+    print(f">> [PREFECT TASK 4] Ingesting Bronze snapshots ({bronze_file_count} objects) into Qdrant...")
+    qdrant_mod = importlib.import_module("acdp.3_ingest_to_qdrant")
+    qdrant_mod.ingest()
+    return qdrant_mod.QDRANT_COLLECTION
 
 
 @flow(name="ACDP Medallion Lakehouse Flow", log_prints=True)
-def medallion_lakehouse_flow(execute_llm: bool = False) -> dict:
-    """Main Prefect workflow orchestrating the Medallion Data Pipeline."""
-    print("🚀 Starting ACDP Medallion Lakehouse Orchestration Pipeline (Zero Fallback)...")
+def medallion_lakehouse_flow(execute_llm: bool = False, ingest_qdrant: bool = False) -> dict:
+    """Main Prefect workflow orchestrating the R2-only Medallion Data Pipeline."""
+    print("🚀 Starting ACDP Medallion Lakehouse Orchestration Pipeline (Cloudflare R2 Exclusive)...")
 
     # 1. Bronze Tier
     bronze_count = task_ingest_bronze()
 
     # 2. Silver Tier
-    silver_count = task_extract_silver(bronze_count, execute_llm=execute_llm)
+    silver_domains = task_extract_silver(bronze_count, execute_llm=execute_llm)
 
-    # 3. Gold Tier & DuckDB Materialization
-    gold_db_path = task_build_gold_duckdb(silver_count)
+    # 3. Gold Tier & R2 Parquet Materialization
+    gold_uri = task_build_gold_r2(silver_domains)
+
+    # 4. Optional Vector Indexing Tier
+    qdrant_collection = task_ingest_qdrant(bronze_count) if ingest_qdrant else None
 
     print("🎉 ACDP Medallion Lakehouse Flow completed successfully!")
     return {
         "status": "SUCCESS",
-        "bronze_files": bronze_count,
-        "silver_records": silver_count,
-        "gold_database": gold_db_path,
+        "bronze_objects": bronze_count,
+        "silver_domains": silver_domains,
+        "gold_uri": gold_uri,
+        "qdrant_collection": qdrant_collection,
     }
 
 

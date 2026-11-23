@@ -1,25 +1,30 @@
-"""Module 4: Gold Layer Kimball Star Schema & DuckDB Materialization Engine.
+"""Module 4: Gold Layer Kimball Star Schema & DuckDB Materialization Engine (Cloudflare R2 Exclusive).
 
 Conforms to SPEC-0003 (docs/specs/0003-gold-dimensional-modeling-spec.md):
-1. Deduplicates Silver JSON extractions (newest batch preferred, SHA-256 canonical URL key).
-2. Builds Kimball Star Schema in DuckDB via atomic swap (.tmp -> acdp.duckdb):
+1. Reads latest Silver JSON snapshots directly from Cloudflare R2 (`silver/extractions/`).
+2. Builds Kimball Star Schema in DuckDB `:memory:` (or optional `db_path` for isolated unit tests):
    - 4 Dimensions: dim_competition, dim_date, dim_domain, dim_organizer
    - 3 Facts: fact_competitions, fact_prize_tiers, fact_timeline_stages
    - 2 Bridges: bridge_competition_domain (weighted), bridge_competition_organizer
    - 6 Analytical Data Marts (mart_*) + 6 backward-compatible views (gold_*)
-3. Exports Parquet files to data/lakehouse/gold/ and optionally syncs to Cloudflare R2.
+3. Uploads Silver & Gold Parquet directly to Cloudflare R2 (`silver/` and `gold/`) with zero local disk output,
+   and verifies analytics via DuckDB `httpfs` (`s3://<bucket>/gold/*.parquet`).
 
 Usage:
     uv run python -m src.acdp.4_analytics_gold --build --verify
+    uv run python -m src.acdp.4_analytics_gold --verify
 """
 
 from __future__ import annotations
 
 import argparse
 import hashlib
+import io
+import json
 import os
 import re
 import unicodedata
+from collections import defaultdict
 from datetime import date, datetime
 from pathlib import Path
 from typing import Any
@@ -31,6 +36,10 @@ import pyarrow.parquet as pq
 
 from acdp.config import settings
 from acdp.schemas import Competition
+
+SILVER_KEY_PATTERN = re.compile(
+    r"^silver/extractions/([^/]+)/year=(\d{4})/month=(\d{2})/day=(\d{2})/(\d+)\.json$"
+)
 
 MONTH_NAMES_VI: dict[int, str] = {
     1: "Tháng 1",
@@ -472,29 +481,25 @@ def _competition_richness_score(c: Competition) -> tuple[int, int, int]:
     return (len(c.prizes), len(c.timeline_stages), len(c.summary or ""))
 
 
-def load_silver_competitions_with_source(extractions_dir: Path | None = None) -> tuple[list[Competition], str]:
-    """Load and deduplicate Silver extracted competitions without double-counting batch vs single files."""
-    target_dir = extractions_dir or Path("data/extractions")
-    if not target_dir.exists():
-        raise RuntimeError(f"Silver extractions directory does not exist: '{target_dir.resolve()}'.")
+def parse_silver_key(fkey: str) -> dict[str, Any] | None:
+    """Parse silver/extractions/<domain>/year=<Y>/month=<M>/day=<D>/<ts>.json."""
+    match = SILVER_KEY_PATTERN.match(fkey)
+    if not match:
+        return None
+    domain, year, month, day, ts = match.groups()
+    return {
+        "key": fkey,
+        "domain": domain,
+        "date": f"{year}-{month}-{day}",
+        "timestamp": int(ts),
+    }
 
-    batch_files = sorted(target_dir.glob("extractions_*.json"), key=_extract_batch_sort_key)
-    if batch_files:
-        selected_files = [batch_files[-1]]
-        source_label = batch_files[-1].name
-    else:
-        selected_files = sorted(
-            jf for jf in target_dir.glob("*.json") if not jf.name.startswith("extractions_")
-        )
-        source_label = "single_domain_json_files" if selected_files else "empty"
 
+def _deduplicate_competition_payloads(payloads: list[tuple[str, dict[str, Any]]]) -> list[Competition]:
+    """Validate and deduplicate extracted competition records by canonical URL key + richness."""
     dedup_by_key: dict[str, Competition] = {}
-    for jf in selected_files:
+    for label, data in payloads:
         try:
-            import json
-
-            with open(jf, encoding="utf-8") as f:
-                data = json.load(f)
             if not isinstance(data, dict):
                 continue
 
@@ -512,21 +517,119 @@ def load_silver_competitions_with_source(extractions_dir: Path | None = None) ->
                 if existing is None or _competition_richness_score(comp) > _competition_richness_score(existing):
                     dedup_by_key[key] = comp
         except (OSError, ValueError) as exc:
-            print(f"[WARN] Failed to parse {jf.name}: {exc}")
+            print(f"[WARN] Failed to parse {label}: {exc}")
 
-    competitions = list(dedup_by_key.values())
+    return list(dedup_by_key.values())
+
+
+def load_silver_competitions_from_r2(target_date: str | None = None) -> tuple[list[Competition], str]:
+    """Load latest Silver JSON extraction per domain directly from Cloudflare R2."""
+    if not settings.bucket_name:
+        raise RuntimeError("BUCKET_NAME is required in .env to load Silver layer from Cloudflare R2.")
+
+    s3 = settings.create_r2_client()
+    paginator = s3.get_paginator("list_objects_v2")
+    parsed_items: list[dict[str, Any]] = []
+
+    for page in paginator.paginate(Bucket=settings.bucket_name, Prefix="silver/extractions/"):
+        for obj in page.get("Contents", []):
+            if obj.get("Size", 0) == 0:
+                continue
+            parsed = parse_silver_key(obj["Key"])
+            if parsed is not None:
+                parsed_items.append(parsed)
+
+    if not parsed_items:
+        raise RuntimeError(
+            f"No Silver JSON extractions found in s3://{settings.bucket_name}/silver/extractions/. "
+            "Ensure Silver extraction (src/acdp/2_instruction.py --extract) completed successfully."
+        )
+
+    if target_date:
+        filtered = [it for it in parsed_items if it["date"] == target_date]
+        if not filtered:
+            available = sorted({it["date"] for it in parsed_items})
+            raise RuntimeError(
+                f"No Silver extractions found on R2 for date '{target_date}'. Available dates: {available}"
+            )
+        selected_pool = filtered
+        scope_label = f"r2:silver/extractions@{target_date}"
+    else:
+        selected_pool = parsed_items
+        latest_date = max(it["date"] for it in parsed_items)
+        scope_label = f"r2:silver/extractions@latest({latest_date})"
+
+    by_domain: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for it in selected_pool:
+        by_domain[it["domain"]].append(it)
+
+    latest_per_domain = [max(group, key=lambda x: x["timestamp"]) for group in by_domain.values()]
+    payloads: list[tuple[str, dict[str, Any]]] = []
+    for snap in sorted(latest_per_domain, key=lambda x: x["domain"]):
+        body = s3.get_object(Bucket=settings.bucket_name, Key=snap["key"])["Body"]
+        raw_text = body.read().decode("utf-8", errors="replace")
+        try:
+            payloads.append((snap["key"], json.loads(raw_text)))
+        except json.JSONDecodeError as exc:
+            print(f"[WARN] Failed to decode JSON {snap['key']}: {exc}")
+
+    competitions = _deduplicate_competition_payloads(payloads)
     if not competitions:
         raise RuntimeError(
-            f"No valid Silver extracted competition records found in '{target_dir.resolve()}'. "
+            f"No valid Silver extracted competition records found in s3://{settings.bucket_name}/silver/extractions/."
+        )
+
+    print(
+        f">> [R2 SILVER LOADED] {len(competitions)} competitions from {len(latest_per_domain)} domains ({scope_label})"
+    )
+    return competitions, scope_label
+
+
+def load_silver_competitions_with_source(
+    extractions_dir: Path | None = None,
+    target_date: str | None = None,
+) -> tuple[list[Competition], str]:
+    """Load Silver competitions from R2 by default, or from an explicit directory when passed in unit tests."""
+    if extractions_dir is None:
+        return load_silver_competitions_from_r2(target_date=target_date)
+
+    if not extractions_dir.exists():
+        raise RuntimeError(f"Silver extractions directory does not exist: '{extractions_dir.resolve()}'.")
+
+    batch_files = sorted(extractions_dir.glob("extractions_*.json"), key=_extract_batch_sort_key)
+    if batch_files:
+        selected_files = [batch_files[-1]]
+        source_label = batch_files[-1].name
+    else:
+        selected_files = sorted(
+            jf for jf in extractions_dir.glob("*.json") if not jf.name.startswith("extractions_")
+        )
+        source_label = "single_domain_json_files" if selected_files else "empty"
+
+    payloads: list[tuple[str, dict[str, Any]]] = []
+    for jf in selected_files:
+        try:
+            with open(jf, encoding="utf-8") as f:
+                payloads.append((jf.name, json.load(f)))
+        except (OSError, ValueError) as exc:
+            print(f"[WARN] Failed to parse {jf.name}: {exc}")
+
+    competitions = _deduplicate_competition_payloads(payloads)
+    if not competitions:
+        raise RuntimeError(
+            f"No valid Silver extracted competition records found in '{extractions_dir.resolve()}'. "
             "Ensure Silver extraction (src/acdp/2_instruction.py) completed successfully."
         )
 
     return competitions, source_label
 
 
-def load_silver_competitions(extractions_dir: Path | None = None) -> list[Competition]:
+def load_silver_competitions(
+    extractions_dir: Path | None = None,
+    target_date: str | None = None,
+) -> list[Competition]:
     """Load deduplicated Silver competitions."""
-    competitions, _ = load_silver_competitions_with_source(extractions_dir)
+    competitions, _ = load_silver_competitions_with_source(extractions_dir=extractions_dir, target_date=target_date)
     return competitions
 
 
@@ -543,12 +646,11 @@ def _compute_competition_total_prize_vnd(c: Competition) -> int:
     return tier_sum
 
 
-def export_silver_parquet(competitions: list[Competition], output_dir: Path) -> tuple[Path, Path]:
-    """Export deduplicated Silver competitions and prizes to Parquet files."""
-    output_dir.mkdir(parents=True, exist_ok=True)
-    comp_parquet_path = output_dir / "competitions.parquet"
-    prizes_parquet_path = output_dir / "prizes.parquet"
-
+def export_silver_parquet(
+    competitions: list[Competition],
+    output_dir: Path | None = None,
+) -> list[str | Path]:
+    """Export deduplicated Silver competitions and prizes directly to R2 Parquet (or local dir if passed)."""
     comp_rows: list[dict[str, Any]] = []
     prize_rows: list[dict[str, Any]] = []
 
@@ -601,14 +703,45 @@ def export_silver_parquet(competitions: list[Competition], output_dir: Path) -> 
                 }
             )
 
-    pq.write_table(pa.Table.from_pylist(comp_rows), comp_parquet_path)
-    print(f">> [PARQUET EXPORTED] {len(comp_rows)} competitions -> {comp_parquet_path}")
+    comp_table = pa.Table.from_pylist(comp_rows)
+    prize_table = pa.Table.from_pylist(prize_rows) if prize_rows else None
 
-    if prize_rows:
-        pq.write_table(pa.Table.from_pylist(prize_rows), prizes_parquet_path)
-        print(f">> [PARQUET EXPORTED] {len(prize_rows)} prize tiers -> {prizes_parquet_path}")
+    if output_dir is not None:
+        output_dir.mkdir(parents=True, exist_ok=True)
+        comp_parquet_path = output_dir / "competitions.parquet"
+        prizes_parquet_path = output_dir / "prizes.parquet"
+        pq.write_table(comp_table, comp_parquet_path)
+        print(f">> [PARQUET EXPORTED] {len(comp_rows)} competitions -> {comp_parquet_path}")
+        exported: list[str | Path] = [comp_parquet_path]
+        if prize_table is not None:
+            pq.write_table(prize_table, prizes_parquet_path)
+            print(f">> [PARQUET EXPORTED] {len(prize_rows)} prize tiers -> {prizes_parquet_path}")
+            exported.append(prizes_parquet_path)
+        return exported
 
-    return comp_parquet_path, prizes_parquet_path
+    if not settings.bucket_name:
+        raise RuntimeError("BUCKET_NAME is required to upload Silver Parquet to Cloudflare R2.")
+
+    s3 = settings.create_r2_client()
+    uploaded: list[str | Path] = []
+    for filename, table in (("competitions.parquet", comp_table), ("prizes.parquet", prize_table)):
+        if table is None:
+            continue
+        buf = io.BytesIO()
+        pq.write_table(table, buf)
+        key = f"silver/{filename}"
+        s3.put_object(
+            Bucket=settings.bucket_name,
+            Key=key,
+            Body=buf.getvalue(),
+            ContentType="application/vnd.apache.parquet",
+            Metadata={"layer": "silver"},
+        )
+        uri = f"s3://{settings.bucket_name}/{key}"
+        uploaded.append(uri)
+        print(f">> [R2 SILVER PARQUET] {len(table)} rows -> {uri}")
+
+    return uploaded
 
 
 def _create_star_schema_ddl(con: duckdb.DuckDBPyConnection) -> None:
@@ -978,22 +1111,23 @@ def resolve_effective_registration_status(
 
 
 def build_gold_star_schema(
-    db_path: Path,
+    db_path: Path | None,
     competitions: list[Competition],
     source_batch_file: str = "manual_input",
     gold_dir: Path | None = None,
     sync_r2: bool = False,
-) -> list[Path]:
-    """Build full Kimball Star Schema into DuckDB via atomic swap and export Gold Parquet."""
-    db_path.parent.mkdir(parents=True, exist_ok=True)
-    tmp_db_path = db_path.with_name(f"{db_path.name}.tmp")
-    if tmp_db_path.exists():
-        tmp_db_path.unlink()
-
+) -> list[str | Path]:
+    """Build full Kimball Star Schema in DuckDB (:memory: for R2-only, or atomic swap if db_path given)."""
+    tmp_db_path: Path | None = None
     con = duckdb.connect(":memory:")
-    escaped_tmp_path = str(tmp_db_path).replace("'", "''")
-    con.execute(f"ATTACH '{escaped_tmp_path}' AS gold_compat (STORAGE_VERSION 'v1.5.0')")
-    con.execute("USE gold_compat")
+    if db_path is not None:
+        db_path.parent.mkdir(parents=True, exist_ok=True)
+        tmp_db_path = db_path.with_name(f"{db_path.name}.tmp")
+        if tmp_db_path.exists():
+            tmp_db_path.unlink()
+        escaped_tmp_path = str(tmp_db_path).replace("'", "''")
+        con.execute(f"ATTACH '{escaped_tmp_path}' AS gold_compat (STORAGE_VERSION 'v1.5.0')")
+        con.execute("USE gold_compat")
     try:
         _create_star_schema_ddl(con)
 
@@ -1216,91 +1350,151 @@ def build_gold_star_schema(
         _create_data_marts_and_aliases(con)
 
         # Internal integrity assertion (SPEC-0003 EC-G1)
-        check = con.execute("""
+        check_rows = con.execute("""
             SELECT
                 (SELECT total_prize_pool_vnd FROM mart_kpi_overview) AS kpi_total,
                 (SELECT COALESCE(SUM(allocated_prize_vnd), 0) FROM mart_domain_analytics) AS domain_sum
-        """).fetchone()
-        assert check is not None
+        """).fetchall()
+        assert check_rows
+        check = check_rows[0]
         if abs(float(check[0]) - float(check[1])) > 1.0:
             raise RuntimeError(f"Prize allocation mismatch: kpi_total={check[0]}, domain_sum={check[1]}")
 
-        exported_files: list[Path] = []
-        if gold_dir is not None:
-            exported_files = export_gold_parquet_and_sync_r2(con, gold_dir, sync_r2=sync_r2)
+        exported_files: list[str | Path] = []
+        if gold_dir is not None or sync_r2:
+            exported_files = export_gold_parquet_and_sync_r2(con, gold_dir=gold_dir, sync_r2=sync_r2)
     finally:
         con.close()
 
-    os.replace(tmp_db_path, db_path)
-    print(f">> [STAR SCHEMA COMMITTED] Atomic swap complete -> {db_path}")
+    if db_path is not None and tmp_db_path is not None:
+        os.replace(tmp_db_path, db_path)
+        print(f">> [STAR SCHEMA COMMITTED] Atomic swap complete -> {db_path}")
+    else:
+        print(f">> [STAR SCHEMA COMMITTED] In-memory build synced to R2 ({len(exported_files)} Parquet objects).")
     return exported_files
+
+
+GOLD_ENTITIES: tuple[str, ...] = (
+    "dim_competition",
+    "dim_date",
+    "dim_domain",
+    "dim_organizer",
+    "fact_competitions",
+    "fact_prize_tiers",
+    "fact_timeline_stages",
+    "bridge_competition_domain",
+    "bridge_competition_organizer",
+    "mart_kpi_overview",
+    "mart_domain_analytics",
+    "mart_seasonality_academic",
+    "mart_organizer_ecosystem",
+    "mart_team_and_mode_matrix",
+    "mart_competition_explorer",
+    "gold_competitions",
+    "gold_prizes",
+    "gold_category_summary",
+    "gold_mode_distribution",
+    "gold_seasonality",
+    "gold_top_prizes",
+)
 
 
 def export_gold_parquet_and_sync_r2(
     con: duckdb.DuckDBPyConnection,
-    gold_dir: Path,
+    gold_dir: Path | None = None,
     sync_r2: bool = False,
-) -> list[Path]:
-    """Export all Star Schema tables, Data Marts, and aliases to Parquet and optionally sync R2."""
-    gold_dir.mkdir(parents=True, exist_ok=True)
-    gold_entities = [
-        "dim_competition",
-        "dim_date",
-        "dim_domain",
-        "dim_organizer",
-        "fact_competitions",
-        "fact_prize_tiers",
-        "fact_timeline_stages",
-        "bridge_competition_domain",
-        "bridge_competition_organizer",
-        "mart_kpi_overview",
-        "mart_domain_analytics",
-        "mart_seasonality_academic",
-        "mart_organizer_ecosystem",
-        "mart_team_and_mode_matrix",
-        "mart_competition_explorer",
-        "gold_competitions",
-        "gold_prizes",
-        "gold_category_summary",
-        "gold_mode_distribution",
-        "gold_seasonality",
-        "gold_top_prizes",
-    ]
-    exported_files: list[Path] = []
-    for entity in gold_entities:
-        parquet_file = gold_dir / f"{entity}.parquet"
-        escaped_file = str(parquet_file).replace("\\", "/")
-        con.execute(f"COPY {entity} TO '{escaped_file}' (FORMAT PARQUET)")
-        exported_files.append(parquet_file)
-    print(f">> [GOLD PARQUET EXPORTED] {len(exported_files)} tables/views -> {gold_dir}")
+) -> list[str | Path]:
+    """Export all 21 Star Schema tables, Data Marts, and aliases directly to R2 Parquet (or local gold_dir)."""
+    exported: list[str | Path] = []
+    if gold_dir is not None:
+        gold_dir.mkdir(parents=True, exist_ok=True)
+        for entity in GOLD_ENTITIES:
+            parquet_file = gold_dir / f"{entity}.parquet"
+            escaped_file = str(parquet_file).replace("\\", "/")
+            con.execute(f"COPY {entity} TO '{escaped_file}' (FORMAT PARQUET)")
+            exported.append(parquet_file)
+        print(f">> [GOLD PARQUET EXPORTED] {len(exported)} tables/views -> {gold_dir}")
 
-    if (
-        sync_r2
-        and settings.bronze_storage_backend == "cloudflare_r2"
-        and settings.bucket_name
-        and settings.aws_endpoint_url
-        and settings.aws_access_key_id
-    ):
-        print(f"\n>> [R2 SYNC] Synchronizing Silver & Gold Parquet to s3://{settings.bucket_name} ...")
+    if sync_r2:
+        if not settings.bucket_name:
+            raise RuntimeError("BUCKET_NAME is required to upload Gold Parquet to Cloudflare R2.")
+        print(f"\n>> [R2 GOLD SYNC] Uploading {len(GOLD_ENTITIES)} Gold Parquet files to s3://{settings.bucket_name}/gold/ ...")
         s3 = settings.create_r2_client()
+        uploaded: list[str | Path] = []
+        cur = con.cursor()
+        try:
+            for entity in GOLD_ENTITIES:
+                arrow_table = cur.sql(f"SELECT * FROM {entity}").to_arrow_table()
+                buf = io.BytesIO()
+                pq.write_table(arrow_table, buf)
+                key = f"gold/{entity}.parquet"
+                s3.put_object(
+                    Bucket=settings.bucket_name,
+                    Key=key,
+                    Body=buf.getvalue(),
+                    ContentType="application/vnd.apache.parquet",
+                    Metadata={"layer": "gold"},
+                )
+                uploaded.append(f"s3://{settings.bucket_name}/{key}")
+        finally:
+            cur.close()
+        print(f">> [R2 SYNC COMPLETE] {len(uploaded)} Gold Parquet objects uploaded.")
+        return uploaded if gold_dir is None else exported
 
-        silver_dir = Path("data/lakehouse/silver")
-        silver_files = list(silver_dir.glob("*.parquet"))
-        for sp in silver_files:
-            s3.upload_file(str(sp), settings.bucket_name, f"silver/{sp.name}")
+    return exported
 
-        for gp in exported_files:
-            s3.upload_file(str(gp), settings.bucket_name, f"gold/{gp.name}")
 
-        print(f">> [R2 SYNC COMPLETE] {len(silver_files)} Silver and {len(exported_files)} Gold Parquet files uploaded.")
+def build_metabase_r2_init_sql() -> str:
+    """Generate DuckDB SQL snippet to register Cloudflare R2 httpfs persistent secret & Gold views in Metabase."""
+    endpoint = settings.get_r2_endpoint_host() or "<ACCOUNT_ID>.r2.cloudflarestorage.com"
+    bucket = (settings.bucket_name or "acdp-lakehouse").strip().strip("/")
+    lines = [
+        "INSTALL httpfs;",
+        "LOAD httpfs;",
+        "CREATE OR REPLACE PERSISTENT SECRET r2_secret (",
+        "    TYPE s3,",
+        "    PROVIDER config,",
+        "    KEY_ID '<AWS_ACCESS_KEY_ID>',",
+        "    SECRET '<AWS_SECRET_ACCESS_KEY>',",
+        f"    ENDPOINT '{endpoint}',",
+        "    REGION 'auto',",
+        "    URL_STYLE 'path',",
+        "    USE_SSL true",
+        ");",
+        "",
+    ]
+    for entity in GOLD_ENTITIES:
+        lines.append(
+            f"CREATE OR REPLACE VIEW {entity} AS SELECT * FROM read_parquet('s3://{bucket}/gold/{entity}.parquet');"
+        )
+    return "\n".join(lines)
 
-    return exported_files
+
+def verify_analytics_from_r2() -> None:
+    """Open DuckDB in-memory with httpfs and verify Gold Parquet directly on Cloudflare R2."""
+    con = duckdb.connect(":memory:")
+    try:
+        settings.configure_duckdb_r2(con)
+        bucket = settings.bucket_name.strip().strip("/")
+        for entity in (
+            "mart_kpi_overview",
+            "mart_domain_analytics",
+            "mart_seasonality_academic",
+            "mart_team_and_mode_matrix",
+            "mart_organizer_ecosystem",
+        ):
+            con.execute(
+                f"CREATE OR REPLACE VIEW {entity} AS SELECT * FROM read_parquet('s3://{bucket}/gold/{entity}.parquet')"
+            )
+        verify_analytics(con)
+    finally:
+        con.close()
 
 
 def verify_analytics(con: duckdb.DuckDBPyConnection) -> None:
     """Execute verification queries over the Gold Star Schema Data Marts."""
     print("\n" + "=" * 72)
-    print("ACDP GOLD LAYER STAR SCHEMA REPORT (DuckDB Read-Only OLAP)")
+    print("ACDP GOLD LAYER STAR SCHEMA REPORT (DuckDB httpfs over Cloudflare R2)")
     print("=" * 72)
 
     print("\n[1] KPI Overview (mart_kpi_overview):")
@@ -1326,35 +1520,36 @@ def verify_analytics(con: duckdb.DuckDBPyConnection) -> None:
     print("=" * 72)
 
 
-def run_gold_pipeline() -> None:
-    """Execute end-to-end Silver-to-Gold Star Schema pipeline."""
-    extractions_dir = Path("data/extractions")
-    silver_dir = Path("data/lakehouse/silver")
-    gold_dir = Path("data/lakehouse/gold")
-    duckdb_file = Path(settings.duckdb_database_path)
-
-    competitions, source_batch = load_silver_competitions_with_source(extractions_dir)
-    export_silver_parquet(competitions, silver_dir)
-    build_gold_star_schema(duckdb_file, competitions, source_batch_file=source_batch, gold_dir=gold_dir, sync_r2=True)
-
-    con = duckdb.connect(str(duckdb_file), read_only=True)
-    try:
-        verify_analytics(con)
-    finally:
-        con.close()
+def run_gold_pipeline(target_date: str | None = None, verify: bool = True) -> None:
+    """Execute end-to-end Silver-to-Gold Star Schema pipeline purely on Cloudflare R2 (Zero Local Disk)."""
+    competitions, source_batch = load_silver_competitions_from_r2(target_date=target_date)
+    export_silver_parquet(competitions, output_dir=None)
+    build_gold_star_schema(
+        db_path=None,
+        competitions=competitions,
+        source_batch_file=source_batch,
+        gold_dir=None,
+        sync_r2=True,
+    )
+    if verify:
+        verify_analytics_from_r2()
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="ACDP Gold Layer Star Schema & DuckDB Materialization Engine")
-    parser.add_argument("--build", action="store_true", help="Build Silver Parquet and DuckDB Gold Star Schema")
-    parser.add_argument("--verify", action="store_true", help="Print verification queries from DuckDB")
+    parser = argparse.ArgumentParser(description="ACDP Gold Layer Star Schema & R2 Materialization Engine")
+    parser.add_argument("--build", action="store_true", help="Build Silver & Gold Parquet directly on Cloudflare R2")
+    parser.add_argument("--verify", action="store_true", help="Verify Gold marts directly from R2 via DuckDB httpfs")
+    parser.add_argument("--date", type=str, default=None, help="Optional Silver extraction date (YYYY-MM-DD)")
+    parser.add_argument(
+        "--print-metabase-sql",
+        action="store_true",
+        help="Print DuckDB httpfs Persistent Secret & Gold Views SQL for Metabase BI setup",
+    )
     args = parser.parse_args()
 
-    if args.build or not args.verify:
-        run_gold_pipeline()
+    if args.print_metabase_sql:
+        print(build_metabase_r2_init_sql())
+    elif args.build or not args.verify:
+        run_gold_pipeline(target_date=args.date, verify=True)
     elif args.verify:
-        con = duckdb.connect(str(settings.duckdb_database_path), read_only=True)
-        try:
-            verify_analytics(con)
-        finally:
-            con.close()
+        verify_analytics_from_r2()

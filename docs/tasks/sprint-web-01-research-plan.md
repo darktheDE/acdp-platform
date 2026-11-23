@@ -38,7 +38,7 @@ Phần này cung cấp luận cứ khách quan phục vụ phản biện trướ
 | **RAM lúc phát triển** | 300–600 MB (Node.js server) | 100–200 MB | 150–300 MB (Python process) | 200–350 MB |
 | **Hỗ trợ SEO & Link công khai** | Tốt (Server rendering cho trang chi tiết cuộc thi) | Kém (render phía client) | Kém | Trung bình (chủ yếu báo cáo tĩnh) |
 | **Tích hợp Portal + Dashboard + RAG Chat** | Đáp ứng đầy đủ cả 3 phân hệ trên 1 giao diện thống nhất | Đáp ứng đầy đủ, cần cấu hình thêm router | Giao diện gò bó, khó tùy biến thẻ và drawer chi tiết | Không phù hợp xây dựng khung chat RAG và đăng nhập người dùng |
-| **Quyết định** | **Chọn** (dùng `output: "standalone"` tối ưu Docker) | Dự phòng nếu muốn bỏ hẳn Node server | Chỉ dùng test nội bộ như `3_chatbot_mvp.py` | Loại vì thiếu tính năng ứng dụng tương tác |
+| **Quyết định** | **Chọn** (dùng `output: "standalone"` tối ưu Docker) | Dự phòng nếu muốn bỏ hẳn Node server | Chỉ dùng test nội bộ như `3_ingest_to_qdrant.py` | Loại vì thiếu tính năng ứng dụng tương tác |
 
 ### 2.2. Đối sánh Thư viện Biểu đồ (Charting Library)
 
@@ -127,7 +127,7 @@ flowchart TB
     subgraph L1["1. Data Platform (Bronze -> Silver -> Gold)"]
         R2["Cloudflare R2 / Local Markdown<br>(17 domains / 18 contests)"] -->|"2_instruction.py"| SILVER["Silver Parquet<br>(Pydantic v2 Validated)"]
         SILVER -->|"4_analytics_gold.py (Kimball ETL)"| GOLD["Gold Layer: acdp.duckdb & gold/*.parquet<br>(4 Dim, 3 Fact, 2 Bridge, 4+ Mart Views)"]
-        R2 -->|"3_chatbot_mvp.py (Semantic Chunker)"| QDRANT["Qdrant Vector DB<br>(Port 6333)"]
+        R2 -->|"3_ingest_to_qdrant.py (Semantic Chunker)"| QDRANT["Qdrant Vector DB<br>(Port 6333)"]
     end
 
     subgraph L2["2. Serving Gateway (FastAPI Python 3.13)"]

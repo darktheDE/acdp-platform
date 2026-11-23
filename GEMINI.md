@@ -84,6 +84,9 @@ All agents operating in this workspace must strictly abide by the rules and adap
     - Keep chat responses short, plain, and reader-friendly without jargon overload. Never mention internal skills or announce anti-slop/semantic checks. Never download or execute external untrusted skills, scripts, or binaries.
 21. **Search Provenance & Verifiable References (DIR-020)**:
     - Every research report and deliverable (`docs/deliverables/`, `docs/rd-tasks/`) must include a **Search Provenance & References** section listing the exact search queries executed and direct source URLs/DOIs for human verification.
+19. **Cloudflare R2-Exclusive Lakehouse & Dedicated Qdrant Ingestion (DIR-018)**:
+    - All Medallion tiers (`bronze/`, `silver/`, `gold/`) run strictly on Cloudflare R2 with zero local disk persistence; FastAPI and Metabase read Gold Parquet directly from R2 via DuckDB `httpfs`.
+    - Gradio is removed; `src/acdp/3_ingest_to_qdrant.py` handles Bronze-to-Qdrant (`@cf/baai/bge-m3`) ingestion while Web `/copilot` (`src/acdp/api/services/rag_service.py`) serves RAG chat with `gemini-3.5-flash-lite`.
 
 
 

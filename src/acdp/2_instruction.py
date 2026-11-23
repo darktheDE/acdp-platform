@@ -1,8 +1,8 @@
-"""Module 2: Instruction & Information Extraction using Instructor and Pydantic.
+"""Module 2: Instruction & Information Extraction using Instructor and Pydantic (Cloudflare R2 Exclusive).
 
 Reads raw markdown files stored in the Bronze layer of Cloudflare R2 bucket,
-applies the standardized competition Pydantic schema, and extracts structured
-data using an Instructor-patched LLM (Ollama / LiteLLM).
+applies the standardized competition Pydantic schema, and uploads structured
+JSON extractions directly to the Silver layer on Cloudflare R2 (Zero Local Persistence).
 
 Incorporates:
 - Few-Shot Prompting derived from real Bronze layer crawled data (October 31, 2026).
@@ -10,14 +10,12 @@ Incorporates:
   for the target crawl date, keeping older crawl snapshots preserved as historical archives.
 """
 
-import importlib
 import json
 import os
 import re
 import sys
 from collections import defaultdict
 from datetime import datetime
-from pathlib import Path
 
 import instructor
 from dotenv import find_dotenv, load_dotenv
@@ -31,19 +29,15 @@ load_dotenv(find_dotenv(usecwd=True))
 
 try:
     from acdp.config import settings
-    from acdp.schemas import Competition, CompetitionExtractionResult
+    from acdp.schemas import CompetitionExtractionResult
 except ModuleNotFoundError:
     from config import settings  # type: ignore
-    from schemas import Competition, CompetitionExtractionResult  # type: ignore
+    from schemas import CompetitionExtractionResult  # type: ignore
 
 BUCKET_NAME = settings.bucket_name
 LLM_PROVIDER = os.getenv("LLM_PROVIDER", "ollama/qwen2.5:7b")
 # Cấu hình context window cho Ollama (mặc định 8192 token để đủ chứa prompt ~5k token mà vẫn tối ưu tốc độ CPU)
 OLLAMA_NUM_CTX = int(os.getenv("OLLAMA_NUM_CTX", "8192"))
-
-# Thư mục gốc dự án và thư mục mặc định lưu trữ file JSON trích xuất
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_OUTPUT_DIR = PROJECT_ROOT / "data" / "extractions"
 
 SYSTEM_PROMPT = """Bạn là chuyên gia Kỹ thuật Dữ liệu (Data Engineer) phụ trách bóc tách thông tin có cấu trúc từ tài liệu Markdown của các cuộc thi học thuật, tin học, AI và khoa học dữ liệu.
 
@@ -406,33 +400,54 @@ def extract_competition_from_markdown(
     return extraction
 
 
+def upload_to_silver(
+    s3_client,
+    record: dict,
+    domain: str,
+    crawl_date: str,
+    timestamp: int,
+) -> str:
+    """Upload bản ghi Silver JSON đã trích xuất thẳng lên Cloudflare R2 (không lưu local)."""
+    safe_domain = re.sub(r"[^\w\-.]", "_", domain)
+    parts = crawl_date.split("-")
+    if len(parts) == 3:
+        year, month, day = parts
+    else:
+        now = datetime.now()
+        year, month, day = str(now.year), now.strftime("%m"), now.strftime("%d")
+
+    silver_key = f"silver/extractions/{safe_domain}/year={year}/month={month}/day={day}/{timestamp}.json"
+    s3_client.put_object(
+        Bucket=BUCKET_NAME,
+        Key=silver_key,
+        Body=json.dumps(record, ensure_ascii=False, indent=2).encode("utf-8"),
+        ContentType="application/json; charset=utf-8",
+        Metadata={"source": domain, "layer": "silver", "crawl_date": crawl_date},
+    )
+    print(f">> [R2 SILVER UPLOADED] s3://{BUCKET_NAME}/{silver_key}")
+    return silver_key
+
+
 def process_bronze_bucket(
     run_llm: bool = False,
     target_date: str | None = None,
     process_all_dates: bool = False,
-    output_dir: str | Path | None = None,
-    output_file: str | Path | None = None,
-    save_silver_parquet: bool = False,
-):
-    """Quét dữ liệu tầng Bronze trên R2 theo cơ chế Scoped Latest Snapshot và xuất file JSON.
-    
+    dry_run: bool = False,
+) -> list[dict]:
+    """Quét dữ liệu tầng Bronze trên R2 theo cơ chế Scoped Latest Snapshot và đẩy Silver JSON lên R2.
+
     Quy tắc:
     1. Giữ nguyên 100% lịch sử các ngày cào trên bucket.
     2. Chỉ trích xuất tệp của ngày mục tiêu (mặc định: ngày cào mới nhất).
     3. Nếu 1 domain được cào nhiều lần trong cùng một ngày, chỉ trích xuất tệp có timestamp mới nhất.
-    4. Xuất kết quả trích xuất schema thành tệp .json (cả tệp đơn lẻ từng domain và tệp tổng hợp).
-    
+    4. Upload kết quả trích xuất schema trực tiếp lên tầng Silver trên Cloudflare R2 (Zero Local Persistence).
+
     Args:
         run_llm: Nếu True, gọi LLM qua Instructor để trích xuất schema.
         target_date: Chuỗi ngày cần trích xuất định dạng 'YYYY-MM-DD'.
         process_all_dates: Nếu True, bỏ qua lọc ngày và quét toàn bộ lịch sử.
-        output_dir: Thư mục lưu tệp json (mặc định: data/extracted).
-        output_file: Tệp json tổng hợp tùy chọn do người dùng chỉ định qua --output.
+        dry_run: Nếu True, chỉ in kết quả trích xuất mà không đẩy object lên R2.
     """
-    out_dir = Path(output_dir) if output_dir else DEFAULT_OUTPUT_DIR
-    if run_llm:
-        out_dir.mkdir(parents=True, exist_ok=True)
-
     client = None
     if run_llm:
         gemini_key = os.getenv("GEMINI_API_KEY")
@@ -535,7 +550,7 @@ def process_bronze_bucket(
     print(f"Số domain duy nhất cần trích xuất (Latest Snapshot): {len(final_queue)}")
     print(f"Số tệp lịch sử cũ được bảo lưu (Skipped from LLM): {historical_skipped_count}")
     print(f"Số tệp metadata/Delta log đã bỏ qua: {skipped_metadata_count}")
-    print(f"Thư mục xuất file JSON: {out_dir}")
+    print(f"Đích lưu Silver JSON trên R2: s3://{BUCKET_NAME}/silver/extractions/")
     print("=" * 60)
 
     # 4. Thực thi trích xuất LLM trên tập snapshot đã lọc
@@ -600,24 +615,28 @@ def process_bronze_bucket(
                 }
                 successful_extractions.append(record)
 
-                # Lưu ngay tệp JSON đơn lẻ của domain này (phòng ngừa gián đoạn tiến trình)
-                safe_domain = re.sub(r"[^\w\-.]", "_", item["domain"])
-                domain_json_path = out_dir / f"{safe_domain}_{item['timestamp']}.json"
-                with open(domain_json_path, "w", encoding="utf-8") as f:
-                    json.dump(record, f, ensure_ascii=False, indent=2)
-                print(f">> [SAVED JSON] Kết quả domain đã lưu tại: {domain_json_path}")
+                # Đẩy ngay tệp JSON đơn lẻ của domain này lên tầng Silver trên Cloudflare R2
+                if dry_run:
+                    print(f">> [DRY-RUN] Bỏ qua upload R2 cho domain '{item['domain']}'.")
+                else:
+                    upload_to_silver(
+                        s3_client=s3_client,
+                        record=record,
+                        domain=item["domain"],
+                        crawl_date=item["date"],
+                        timestamp=item["timestamp"],
+                    )
 
             except Exception as e:
                 print(f">> [ERROR] Extraction failed for domain '{item['domain']}': {e}")
                 raise e
         else:
-            print(">> [READY] Filtered & Schema ready. Set run_llm=True (hoặc truyền --extract) để gọi LLM & xuất JSON.")
+            print(">> [READY] Filtered & Schema ready. Set run_llm=True (hoặc truyền --extract) để gọi LLM & đẩy lên R2.")
 
-    # 5. Lưu tệp JSON tổng hợp batch
-    if successful_extractions:
+    # 5. Đẩy manifest tổng hợp batch lên tầng Silver trên Cloudflare R2
+    if successful_extractions and not dry_run:
         timestamp_now = int(datetime.now().timestamp())
-        batch_filename = f"extractions_{chosen_date}_{timestamp_now}.json"
-        batch_path = out_dir / batch_filename
+        batch_key = f"silver/batches/extractions_{chosen_date}_{timestamp_now}.json"
         batch_payload = {
             "metadata": {
                 "extraction_date": chosen_date,
@@ -631,29 +650,17 @@ def process_bronze_bucket(
             "results": successful_extractions,
         }
 
-        with open(batch_path, "w", encoding="utf-8") as f:
-            json.dump(batch_payload, f, ensure_ascii=False, indent=2)
-        print(f"\n>> [BATCH JSON SAVED] Đã lưu tệp tổng hợp ({len(successful_extractions)} domain) vào: {batch_path}")
-
-        # Nếu người dùng chỉ định đường dẫn output cụ thể qua --output
-        if output_file:
-            custom_path = Path(output_file)
-            custom_path.parent.mkdir(parents=True, exist_ok=True)
-            with open(custom_path, "w", encoding="utf-8") as f:
-                json.dump(batch_payload, f, ensure_ascii=False, indent=2)
-            print(f">> [CUSTOM JSON SAVED] Đã lưu kết quả theo tham số --output vào: {custom_path}")
-
-        # Xuất trực tiếp Silver Parquet phục vụ DuckDB nếu được bật (--save-parquet)
-        if save_silver_parquet:
-            extracted_comps = [
-                Competition.model_validate(c)
-                for rec in successful_extractions
-                for c in rec.get("competitions", [])
-            ]
-            if extracted_comps:
-                analytics_gold = importlib.import_module("acdp.4_analytics_gold")
-                silver_out = PROJECT_ROOT / "data" / "lakehouse" / "silver"
-                analytics_gold.export_silver_parquet(extracted_comps, silver_out)
+        s3_client.put_object(
+            Bucket=BUCKET_NAME,
+            Key=batch_key,
+            Body=json.dumps(batch_payload, ensure_ascii=False, indent=2).encode("utf-8"),
+            ContentType="application/json; charset=utf-8",
+            Metadata={"layer": "silver", "extraction_date": chosen_date},
+        )
+        print(
+            f"\n>> [R2 BATCH UPLOADED] Đã đẩy manifest tổng hợp ({len(successful_extractions)} domain) "
+            f"lên: s3://{BUCKET_NAME}/{batch_key}"
+        )
 
     print("\n" + "=" * 60)
     print(
@@ -661,40 +668,29 @@ def process_bronze_bucket(
         f"extracted {len(successful_extractions)} successfully, "
         f"skipped {empty_count} empty files."
     )
-    if successful_extractions:
-        print(f"Các file JSON đã được lưu tại thư mục: {out_dir}")
+    if successful_extractions and not dry_run:
+        print(f"Silver JSON đã được đồng bộ trực tiếp lên: s3://{BUCKET_NAME}/silver/extractions/")
     print("=" * 60)
+    return successful_extractions
 
 
 if __name__ == "__main__":
     execute_extraction = "--extract" in sys.argv or os.getenv("EXECUTE_LLM", "0") == "1"
     process_all = "--all" in sys.argv
-    save_parquet_flag = "--save-parquet" in sys.argv
+    dry_run_flag = "--dry-run" in sys.argv
 
     # Trích xuất tham số dòng lệnh
     target_date_arg = None
-    target_output_file = None
-    target_output_dir = None
 
     for i, arg in enumerate(sys.argv):
         if arg.startswith("--date="):
             target_date_arg = arg.split("=", 1)[1]
         elif arg == "--date" and i + 1 < len(sys.argv):
             target_date_arg = sys.argv[i + 1]
-        elif arg.startswith("--output="):
-            target_output_file = arg.split("=", 1)[1]
-        elif arg in ("--output", "-o") and i + 1 < len(sys.argv):
-            target_output_file = sys.argv[i + 1]
-        elif arg.startswith("--output-dir="):
-            target_output_dir = arg.split("=", 1)[1]
-        elif arg == "--output-dir" and i + 1 < len(sys.argv):
-            target_output_dir = sys.argv[i + 1]
 
     process_bronze_bucket(
         run_llm=execute_extraction,
         target_date=target_date_arg,
         process_all_dates=process_all,
-        output_dir=target_output_dir,
-        output_file=target_output_file,
-        save_silver_parquet=save_parquet_flag,
+        dry_run=dry_run_flag,
     )

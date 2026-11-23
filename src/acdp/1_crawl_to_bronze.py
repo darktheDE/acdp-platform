@@ -5,7 +5,6 @@ import random
 import re
 import sys
 from datetime import datetime
-from pathlib import Path
 from urllib.parse import urlparse
 
 from crawl4ai import (
@@ -57,7 +56,7 @@ if any(old in _raw_query_model.lower() for old in ("qwen", "ollama")):
 QUERY_PROVIDER = _raw_query_model if "/" in _raw_query_model else f"gemini/{_raw_query_model}"
 
 def upload_to_bronze(md_content: str, dm_name: str) -> None:
-    """Upload nội dung Markdown lên tầng Bronze trên R2 hoặc lưu cục bộ theo cấu hình.
+    """Upload nội dung Markdown lên tầng Bronze trên Cloudflare R2.
 
     FIX: Chặn upload file rỗng — nếu nội dung trống (crawl thất bại / bị anti-bot),
     in cảnh báo và thoát ngay; không tạo object 0-byte trên bucket.
@@ -69,20 +68,6 @@ def upload_to_bronze(md_content: str, dm_name: str) -> None:
 
     now = datetime.now()
     ts = int(now.timestamp())
-
-    if settings.bronze_storage_backend == "local" and not settings.bronze_storage_uri.startswith(("s3://", "r2://")):
-        local_dir = (
-            Path(settings.bronze_storage_uri)
-            / domain
-            / f"year={now.year}"
-            / f"month={now.strftime('%m')}"
-            / f"day={now.strftime('%d')}"
-        )
-        local_dir.mkdir(parents=True, exist_ok=True)
-        local_path = local_dir / f"{ts}.md"
-        local_path.write_text(md_content, encoding="utf-8")
-        print(f"Saved {domain} content to local bronze layer! ({len(md_content):,} chars -> {local_path})")
-        return
 
     bronze_key = (
         f"bronze/{domain}"

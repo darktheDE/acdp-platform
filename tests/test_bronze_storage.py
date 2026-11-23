@@ -1,27 +1,31 @@
-"""Unit tests for Bronze Layer Ingestion, Configuration, and UTF-8 Storage Integrity.
+"""Unit tests for Bronze Layer Ingestion, Configuration, and UTF-8 Storage Integrity (Cloudflare R2 Exclusive).
 
 Tests:
-1. Storage options generation from AppConfig for local POSIX and Cloudflare R2 backends.
+1. Storage options generation from AppConfig for Cloudflare R2 and custom S3 backends.
 2. UTF-8 Markdown read/write parity and SHA-256 fingerprint hashing.
 3. R2 Object Storage key format and URL domain slugging logic.
-4. Empty and corrupted crawl response handling (prevent 0-byte uploads).
+4. Empty and corrupted crawl response handling (prevent 0-byte uploads) + mocked R2 put_object verification.
 """
 
 import hashlib
 from datetime import datetime
 from pathlib import Path
+from unittest.mock import MagicMock
 from urllib.parse import urlparse
+
+import pytest
+from pydantic import ValidationError
 
 from acdp.config import AppConfig
 
 
-def test_storage_options_local_backend() -> None:
-    """Verify local storage backend returns empty options dictionary for local POSIX IO."""
-    local_cfg = AppConfig(
-        bronze_storage_backend="local",
-        bronze_storage_uri="./data/lakehouse/bronze",
-    )
-    assert local_cfg.get_storage_options() == {}
+def test_local_backend_rejected_under_r2_exclusive_policy() -> None:
+    """Verify legacy 'local' storage backend is disallowed under DIR-018 R2-exclusive policy."""
+    with pytest.raises(ValidationError):
+        AppConfig(
+            _env_file=None,
+            bronze_storage_backend="local",  # type: ignore[arg-type]
+        )
 
 
 def test_storage_options_cloudflare_r2_backend() -> None:
@@ -112,21 +116,26 @@ def test_empty_content_check_logic() -> None:
     assert not (not valid_md or not valid_md.strip())
 
 
-def test_upload_to_bronze_local_and_empty_skip(tmp_path: Path, monkeypatch) -> None:
-    """Verify real upload_to_bronze skips empty content and writes UTF-8 Markdown locally."""
+def test_upload_to_bronze_r2_and_empty_skip(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Verify real upload_to_bronze skips empty content and uploads UTF-8 Markdown directly to R2."""
     import importlib
 
     bronze_mod = importlib.import_module("acdp.1_crawl_to_bronze")
-    monkeypatch.setattr(bronze_mod.settings, "bronze_storage_backend", "local")
-    monkeypatch.setattr(bronze_mod.settings, "bronze_storage_uri", str(tmp_path))
+    fake_s3 = MagicMock()
+    monkeypatch.setattr(bronze_mod.settings, "bucket_name", "acdp-test-bucket")
+    monkeypatch.setattr(type(bronze_mod.settings), "create_r2_client", lambda self: fake_s3)
 
-    # Empty / whitespace should not create any files
+    # Empty / whitespace should not trigger put_object
     bronze_mod.upload_to_bronze("   \n\t ", "https://example.org/empty")
-    assert list(tmp_path.rglob("*.md")) == []
+    fake_s3.put_object.assert_not_called()
 
-    # Valid UTF-8 Markdown should be persisted under domain partition
+    # Valid UTF-8 Markdown should be uploaded under bronze/<domain>/year=.../month=.../day=.../<ts>
     sample = "# Cuộc thi AI HCM-UTE\n\nGiải thưởng: 50 triệu VNĐ"
     bronze_mod.upload_to_bronze(sample, "https://example.org/contest")
-    written = list((tmp_path / "example.org").rglob("*.md"))
-    assert len(written) == 1
-    assert written[0].read_text(encoding="utf-8") == sample
+    fake_s3.put_object.assert_called_once()
+    kwargs = fake_s3.put_object.call_args.kwargs
+    assert kwargs["Bucket"] == "acdp-test-bucket"
+    assert kwargs["Key"].startswith("bronze/example.org/year=")
+    assert kwargs["Body"] == sample.encode("utf-8")
+    assert kwargs["ContentType"] == "text/markdown; charset=utf-8"
+    assert kwargs["Metadata"] == {"source": "example.org", "layer": "bronze"}

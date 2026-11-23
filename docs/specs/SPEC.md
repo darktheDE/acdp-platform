@@ -70,7 +70,7 @@ Trang `/dashboard` không dùng để trang trí bằng số liệu minh họa m
 
 ### 3.3. Phân hệ 3: RAG Regulation Copilot (`/copilot`)
 
-1. **Người dùng đang chat với ai?** Người dùng trao đổi với **Trợ lý Hỏi đáp Thể lệ ACDP**, một đường ống Retrieval-Augmented Generation (RAG) không trò chuyện tán gẫu tự do mà hoạt động dựa trên kho chỉ mục vector `Qdrant v1.13.4` (collection `acdp_competitions`, chỉ mục `metadata.domain`) kết hợp LLM (`Gemini` / `Ollama` trong `src/acdp/3_chatbot_mvp.py`) và lưu trữ lịch sử đa phiên tại PostgreSQL 18 (`chat_sessions`, `chat_messages`).
+1. **Người dùng đang chat với ai?** Người dùng trao đổi với **Trợ lý Hỏi đáp Thể lệ ACDP**, một đường ống Retrieval-Augmented Generation (RAG) không trò chuyện tán gẫu tự do mà hoạt động dựa trên kho chỉ mục vector `Qdrant v1.13.4` (collection `acdp_competitions`, chỉ mục `metadata.domain`) kết hợp LLM (`Gemini` / `Ollama` trong `src/acdp/3_ingest_to_qdrant.py`) và lưu trữ lịch sử đa phiên tại PostgreSQL 18 (`chat_sessions`, `chat_messages`).
 2. **Người dùng nhận được gì?** Thí sinh nhập câu hỏi tự nhiên bằng tiếng Việt (ví dụ: *"Cuộc thi này có cho sinh viên năm hai ghép nhóm liên trường không, hạn nộp vòng sơ loại là ngày nào?"*). Hệ thống trả về câu trả lời trực diện kèm khung **Trích dẫn Nguồn (Citations)** gồm tiêu đề tài liệu, tên miền, đoạn trích gốc và đường dẫn URL nguồn để thí sinh tự bấm kiểm chứng.
 3. **Cơ chế chống bịa đặt (`DIR-004`):** Nếu câu hỏi vượt ra ngoài tập dữ liệu thể lệ hiện có trong Qdrant (`grounded = false`), Copilot từ chối suy đoán và hiển thị cảnh báo chưa tìm thấy điều khoản xác thực trong nguồn thu thập, bảo vệ thí sinh khỏi rủi ro nộp sai quy chế.
 
