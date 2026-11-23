@@ -139,3 +139,77 @@ def test_upload_to_bronze_r2_and_empty_skip(monkeypatch: pytest.MonkeyPatch) -> 
     assert kwargs["Body"] == sample.encode("utf-8")
     assert kwargs["ContentType"] == "text/markdown; charset=utf-8"
     assert kwargs["Metadata"] == {"source": "example.org", "layer": "bronze"}
+
+
+def test_v2_package_bronze_html_with_boundaries() -> None:
+    """Verify ACDP v2 packages multi-page CrawlResult HTML with ACDP_PAGE_BOUNDARY."""
+    import importlib
+    from types import SimpleNamespace
+
+    v2_bronze = importlib.import_module("acdp.v2.1_crawl_to_bronze")
+    records = [
+        SimpleNamespace(
+            url="https://example.org/contest",
+            success=True,
+            html='<!DOCTYPE html><html><head><meta property="og:title" content="AI Contest"></head><body><h1>Main</h1></body></html>',
+        ),
+        SimpleNamespace(
+            url="https://example.org/empty",
+            success=True,
+            html="   \n\t ",
+        ),
+        SimpleNamespace(
+            url="https://example.org/failed",
+            success=False,
+            html="<html><body>500</body></html>",
+        ),
+        SimpleNamespace(
+            url='https://example.org/rules?tab="prize"',
+            success=True,
+            html="<html><body><p>Prize 100M VND</p></body></html>",
+        ),
+    ]
+
+    packaged, page_count = v2_bronze.package_bronze_html(records)
+    assert page_count == 2
+    assert '<!-- ACDP_PAGE_BOUNDARY url="https://example.org/contest" -->' in packaged
+    assert '<!-- ACDP_PAGE_BOUNDARY url="https://example.org/rules?tab=&quot;prize&quot;" -->' in packaged
+    assert '<meta property="og:title" content="AI Contest">' in packaged
+    assert "500" not in packaged
+
+
+def test_v2_upload_to_bronze_raw_html_r2_and_empty_skip(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Verify ACDP v2 uploads Raw Rendered HTML (.html) to R2 and skips empty payloads."""
+    import importlib
+
+    v2_bronze = importlib.import_module("acdp.v2.1_crawl_to_bronze")
+    fake_s3 = MagicMock()
+    monkeypatch.setattr(v2_bronze.settings, "bucket_name", "acdp-test-bucket")
+    monkeypatch.setattr(type(v2_bronze.settings), "create_r2_client", lambda self: fake_s3)
+
+    assert v2_bronze.upload_to_bronze("   \n ", "https://example.org/empty") is None
+    fake_s3.put_object.assert_not_called()
+
+    sample_html = (
+        '<!-- ACDP_PAGE_BOUNDARY url="https://example.org/contest" -->\n'
+        "<html><head><title>Cuộc thi AI</title></head><body><p>Giải thưởng 50 triệu</p></body></html>"
+    )
+    uploaded_key = v2_bronze.upload_to_bronze(
+        sample_html, "https://example.org/contest", page_count=1
+    )
+    assert uploaded_key is not None
+    assert uploaded_key.startswith("bronze/example.org/year=")
+    assert uploaded_key.endswith(".html")
+
+    fake_s3.put_object.assert_called_once()
+    kwargs = fake_s3.put_object.call_args.kwargs
+    assert kwargs["Bucket"] == "acdp-test-bucket"
+    assert kwargs["Key"] == uploaded_key
+    assert kwargs["Body"] == sample_html.encode("utf-8")
+    assert kwargs["ContentType"] == "text/html; charset=utf-8"
+    assert kwargs["Metadata"] == {
+        "source": "example.org",
+        "layer": "bronze",
+        "format": "raw_html",
+        "page_count": "1",
+    }

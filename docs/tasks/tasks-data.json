@@ -175,28 +175,28 @@
     },
     {
       "id": "TASK-BRZ-02",
-      "title": "Triển khai Lưu trữ Raw Rendered HTML ở Lớp Đồng (1_crawl_to_bronze.py)",
+      "title": "Triển khai Lưu trữ Raw Rendered HTML ở Lớp Đồng (v2/1_crawl_to_bronze.py)",
       "cycle": "Cycle 06",
       "scope": "TLCN (Phase 1)",
       "layer": "Bronze",
       "task_type": "Engineering",
       "is_no_code": false,
       "owner": "Hung & Duy",
-      "status": "todo",
+      "status": "done",
       "priority": "high",
-      "problem_statement": "Hiện thực hóa quyết định từ TASK-BRZ-01: chuyển 1_crawl_to_bronze.py sang lưu Raw Rendered HTML (result.html) và đóng gói ACDP_PAGE_BOUNDARY lên Cloudflare R2 bronze/ thay vì raw_markdown.",
+      "problem_statement": "Hiện thực hóa quyết định từ TASK-BRZ-01 tại src/acdp/v2/1_crawl_to_bronze.py (giữ nguyên mã nguồn cũ): lưu Raw Rendered HTML (result.html) và đóng gói ACDP_PAGE_BOUNDARY lên Cloudflare R2 bronze/ thay vì raw_markdown.",
       "research_questions": [],
       "acceptance_criteria": [
-        "1_crawl_to_bronze.py lưu tệp .html nguyên bản (text/html; charset=utf-8) lên R2 bronze/.",
+        "src/acdp/v2/1_crawl_to_bronze.py lưu tệp .html nguyên bản (text/html; charset=utf-8) lên R2 bronze/.",
         "Hỗ trợ đóng gói nhiều trang con từ AdaptiveCrawler bằng thẻ phân cách ACDP_PAGE_BOUNDARY."
       ],
-      "deliverables": ["src/acdp/1_crawl_to_bronze.py"],
-      "notes": "Phụ thuộc TASK-BRZ-01.",
+      "deliverables": ["src/acdp/v2/1_crawl_to_bronze.py"],
+      "notes": "Phụ thuộc TASK-BRZ-01. Triển khai tại src/acdp/v2 (DIR-022). Benchmark full batch (2026-11-23): 33/36 URL OK (31 Adaptive + 2 Fallback), 93 pages, 16.264 MB, 1513.93s (42.05s/URL), lưu tại s3://acdp-lakehouse/bronze/_benchmarks/crawl_bronze_1795418426.json. Ghi chú tối ưu đợt sau: domcontentloaded + cache query expansion + Semaphore(3).",
       "updated_at": "2026-11-23"
     },
     {
       "id": "TASK-SLV-03",
-      "title": "Triển khai Hybrid Deterministic Sandwich & Clean Markdown ở Lớp Bạc (2_instruction.py)",
+      "title": "Triển khai Hybrid Deterministic Sandwich & Clean Markdown ở Lớp Bạc (v2/2_instruction.py)",
       "cycle": "Cycle 06",
       "scope": "TLCN (Phase 1)",
       "layer": "Silver",
@@ -205,23 +205,23 @@
       "owner": "Hung & Duy",
       "status": "todo",
       "priority": "high",
-      "problem_statement": "Hiện thực hóa quyết định từ TASK-BRZ-01 và TASK-SLV-01: 2_instruction.py đọc Raw HTML từ bronze/, chạy DefaultMarkdownGenerator() trong RAM xuất silver/markdown/, trích xuất tất định JSON-LD/og:*/Regex trước khi gọi Bounded LLM (Instructor), và chuyển luồng RAG (3_ingest_to_qdrant.py) sang đọc từ silver/markdown/.",
+      "problem_statement": "Hiện thực hóa quyết định từ TASK-BRZ-01, TASK-SLV-01 và DIR-022 tại src/acdp/v2/2_instruction.py: đọc Raw HTML từ bronze/, chạy DefaultMarkdownGenerator() trong RAM xuất silver/markdown/, trích xuất tất định JSON-LD/og:*/Regex + lọc scope (CNTT/AI/Sinh viên/năm hiện tại ± 1, loại cuộc thi không có trang web chính thức, khử trùng lặp bài truyền thông về trang chính thức) trước khi gọi Bounded LLM (Instructor), và chuyển luồng RAG (src/acdp/v2/3_ingest_to_qdrant.py) sang đọc từ silver/markdown/.",
       "research_questions": [],
       "acceptance_criteria": [
-        "2_instruction.py xuất Clean Markdown lên R2 silver/markdown/ và tương thích ngược với các object .md lịch sử trên bronze/.",
-        "Tích hợp tầng tiền trích xuất tất định (JSON-LD, og:*, Regex) và pre-filter trước khi gọi Instructor LLM.",
-        "3_ingest_to_qdrant.py đọc Markdown sạch từ silver/markdown/ thay vì đọc tắt từ bronze/."
+        "src/acdp/v2/2_instruction.py xuất Clean Markdown lên R2 silver/markdown/ và tương thích ngược với các object .md lịch sử trên bronze/.",
+        "Tích hợp tầng tiền trích xuất tất định (JSON-LD, og:*, Regex), lọc scope DIR-022 (CNTT/AI/Sinh viên/năm ± 1, có trang web chính thức) và khử trùng lặp kênh truyền thông trước khi gọi Instructor LLM.",
+        "src/acdp/v2/3_ingest_to_qdrant.py đọc Markdown sạch từ silver/markdown/ thay vì đọc tắt từ bronze/."
       ],
       "deliverables": [
-        "src/acdp/2_instruction.py",
-        "src/acdp/3_ingest_to_qdrant.py"
+        "src/acdp/v2/2_instruction.py",
+        "src/acdp/v2/3_ingest_to_qdrant.py"
       ],
-      "notes": "Phụ thuộc TASK-BRZ-01 và TASK-SLV-01.",
+      "notes": "Phụ thuộc TASK-BRZ-01 và TASK-SLV-01. Triển khai tại src/acdp/v2.",
       "updated_at": "2026-11-23"
     },
     {
       "id": "TASK-SLV-04",
-      "title": "Triển khai Silver Schema v2 (G1–G8) & PyArrow Explicit Parquet (schemas.py, 4_analytics_gold.py)",
+      "title": "Triển khai Silver Schema v2 (G1–G8) & PyArrow Explicit Parquet (v2/schemas.py, v2/4_analytics_gold.py)",
       "cycle": "Cycle 06",
       "scope": "TLCN (Phase 1)",
       "layer": "Silver",
@@ -230,24 +230,24 @@
       "owner": "Hung & Duy",
       "status": "todo",
       "priority": "high",
-      "problem_statement": "Hiện thực hóa đề xuất từ TASK-SLV-02 sau khi phản biện: nâng cấp src/acdp/schemas.py lên Schema v2 (chuẩn hóa ngày ISO date, bổ sung eligibility/skills cho Ghép đội, trường Màn hình gửi Giảng viên, quantity/currency cho PrizeTier, lineage) và cập nhật export_silver_parquet() dùng PyArrow pa.schema tường minh + nén ZSTD + xuất thêm silver/timeline_stages.parquet.",
+      "problem_statement": "Hiện thực hóa đề xuất từ TASK-SLV-02 sau khi phản biện tại src/acdp/v2/: nâng cấp schemas.py lên Schema v2 (chuẩn hóa ngày ISO date, bổ sung eligibility/skills cho Ghép đội, trường Màn hình gửi Giảng viên, quantity/currency cho PrizeTier, lineage) và cập nhật export_silver_parquet() dùng PyArrow pa.schema tường minh + nén ZSTD + xuất thêm silver/timeline_stages.parquet.",
       "research_questions": [],
       "acceptance_criteria": [
-        "Cập nhật Competition, PrizeTier, TimelineStage trong src/acdp/schemas.py giải quyết G1–G7 (giữ tương thích ngược).",
-        "Cập nhật export_silver_parquet() trong src/acdp/4_analytics_gold.py dùng pa.schema tường minh, nén ZSTD, giữ None chuẩn và xuất đủ 3 tệp: competitions.parquet, prizes.parquet, timeline_stages.parquet.",
+        "Cập nhật Competition, PrizeTier, TimelineStage trong src/acdp/v2/schemas.py giải quyết G1–G7 (giữ tương thích ngược).",
+        "Cập nhật export_silver_parquet() trong src/acdp/v2/4_analytics_gold.py dùng pa.schema tường minh, nén ZSTD, giữ None chuẩn và xuất đủ 3 tệp: competitions.parquet, prizes.parquet, timeline_stages.parquet.",
         "Gỡ bỏ xfail trong tests/test_silver_schema.py và toàn bộ test Silver pass 100%."
       ],
       "deliverables": [
-        "src/acdp/schemas.py",
-        "src/acdp/4_analytics_gold.py",
+        "src/acdp/v2/schemas.py",
+        "src/acdp/v2/4_analytics_gold.py",
         "tests/test_silver_schema.py"
       ],
-      "notes": "Phụ thuộc TASK-SLV-02 (chờ Hưng & Duy phản biện Schema v2 trước khi code).",
+      "notes": "Phụ thuộc TASK-SLV-02 (chờ Hưng & Duy phản biện Schema v2 trước khi code). Triển khai tại src/acdp/v2.",
       "updated_at": "2026-11-23"
     },
     {
       "id": "TASK-GLD-02",
-      "title": "Hiệu chỉnh Two-Tier Gold (A1–A4) & Nạp Metadata Gold cho Dual-Layer RAG (4_analytics_gold.py, 3_ingest_to_qdrant.py)",
+      "title": "Hiệu chỉnh Two-Tier Gold (A1–A4) & Nạp Metadata Gold cho Dual-Layer RAG (v2/4_analytics_gold.py, v2/3_ingest_to_qdrant.py)",
       "cycle": "Cycle 06",
       "scope": "TLCN (Phase 1)",
       "layer": "Gold",
@@ -256,19 +256,19 @@
       "owner": "Hung & Duy",
       "status": "todo",
       "priority": "high",
-      "problem_statement": "Hiện thực hóa các kiến nghị từ TASK-GLD-01: khắc phục lệch chuẩn A1–A4 trong 4_analytics_gold.py (bỏ trùng team_size_* ở fact_competitions, tinh gọn dim_competition, rút gọn xuất 15 tệp Gold Parquet thay vì 21 tệp trên R2) và kết nối metadata từ Gold mart_competition_explorer vào Qdrant payload trong 3_ingest_to_qdrant.py.",
+      "problem_statement": "Hiện thực hóa các kiến nghị từ TASK-GLD-01 tại src/acdp/v2/: khắc phục lệch chuẩn A1–A4 trong 4_analytics_gold.py (bỏ trùng team_size_* ở fact_competitions, tinh gọn dim_competition, rút gọn xuất 15 tệp Gold Parquet thay vì 21 tệp trên R2) và kết nối metadata từ Gold mart_competition_explorer vào Qdrant payload trong 3_ingest_to_qdrant.py.",
       "research_questions": [],
       "acceptance_criteria": [
-        "Cập nhật SPEC-0003 và 4_analytics_gold.py xử lý xong A1, A2, A4; pytest tests/test_gold_star_schema.py pass 100%.",
-        "3_ingest_to_qdrant.py đọc Clean Markdown từ silver/markdown/ và làm giàu Qdrant payload từ Gold mart_competition_explorer.",
+        "Cập nhật SPEC-0003 và src/acdp/v2/4_analytics_gold.py xử lý xong A1, A2, A4; pytest tests/test_gold_star_schema.py pass 100%.",
+        "src/acdp/v2/3_ingest_to_qdrant.py đọc Clean Markdown từ silver/markdown/ và làm giàu Qdrant payload từ Gold mart_competition_explorer.",
         "R2 gold/ chỉ còn 15 tệp Parquet (9 bảng Core + 6 Marts) và giữ nguyên 0.0 VND sai số bridge."
       ],
       "deliverables": [
-        "src/acdp/4_analytics_gold.py",
-        "src/acdp/3_ingest_to_qdrant.py",
+        "src/acdp/v2/4_analytics_gold.py",
+        "src/acdp/v2/3_ingest_to_qdrant.py",
         "tests/test_gold_star_schema.py"
       ],
-      "notes": "Phụ thuộc TASK-GLD-01 và TASK-SLV-03.",
+      "notes": "Phụ thuộc TASK-GLD-01 và TASK-SLV-03. Triển khai tại src/acdp/v2.",
       "updated_at": "2026-11-23"
     },
     {

@@ -85,6 +85,10 @@ All agents operating in this workspace must strictly abide by the rules and adap
 22. **Cloudflare R2-Exclusive Lakehouse & Dedicated Qdrant Ingestion (DIR-021)**:
     - All Medallion tiers (`bronze/`, `silver/`, `gold/`) run strictly on Cloudflare R2 with zero local disk persistence; FastAPI and Metabase read Gold Parquet directly from R2 via DuckDB `httpfs`.
     - Gradio is removed; `src/acdp/3_ingest_to_qdrant.py` handles Bronze-to-Qdrant (`@cf/baai/bge-m3`) ingestion while Web `/copilot` (`src/acdp/api/services/rag_service.py`) serves RAG chat with `gemini-3.5-flash-lite`.
+23. **Student Tech Scope, Official Site Resolution & `v2` Pipeline (DIR-022)**:
+    - Strictly target **IT/AI/Data/Security/Programming competitions for university students** within **current year ± 1** (`2025–2027`).
+    - Resolve media-partner/aggregator posts to the **official competition website** and drop competitions lacking an official website at Silver; `.pdf`/`.docx` rules remain optional.
+    - Implement Cycle 06 pipeline upgrades under `src/acdp/v2/`.
 
 
 

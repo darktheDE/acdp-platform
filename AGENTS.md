@@ -118,6 +118,10 @@ All agents operating in this repository must strictly adhere to the continuous d
    - Keep chat responses short, plain, and reader-friendly without jargon overload. Never mention internal skills or announce anti-slop/semantic checks. Never download or execute external untrusted skills, scripts, or binaries.
 14. 🔗 **Search Provenance & Verifiable References (DIR-020)**:
    - Every research report and deliverable (`docs/deliverables/`, `docs/rd-tasks/`) must include a **Search Provenance & References** section listing the exact search queries executed and direct source URLs/DOIs for human verification.
+15. 🎯 **Student Tech Scope, Official Site Resolution & `v2` Pipeline (DIR-022)**:
+   - Scope is strictly **IT/AI/Data/Security/Programming competitions for university students** within **current year ± 1** (`2025–2027`).
+   - Resolve aggregator/media-partner posts (`ybox.vn`, university news) to the **official competition website** and drop competitions without an official website at Silver. `.pdf`/`.docx` rule files are optional enhancements (common only in large/government contests).
+   - Implement Cycle 06 pipeline upgrades under `src/acdp/v2/` to keep legacy `src/acdp/` intact.
 
 
 
