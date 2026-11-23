@@ -1,9 +1,9 @@
 # SPEC-0003: Gold Layer Kimball Star Schema & Analytical Data Marts
 
-> **Task ID**: `TASK-W102` | **Task Registry**: [`NT-024`](../tasks/task-registry.md)
-> **Status**: Proposed (Web Sprint 01 Specification)
+> **Task ID**: `TASK-W102` / `TASK-GLD-02` | **Task Registry**: [`NT-024`](../tasks/task-registry.md)
+> **Status**: Active (Cycle 06 Two-Tier Gold Calibration)
 > **Dependencies**: [`SPEC-0002`](./0002-data-ingestion-and-schema-spec.md), [`T14`](./../rd-tasks/T14_web_and_gold_stack_evaluation.md)
-> **Target Module (Sprint 02 Implementation)**: `src/acdp/4_analytics_gold.py` (refactor)
+> **Target Module**: `src/acdp/v2/gold_star_schema.py` (Two-Tier Gold: 9 Core + 6 Marts)
 
 ---
 
@@ -23,7 +23,7 @@ Tài liệu này đặc tả cấu trúc kho dữ liệu phân tích Lớp Vàng
 
 ### 1.2. Phạm vi
 
-Phạm vi áp dụng bao gồm toàn bộ bước đọc JSON Silver, biến đổi thành 9 bảng Star Schema (Dimension, Fact, Bridge), tạo 6 Analytical Data Marts (`mart_*`), duy trì 4 view tương thích ngược (`gold_*`), và xuất ra Parquet/DuckDB tại `data/lakehouse/`. Lớp phục vụ HTTP/FastAPI nằm ngoài phạm vi tài liệu này và được quy định tại [`SPEC-0004`](./0004-serving-api-and-oltp-spec.md).
+Phạm vi áp dụng bao gồm toàn bộ bước đọc JSON Silver từ R2, biến đổi thành 9 bảng Star Schema (Dimension, Fact, Bridge), tạo 6 Analytical Data Marts (`mart_*`), và xuất đúng **15 tệp Parquet** lên Cloudflare R2 `gold/` (loại bỏ 6 tệp `gold_*.parquet` thừa theo `TASK-GLD-01` A4; duy trì 4 view `gold_*` dưới dạng virtual SQL view trong Metabase init script nếu cần). Lớp phục vụ HTTP/FastAPI nằm ngoài phạm vi tài liệu này và được quy định tại [`SPEC-0004`](./0004-serving-api-and-oltp-spec.md).
 
 ---
 
@@ -47,7 +47,7 @@ erDiagram
 ### 2.2. DuckDB DDL cho 4 Bảng Dimension
 
 ```sql
--- 1. Dimension Cuộc thi (Type-1 SCD cho TLCN, khóa tự nhiên là SHA-256 của canonical URL)
+-- 1. Dimension Cuộc thi (Type-1 SCD cho TLCN, tinh gọn chuẩn 1NF theo A2: bỏ mảng lồng & challenge_overview)
 CREATE OR REPLACE TABLE dim_competition (
     competition_sk BIGINT PRIMARY KEY,
     competition_key VARCHAR(64) NOT NULL UNIQUE,
@@ -58,6 +58,7 @@ CREATE OR REPLACE TABLE dim_competition (
     target_audience VARCHAR,
     team_size_min SMALLINT,
     team_size_max SMALLINT,
+    team_description VARCHAR,
     team_profile VARCHAR NOT NULL,         -- 'Individual (1)' | 'Small Team (2-4)' | 'Large Team (5+)' | 'Unspecified'
     mode_raw VARCHAR,
     mode_canonical VARCHAR NOT NULL,       -- 'Online' | 'Offline' | 'Hybrid' | 'Unknown'
@@ -67,7 +68,10 @@ CREATE OR REPLACE TABLE dim_competition (
     total_prize_pool_raw VARCHAR,
     registration_status VARCHAR,
     submission_platform VARCHAR,
-    raw_categories VARCHAR[],
+    registration_start_raw VARCHAR,
+    registration_deadline_raw VARCHAR,
+    event_start_raw VARCHAR,
+    event_end_raw VARCHAR,
     source_batch_file VARCHAR NOT NULL,
     loaded_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -116,7 +120,7 @@ Bảng ánh xạ chuẩn 5 nhóm lĩnh vực trong `dim_domain` (cộng bản gh
 ### 2.3. DuckDB DDL cho 3 Bảng Fact & 2 Bảng Bridge
 
 ```sql
--- 5. Fact Cuộc thi (Grain: 1 dòng cho 1 cuộc thi duy nhất sau khử trùng)
+-- 5. Fact Cuộc thi (Grain: 1 dòng cho 1 cuộc thi duy nhất sau khử trùng; bỏ team_size_* theo A1)
 CREATE OR REPLACE TABLE fact_competitions (
     competition_sk BIGINT PRIMARY KEY REFERENCES dim_competition(competition_sk),
     reg_start_date_sk INTEGER NOT NULL REFERENCES dim_date(date_sk),
@@ -129,8 +133,6 @@ CREATE OR REPLACE TABLE fact_competitions (
     organizer_count SMALLINT NOT NULL DEFAULT 0,
     sponsor_count SMALLINT NOT NULL DEFAULT 0,
     domain_count SMALLINT NOT NULL DEFAULT 0,
-    team_size_min SMALLINT,
-    team_size_max SMALLINT,
     duration_days INTEGER,
     has_scholarship BOOLEAN NOT NULL DEFAULT FALSE
 );
@@ -177,18 +179,20 @@ CREATE OR REPLACE TABLE bridge_competition_organizer (
 );
 ```
 
-### 2.4. Đặc tả 6 Analytical Data Marts (`mart_*`) & 4 View Tương thích Ngược (`gold_*`)
+### 2.4. Đặc tả 6 Analytical Data Marts (`mart_*`) & Quy tắc Materialize 15 Tệp Parquet (`A4`)
+
+> **Quy tắc Two-Tier Gold (A4)**: Chỉ materialize **15 tệp Parquet** lên Cloudflare R2 `gold/` gồm **9 bảng Core** (`dim_*`, `fact_*`, `bridge_*`) và **6 Data Marts** (`mart_*`). Bốn view tương thích ngược (`gold_category_summary`, `gold_mode_distribution`, `gold_seasonality`, `gold_top_prizes`) không xuất thành file Parquet trên R2 mà được khai báo dưới dạng virtual SQL view trong Metabase init script nếu cần.
 
 | Tên Data Mart / View | Nguồn bảng lõi | Mục đích phục vụ API & BI | Công thức cốt lõi |
 | :--- | :--- | :--- | :--- |
-| `mart_kpi_overview` | `fact_competitions`, `dim_competition` | Thẻ KPI hàng đầu trên `/dashboard` | Đếm tổng cuộc thi, tổng `total_prize_vnd` không trùng, tỷ lệ miễn phí `%`, số cuộc thi có học bổng |
+| `mart_kpi_overview` | `fact_competitions`, `dim_competition` | Thẻ KPI hàng đầu trên `/dashboard` | Đếm tổng cuộc thi, tổng `total_prize_vnd` không trùng, tỷ lệ miễn phí `%`, số cuộc thi có học bổng, `AVG(d.team_size_max)` từ `dim_competition` |
 | `mart_domain_analytics` | `bridge_competition_domain`, `dim_domain`, `fact_competitions` | Biểu đồ ngang phân bổ cuộc thi & giải thưởng theo 5 ngành | `COUNT(DISTINCT competition_sk)` và `SUM(total_prize_vnd * allocation_weight)` |
 | `mart_seasonality_academic` | `fact_competitions`, `dim_date` | Biểu đồ Composed theo Tháng / Học kỳ (`HK1`, `HK2`, `Hè`) | Nhóm theo `academic_year`, `academic_term`, `month` trên `COALESCE(NULLIF(event_start_date_sk, -1), reg_deadline_date_sk)` |
 | `mart_organizer_ecosystem` | `bridge_competition_organizer`, `dim_organizer`, `fact_competitions` | Xếp hạng BTC & nhà tài trợ tích cực | Phân tách theo `role_type`, tính số cuộc thi và `SUM(total_prize_vnd * allocation_weight)` |
 | `mart_team_and_mode_matrix` | `fact_competitions`, `dim_competition` | Biểu đồ Donut `mode_canonical` & ma trận `team_profile` | Nhóm theo `(mode_canonical, team_profile)` tính số lượng & tổng giải thưởng |
-| `mart_competition_explorer` | `fact_competitions`, `dim_competition`, `dim_date` | Phục vụ `/competitions`, `/competitions/[key]` và lọc bookmark | Nối sẵn ngày chuẩn hóa, `domain_groups`, `organizer_names`, `total_prize_vnd`, `stage_count` |
+| `mart_competition_explorer` | `fact_competitions`, `dim_competition`, `bridge_*`, `dim_domain`, `dim_organizer` | OBT Serving Mart cho `/competitions`, `/competitions/[key]`, bookmark và **Dual-Layer RAG payload** | Nối sẵn ngày chuẩn hóa, `domain_groups`, `domain_slugs`, `organizers`, `partners_and_sponsors`, `challenge_overview`, `total_prize_vnd`, `stage_count` |
 
-Bốn view tương thích ngược cho kịch bản kiểm thử và Metabase hiện hữu được khai báo qua `CREATE OR REPLACE VIEW`:
+Bốn view tương thích ngược (virtual SQL views trong Metabase, không materialize Parquet trên R2):
 
 ```sql
 CREATE OR REPLACE VIEW gold_category_summary AS

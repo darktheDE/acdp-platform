@@ -263,7 +263,7 @@
       "task_type": "Engineering",
       "is_no_code": false,
       "owner": "Hung & Duy",
-      "status": "todo",
+      "status": "done",
       "priority": "high",
       "problem_statement": "Hiện thực hóa các kiến nghị từ TASK-GLD-01 tại src/acdp/v2/: khắc phục lệch chuẩn A1–A4 trong gold_star_schema.py (bỏ trùng team_size_* ở fact_competitions, tinh gọn dim_competition, rút gọn xuất 15 tệp Gold Parquet thay vì 21 tệp trên R2) và kết nối metadata từ Gold mart_competition_explorer vào Qdrant payload trong rag_ingest.py.",
       "research_questions": [],
@@ -275,9 +275,11 @@
       "deliverables": [
         "src/acdp/v2/gold_star_schema.py",
         "src/acdp/v2/rag_ingest.py",
-        "tests/test_gold_star_schema.py"
+        "tests/test_gold_star_schema.py",
+        "docs/deliverables/TASK-GLD-02-two-tier-gold-and-dual-layer-rag-implementation.md",
+        "docs/deliverables/TASK-GLD-02-two-tier-gold-and-dual-layer-rag-implementation-visual-dossier.html"
       ],
-      "notes": "Phụ thuộc TASK-GLD-01 và TASK-SLV-03. Triển khai tại src/acdp/v2.",
+      "notes": "Phụ thuộc TASK-GLD-01 và TASK-SLV-03. Triển khai tại src/acdp/v2. Đã chạy thực tế trên R2: 24 cuộc thi, 15 tệp Gold Parquet ZSTD (0.00 VND bridge diff), 26/26 docs RAG enriched.",
       "updated_at": "2026-11-23"
     },
     {

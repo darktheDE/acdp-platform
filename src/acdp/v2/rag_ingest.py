@@ -1,10 +1,12 @@
-"""TASK-SLV-03: Silver-to-Qdrant Vector Ingestion Pipeline (ACDP v2).
+"""TASK-SLV-03 & TASK-GLD-02: Dual-Layer RAG Ingestion Pipeline (ACDP v2).
 
-Replaces the Bronze-reading anti-pattern in `src/acdp/3_ingest_to_qdrant.py`
-per TASK-BRZ-01, TASK-SLV-03, and DIR-021:
+Implements Dual-Layer RAG (Silver Clean Text + Gold Mart Metadata):
 1. Reads Clean Markdown strictly from Cloudflare R2 `silver/markdown/`.
-2. Enriches metadata (`canonical_url`, `competition_name`, `domain`, `crawl_date`)
-   from R2 object metadata and matching `silver/extractions/` JSON records.
+2. Loads Gold OBT `gold/mart_competition_explorer.parquet` from R2 and enriches
+   Qdrant payload metadata (`competition_key`, `domain_groups`, `domain_slugs`,
+   `mode_canonical`, `is_free`, `total_prize_vnd`, `has_scholarship`,
+   `registration_status`, `registration_deadline_raw`, `team_size_min`,
+   `team_size_max`, `team_profile`) for Qdrant pre-filtering.
 3. Runs SemanticChunker + Cloudflare Workers AI `@cf/baai/bge-m3` (1024 dims)
    and upserts deterministic UUIDv5 points into Qdrant Cloud.
 """
@@ -12,6 +14,7 @@ per TASK-BRZ-01, TASK-SLV-03, and DIR-021:
 from __future__ import annotations
 
 import argparse
+import io
 import json
 import os
 import random
@@ -25,6 +28,7 @@ from typing import Any
 from urllib.parse import urlparse
 
 import httpx
+import pyarrow.parquet as pq
 from dotenv import find_dotenv, load_dotenv
 from langchain_core.documents import Document
 from langchain_core.embeddings import Embeddings
@@ -41,6 +45,7 @@ from qdrant_client.http.models import (
 )
 
 from acdp.config import settings
+from acdp.v2.schemas import normalize_canonical_url
 
 if sys.stdout and hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
@@ -253,18 +258,99 @@ def load_silver_extraction_index(
     return index
 
 
+GOLD_EXPLORER_KEY = "gold/mart_competition_explorer.parquet"
+
+
+def load_gold_explorer_metadata(
+    s3_client: Any,
+    bucket_name: str,
+) -> tuple[dict[str, dict[str, Any]], dict[str, dict[str, Any]]]:
+    """Load Gold mart_competition_explorer.parquet from R2, indexed by canonical_url and domain."""
+    by_url: dict[str, dict[str, Any]] = {}
+    by_domain: dict[str, dict[str, Any]] = {}
+    try:
+        raw = s3_client.get_object(Bucket=bucket_name, Key=GOLD_EXPLORER_KEY)["Body"].read()
+    except Exception as exc:
+        print(f"[WARN] Gold mart_competition_explorer not available on R2 ({exc}); using Silver metadata only.")
+        return by_url, by_domain
+
+    table = pq.read_table(io.BytesIO(raw))
+    for row in table.to_pylist():
+        canon_url = normalize_canonical_url(row.get("canonical_url"), row.get("name") or "")
+        record = {
+            "competition_key": str(row.get("competition_key") or ""),
+            "competition_name": str(row.get("name") or ""),
+            "canonical_url": canon_url,
+            "domain_groups": list(row.get("domain_groups") or []),
+            "domain_slugs": list(row.get("domain_slugs") or []),
+            "mode_canonical": str(row.get("mode_canonical") or "Unknown"),
+            "is_free": bool(row.get("is_free", False)),
+            "total_prize_vnd": int(row.get("total_prize_vnd") or 0),
+            "has_scholarship": bool(row.get("has_scholarship", False)),
+            "registration_status": str(row.get("registration_status") or "unknown"),
+            "registration_deadline_raw": row.get("registration_deadline_raw"),
+            "team_size_min": row.get("team_size_min"),
+            "team_size_max": row.get("team_size_max"),
+            "team_profile": str(row.get("team_profile") or "Unspecified"),
+        }
+        if canon_url:
+            by_url[canon_url] = record
+            host = urlparse(canon_url).netloc.lower()
+            if host and host not in by_domain:
+                by_domain[host] = record
+    return by_url, by_domain
+
+
+def enrich_document_with_gold_metadata(
+    doc: Document,
+    gold_by_url: dict[str, dict[str, Any]],
+    gold_by_domain: dict[str, dict[str, Any]],
+) -> Document:
+    """Enrich a Silver Clean Markdown Document with Gold mart_competition_explorer payload fields."""
+    raw_url = str(doc.metadata.get("canonical_url") or doc.metadata.get("source_url") or "")
+    norm_url = normalize_canonical_url(raw_url, str(doc.metadata.get("competition_name") or "")) if raw_url else ""
+    domain = str(doc.metadata.get("domain") or "").lower()
+
+    gold_meta = gold_by_url.get(norm_url) or gold_by_domain.get(domain)
+    if gold_meta:
+        doc.metadata.update(
+            {
+                "competition_key": gold_meta["competition_key"],
+                "competition_name": gold_meta["competition_name"] or doc.metadata.get("competition_name"),
+                "canonical_url": gold_meta["canonical_url"] or doc.metadata.get("canonical_url"),
+                "domain_groups": gold_meta["domain_groups"],
+                "domain_slugs": gold_meta["domain_slugs"],
+                "mode_canonical": gold_meta["mode_canonical"],
+                "is_free": gold_meta["is_free"],
+                "total_prize_vnd": gold_meta["total_prize_vnd"],
+                "has_scholarship": gold_meta["has_scholarship"],
+                "registration_status": gold_meta["registration_status"],
+                "registration_deadline_raw": gold_meta["registration_deadline_raw"],
+                "team_size_min": gold_meta["team_size_min"],
+                "team_size_max": gold_meta["team_size_max"],
+                "team_profile": gold_meta["team_profile"],
+                "gold_enriched": True,
+                "layer": "silver+gold",
+            }
+        )
+    else:
+        doc.metadata.setdefault("gold_enriched", False)
+    return doc
+
+
 def load_competition_documents_from_silver(
     s3_client: Any,
     bucket_name: str,
     target_date: str | None = None,
 ) -> tuple[str, list[Document]]:
-    """Load Clean Markdown Documents strictly from R2 `silver/markdown/`."""
+    """Load Clean Markdown Documents from R2 `silver/markdown/` and enrich with Gold `mart_competition_explorer`."""
     chosen_date, snapshots = list_latest_silver_markdown_snapshots(
         s3_client=s3_client,
         bucket_name=bucket_name,
         target_date=target_date,
     )
     ext_index = load_silver_extraction_index(s3_client, bucket_name, chosen_date)
+    gold_by_url, gold_by_domain = load_gold_explorer_metadata(s3_client, bucket_name)
     docs: list[Document] = []
 
     for snap in snapshots:
@@ -282,25 +368,25 @@ def load_competition_documents_from_silver(
             or f"https://{snap['domain']}"
         )
         comp_name = ext_meta.get("competition_name") or snap["domain"]
-        docs.append(
-            Document(
-                page_content=content,
-                metadata={
-                    "domain": snap["domain"],
-                    "competition_name": comp_name,
-                    "source_url": canonical_url,
-                    "canonical_url": canonical_url,
-                    "source_key": snap["key"],
-                    "bronze_key": obj_meta.get("bronze_key", ""),
-                    "crawl_date": snap["date"],
-                    "crawl_timestamp": snap["timestamp"],
-                    "category": ext_meta.get("category", []),
-                    "mode": ext_meta.get("mode", "unknown"),
-                    "registration_status": ext_meta.get("registration_status", "unknown"),
-                    "layer": "silver",
-                },
-            )
+        doc = Document(
+            page_content=content,
+            metadata={
+                "domain": snap["domain"],
+                "competition_name": comp_name,
+                "source_url": canonical_url,
+                "canonical_url": canonical_url,
+                "source_key": snap["key"],
+                "bronze_key": obj_meta.get("bronze_key", ""),
+                "crawl_date": snap["date"],
+                "crawl_timestamp": snap["timestamp"],
+                "category": ext_meta.get("category", []),
+                "mode": ext_meta.get("mode", "unknown"),
+                "registration_status": ext_meta.get("registration_status", "unknown"),
+                "layer": "silver",
+                "gold_enriched": False,
+            },
         )
+        docs.append(enrich_document_with_gold_metadata(doc, gold_by_url, gold_by_domain))
     return chosen_date, docs
 
 
@@ -330,7 +416,13 @@ def ensure_collection(
     collection_name: str,
     expected_dim: int,
 ) -> None:
-    if qdrant_client.collection_exists(collection_name):
+    if not qdrant_client.collection_exists(collection_name):
+        dim = len(embeddings.embed_query("dimension probe"))
+        qdrant_client.create_collection(
+            collection_name=collection_name,
+            vectors_config=VectorParams(size=dim, distance=Distance.COSINE),
+        )
+    else:
         info = qdrant_client.get_collection(collection_name)
         vec_cfg = info.config.params.vectors
         existing_dim = vec_cfg.size if isinstance(vec_cfg, VectorParams) else None
@@ -338,18 +430,21 @@ def ensure_collection(
             raise RuntimeError(
                 f"Collection '{collection_name}' dim={existing_dim} != expected {expected_dim}."
             )
-        return
 
-    dim = len(embeddings.embed_query("dimension probe"))
-    qdrant_client.create_collection(
-        collection_name=collection_name,
-        vectors_config=VectorParams(size=dim, distance=Distance.COSINE),
+    payload_indexes = (
+        ("metadata.domain", PayloadSchemaType.KEYWORD),
+        ("metadata.canonical_url", PayloadSchemaType.KEYWORD),
+        ("metadata.competition_key", PayloadSchemaType.KEYWORD),
+        ("metadata.domain_slugs", PayloadSchemaType.KEYWORD),
+        ("metadata.mode_canonical", PayloadSchemaType.KEYWORD),
+        ("metadata.registration_status", PayloadSchemaType.KEYWORD),
+        ("metadata.is_free", PayloadSchemaType.BOOL),
     )
-    for field_name in ("metadata.domain", "metadata.canonical_url"):
+    for field_name, schema_type in payload_indexes:
         qdrant_client.create_payload_index(
             collection_name=collection_name,
             field_name=field_name,
-            field_schema=PayloadSchemaType.KEYWORD,
+            field_schema=schema_type,
         )
 
 

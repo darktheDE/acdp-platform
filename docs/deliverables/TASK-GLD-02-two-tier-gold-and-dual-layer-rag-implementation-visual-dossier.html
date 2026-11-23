@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TASK-GLD-02: Two-Tier Gold (A1–A4) & Dual-Layer RAG Visual Dossier</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'slate' });
+  </script>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased">
+  <div class="max-w-6xl mx-auto px-6 py-10 space-y-8">
+    <header class="border-b border-slate-800 pb-6">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+            TASK-GLD-02 · Cycle 06 · DONE
+          </span>
+          <h1 class="text-3xl font-bold tracking-tight text-white mt-2">
+            Two-Tier Gold (A1–A4) &amp; Dual-Layer RAG Implementation
+          </h1>
+          <p class="text-slate-400 mt-1 text-sm">
+            ACDP v2 Lakehouse · Cloudflare R2 ZSTD Parquet + DuckDB httpfs + Qdrant Payload Enrichment
+          </p>
+        </div>
+        <div class="text-right text-xs text-slate-400">
+          <div>Date: <strong class="text-slate-200">2026-11-23</strong></div>
+          <div>Scope: <strong class="text-slate-200">TLCN (Phase 1)</strong></div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Tier 1: Executive KPI Cards -->
+    <section class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+        <div class="text-xs text-slate-400 uppercase tracking-wider">Gold Parquet Files (R2)</div>
+        <div class="text-2xl font-bold text-emerald-400 mt-1">15 <span class="text-sm font-normal text-slate-400">/ 21 cũ</span></div>
+        <div class="text-xs text-slate-500 mt-1">9 Core + 6 Marts (104.9 KB ZSTD)</div>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+        <div class="text-xs text-slate-400 uppercase tracking-wider">Bridge Allocation Error</div>
+        <div class="text-2xl font-bold text-sky-400 mt-1">0.00 VND</div>
+        <div class="text-xs text-slate-500 mt-1">24 cuộc thi · 6.998 tỷ VNĐ</div>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+        <div class="text-xs text-slate-400 uppercase tracking-wider">OBT Warm Latency (R2)</div>
+        <div class="text-2xl font-bold text-amber-400 mt-1">139.8 ms</div>
+        <div class="text-xs text-slate-500 mt-1">Cold: 453.5 ms (2.93x vs Star Join)</div>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+        <div class="text-xs text-slate-400 uppercase tracking-wider">Dual-Layer RAG Enriched</div>
+        <div class="text-2xl font-bold text-violet-400 mt-1">26 / 26</div>
+        <div class="text-xs text-slate-500 mt-1">100% Silver MD + Gold Mart</div>
+      </div>
+    </section>
+
+    <!-- Tier 2: Architecture Diagram & Benchmark Charts -->
+    <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+        <h2 class="text-lg font-semibold text-white mb-3">Kiến trúc Two-Tier Gold &amp; Dual-Layer RAG</h2>
+        <div class="mermaid">
+flowchart LR
+    S1["Silver Clean MD\n(silver/markdown/)"] -->|"SemanticChunker\n+ BGE-M3"| Q[("Qdrant Cloud\nVector + Metadata")]
+    S2["Silver Extractions\n(24 contests)"] -->|"v2/gold_star_schema.py\nA1 & A2"| GC["Gold Core (9)\ndim_*, fact_*, bridge_*"]
+    GC -->|"OBT Denormalize\nA4 (15 files)"| GM["Gold Marts (6)\nmart_competition_explorer"]
+    GM -->|"Payload Enrichment\n(26/26 docs)"| Q
+    GM -->|"DuckDB httpfs\n139.8 ms warm"| API["FastAPI Gateway"]
+        </div>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+        <h2 class="text-lg font-semibold text-white mb-3">DuckDB httpfs Latency trên R2 (ms)</h2>
+        <canvas id="latencyChart" height="170"></canvas>
+      </div>
+    </section>
+
+    <!-- Domain Breakdown Chart -->
+    <section class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+      <h2 class="text-lg font-semibold text-white mb-3">Phân bổ Quỹ Giải thưởng Weighted Bridge (Tổng: 6,997,591,840 VNĐ)</h2>
+      <canvas id="domainChart" height="100"></canvas>
+    </section>
+
+    <!-- Tier 3: Collapsible Technical Spec & Verification -->
+    <details class="bg-slate-900 border border-slate-800 rounded-xl p-5" open>
+      <summary class="cursor-pointer text-base font-semibold text-white">Chi tiết hiệu chỉnh A1–A4 &amp; Kiểm thử (7/7 pytest PASS)</summary>
+      <div class="mt-4 overflow-x-auto">
+        <table class="w-full text-sm text-left text-slate-300">
+          <thead class="text-xs uppercase bg-slate-800/70 text-slate-400">
+            <tr>
+              <th class="px-4 py-2">Mã</th>
+              <th class="px-4 py-2">Thay đổi triển khai</th>
+              <th class="px-4 py-2">Trạng thái R2 &amp; Test</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800">
+            <tr>
+              <td class="px-4 py-2 font-mono text-emerald-400">A1</td>
+              <td class="px-4 py-2">Xóa <code>team_size_min</code>, <code>team_size_max</code> khỏi <code>fact_competitions</code>; giữ ở <code>dim_competition</code> &amp; <code>mart_competition_explorer</code>.</td>
+              <td class="px-4 py-2 text-emerald-300">Verified in Parquet &amp; pytest</td>
+            </tr>
+            <tr>
+              <td class="px-4 py-2 font-mono text-emerald-400">A2</td>
+              <td class="px-4 py-2">Loại bỏ mảng lồng &amp; <code>challenge_overview</code> khỏi <code>dim_competition</code>; tổng hợp tổ chức từ <code>bridge_competition_organizer</code> vào OBT.</td>
+              <td class="px-4 py-2 text-emerald-300">1NF Verified (22,529 bytes)</td>
+            </tr>
+            <tr>
+              <td class="px-4 py-2 font-mono text-emerald-400">A4</td>
+              <td class="px-4 py-2">Chỉ xuất 15 tệp Gold Parquet ZSTD lên R2 và tự động xóa 6 tệp <code>gold_*.parquet</code> thừa.</td>
+              <td class="px-4 py-2 text-emerald-300">15 objects on R2 (6 deleted)</td>
+            </tr>
+            <tr>
+              <td class="px-4 py-2 font-mono text-sky-400">RAG</td>
+              <td class="px-4 py-2"><code>v2/rag_ingest.py</code> đọc <code>gold/mart_competition_explorer.parquet</code> để làm giàu Qdrant payload &amp; tạo 7 payload indexes.</td>
+              <td class="px-4 py-2 text-sky-300">26/26 docs enriched (dry-run)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </details>
+  </div>
+
+  <script>
+    new Chart(document.getElementById('latencyChart'), {
+      type: 'bar',
+      data: {
+        labels: ['Star 4-Table Join (Cold)', 'OBT Explorer (Cold)', 'OBT Explorer (Warm Avg)'],
+        datasets: [{
+          label: 'Latency (ms)',
+          data: [1330.3, 453.5, 139.8],
+          backgroundColor: ['#f43f5e', '#f59e0b', '#10b981'],
+          borderRadius: 6
+        }]
+      },
+      options: {
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { beginAtZero: true, grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } },
+          x: { grid: { display: false }, ticks: { color: '#cbd5e1' } }
+        }
+      }
+    });
+
+    new Chart(document.getElementById('domainChart'), {
+      type: 'bar',
+      data: {
+        labels: [
+          'AI & Data Science (22)',
+          'Software, Web & Mobile (18)',
+          'Security, IoT & Embedded (5)',
+          'Startup, Design & Interdisc. (5)',
+          'Web3, Blockchain & FinTech (1)'
+        ],
+        datasets: [{
+          label: 'Allocated Prize (Triệu VNĐ)',
+          data: [2598.39, 2478.39, 875.16, 841.33, 204.32],
+          backgroundColor: '#38bdf8',
+          borderRadius: 6
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { beginAtZero: true, grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } },
+          y: { grid: { display: false }, ticks: { color: '#cbd5e1' } }
+        }
+      }
+    });
+  </script>
+</body>
+</html>
