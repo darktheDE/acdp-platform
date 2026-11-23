@@ -2,7 +2,7 @@
 
 This ledger is auto-generated from [`tasks-data.json`](./tasks-data.json) and synchronized with the interactive portal [`index.html`](./index.html) per **DIR-018**.
 
-- **Total tasks**: `44` (`26` completed)
+- **Total tasks**: `44` (`27` completed)
 - **Scope distribution**: `40` TLCN (Phase 1) | `6` KLTN (Phase 2)
 - **Last updated**: `2026-11-22`
 
@@ -40,7 +40,7 @@ This ledger is auto-generated from [`tasks-data.json`](./tasks-data.json) and sy
 | **NT-028** | Cycle 04 | TLCN (Phase 1) | Serving & Web | 4-Tier Testing Strategy, 8 Edge Cases & Manual Test / CLI Playbook | Hung & Duy | [`sprint-web-01-research-plan.md`](../../docs/tasks/sprint-web-01-research-plan.md) | ✅ Done |
 | **NT-029** | Cycle 05 | TLCN (Phase 1) | Serving & Web | Web Sprint 02 Full-Stack Implementation (Docker, FastAPI + PG18, Next.js 16) | Hung | [`api`](../../src/acdp/api), [`web`](../../apps/web), [`docker-compose.yml`](../../docker-compose.yml) | ✅ Done |
 | **TASK-ING-01** | Cycle 06 | TLCN (Phase 1) | Discovery | Nghiên cứu Search Pattern & Kỹ thuật Cào Tối ưu trên Free Tier (Scale nhỏ) | Hung & Duy | [`TASK-ING-01-search-pattern-and-crawling-tradeoffs.md`](../../docs/deliverables/TASK-ING-01-search-pattern-and-crawling-tradeoffs.md), [`TASK-ING-01-search-pattern-and-crawling-tradeoffs-visual-dossier.html`](../../docs/deliverables/TASK-ING-01-search-pattern-and-crawling-tradeoffs-visual-dossier.html) | ✅ Done |
-| **TASK-BRZ-01** | Cycle 06 | TLCN (Phase 1) | Bronze | Kiểm định Lý thuyết Lớp Đồng (Bronze Purity: Raw HTML vs Pre-processed Markdown) | Hung & Duy | `docs/deliverables/TASK-BRZ-01-bronze-raw-vs-markdown-justification.md` | ⏳ Todo |
+| **TASK-BRZ-01** | Cycle 06 | TLCN (Phase 1) | Bronze | Kiểm định Lý thuyết Lớp Đồng (Bronze Purity: Raw HTML vs Pre-processed Markdown) | Hung & Duy | [`TASK-BRZ-01-bronze-raw-vs-markdown-justification.md`](../../docs/deliverables/TASK-BRZ-01-bronze-raw-vs-markdown-justification.md), [`TASK-BRZ-01-bronze-raw-vs-markdown-justification-visual-dossier.html`](../../docs/deliverables/TASK-BRZ-01-bronze-raw-vs-markdown-justification-visual-dossier.html) | ✅ Done |
 | **TASK-SLV-01** | Cycle 06 | TLCN (Phase 1) | Silver | Bảo vệ Tính chất Data Engineering & Tối ưu Tỷ lệ Sử dụng LLM ở Lớp Bạc | Hung & Duy | `docs/deliverables/TASK-SLV-01-hybrid-de-vs-llm-extraction-study.md` | ⏳ Todo |
 | **TASK-SLV-02** | Cycle 06 | TLCN (Phase 1) | Silver | Kiểm chứng Schema Lớp Bạc (Competition + PrizeTier) & Lưu trữ Parquet | Hung & Duy | `docs/deliverables/TASK-SLV-02-silver-schema-and-parquet-validation.md` | ⏳ Todo |
 | **TASK-GLD-01** | Cycle 06 | TLCN (Phase 1) | Gold | Phản biện & Bảo vệ Mô hình Lớp Vàng (Kimball Star Schema vs OBT / Alternatives) | Hung & Duy | `docs/deliverables/TASK-GLD-01-kimball-star-schema-audit-and-alternatives.md` | ⏳ Todo |

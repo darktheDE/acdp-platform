@@ -78,7 +78,7 @@
       "task_type": "Research & Theory",
       "is_no_code": false,
       "owner": "Hung & Duy",
-      "status": "todo",
+      "status": "done",
       "priority": "high",
       "problem_statement": "Tại lớp Đồng đang dùng Crawl4AI cào theo trường, tiền xử lý rồi xuất ra file .md. Cần kiểm chứng xem việc lưu dữ liệu đã qua tiền xử lý tại lớp Đồng có đúng lý thuyết Medallion Architecture không.",
       "research_questions": [
@@ -88,9 +88,12 @@
       "acceptance_criteria": [
         "Có báo cáo đối chiếu lý thuyết Medallion (Databricks/Lakehouse papers) và quyết định thiết kế rõ ràng cho lớp Đồng."
       ],
-      "deliverables": ["docs/deliverables/TASK-BRZ-01-bronze-raw-vs-markdown-justification.md"],
+      "deliverables": [
+        "docs/deliverables/TASK-BRZ-01-bronze-raw-vs-markdown-justification.md",
+        "docs/deliverables/TASK-BRZ-01-bronze-raw-vs-markdown-justification-visual-dossier.html"
+      ],
       "notes": "Mọi quyết định phải có lý thuyết và căn cứ rõ ràng để bảo vệ trước Hội đồng.",
-      "updated_at": "2026-11-22"
+      "updated_at": "2026-11-23"
     },
     {
       "id": "TASK-SLV-01",

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TASK-BRZ-01: Bronze Purity &amp; Medallion Boundary Audit Visual Dossier</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    .mermaid svg { max-width: 100%; height: auto; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen antialiased">
+
+  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center space-x-3">
+        <span class="px-2.5 py-1 text-xs font-semibold uppercase tracking-wider rounded-md bg-amber-500/20 text-amber-400 border border-amber-500/30">
+          TASK-BRZ-01 | Bronze &rarr; Silver
+        </span>
+        <h1 class="text-lg font-bold text-white tracking-tight">Bronze Purity &amp; Medallion Boundary Audit Dossier</h1>
+      </div>
+      <div class="flex items-center space-x-3 text-xs text-slate-400">
+        <span>Đỗ Kiến Hưng &amp; Nguyễn Văn Quang Duy</span>
+        <span class="text-slate-600">|</span>
+        <span>Khoa CNTT - Trường ĐH Công nghệ Kỹ thuật TP.HCM (HCM-UTE)</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+    <!-- TIER 1: Executive KPI Cards -->
+    <section>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm">
+          <div class="text-xs font-medium text-slate-400 uppercase tracking-wider">Lớp Đồng (Cloudflare R2)</div>
+          <div class="mt-2 flex items-baseline gap-2">
+            <span class="text-3xl font-extrabold text-amber-400">100% HTML</span>
+          </div>
+          <p class="mt-1 text-xs text-slate-500">Bảo toàn JSON-LD, og:*, DOM gốc</p>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm">
+          <div class="text-xs font-medium text-slate-400 uppercase tracking-wider">Chi Phí Browser ở Lớp Bạc</div>
+          <div class="mt-2 flex items-baseline gap-2">
+            <span class="text-3xl font-extrabold text-emerald-400">0 ms</span>
+            <span class="text-xs text-slate-400">Playwright</span>
+          </div>
+          <p class="mt-1 text-xs text-slate-500">DefaultMarkdownGenerator chạy trong RAM</p>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm">
+          <div class="text-xs font-medium text-slate-400 uppercase tracking-wider">Thực Tế Bucket R2</div>
+          <div class="mt-2 flex items-baseline gap-2">
+            <span class="text-3xl font-extrabold text-sky-400">2,26 MB</span>
+            <span class="text-xs text-slate-400">83 objects</span>
+          </div>
+          <p class="mt-1 text-xs text-slate-500">&lt; 0,03% hạn mức 10 GB Free Tier</p>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm">
+          <div class="text-xs font-medium text-slate-400 uppercase tracking-wider">Luồng Đọc RAG Chuẩn</div>
+          <div class="mt-2 flex items-baseline gap-2">
+            <span class="text-3xl font-extrabold text-indigo-400">Silver &rarr; Qdrant</span>
+          </div>
+          <p class="mt-1 text-xs text-slate-500">Thay thế 3_chatbot_mvp.py bằng rag_service.py</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Navigation Tabs -->
+    <div class="border-b border-slate-800 flex space-x-6 text-sm font-medium">
+      <button onclick="switchTab('tab-architecture')" id="btn-architecture" class="tab-btn pb-3 text-amber-400 border-b-2 border-amber-500 transition">
+        Kiến Trúc Bronze-to-Silver Mới
+      </button>
+      <button onclick="switchTab('tab-benchmarks')" id="btn-benchmarks" class="tab-btn pb-3 text-slate-400 hover:text-slate-200 transition">
+        Thực Nghiệm R2 &amp; Suy Hao
+      </button>
+      <button onclick="switchTab('tab-defense')" id="btn-defense" class="tab-btn pb-3 text-slate-400 hover:text-slate-200 transition">
+        Kiểm Toán R2 &amp; Phản Biện Hội Đồng
+      </button>
+    </div>
+
+    <!-- TIER 2A: Architecture Tab -->
+    <div id="tab-architecture" class="tab-content space-y-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+        <h3 class="text-base font-semibold text-white mb-4">Tái Định Vị Ranh Giới Medallion: Raw HTML ở Lớp Đồng &rarr; Xử Lý Toàn Phần ở Lớp Bạc</h3>
+        <div class="mermaid text-center">
+flowchart LR
+    subgraph Bronze["Lớp Đồng (Cloudflare R2: bronze/)"]
+        B1["1_crawl_to_bronze.py<br>(Playwright + AdaptiveCrawler)<br>Chỉ cào &amp; lưu Raw Rendered HTML<br>bronze/{domain}/.../ts.html"]
+    end
+
+    subgraph Silver["Lớp Bạc (Cloudflare R2: silver/ &amp; 2_instruction.py)"]
+        S1["Nhánh 1: Crawl4AI DefaultMarkdownGenerator<br>(Thuần Python trong RAM, 0 ms Browser)<br>-&gt; silver/markdown/{domain}/.../ts.md"]
+        S2["Nhánh 2: Deterministic DOM/JSON-LD<br>+ Instructor Pydantic v2<br>-&gt; silver/competitions.parquet &amp; prizes.parquet"]
+    end
+
+    subgraph GoldServing["Lớp Vàng &amp; Serving API"]
+        G1["4_analytics_gold.py<br>(DuckDB Star Schema -&gt; gold/*.parquet)"]
+        G2["rag_service.py (FastAPI Backend)<br>Đọc Markdown sạch &amp; Metadata từ Silver -&gt; Qdrant"]
+    end
+
+    B1 -->|"Đọc Raw HTML"| S1
+    B1 -->|"Đọc Raw HTML + Markdown sạch"| S2
+    S1 --> G2
+    S2 --> G1
+    S2 --> G2
+        </div>
+      </div>
+
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+        <h4 class="text-sm font-semibold text-slate-200 mb-3">Mã Nguồn Thực Thi Crawl4AI Không Cần Trình Duyệt Tại Lớp Bạc</h4>
+        <pre class="bg-slate-950 border border-slate-800 rounded-lg p-4 text-xs text-emerald-300 overflow-x-auto"><code>from crawl4ai.markdown_generation_strategy import DefaultMarkdownGenerator
+
+# Đọc Raw HTML từ Cloudflare R2 (bronze/) và sinh Markdown sạch trong RAM (&lt; 5 ms, 0 MB Playwright)
+md_generator = DefaultMarkdownGenerator()
+md_result = md_generator.generate_markdown(raw_html_from_bronze)
+clean_markdown = md_result.raw_markdown</code></pre>
+      </div>
+    </div>
+
+    <!-- TIER 2B: Benchmarks Tab -->
+    <div id="tab-benchmarks" class="tab-content hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+          <h3 class="text-base font-semibold text-white mb-4">Dung Lượng Raw HTML vs. Markdown (KB) Trên 7 Cuộc Thi Mẫu</h3>
+          <div class="h-72">
+            <canvas id="sizeChart"></canvas>
+          </div>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+          <h3 class="text-base font-semibold text-white mb-4">Siêu Dữ Liệu Bị Mất Khi Chuyển HTML &rarr; Markdown (Số Lượng Thẻ)</h3>
+          <div class="h-72">
+            <canvas id="lossChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TIER 2C: Defense & R2 Audit Tab -->
+    <div id="tab-defense" class="tab-content hidden space-y-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 overflow-x-auto">
+        <h3 class="text-base font-semibold text-white mb-4">Kiểm Toán Hiện Trạng Bucket Cloudflare R2 (acdp-lakehouse)</h3>
+        <table class="w-full text-left text-sm text-slate-300">
+          <thead class="text-xs uppercase bg-slate-950 text-slate-400">
+            <tr>
+              <th class="px-4 py-3">Prefix trên R2</th>
+              <th class="px-4 py-3">Số Objects</th>
+              <th class="px-4 py-3">Dung Lượng</th>
+              <th class="px-4 py-3">Trạng Thái Hiện Tại &amp; Hướng Chuẩn Hóa</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800">
+            <tr>
+              <td class="px-4 py-3 font-mono text-amber-400">bronze/</td>
+              <td class="px-4 py-3">60</td>
+              <td class="px-4 py-3">2.224.170 B (~2,12 MB)</td>
+              <td class="px-4 py-3">Đang chứa 18 domain dạng Markdown; chuẩn hóa sang lưu Raw Rendered HTML (`ts.html`).</td>
+            </tr>
+            <tr>
+              <td class="px-4 py-3 font-mono text-sky-400">silver/</td>
+              <td class="px-4 py-3">2</td>
+              <td class="px-4 py-3">29.654 B (~29,0 KB)</td>
+              <td class="px-4 py-3">Chứa `competitions.parquet` (15x25) &amp; `prizes.parquet` (50x7); bổ sung `silver/markdown/` cho `rag_service.py`.</td>
+            </tr>
+            <tr>
+              <td class="px-4 py-3 font-mono text-emerald-400">gold/</td>
+              <td class="px-4 py-3">21</td>
+              <td class="px-4 py-3">109.551 B (~107,0 KB)</td>
+              <td class="px-4 py-3">Đủ 4 dim, 3 fact, 2 bridge, 6 mart, 6 gold views (Kimball Star Schema).</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+          <h4 class="text-sm font-semibold text-amber-400 mb-2">1. Tại sao phải lưu Raw HTML ở Lớp Đồng?</h4>
+          <p class="text-xs text-slate-300 leading-relaxed">Bảo toàn 100% thẻ `application/ld+json`, `&lt;meta property="og:*"&gt;` và cấu trúc DOM bảng để lớp Bạc chạy bộ trích xuất tất định (Deterministic DE) và có thể replay khi website cuộc thi đóng cửa.</p>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+          <h4 class="text-sm font-semibold text-emerald-400 mb-2">2. Lớp Bạc có phải mở lại Playwright không?</h4>
+          <p class="text-xs text-slate-300 leading-relaxed">Không. Trình duyệt chỉ chạy 1 lần ở lớp Đồng. Lớp Bạc gọi `DefaultMarkdownGenerator().generate_markdown(raw_html)` thuần Python trong RAM với 0 ms browser overhead.</p>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+          <h4 class="text-sm font-semibold text-indigo-400 mb-2">3. Vì sao RAG không được đọc từ Bronze?</h4>
+          <p class="text-xs text-slate-300 leading-relaxed">`3_chatbot_mvp.py` đọc trực tiếp từ Bronze là anti-pattern. `rag_service.py` trong FastAPI phải đọc văn bản sạch và `competition_key` đã kiểm định từ Silver để tránh rác và trùng lặp.</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.getElementById(tabId).classList.remove('hidden');
+
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('text-amber-400', 'border-b-2', 'border-amber-500');
+        btn.classList.add('text-slate-400');
+      });
+
+      const activeBtn = document.getElementById('btn-' + tabId.replace('tab-', ''));
+      activeBtn.classList.remove('text-slate-400');
+      activeBtn.classList.add('text-amber-400', 'border-b-2', 'border-amber-500');
+    }
+
+    const sizeCtx = document.getElementById('sizeChart').getContext('2d');
+    new Chart(sizeCtx, {
+      type: 'bar',
+      data: {
+        labels: ['datadna', 'vietnamai', 'hackaithon', 'codetour', 'itconsultant', 'aichallenge', 'rmit'],
+        datasets: [
+          { label: 'Raw HTML (KB)', data: [302.5, 175.8, 157.2, 112.0, 109.2, 79.1, 16.9], backgroundColor: 'rgba(245, 158, 11, 0.75)' },
+          { label: 'Markdown (KB)', data: [28.8, 21.6, 13.3, 16.5, 10.0, 12.5, 8.0], backgroundColor: 'rgba(56, 189, 248, 0.85)' }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: { beginAtZero: true, grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } },
+          x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+        },
+        plugins: { legend: { labels: { color: '#cbd5e1' } } }
+      }
+    });
+
+    const lossCtx = document.getElementById('lossChart').getContext('2d');
+    new Chart(lossCtx, {
+      type: 'bar',
+      data: {
+        labels: ['codetour', 'datadna', 'hackaithon', 'itconsultant', 'vietnamai'],
+        datasets: [
+          { label: 'Thẻ og:* bị mất', data: [8, 8, 12, 12, 0], backgroundColor: 'rgba(244, 63, 94, 0.8)' },
+          { label: 'Khối Next.js / JSON-LD bị mất', data: [0, 4, 0, 11, 12], backgroundColor: 'rgba(168, 85, 247, 0.8)' }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: { beginAtZero: true, grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } },
+          x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+        },
+        plugins: { legend: { labels: { color: '#cbd5e1' } } }
+      }
+    });
+  </script>
+</body>
+</html>
