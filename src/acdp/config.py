@@ -50,6 +50,14 @@ class AppConfig(BaseSettings):
         default=25400,
         description="Reference USD to VND exchange rate for Gold prize normalization",
     )
+    motherduck_token: str = Field(
+        default="",
+        description="Optional MotherDuck Lite service token for Cloud BI SQL Workbench",
+    )
+    motherduck_database: str = Field(
+        default="acdp_gold",
+        description="Target MotherDuck database name for Gold Star Schema views",
+    )
 
     # Lakehouse Storage Configuration (Cloudflare R2 Exclusive - DIR-021)
     bronze_storage_backend: Literal["cloudflare_r2"] = Field(
@@ -201,6 +209,14 @@ class AppConfig(BaseSettings):
         if any(legacy in raw.lower() for legacy in ("gemma", "ollama", "gemini-1.5", "gemini-2.5")):
             return "gemini-3.5-flash-lite"
         return raw
+
+    def get_motherduck_dsn(self) -> str:
+        """Return MotherDuck connection URI (`md:<db>`) with token if configured."""
+        db = (self.motherduck_database or "acdp_gold").strip() or "acdp_gold"
+        token = self.motherduck_token.strip()
+        if token:
+            return f"md:{db}?motherduck_token={token}"
+        return f"md:{db}"
 
     def get_database_url(self) -> str:
         """Build asyncpg SQLAlchemy connection URI for PostgreSQL 18 OLTP."""

@@ -1485,6 +1485,86 @@ def build_metabase_r2_init_sql() -> str:
     )
 
 
+def build_motherduck_r2_init_sql(include_credentials: bool = False) -> str:
+    """Generate MotherDuck Lite SQL script with IN MOTHERDUCK R2 secret, 19 Gold views & 3 Data Quality queries."""
+    endpoint = settings.get_r2_endpoint_host() or "<ACCOUNT_ID>.r2.cloudflarestorage.com"
+    bucket = (settings.bucket_name or "acdp-lakehouse").strip().strip("/")
+    db_name = (settings.motherduck_database or "acdp_gold").strip() or "acdp_gold"
+    if include_credentials and settings.aws_access_key_id and settings.aws_secret_access_key:
+        key_id = settings.aws_access_key_id.replace("'", "''")
+        secret = settings.aws_secret_access_key.replace("'", "''")
+    else:
+        key_id = "<R2_ACCESS_KEY_ID>"
+        secret = "<R2_SECRET_ACCESS_KEY>"
+
+    view_lines = [
+        f"CREATE OR REPLACE VIEW {entity} AS SELECT * FROM read_parquet('s3://{bucket}/gold/{entity}.parquet');"
+        for entity in GOLD_ENTITIES
+    ]
+    legacy_views = [
+        "CREATE OR REPLACE VIEW gold_category_summary AS "
+        "SELECT domain_group AS category, competition_count AS count, allocated_prize_vnd AS total_prize_vnd "
+        "FROM mart_domain_analytics;",
+        "CREATE OR REPLACE VIEW gold_mode_distribution AS "
+        "SELECT mode_canonical AS mode, SUM(competition_count) AS count FROM mart_team_and_mode_matrix "
+        "GROUP BY mode_canonical;",
+        "CREATE OR REPLACE VIEW gold_seasonality AS "
+        "SELECT CONCAT(year, '-', LPAD(CAST(month AS VARCHAR), 2, '0')) AS month_key, "
+        "academic_term, SUM(competition_count) AS count "
+        "FROM mart_seasonality_academic WHERE date_known = TRUE GROUP BY year, month, academic_term;",
+        "CREATE OR REPLACE VIEW gold_top_prizes AS "
+        "SELECT competition_key, name, total_prize_vnd, mode_canonical AS mode "
+        "FROM mart_competition_explorer ORDER BY total_prize_vnd DESC;",
+    ]
+    quality_queries = [
+        "-- 1. Data Quality Scorecard: Unknown Member (-1) & NULL checks across Fact/Dim",
+        "SELECT",
+        "    COUNT(*) AS total_competitions,",
+        "    SUM(CASE WHEN f.reg_deadline_date_sk = -1 THEN 1 ELSE 0 END) AS missing_deadline_count,",
+        "    SUM(CASE WHEN d.team_size_max IS NULL THEN 1 ELSE 0 END) AS missing_team_size_count,",
+        "    SUM(CASE WHEN f.prize_tier_count = 0 THEN 1 ELSE 0 END) AS missing_prize_tiers_count",
+        "FROM fact_competitions f",
+        "JOIN dim_competition d USING (competition_sk);",
+        "",
+        "-- 2. Bridge Weighting Factor Prize Conservation Invariant (Expected drift_vnd = 0)",
+        "WITH kpi_sum AS (",
+        "    SELECT COALESCE(SUM(total_prize_vnd), 0) AS fact_total_vnd FROM fact_competitions",
+        "),",
+        "domain_sum AS (",
+        "    SELECT COALESCE(SUM(allocated_prize_vnd), 0) AS bridge_total_vnd FROM mart_domain_analytics",
+        ")",
+        "SELECT fact_total_vnd, bridge_total_vnd, ABS(fact_total_vnd - bridge_total_vnd) AS drift_vnd",
+        "FROM kpi_sum, domain_sum;",
+        "",
+        "-- 3. Batch Lineage & Freshness Audit",
+        "SELECT",
+        "    source_batch_file,",
+        "    COUNT(*) AS record_count,",
+        "    MAX(loaded_at) AS latest_loaded_at",
+        "FROM dim_competition",
+        "GROUP BY source_batch_file",
+        "ORDER BY latest_loaded_at DESC;",
+    ]
+    return "\n".join(
+        [
+            f"CREATE DATABASE IF NOT EXISTS {db_name};",
+            f"USE {db_name};",
+            "CREATE OR REPLACE SECRET r2_secret IN MOTHERDUCK (",
+            "    TYPE S3,",
+            f"    KEY_ID '{key_id}',",
+            f"    SECRET '{secret}',",
+            "    REGION 'auto',",
+            f"    ENDPOINT '{endpoint}',",
+            "    URL_STYLE 'path'",
+            ");",
+            *view_lines,
+            *legacy_views,
+            "",
+            *quality_queries,
+        ]
+    )
+
+
 def verify_analytics(con: duckdb.DuckDBPyConnection) -> dict[str, Any]:
     """Run integrity and analytical verification queries on Gold Star Schema."""
     kpi = con.execute("SELECT * FROM mart_kpi_overview").fetchone()
@@ -1527,17 +1607,142 @@ def verify_analytics_from_r2() -> dict[str, Any]:
         con.close()
 
 
+def verify_motherduck_views_from_r2() -> dict[str, Any]:
+    """Verify all 19 Gold Views & 3 Data Quality Scorecard queries on MotherDuck Cloud or direct R2 httpfs."""
+    if not settings.bucket_name:
+        raise RuntimeError("BUCKET_NAME is required in .env to verify Gold Views on Cloudflare R2.")
+
+    bucket = settings.bucket_name.strip().strip("/")
+    has_md_token = bool(settings.motherduck_token.strip())
+    if has_md_token:
+        con = duckdb.connect(f"md:?motherduck_token={settings.motherduck_token.strip()}")
+        mode = "motherduck_cloud"
+        endpoint = settings.get_r2_endpoint_host()
+        if not endpoint or not settings.aws_access_key_id or not settings.aws_secret_access_key:
+            raise RuntimeError("Cloudflare R2 credentials are required to configure IN MOTHERDUCK secret.")
+        key_id = settings.aws_access_key_id.replace("'", "''")
+        secret = settings.aws_secret_access_key.replace("'", "''")
+        db_name = (settings.motherduck_database or "acdp_gold").strip() or "acdp_gold"
+        con.execute(f"CREATE DATABASE IF NOT EXISTS {db_name}")
+        con.execute(f"USE {db_name}")
+        con.execute(
+            f"""
+            CREATE OR REPLACE SECRET r2_secret IN MOTHERDUCK (
+                TYPE S3,
+                KEY_ID '{key_id}',
+                SECRET '{secret}',
+                REGION 'auto',
+                ENDPOINT '{endpoint.replace("'", "''")}',
+                URL_STYLE 'path'
+            )
+            """
+        )
+    else:
+        con = duckdb.connect(":memory:")
+        mode = "r2_direct_httpfs_verified"
+        settings.configure_duckdb_r2(con)
+
+    try:
+        for entity in GOLD_ENTITIES:
+            s3_uri = f"s3://{bucket}/gold/{entity}.parquet"
+            con.execute(f"CREATE OR REPLACE VIEW {entity} AS SELECT * FROM read_parquet('{s3_uri}')")
+
+        legacy_defs = (
+            "CREATE OR REPLACE VIEW gold_category_summary AS "
+            "SELECT domain_group AS category, competition_count AS count, allocated_prize_vnd AS total_prize_vnd "
+            "FROM mart_domain_analytics",
+            "CREATE OR REPLACE VIEW gold_mode_distribution AS "
+            "SELECT mode_canonical AS mode, SUM(competition_count) AS count FROM mart_team_and_mode_matrix "
+            "GROUP BY mode_canonical",
+            "CREATE OR REPLACE VIEW gold_seasonality AS "
+            "SELECT CONCAT(year, '-', LPAD(CAST(month AS VARCHAR), 2, '0')) AS month_key, "
+            "academic_term, SUM(competition_count) AS count "
+            "FROM mart_seasonality_academic WHERE date_known = TRUE GROUP BY year, month, academic_term",
+            "CREATE OR REPLACE VIEW gold_top_prizes AS "
+            "SELECT competition_key, name, total_prize_vnd, mode_canonical AS mode "
+            "FROM mart_competition_explorer ORDER BY total_prize_vnd DESC",
+        )
+        for stmt in legacy_defs:
+            con.execute(stmt)
+
+        all_views = [*GOLD_ENTITIES, "gold_category_summary", "gold_mode_distribution", "gold_seasonality", "gold_top_prizes"]
+        view_counts: dict[str, int] = {}
+        for view_name in all_views:
+            row = con.execute(f"SELECT COUNT(*) FROM {view_name}").fetchone()
+            view_counts[view_name] = int(row[0]) if row else 0
+
+        sc_row = con.execute(
+            """
+            SELECT
+                COUNT(*) AS total_competitions,
+                SUM(CASE WHEN f.reg_deadline_date_sk = -1 THEN 1 ELSE 0 END) AS missing_deadline_count,
+                SUM(CASE WHEN d.team_size_max IS NULL THEN 1 ELSE 0 END) AS missing_team_size_count,
+                SUM(CASE WHEN f.prize_tier_count = 0 THEN 1 ELSE 0 END) AS missing_prize_tiers_count
+            FROM fact_competitions f
+            JOIN dim_competition d USING (competition_sk)
+            """
+        ).fetchone()
+        scorecard = {
+            "total_competitions": int(sc_row[0]) if sc_row else 0,
+            "missing_deadline_count": int(sc_row[1] or 0) if sc_row else 0,
+            "missing_team_size_count": int(sc_row[2] or 0) if sc_row else 0,
+            "missing_prize_tiers_count": int(sc_row[3] or 0) if sc_row else 0,
+        }
+
+        inv_row = con.execute(
+            """
+            WITH kpi_sum AS (
+                SELECT COALESCE(SUM(total_prize_vnd), 0) AS fact_total_vnd FROM fact_competitions
+            ),
+            domain_sum AS (
+                SELECT COALESCE(SUM(allocated_prize_vnd), 0) AS bridge_total_vnd FROM mart_domain_analytics
+            )
+            SELECT fact_total_vnd, bridge_total_vnd, ABS(fact_total_vnd - bridge_total_vnd) AS drift_vnd
+            FROM kpi_sum, domain_sum
+            """
+        ).fetchone()
+        bridge_invariant = {
+            "fact_total_vnd": int(inv_row[0]) if inv_row else 0,
+            "bridge_total_vnd": int(inv_row[1]) if inv_row else 0,
+            "drift_vnd": float(inv_row[2]) if inv_row else 0.0,
+        }
+
+        print(f"\n=== MOTHERDUCK / R2 GOLD VIEWS VERIFICATION ({mode}) ===")
+        print(f"Verified {len(view_counts)} views (15 Two-Tier Gold + 4 Virtual Legacy Views):")
+        for vname, cnt in view_counts.items():
+            print(f"  - {vname}: {cnt} rows")
+        print(f"Data Quality Scorecard: {scorecard}")
+        print(f"Bridge Weighting Invariant: {bridge_invariant}")
+
+        return {
+            "mode": mode,
+            "view_counts": view_counts,
+            "scorecard": scorecard,
+            "bridge_invariant": bridge_invariant,
+        }
+    finally:
+        con.close()
+
+
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description="ACDP v2 Silver Parquet & Two-Tier Gold Star Schema Builder")
     parser.add_argument("--export-silver-r2", action="store_true", help="Export Silver ZSTD Parquet to R2")
     parser.add_argument("--build-gold-r2", action="store_true", help="Build Two-Tier Gold (15 Parquets) on R2")
     parser.add_argument("--verify", action="store_true", help="Verify Silver and/or Gold Parquet on R2")
     parser.add_argument("--metabase-sql", action="store_true", help="Print DuckDB httpfs init SQL for Metabase")
+    parser.add_argument("--motherduck-sql", action="store_true", help="Print MotherDuck Lite IN MOTHERDUCK R2 init SQL")
+    parser.add_argument("--verify-motherduck", action="store_true", help="Verify 19 Gold Views & Data Quality Scorecard")
     parser.add_argument("--date", type=str, default=None, help="Optional Silver extraction date (YYYY-MM-DD)")
     args = parser.parse_args(argv)
 
     if args.metabase_sql:
         print(build_metabase_r2_init_sql())
+        return
+    if args.motherduck_sql:
+        print(build_motherduck_r2_init_sql(include_credentials=False))
+        return
+    if args.verify_motherduck:
+        verify_motherduck_views_from_r2()
         return
 
     run_all = not (args.export_silver_r2 or args.build_gold_r2 or args.verify)

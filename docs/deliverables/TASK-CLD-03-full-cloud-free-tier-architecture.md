@@ -7,7 +7,7 @@
 | Institution | Khoa Công nghệ Thông tin, Trường Đại học Công nghệ Kỹ thuật TP.HCM (HCM-UTE) |
 | Date Completed | 2026-11-23 |
 | Deliverable Type | Cloud Architecture Blueprint, Tech Stack Audit & Risk Continuity Plan |
-| Status | Complete (Hồ sơ kiến trúc & phản biện nội bộ theo `DIR-011`, chờ Hưng & Duy duyệt trước khi chốt ADR và sửa code tại `TASK-CLD-01`, `TASK-CLD-04`) |
+| Status | Complete (Đã phản biện và chốt PA-1 tại [`ADR-0002`](../adr/0002-full-cloud-free-tier-architecture.md) trong `TASK-CLD-07`) |
 
 ---
 

@@ -458,7 +458,7 @@
       "task_type": "Architecture",
       "is_no_code": false,
       "owner": "Hung & Duy",
-      "status": "todo",
+      "status": "done",
       "priority": "high",
       "problem_statement": "Thực hiện phản biện nội bộ (DIR-011) giữa Hưng và Duy để chốt phương án PA-1 (giữ FastAPI) hoặc PA-2 (Next.js BFF + Supabase), thiết lập MotherDuck Lite Free thay thế Metabase local, và ban hành ADR-0002 chính thức.",
       "research_questions": [],
@@ -466,8 +466,14 @@
         "Hai tác giả ký duyệt lựa chọn PA-1 hoặc PA-2 và ban hành docs/adr/0002-full-cloud-free-tier-architecture.md.",
         "MotherDuck Lite kết nối đọc thành công Gold Parquet trên R2."
       ],
-      "deliverables": ["docs/adr/0002-full-cloud-free-tier-architecture.md"],
-      "notes": "Phụ thuộc TASK-CLD-03; mở khóa TASK-CLD-05.",
+      "deliverables": [
+        "docs/adr/0002-full-cloud-free-tier-architecture.md",
+        "src/acdp/v2/gold_star_schema.py",
+        "src/acdp/config.py",
+        "docs/deliverables/TASK-CLD-07-adr-0002-and-motherduck-setup.md",
+        "docs/deliverables/TASK-CLD-07-adr-0002-and-motherduck-setup-visual-dossier.html"
+      ],
+      "notes": "Đã chốt PA-1 (FastAPI + DuckDB httpfs + TTL Cache theo chuẩn Low-Footprint đa đích HF Spaces 16GB / Koyeb-Render 512MB), ban hành ADR-0002 thay thế ADR-0001, bổ sung --motherduck-sql & --verify-motherduck kiểm chứng 19 Gold Views trên Cloudflare R2.",
       "updated_at": "2026-11-23"
     },
     {

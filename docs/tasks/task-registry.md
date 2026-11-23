@@ -2,7 +2,7 @@
 
 This ledger is auto-generated from [`tasks-data.json`](./tasks-data.json) and synchronized with the interactive portal [`index.html`](./index.html) per **DIR-018**.
 
-- **Total tasks**: `58` (`38` completed)
+- **Total tasks**: `58` (`39` completed)
 - **Scope distribution**: `50` TLCN (Phase 1) | `12` KLTN (Phase 2)
 - **Last updated**: `2026-11-22`
 
@@ -55,7 +55,7 @@ This ledger is auto-generated from [`tasks-data.json`](./tasks-data.json) and sy
 | **TASK-CLD-04** | Cycle 07 | TLCN -> KLTN | Cloud & Infra | Triển khai Kết nối Supabase OLTP & DuckDB Direct-on-R2 (s3://) | Hung | [`config.py`](../../src/acdp/config.py), [`api`](../../src/acdp/api) | ⏳ Todo |
 | **TASK-CLD-05** | Cycle 07 | TLCN -> KLTN | Cloud & Infra | Triển khai Serving API (PA-1: HF Spaces / PA-2: Next.js BFF) & Frontend lên Vercel Hobby kèm TTL Cache | Hung & Duy | [`Dockerfile.api`](../../Dockerfile.api), [`next.config.ts`](../../apps/web/next.config.ts), [`gold_queries.py`](../../src/acdp/api/services/gold_queries.py) | ⏳ Todo |
 | **TASK-CLD-06** | Cycle 07 | TLCN -> KLTN | Cloud & Infra | Thiết lập GitHub Actions Keep-Alive, Backup pg_dump & Chuỗi Fallback LLM/Vector | Hung & Duy | `.github/workflows/keep-alive.yml`, [`rag_service.py`](../../src/acdp/api/services/rag_service.py) | ⏳ Todo |
-| **TASK-CLD-07** | Cycle 07 | TLCN (Phase 1) | Cloud & Infra | Chốt Phản biện Kiến trúc Full Cloud (PA-1 vs PA-2), Cấu hình MotherDuck Lite & Ban hành ADR-0002 | Hung & Duy | `docs/adr/0002-full-cloud-free-tier-architecture.md` | ⏳ Todo |
+| **TASK-CLD-07** | Cycle 07 | TLCN (Phase 1) | Cloud & Infra | Chốt Phản biện Kiến trúc Full Cloud (PA-1 vs PA-2), Cấu hình MotherDuck Lite & Ban hành ADR-0002 | Hung & Duy | [`0002-full-cloud-free-tier-architecture.md`](../../docs/adr/0002-full-cloud-free-tier-architecture.md), [`gold_star_schema.py`](../../src/acdp/v2/gold_star_schema.py), [`config.py`](../../src/acdp/config.py), [`TASK-CLD-07-adr-0002-and-motherduck-setup.md`](../../docs/deliverables/TASK-CLD-07-adr-0002-and-motherduck-setup.md), [`TASK-CLD-07-adr-0002-and-motherduck-setup-visual-dossier.html`](../../docs/deliverables/TASK-CLD-07-adr-0002-and-motherduck-setup-visual-dossier.html) | ✅ Done |
 | **TASK-SRV-01** | Cycle 08 | TLCN (Phase 1) | Serving & Web | Xây dựng Trang Hồ sơ Cá nhân Sinh viên (/profile — Định dạng Mini-CV) | Hung | `apps/web/app/profile/page.tsx`, [`api`](../../src/acdp/api) | ⏳ Todo |
 | **TASK-SRV-02** | Cycle 08 | TLCN (Phase 1) | Serving & Web | Hệ thống Tạo Đội & Xin Tham Gia Đội trên từng Cuộc thi (Thuần OLTP — Không AI) | Hung | [`competitions`](../../apps/web/app/competitions), [`api`](../../src/acdp/api) | ⏳ Todo |
 | **TASK-SRV-03** | Cycle 08 | TLCN (Phase 1) | Serving & Web | Màn hình Tổng hợp Thông tin Cuộc thi & Đội thi (Team Summary để gửi Giảng viên) | Hung | `apps/web/app/teams` | ⏳ Todo |

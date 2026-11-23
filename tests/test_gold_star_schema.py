@@ -323,6 +323,25 @@ def test_r2_end_to_end_silver_to_gold_zero_local_disk(monkeypatch) -> None:
     assert "CREATE OR REPLACE PERSISTENT SECRET r2_secret" in sql_snippet
     assert "s3://acdp-test-bucket/gold/mart_kpi_overview.parquet" in sql_snippet
 
+    md_sql = gold.build_motherduck_r2_init_sql(include_credentials=False)
+    assert "CREATE DATABASE IF NOT EXISTS acdp_gold;" in md_sql
+    assert "CREATE OR REPLACE SECRET r2_secret IN MOTHERDUCK (" in md_sql
+    assert "KEY_ID '<R2_ACCESS_KEY_ID>'" in md_sql
+    assert "SECRET '<R2_SECRET_ACCESS_KEY>'" in md_sql
+    assert "s3://acdp-test-bucket/gold/dim_competition.parquet" in md_sql
+    assert "CREATE OR REPLACE VIEW gold_top_prizes AS" in md_sql
+    assert "JOIN dim_competition d USING (competition_sk)" in md_sql
+
+
+def test_motherduck_cli_sql_output(capsys) -> None:
+    """Verify --motherduck-sql prints MotherDuck IN MOTHERDUCK R2 setup SQL without leaking secrets."""
+    gold.main(["--motherduck-sql"])
+    captured = capsys.readouterr().out
+    assert "CREATE DATABASE IF NOT EXISTS" in captured
+    assert "IN MOTHERDUCK" in captured
+    assert "<R2_ACCESS_KEY_ID>" in captured
+    assert "mart_competition_explorer" in captured
+
 
 def test_expired_open_status_normalizes_to_closed() -> None:
     """Verify open contests with past registration deadlines normalize to closed."""

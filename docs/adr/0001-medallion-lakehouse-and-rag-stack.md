@@ -1,6 +1,6 @@
 # ADR-0001: Core Architecture, Medallion Lakehouse, and Hybrid RAG Stack (Archived Inception Proposal)
 
-- **Status**: Superseded / Archived Inception Proposal (Subject to Active R&D Tasks & DIR-011)
+- **Status**: Superseded by [`ADR-0002`](./0002-full-cloud-free-tier-architecture.md) (Archived Inception Proposal)
 - **Date**: 2026-09-08
 - **Authors**: Do Kien Hung, Nguyen Van Quang Duy
 - **Scientific Advisor**: M.Sc. Tran Quang Khai
