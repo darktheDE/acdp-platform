@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TASK-GLD-01 — Phản biện &amp; Bảo vệ Mô hình Lớp Vàng | ACDP</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <style>
+    body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+    .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 antialiased">
+  <header class="bg-slate-900 text-white border-b border-slate-800">
+    <div class="max-w-6xl mx-auto px-6 py-7 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+        <div class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-amber-300 mb-2">
+          <span class="px-2 py-0.5 rounded bg-amber-500/20 border border-amber-400/30">TASK-GLD-01</span>
+          <span>Cycle 06 · Gold Layer · TLCN Phase 1</span>
+        </div>
+        <h1 class="text-2xl md:text-3xl font-bold tracking-tight">Phản biện &amp; Bảo vệ Mô hình Lớp Vàng (Two-Tier Gold)</h1>
+        <p class="text-slate-300 text-sm mt-1">Kiểm định Kimball Star Schema (<span class="mono text-amber-200">4 dim · 3 fact · 2 bridge · 6 mart</span>), thực nghiệm DuckDB-on-R2 &amp; luồng Serving</p>
+      </div>
+      <div class="text-xs text-slate-300 bg-slate-800/70 border border-slate-700 rounded-lg px-4 py-3">
+        <div><strong>Nhóm thực hiện:</strong> Đỗ Kiến Hưng &amp; Nguyễn Văn Quang Duy</div>
+        <div><strong>Đơn vị:</strong> FIT · HCM-UTE · 2026-11-23</div>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-6 py-8 space-y-8">
+    <!-- Tier 1: Executive KPI Cards -->
+    <section>
+      <h2 class="text-lg font-bold text-slate-800 mb-3">1. Tóm tắt điều hành (1-Minute KPI)</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+          <div class="text-xs text-slate-500 uppercase font-semibold">R2 Gold Footprint</div>
+          <div class="text-2xl font-bold text-slate-900 mt-1">21 <span class="text-sm font-normal text-slate-500">Parquet · 107 KB</span></div>
+          <div class="text-xs text-amber-700 mt-1">6 tệp gold_* chiếm 29.4% (nên bỏ)</div>
+        </div>
+        <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+          <div class="text-xs text-slate-500 uppercase font-semibold">Tốc độ OBT vs Star (R2)</div>
+          <div class="text-2xl font-bold text-emerald-700 mt-1">4.8x <span class="text-sm font-normal text-slate-500">cold · 3.9x warm</span></div>
+          <div class="text-xs text-slate-600 mt-1">182.9 ms (OBT) vs 880.5 ms (Join)</div>
+        </div>
+        <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+          <div class="text-xs text-slate-500 uppercase font-semibold">Bảo toàn quỹ giải Bridge</div>
+          <div class="text-2xl font-bold text-indigo-700 mt-1">0.0 <span class="text-sm font-normal text-slate-500">VNĐ sai số</span></div>
+          <div class="text-xs text-slate-600 mt-1">Tổng quỹ 4.17 tỷ VNĐ (15 cuộc thi)</div>
+        </div>
+        <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+          <div class="text-xs text-slate-500 uppercase font-semibold">Lệch chuẩn &amp; Tồn tại</div>
+          <div class="text-2xl font-bold text-rose-600 mt-1">5 <span class="text-sm font-normal text-slate-500">A1 – A5</span></div>
+          <div class="text-xs text-rose-700 mt-1">20% deadline=-1 · 33% thiếu team_max</div>
+        </div>
+      </div>
+      <div class="mt-4 bg-slate-900 text-slate-100 rounded-xl p-4 text-sm leading-relaxed">
+        <strong class="text-amber-300">Kết luận kiến trúc (DIR-011):</strong> Giữ <strong>Two-Tier Gold Architecture</strong>: tầng lõi <strong>Kimball Star Schema</strong> bảo toàn quan hệ 1:N (<span class="mono">50</span> giải, <span class="mono">54</span> vòng thi) và chống fan-out qua Bridge trọng số; tầng phục vụ xuất <strong>OBT Serving Marts</strong> (<span class="mono">mart_competition_explorer</span>) cho FastAPI đọc qua R2 <span class="mono">httpfs</span> nhanh hơn gần 5 lần. RAG lấy văn bản từ <strong>Silver Clean Markdown</strong> kết hợp metadata lọc từ <strong>Gold</strong>.
+      </div>
+    </section>
+
+    <!-- Tier 2: Architecture Diagram & Benchmark Charts -->
+    <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+        <h2 class="text-base font-bold text-slate-800 mb-2">2. Kiến trúc Two-Tier Gold &amp; Dual-Layer Serving</h2>
+        <p class="text-xs text-slate-500 mb-3">Phân định rõ vai trò Bronze, Silver, Gold Core, Gold OBT Marts, OLTP và Metabase BI</p>
+        <div class="mermaid">
+flowchart TD
+  S1["Silver Clean Markdown&lt;br/&gt;(Nguyên văn thể lệ sạch)"] --&gt;|"Chunk + BGE-M3"| Q[("Qdrant Vector DB")]
+  S2["Silver Parquet&lt;br/&gt;(competitions, prizes, stages)"] --&gt;|"4_analytics_gold.py"| GC["Gold Core: Kimball (4+3+2)&lt;br/&gt;dim_*, fact_*, bridge_*"]
+  GC --&gt;|"Denormalize + Aggregate"| GM["Gold Serving Marts (OBT)&lt;br/&gt;mart_competition_explorer + 5 mart_*"]
+  GM --&gt;|"Payload Pre-filter"| Q
+  GM --&gt;|"DuckDB httpfs (208 ms)"| API["FastAPI Gateway"]
+  GC --&gt;|"1:N Prizes &amp; Stages"| API
+  PG[("PostgreSQL 18 / Supabase&lt;br/&gt;/profile, Teams, Bookmarks")] &lt;--&gt;|"competition_key"| API
+  API --&gt; WEB["Next.js 16 Portal&lt;br/&gt;(Sinh viên &amp; Giảng viên)"]
+  GC -.-&gt;|"--profile bi"| MB["Metabase BI&lt;br/&gt;(Admin DataOps &amp; SQL)"]
+  classDef core fill:#e0e7ff,stroke:#4338ca,color:#1e1b4b
+  classDef mart fill:#fef3c7,stroke:#d97706,color:#78350f
+  classDef db fill:#dcfce7,stroke:#15803d,color:#14532d
+  class GC core
+  class GM mart
+  class PG,Q db
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm flex flex-col justify-between">
+        <div>
+          <h2 class="text-base font-bold text-slate-800 mb-2">3. Benchmark DuckDB: Star Join vs OBT (ms, thấp hơn là tốt hơn)</h2>
+          <p class="text-xs text-slate-500 mb-3">Đo thực tế trên Cloudflare R2 (<span class="mono">httpfs</span>) và mô phỏng 10,000 bản ghi in-memory</p>
+          <div class="h-64">
+            <canvas id="latencyChart"></canvas>
+          </div>
+        </div>
+        <div class="mt-4 pt-3 border-t border-slate-100 text-xs text-slate-600">
+          Trên Object Storage (<span class="mono">httpfs</span>), mỗi bảng Star cần thêm HTTP range-request. OBT (<span class="mono">mart_competition_explorer</span>) gom vào 1 tệp giúp giảm độ trễ từ <span class="mono">880.5 ms</span> xuống <span class="mono">182.9 ms</span>.
+        </div>
+      </div>
+    </section>
+
+    <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+        <h2 class="text-base font-bold text-slate-800 mb-2">4. So sánh 5 mô hình dữ liệu (Điểm 1–10 theo ngữ cảnh ACDP)</h2>
+        <p class="text-xs text-slate-500 mb-3">Chấm điểm trên 6 trục: Hiệu năng R2, Chuẩn 1:N/N:M, Chống fan-out, Metabase, Chi phí vận hành, Hội đồng</p>
+        <div class="h-72">
+          <canvas id="radarChart"></canvas>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+        <h2 class="text-base font-bold text-slate-800 mb-2">5. Phân tách Dashboard: Web Portal vs Metabase BI</h2>
+        <div class="overflow-x-auto mt-3">
+          <table class="w-full text-xs text-left border-collapse">
+            <thead>
+              <tr class="border-b border-slate-200 text-slate-500 uppercase">
+                <th class="py-2 pr-3">Vai trò</th>
+                <th class="py-2 pr-3">Kênh</th>
+                <th class="py-2">Biểu đồ / Chỉ số cốt lõi</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr>
+                <td class="py-2.5 pr-3 font-semibold text-slate-800">Sinh viên</td>
+                <td class="py-2.5 pr-3"><span class="px-2 py-0.5 rounded bg-indigo-50 text-indigo-700 font-medium">Web /dashboard</span></td>
+                <td class="py-2.5 text-slate-600">Cuộc thi đang mở, sắp đóng đơn &le;14 ngày, miễn phí/học bổng, ngành nóng, mùa vụ HK1/HK2/Hè, quy mô đội để lập nhóm.</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 pr-3 font-semibold text-slate-800">Giảng viên / Khoa</td>
+                <td class="py-2.5 pr-3"><span class="px-2 py-0.5 rounded bg-indigo-50 text-indigo-700 font-medium">Web</span> + Metabase</td>
+                <td class="py-2.5 text-slate-600">Hệ sinh thái BTC vs Nhà tài trợ (<span class="mono">59</span> đơn vị), đối chiếu mùa thi với lịch học kỳ HCM-UTE, phân bổ học bổng.</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 pr-3 font-semibold text-slate-800">Admin / DataOps</td>
+                <td class="py-2.5 pr-3"><span class="px-2 py-0.5 rounded bg-amber-50 text-amber-800 font-medium">Metabase BI</span></td>
+                <td class="py-2.5 text-slate-600">Tỷ lệ <span class="mono">date_sk=-1</span> (20%), thiếu <span class="mono">team_size_max</span> (33%), cân bằng bridge <span class="mono">0.0 VNĐ</span>, log theo batch &amp; ad-hoc SQL.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tier 3: Deep Audit Accordions -->
+    <section class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm space-y-4">
+      <h2 class="text-lg font-bold text-slate-800">6. Chi tiết kiểm định &amp; đề xuất chỉnh sửa (Chờ phản biện Hưng &amp; Duy)</h2>
+
+      <details class="border border-slate-200 rounded-lg p-4" open>
+        <summary class="font-semibold text-sm text-slate-800 cursor-pointer">5 điểm lệch chuẩn &amp; tồn tại kỹ thuật (A1–A5)</summary>
+        <ul class="mt-3 space-y-2 text-xs text-slate-700 list-disc pl-5">
+          <li><strong>A1 (Trùng thuộc tính Dim/Fact):</strong> <span class="mono">team_size_min/max</span> lặp ở cả <span class="mono">dim_competition</span> và <span class="mono">fact_competitions</span>; cần giữ 1 nguồn duy nhất.</li>
+          <li><strong>A2 (Array lồng trong Dim):</strong> <span class="mono">dim_competition</span> chứa <span class="mono">raw_categories[]</span>, <span class="mono">organizers[]</span> và văn bản dài (<span class="mono">20.99 KB</span>, gấp 7.2x bảng Fact). Nên tách văn bản hiển thị ra OBT Mart.</li>
+          <li><strong>A3 (Surrogate Key tuần tự):</strong> <span class="mono">comp_sk</span> tăng <span class="mono">1..N</span> mỗi lần rebuild; ổn cho SCD Type 1 TLCN, nhưng cần hash/lookup bền vững khi lên SCD Type 2 ở KLTN.</li>
+          <li><strong>A4 (21 tệp Parquet trên R2):</strong> <span class="mono">6</span> tệp view <span class="mono">gold_*</span> chiếm <span class="mono">32.2 KB</span> (~29.4%) dù API chỉ đọc <span class="mono">15</span> tệp; nên bỏ materialize Parquet cho alias cũ.</li>
+          <li><strong>A5 (Thiếu dữ liệu từ Silver):</strong> R2 Gold ghi nhận <span class="mono">3/15</span> thiếu deadline, <span class="mono">5/15</span> thiếu <span class="mono">team_size_max</span>, <span class="mono">1/15</span> không có giải thưởng (<span class="mono">TASK-SLV-03/04</span>).</li>
+        </ul>
+      </details>
+
+      <details class="border border-slate-200 rounded-lg p-4">
+        <summary class="font-semibold text-sm text-slate-800 cursor-pointer">Lộ trình SCD Type 2 &amp; CDC cho KLTN (Mail Service TASK-SRV-05)</summary>
+        <p class="mt-3 text-xs text-slate-700 leading-relaxed">
+          TLCN Phase 1 dùng <strong>SCD Type 1</strong> (ghi đè toàn bộ) vì chạy on-demand trên 5–10 link. Khi chuyển sang KLTN Phase 2 chạy lịch cào tự động bằng GitHub Actions, hệ thống cần bổ sung <strong>SCD Type 2</strong> (<span class="mono">effective_from</span>, <span class="mono">effective_to</span>, <span class="mono">is_current</span>) và bảng <strong>CDC Diff</strong> so sánh theo <span class="mono">competition_key</span> + <span class="mono">content_hash</span> giữa 2 batch liên tiếp để gửi email thông báo cuộc thi mới hoặc gia hạn đúng 1 lần.
+        </p>
+      </details>
+    </section>
+  </main>
+
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const ctxLat = document.getElementById('latencyChart');
+      if (ctxLat) {
+        new Chart(ctxLat, {
+          type: 'bar',
+          data: {
+            labels: ['R2 httpfs (Cold)', 'R2 httpfs (Warm avg)', 'In-Memory 10k rows'],
+            datasets: [
+              {
+                label: 'Star Join (4 bảng)',
+                data: [880.5, 813.8, 17.02],
+                backgroundColor: '#f59e0b'
+              },
+              {
+                label: 'OBT Mart (1 tệp)',
+                data: [182.9, 208.0, 3.00],
+                backgroundColor: '#10b981'
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'bottom' } },
+            scales: { y: { beginAtZero: true, title: { display: true, text: 'ms' } } }
+          }
+        });
+      }
+
+      const ctxRadar = document.getElementById('radarChart');
+      if (ctxRadar) {
+        new Chart(ctxRadar, {
+          type: 'radar',
+          data: {
+            labels: ['Tốc độ R2 httpfs', 'Xử lý 1:N & N:M', 'Chống fan-out', 'Metabase BI', 'Gọn nhẹ vận hành', 'Thuyết phục Hội đồng'],
+            datasets: [
+              {
+                label: 'Two-Tier Gold (Kimball + OBT)',
+                data: [9, 10, 10, 9, 8, 10],
+                borderColor: '#4f46e5',
+                backgroundColor: 'rgba(79, 70, 229, 0.18)'
+              },
+              {
+                label: 'OBT Thuần',
+                data: [10, 4, 4, 6, 9, 5],
+                borderColor: '#10b981',
+                backgroundColor: 'rgba(16, 185, 129, 0.12)'
+              },
+              {
+                label: 'Data Vault 2.0',
+                data: [3, 9, 8, 4, 2, 5],
+                borderColor: '#ef4444',
+                backgroundColor: 'rgba(239, 68, 68, 0.10)'
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: { r: { min: 0, max: 10, ticks: { stepSize: 2 } } },
+            plugins: { legend: { position: 'bottom' } }
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

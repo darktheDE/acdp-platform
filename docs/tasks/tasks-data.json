@@ -156,7 +156,7 @@
       "task_type": "Research & Theory",
       "is_no_code": false,
       "owner": "Hung & Duy",
-      "status": "todo",
+      "status": "done",
       "priority": "high",
       "problem_statement": "Lớp Vàng đang lưu Parquet Kimball Star Schema (4 dim, 3 fact, 2 bridge, 6 mart). Cần kiểm chứng xem đã đúng chuẩn Kimball chưa, và liệu có bắt buộc phải dùng Kimball hay nên dùng loại schema khác (OBT, Data Vault) cho mục tiêu sản phẩm.",
       "research_questions": [
@@ -166,9 +166,12 @@
       "acceptance_criteria": [
         "Có hồ sơ kiểm định chuẩn Kimball (Grain, Surrogate Keys, Conformed Dimensions, Bridge Weight) và luận cứ bảo vệ."
       ],
-      "deliverables": ["docs/deliverables/TASK-GLD-01-kimball-star-schema-audit-and-alternatives.md"],
-      "notes": "",
-      "updated_at": "2026-11-22"
+      "deliverables": [
+        "docs/deliverables/TASK-GLD-01-kimball-star-schema-audit-and-alternatives.md",
+        "docs/deliverables/TASK-GLD-01-kimball-star-schema-audit-and-alternatives-visual-dossier.html"
+      ],
+      "notes": "Đã kiểm định 21 tệp Gold Parquet trên R2 (106.98 KB, 0.0 VND sai số bridge); chứng minh OBT nhanh hơn Star Join 4.8x cold qua R2 httpfs (182.9 ms vs 880.5 ms); chốt kiến trúc Two-Tier Gold (Kimball Core + OBT Marts), Dual-Layer RAG (Silver Text + Gold Metadata) và phân tách Web Dashboard vs Metabase.",
+      "updated_at": "2026-11-23"
     },
     {
       "id": "TASK-BRZ-02",
@@ -240,6 +243,56 @@
         "tests/test_silver_schema.py"
       ],
       "notes": "Phụ thuộc TASK-SLV-02 (chờ Hưng & Duy phản biện Schema v2 trước khi code).",
+      "updated_at": "2026-11-23"
+    },
+    {
+      "id": "TASK-GLD-02",
+      "title": "Hiệu chỉnh Two-Tier Gold (A1–A4) & Nạp Metadata Gold cho Dual-Layer RAG (4_analytics_gold.py, 3_ingest_to_qdrant.py)",
+      "cycle": "Cycle 06",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Gold",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "high",
+      "problem_statement": "Hiện thực hóa các kiến nghị từ TASK-GLD-01: khắc phục lệch chuẩn A1–A4 trong 4_analytics_gold.py (bỏ trùng team_size_* ở fact_competitions, tinh gọn dim_competition, rút gọn xuất 15 tệp Gold Parquet thay vì 21 tệp trên R2) và kết nối metadata từ Gold mart_competition_explorer vào Qdrant payload trong 3_ingest_to_qdrant.py.",
+      "research_questions": [],
+      "acceptance_criteria": [
+        "Cập nhật SPEC-0003 và 4_analytics_gold.py xử lý xong A1, A2, A4; pytest tests/test_gold_star_schema.py pass 100%.",
+        "3_ingest_to_qdrant.py đọc Clean Markdown từ silver/markdown/ và làm giàu Qdrant payload từ Gold mart_competition_explorer.",
+        "R2 gold/ chỉ còn 15 tệp Parquet (9 bảng Core + 6 Marts) và giữ nguyên 0.0 VND sai số bridge."
+      ],
+      "deliverables": [
+        "src/acdp/4_analytics_gold.py",
+        "src/acdp/3_ingest_to_qdrant.py",
+        "tests/test_gold_star_schema.py"
+      ],
+      "notes": "Phụ thuộc TASK-GLD-01 và TASK-SLV-03.",
+      "updated_at": "2026-11-23"
+    },
+    {
+      "id": "TASK-GLD-03",
+      "title": "Nâng cấp SCD Type 2 & CDC Delta Events ở Lớp Vàng phục vụ Mail Alert (4_analytics_gold.py)",
+      "cycle": "Cycle 09",
+      "scope": "KLTN (Phase 2)",
+      "layer": "Gold",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "medium",
+      "problem_statement": "Chuyển đổi dim_competition từ SCD Type 1 sang SCD Type 2 (bền vững competition_sk theo effective_from/to/is_current) và sinh bảng CDC Diff (gold_change_events) giữa 2 batch cào tự động liên tiếp để kích hoạt TASK-SRV-05 gửi email thông báo chính xác 1 lần.",
+      "research_questions": [],
+      "acceptance_criteria": [
+        "dim_competition lưu được lịch sử thay đổi registration_status, registration_deadline và total_prize_vnd theo SCD Type 2.",
+        "Sinh bảng gold_change_events phát hiện cuộc thi mới hoặc gia hạn deadline phục vụ TASK-SRV-05."
+      ],
+      "deliverables": [
+        "src/acdp/4_analytics_gold.py",
+        "tests/test_gold_star_schema.py"
+      ],
+      "notes": "Phụ thuộc TASK-GLD-01, TASK-GLD-02 và TASK-ING-02.",
       "updated_at": "2026-11-23"
     },
     {
