@@ -99,7 +99,11 @@ class AppConfig(BaseSettings):
         description="Enable unsafe rename flag for non-AWS S3 providers",
     )
 
-    # Vector Search (Qdrant)
+    # Vector Search (Qdrant: Cloud-first default with local Docker backup mode - TASK-CLD-01)
+    qdrant_mode: Literal["auto", "cloud", "local"] = Field(
+        default="auto",
+        description="Qdrant routing mode: 'auto'/'cloud' prioritizes Qdrant Cloud; 'local' forces local Docker Qdrant backup",
+    )
     qdrant_host: str = Field(default="localhost")
     qdrant_port: int = Field(default=6333)
     qdrant_url: str = Field(default="")
@@ -137,12 +141,31 @@ class AppConfig(BaseSettings):
     internal_api_url: str = Field(default="http://localhost:8000")
 
     def get_qdrant_url(self) -> str:
-        """Resolve Qdrant endpoint: Cloud endpoint first, then explicit URL, then host:port."""
-        if self.qdrant_cluster_endpoint:
-            return self.qdrant_cluster_endpoint
-        if self.qdrant_url:
-            return self.qdrant_url
+        """Resolve Qdrant endpoint: Cloud endpoint first in 'auto'/'cloud' mode, or local URL in 'local' backup mode."""
+        mode = (self.qdrant_mode or "auto").strip().lower()
+        if mode == "local":
+            if self.qdrant_url.strip():
+                return self.qdrant_url.strip()
+            return f"http://{self.qdrant_host}:{self.qdrant_port}"
+        if self.qdrant_cluster_endpoint.strip():
+            return self.qdrant_cluster_endpoint.strip()
+        if self.qdrant_url.strip():
+            return self.qdrant_url.strip()
         return f"http://{self.qdrant_host}:{self.qdrant_port}"
+
+    def get_qdrant_api_key(self) -> str | None:
+        """Return Qdrant API key for HTTPS/Cloud endpoints; omit on local HTTP backup to avoid insecure key warnings."""
+        mode = (self.qdrant_mode or "auto").strip().lower()
+        if mode == "local":
+            return None
+        target_url = self.get_qdrant_url()
+        if target_url.startswith("http://"):
+            return None
+        return self.qdrant_api_key.strip() or None
+
+    def is_qdrant_cloud_active(self) -> bool:
+        """Return True when resolved Qdrant endpoint targets an external HTTPS Qdrant Cloud cluster."""
+        return self.get_qdrant_url().startswith("https://")
 
     def get_qdrant_collection(self) -> str:
         """Resolve target Qdrant collection, redirecting legacy collections to BGE-M3."""

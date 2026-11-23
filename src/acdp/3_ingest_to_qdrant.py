@@ -49,7 +49,7 @@ load_dotenv(find_dotenv(usecwd=True))
 # ==============================================================================
 # CẤU HÌNH
 # ==============================================================================
-QDRANT_API_KEY = settings.qdrant_api_key or os.getenv("QDRANT_API_KEY")
+QDRANT_API_KEY = settings.get_qdrant_api_key()
 QDRANT_CLUSTER_ENDPOINT = settings.get_qdrant_url()
 QDRANT_COLLECTION = settings.get_qdrant_collection()
 

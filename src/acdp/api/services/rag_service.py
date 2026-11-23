@@ -107,7 +107,7 @@ def _get_qdrant() -> QdrantClient:
     global _qdrant_client
     if _qdrant_client is None:
         url = settings.get_qdrant_url()
-        api_key = settings.qdrant_api_key or None
+        api_key = settings.get_qdrant_api_key()
         _qdrant_client = QdrantClient(url=url, api_key=api_key, timeout=15)
     return _qdrant_client
 

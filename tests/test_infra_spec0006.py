@@ -37,10 +37,13 @@ def test_docker_compose_version_pinning_and_profiles() -> None:
             mem_limit = svc["deploy"]["resources"]["limits"]["memory"]
             core_mem_mb += _parse_mem_mb(mem_limit)
 
+    assert core_mem_mb == 1408, f"Expected core profile memory budget 1408 MB (Cloud-First Qdrant), got {core_mem_mb} MB"
     assert core_mem_mb <= 2048, f"Core profile memory budget exceeded: {core_mem_mb} MB > 2048 MB"
     assert services["postgres"]["image"] == "postgres:18.7-alpine3.23"
     assert "postgres_data:/var/lib/postgresql" in services["postgres"]["volumes"]
     assert services["qdrant"]["image"] == "qdrant/qdrant:v1.13.4"
+    assert services["qdrant"]["profiles"] == ["local-backup"]
+    assert "qdrant" not in services["api"].get("depends_on", {})
     assert "3001:3000" in services["metabase"]["ports"]
     # DIR-021: API & Metabase query Gold Parquet directly from Cloudflare R2 via DuckDB httpfs (no local lakehouse mount)
     assert "volumes" not in services["api"]
@@ -74,22 +77,41 @@ def test_app_config_qdrant_resolution_and_env_example(monkeypatch) -> None:
 
     cloud_cfg = AppConfig(
         _env_file=None,
+        qdrant_mode="auto",
         qdrant_cluster_endpoint="https://cloud.qdrant.example:6333",
         qdrant_url="http://qdrant:6333",
+        qdrant_api_key="secret-cloud-key",
     )
     assert cloud_cfg.get_qdrant_url() == "https://cloud.qdrant.example:6333"
+    assert cloud_cfg.get_qdrant_api_key() == "secret-cloud-key"
+    assert cloud_cfg.is_qdrant_cloud_active() is True
+
+    local_backup_cfg = AppConfig(
+        _env_file=None,
+        qdrant_mode="local",
+        qdrant_cluster_endpoint="https://cloud.qdrant.example:6333",
+        qdrant_url="http://qdrant:6333",
+        qdrant_api_key="secret-cloud-key",
+    )
+    assert local_backup_cfg.get_qdrant_url() == "http://qdrant:6333"
+    assert local_backup_cfg.get_qdrant_api_key() is None
+    assert local_backup_cfg.is_qdrant_cloud_active() is False
 
     docker_cfg = AppConfig(
         _env_file=None,
         qdrant_cluster_endpoint="",
         qdrant_url="http://qdrant:6333",
+        qdrant_api_key="secret-cloud-key",
     )
     assert docker_cfg.get_qdrant_url() == "http://qdrant:6333"
+    assert docker_cfg.get_qdrant_api_key() is None
 
     local_cfg = AppConfig(_env_file=None, qdrant_cluster_endpoint="", qdrant_url="")
     assert local_cfg.get_qdrant_url() == "http://localhost:6333"
+    assert local_cfg.get_qdrant_api_key() is None
 
     example_cfg = AppConfig(_env_file=str(ROOT / ".env.example"))
+    assert example_cfg.qdrant_mode == "auto"
     assert example_cfg.bronze_storage_backend == "cloudflare_r2"
     assert example_cfg.postgres_db == "acdp_app"
     assert example_cfg.duckdb_memory_limit == "256MB"

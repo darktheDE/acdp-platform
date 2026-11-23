@@ -484,7 +484,7 @@ def ingest(
     embeddings = CloudflareWorkersAIEmbeddings()
     qdrant_client = QdrantClient(
         url=settings.get_qdrant_url(),
-        api_key=settings.qdrant_api_key or os.getenv("QDRANT_API_KEY") or None,
+        api_key=settings.get_qdrant_api_key(),
     )
     ensure_collection(qdrant_client, embeddings, collection_name, embedding_dim)
     chunker = build_chunker(embeddings)

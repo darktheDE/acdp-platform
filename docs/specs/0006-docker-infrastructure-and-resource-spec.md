@@ -13,8 +13,8 @@ Tài liệu này đặc tả kiến trúc hạ tầng container hóa bằng **Do
 
 Bốn mục tiêu bắt buộc của đặc tả hạ tầng gồm:
 1. **Xóa bỏ hoàn toàn thẻ `:latest`:** Thay thế `qdrant/qdrant:latest` và `ghcr.io/motherduckdb/metabase-duckdb:latest` trong `docker-compose.yml` hiện tại bằng phiên bản khóa cứng (exact tag pinning).
-2. **Phân lớp Compose Profiles (`core`, `bi`, `pipeline`):** Mặc định chỉ bật cụm `core` gồm 4 dịch vụ phục vụ Web hàng ngày; tách Metabase (`bi`) và Prefect (`pipeline`) khỏi phiên khởi động thường nhật.
-3. **Giới hạn ngân sách tài nguyên `<= 2.0 GB` RAM cho Profile `core`:** Thi hành trực tiếp thông qua `deploy.resources.limits` và cờ cấu hình bộ nhớ nội tại của PostgreSQL 18, DuckDB, Node.js.
+2. **Phân lớp Compose Profiles (`core`, `local-backup`, `bi`, `pipeline`):** Mặc định profile `core` chỉ bật 3 dịch vụ (`postgres`, `api`, `web`) và kết nối trực tiếp **Qdrant Cloud** (`TASK-CLD-01`); tách Qdrant Docker vào `local-backup` (dự phòng khi Cloud gián đoạn), Metabase vào `bi`, và Prefect vào `pipeline`.
+3. **Giới hạn ngân sách tài nguyên `<= 2.0 GB` RAM cho Profile `core`:** `core` tiêu thụ tối đa `1408M (~1.38 GB)` RAM (và `1920M` khi bật kèm `local-backup`), thi hành qua `deploy.resources.limits`.
 4. **Đóng gói Multi-Stage & Non-Root:** Tối thiểu hóa dung lượng Docker Image và thu hẹp bề mặt tấn công bằng người dùng không đặc quyền (`appuser`, `nextjs`).
 
 ---
@@ -37,10 +37,10 @@ Bốn mục tiêu bắt buộc của đặc tả hạ tầng gồm:
 | Dịch vụ | Profile | Giới hạn RAM (`limits.memory`) | Giới hạn CPU (`limits.cpus`) | Mức tiêu thụ ước tính thực tế | Thiết lập tiết kiệm RAM bên trong container |
 | :--- | :---: | :---: | :---: | :---: | :--- |
 | `postgres` | `core` | `256M` | `0.50` | `80–130 MB` | `-c shared_buffers=128MB -c work_mem=4MB -c maintenance_work_mem=32MB -c max_connections=40` |
-| `qdrant` | `core` | `512M` | `0.75` | `150–250 MB` | `QDRANT__STORAGE__PERFORMANCE__MAX_SEARCH_THREADS=2` |
 | `api` | `core` | `640M` | `1.00` | `180–300 MB` | DuckDB ép `SET memory_limit='256MB'`, `SET threads=2`; 1 worker Uvicorn ở local dev |
 | `web` | `core` | `512M` | `0.75` | `120–220 MB` | `NODE_OPTIONS="--max-old-space-size=384"` |
-| **Tổng Profile `core`** | **`core`** | **`1920M (~1.88 GB)`** | **`3.00 vCPU`** | **`530–900 MB`** | **Đạt mục tiêu `<= 2.0 GB` (an toàn cho IDE + trình duyệt trên Windows 16GB RAM)** |
+| **Tổng Profile `core` (Cloud-First)** | **`core`** | **`1408M (~1.38 GB)`** | **`2.25 vCPU`** | **`380–650 MB`** | **Giảm 512 MB nhờ dùng Qdrant Cloud mặc định (`TASK-CLD-01`)** |
+| `qdrant` | `local-backup` | `512M` | `0.75` | `150–250 MB` | `QDRANT__STORAGE__PERFORMANCE__MAX_SEARCH_THREADS=2` (bật khi `QDRANT_MODE=local`) |
 | `metabase` | `bi` | `1024M` | `1.00` | `650–850 MB` | `JAVA_TOOL_OPTIONS="-Xmx768m -Xms256m"` |
 | `prefect-server` | `pipeline` | `512M` | `0.50` | `250–350 MB` | Tắt mặc định; chỉ bật khi kiểm thử lịch trình ETL |
 
@@ -316,9 +316,10 @@ Do Next.js 16 giữ cổng mặc định `3000` ở chế độ `core`, dịch v
 
 ### 3.3. Khởi động và Điều khiển theo Ngữ cảnh Công việc
 
-1. Chạy phát triển Web hàng ngày (`core`): `docker compose --profile core up -d --build`
-2. Bật thêm Metabase kiểm tra Star Schema (`core` + `bi`): `docker compose --profile core --profile bi up -d`
-3. Xem mức RAM thực tế của từng container: `docker stats --no-stream --format "table {{.Name}}\t{{.MemUsage}}\t{{.MemPerc}}\t{{.CPUPerc}}"`
+1. Chạy phát triển Web hàng ngày dùng Qdrant Cloud (`core`): `docker compose --profile core up -d --build`
+2. Chạy luồng dự phòng Full Local Backup (`core` + `local-backup`): `$env:QDRANT_MODE="local"; docker compose --profile core --profile local-backup up -d`
+3. Bật thêm Metabase kiểm tra Star Schema (`core` + `bi`): `docker compose --profile core --profile bi up -d`
+4. Xem mức RAM thực tế của từng container: `docker stats --no-stream --format "table {{.Name}}\t{{.MemUsage}}\t{{.MemPerc}}\t{{.CPUPerc}}"`
 
 ---
 
