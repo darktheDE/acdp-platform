@@ -120,6 +120,12 @@ class AppConfig(BaseSettings):
     gemini_api_key: str = Field(default="")
     google_api_key: str = Field(default="")
 
+    # Discovery 3-Tier Search APIs (TASK-ING-03 - Free Tier)
+    tavily_api_key: str = Field(default="")
+    exa_api_key: str = Field(default="")
+    serper_api_key: str = Field(default="")
+    discovery_max_queries_per_run: int = Field(default=12)
+
     # Serving API & Auth (SPEC-0004)
     api_host: str = Field(default="0.0.0.0")
     api_port: int = Field(default=8000)

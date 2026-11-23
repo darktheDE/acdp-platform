@@ -633,15 +633,21 @@
       "task_type": "Engineering",
       "is_no_code": false,
       "owner": "Hung & Duy",
-      "status": "todo",
+      "status": "done",
       "priority": "medium",
       "problem_statement": "Hiện thực hóa kết quả nghiên cứu từ TASK-ING-01 thành module Python tự động phát hiện URL cuộc thi mới (Sitemap/RSS/GDELT kết hợp Tavily/Exa Free Tier), thay thế việc nhập danh sách URL thủ công ở 1_crawl_to_bronze.py.",
       "research_questions": [],
       "acceptance_criteria": [
         "Module src/acdp/0_discover_urls.py chạy được 3 tầng discovery trong hạn mức < 5% Free Tier và xuất danh sách URL khử trùng."
       ],
-      "deliverables": ["src/acdp/0_discover_urls.py"],
-      "notes": "Phụ thuộc TASK-ING-01; làm tiền đề cho TASK-ING-02 ở KLTN.",
+      "deliverables": [
+        "src/acdp/v2/0_discover_urls.py",
+        "src/acdp/v2/discovery_sources.py",
+        "tests/test_discovery_v2.py",
+        "docs/deliverables/TASK-ING-03-three-tier-discovery-implementation.md",
+        "docs/deliverables/TASK-ING-03-three-tier-discovery-implementation-visual-dossier.html"
+      ],
+      "notes": "Phụ thuộc TASK-ING-01; làm tiền đề cho TASK-ING-02 ở KLTN. Triển khai tại src/acdp/v2/ để giữ nguyên pipeline v1; đã kiểm chứng 13/13 pytest + ruff + upload manifest lên R2 (tavily 2.0%/mo, exa 0.8%/mo).",
       "updated_at": "2026-11-23"
     },
     {

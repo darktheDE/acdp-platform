@@ -2,7 +2,7 @@
 
 This ledger is auto-generated from [`tasks-data.json`](./tasks-data.json) and synchronized with the interactive portal [`index.html`](./index.html) per **DIR-018**.
 
-- **Total tasks**: `58` (`31` completed)
+- **Total tasks**: `58` (`32` completed)
 - **Scope distribution**: `50` TLCN (Phase 1) | `12` KLTN (Phase 2)
 - **Last updated**: `2026-11-22`
 
@@ -64,7 +64,7 @@ This ledger is auto-generated from [`tasks-data.json`](./tasks-data.json) and sy
 | **TASK-SRV-05** | Cycle 09 | KLTN (Phase 2) | Serving & Web | Hệ thống Thông báo & Mail Service Tự động khi có Cuộc thi Mới | Hung | [`services`](../../src/acdp/api/services) | ⏳ Todo |
 | **TASK-OPS-01** | Cycle 10 | KLTN (Phase 2) | Academic & Ops | Triển khai Truyền thông Bài bản, Bộ Nhận diện Thương hiệu & Fanpage *(No-Code)* | Duy & Hung | [`task-registry.md`](../../docs/tasks/task-registry.md) | ⏳ Todo |
 | **TASK-OPS-02** | Cycle 10 | KLTN (Phase 2) | Academic & Ops | Nền tảng Quản lý Ticket & Phản hồi Người dùng (External No-Code Platform) *(No-Code)* | Hung & Duy | [`task-registry.md`](../../docs/tasks/task-registry.md) | ⏳ Todo |
-| **TASK-ING-03** | Cycle 06 | TLCN (Phase 1) | Discovery | Triển khai Module Discovery 3 Tầng (Sitemap/RSS/GDELT + Tavily/Exa Free Tier) | Hung & Duy | `src/acdp/0_discover_urls.py` | ⏳ Todo |
+| **TASK-ING-03** | Cycle 06 | TLCN (Phase 1) | Discovery | Triển khai Module Discovery 3 Tầng (Sitemap/RSS/GDELT + Tavily/Exa Free Tier) | Hung & Duy | [`0_discover_urls.py`](../../src/acdp/v2/0_discover_urls.py), [`discovery_sources.py`](../../src/acdp/v2/discovery_sources.py), [`test_discovery_v2.py`](../../tests/test_discovery_v2.py), [`TASK-ING-03-three-tier-discovery-implementation.md`](../../docs/deliverables/TASK-ING-03-three-tier-discovery-implementation.md), [`TASK-ING-03-three-tier-discovery-implementation-visual-dossier.html`](../../docs/deliverables/TASK-ING-03-three-tier-discovery-implementation-visual-dossier.html) | ✅ Done |
 | **TASK-TST-01** | Cycle 08 | TLCN (Phase 1) | Serving & Web | Kiểm thử E2E Toàn luồng Cloud & Diễn tập Demo Day (T-15 phút) | Hung & Duy | [`api`](../../tests/api) | ⏳ Todo |
 | **TASK-ACD-01** | Cycle 08 | TLCN (Phase 1) | Academic & Ops | Xây dựng Slide Bảo vệ Cuối kỳ TLCN & Bộ Q&A Phản biện Hội đồng | Hung & Duy | `docs/academic/Slide_BaoVe_TLCN.html` | ⏳ Todo |
 | **TASK-EVL-01** | Cycle 09 | KLTN (Phase 2) | Serving & Web | Thực nghiệm Định lượng Quy mô KLTN (100–500 Cuộc thi): Ragas Scorecard & Ablation Study | Duy & Hung | `docs/experiments/0002-kltn-quantitative-evaluation.md` | ⏳ Todo |
