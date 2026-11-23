@@ -35,7 +35,7 @@ from crawl4ai.markdown_generation_strategy import DefaultMarkdownGenerator
 from dotenv import find_dotenv, load_dotenv
 
 from acdp.config import settings
-from acdp.schemas import Competition, CompetitionExtractionResult
+from acdp.v2.schemas import Competition, CompetitionExtractionResult
 
 if sys.stdout and hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
@@ -226,10 +226,11 @@ Nhiệm vụ của bạn:
    - `name`, `tagline`, `summary` (2-3 câu ngắn gọn).
    - `url`: Ưu tiên dùng URL trang web chính thức của cuộc thi nếu có trong ngữ cảnh tất định.
    - `organizers`, `partners_and_sponsors`, `category`, `target_audience`.
-   - `team_size_min`, `team_size_max`, `team_description`, `mode` ('online', 'offline', 'hybrid', 'unknown'), `location`.
-   - `participation_fee`, `total_prize_pool`, `prizes`.
+   - `team_size_min`, `team_size_max`, `team_description`, `is_individual_allowed`, `eligibility_level` ('undergraduate', 'all_students', 'open', 'unknown'), `allowed_majors`, `required_skills`.
+   - `mode` ('online', 'offline', 'hybrid', 'unknown'), `location`.
+   - `participation_fee`, `total_prize_pool`, `prizes` (kèm `quantity`, `currency`, `prize_type`).
    - `registration_start`, `registration_deadline`, `registration_status` ('open', 'upcoming', 'closed', 'unknown'), `event_start`, `event_end`, `timeline_stages`.
-   - `challenge_overview`, `submission_platform`.
+   - `challenge_overview`, `submission_platform`, `official_rules_url`, `organizer_contact`, `requires_advisor`, `team_registration_deadline`.
 3. Nguyên tắc nghiêm ngặt:
    - Không có thông tin -> `None` (hoặc `[]`). Tuyệt đối không dùng 'N/A', 'None', 'Not specified', 'Unknown'.
    - Nếu `is_competition = True`, `competitions` bắt buộc có ít nhất 1 phần tử với `name` và `summary` đầy đủ."""
@@ -934,7 +935,16 @@ def apply_post_llm_guards(
         if comp_years and not any(min_year <= y <= max_year for y in comp_years):
             continue
 
-        filtered.append(comp.model_copy(update={"url": resolved_url}))
+        default_rules_url = signals.official_rules_urls[0] if signals.official_rules_urls else None
+        filtered.append(
+            comp.model_copy(
+                update={
+                    "url": resolved_url,
+                    "source_url": comp.source_url or signals.source_url,
+                    "official_rules_url": comp.official_rules_url or default_rules_url,
+                }
+            )
+        )
 
     return CompetitionExtractionResult(
         is_competition=bool(filtered),

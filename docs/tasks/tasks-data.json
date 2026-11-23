@@ -235,7 +235,7 @@
       "task_type": "Engineering",
       "is_no_code": false,
       "owner": "Hung & Duy",
-      "status": "todo",
+      "status": "done",
       "priority": "high",
       "problem_statement": "Hiện thực hóa đề xuất từ TASK-SLV-02 sau khi phản biện tại src/acdp/v2/: nâng cấp schemas.py lên Schema v2 (chuẩn hóa ngày ISO date, bổ sung eligibility/skills cho Ghép đội, trường Màn hình gửi Giảng viên, quantity/currency cho PrizeTier, lineage) và cập nhật export_silver_parquet() dùng PyArrow pa.schema tường minh + nén ZSTD + xuất thêm silver/timeline_stages.parquet.",
       "research_questions": [],
@@ -247,9 +247,11 @@
       "deliverables": [
         "src/acdp/v2/schemas.py",
         "src/acdp/v2/gold_star_schema.py",
-        "tests/test_silver_schema.py"
+        "tests/test_silver_schema.py",
+        "docs/deliverables/TASK-SLV-04-silver-schema-v2-and-parquet-implementation.md",
+        "docs/deliverables/TASK-SLV-04-silver-schema-v2-and-parquet-implementation-visual-dossier.html"
       ],
-      "notes": "Phụ thuộc TASK-SLV-02 (chờ Hưng & Duy phản biện Schema v2 trước khi code). Triển khai tại src/acdp/v2.",
+      "notes": "Đã triển khai Schema v2 (G1–G8) tại src/acdp/v2/, gỡ xfail (24/24 pytest passed, 0 ruff errors) và đẩy trực tiếp 3 tệp ZSTD Parquet lên Cloudflare R2 ngày 2026-11-23: competitions.parquet (24 rows, 43 cols, 36,040 B), prizes.parquet (90 rows, 10 cols, 8,401 B), timeline_stages.parquet (89 rows, 9 cols, 11,443 B).",
       "updated_at": "2026-11-23"
     },
     {

@@ -7,8 +7,8 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from acdp.schemas import Competition, CompetitionExtractionResult
 from acdp.v2 import rag_ingest, silver_transform
+from acdp.v2.schemas import Competition, CompetitionExtractionResult
 
 
 class InMemoryR2Client:

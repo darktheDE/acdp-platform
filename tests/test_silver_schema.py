@@ -270,20 +270,162 @@ def test_silver_parquet_contract_and_referential_integrity(tmp_path) -> None:
     )
 
 
-def test_silver_schema_v2_gap_g1_g4_documented() -> None:
-    """Document known Silver schema gaps (G1-G8) audited in TASK-SLV-02 until resolved in TASK-SLV-03."""
+def test_silver_schema_v2_gap_g1_g8_resolved() -> None:
+    """Verify all Silver schema gaps (G1-G8) audited in TASK-SLV-02 are resolved in ACDP v2."""
+    from acdp.v2.gold_star_schema import (
+        SILVER_COMPETITIONS_ARROW_SCHEMA,
+        SILVER_PRIZES_ARROW_SCHEMA,
+        SILVER_TIMELINE_STAGES_ARROW_SCHEMA,
+    )
+    from acdp.v2.schemas import Competition as CompV2
+    from acdp.v2.schemas import PrizeTier as PrizeV2
+    from acdp.v2.schemas import TimelineStage as StageV2
+
+    comp_fields = set(CompV2.model_fields.keys())
+    prize_fields = set(PrizeV2.model_fields.keys())
+    stage_fields = set(StageV2.model_fields.keys())
+
+    assert {"registration_start_date", "registration_deadline_date", "event_start_date", "event_end_date"}.issubset(
+        comp_fields
+    )
+    assert {"start_date_iso", "end_date_iso"}.issubset(stage_fields)
+    assert {"is_individual_allowed", "eligibility_level", "allowed_majors", "required_skills"}.issubset(comp_fields)
+    assert {"official_rules_url", "organizer_contact", "requires_advisor", "team_registration_deadline"}.issubset(
+        comp_fields
+    )
+    assert {"tier_rank", "quantity", "currency", "prize_type"}.issubset(prize_fields)
+    assert {"competition_key", "source_url", "bronze_key", "extracted_at", "extractor_model", "schema_version"}.issubset(
+        comp_fields
+    )
+
+    assert "registration_deadline_date" in SILVER_COMPETITIONS_ARROW_SCHEMA.names
+    assert "quantity" in SILVER_PRIZES_ARROW_SCHEMA.names
+    assert "start_date_iso" in SILVER_TIMELINE_STAGES_ARROW_SCHEMA.names
+
+
+def test_silver_v2_schema_validation_and_g7_rejection() -> None:
+    """Verify Schema v2 ISO date normalization, eligibility, skills, advisor fields, and G7 strict PrizeTier."""
+    from datetime import date
+
     import pytest
+    from pydantic import ValidationError
 
-    comp_fields = set(Competition.model_fields.keys())
-    prize_fields = set(PrizeTier.model_fields.keys())
+    from acdp.v2.schemas import Competition as CompV2
+    from acdp.v2.schemas import PrizeTier as PrizeV2
+    from acdp.v2.schemas import TimelineStage as StageV2
 
-    missing_for_end_product = {
-        "G1_iso_dates": "registration_deadline_date" in comp_fields,
-        "G2_eligibility": "eligibility_level" in comp_fields and "allowed_majors" in comp_fields,
-        "G3_skills": "required_skills" in comp_fields,
-        "G4_lecturer_screen": "official_rules_url" in comp_fields and "requires_advisor" in comp_fields,
-        "G5_prize_quantity": "quantity" in prize_fields and "currency" in prize_fields,
-        "G6_lineage": "source_url" in comp_fields and "extracted_at" in comp_fields,
+    with pytest.raises(ValidationError):
+        PrizeV2(tier="N/A", reward="Not specified")
+
+    comp = CompV2(
+        name="Vietnam AI Challenge 2026",
+        url="https://vaic.vn/?utm_source=fb",
+        summary="Cuộc thi AI dành cho sinh viên CNTT và KTDL.",
+        team_size_min=1,
+        team_size_max=4,
+        eligibility_level="Sinh viên đại học",
+        allowed_majors="CNTT, Khoa học Dữ liệu",
+        required_skills=["Python", "PyTorch", "none"],
+        registration_deadline="25/09/2026",
+        event_start="2026-10-01",
+        official_rules_url="https://vaic.vn/rules.pdf",
+        organizer_contact="btc@vaic.vn",
+        requires_advisor=True,
+        team_registration_deadline="20/09/2026",
+        prizes=[
+            {"tier": "N/A", "reward": "Not specified"},
+            {"tier": "Khuyến khích", "reward": "5 triệu VNĐ", "quantity": 3, "estimated_value_vnd": 5_000_000},
+        ],
+        timeline_stages=[
+            StageV2(stage_name="Vòng 1", start_date="01/09/2026", end_date="25/09/2026"),
+        ],
+    )
+
+    assert comp.registration_deadline_date == date(2026, 9, 25)
+    assert comp.event_start_date == date(2026, 10, 1)
+    assert comp.team_registration_deadline_date == date(2026, 9, 20)
+    assert comp.is_individual_allowed is True
+    assert comp.eligibility_level == "undergraduate"
+    assert comp.allowed_majors == ["CNTT", "Khoa học Dữ liệu"]
+    assert comp.required_skills == ["Python", "PyTorch"]
+    assert comp.requires_advisor is True
+    assert len(comp.prizes) == 1
+    assert comp.prizes[0].quantity == 3
+    assert comp.prizes[0].tier_rank == 1
+    assert comp.timeline_stages[0].start_date_iso == date(2026, 9, 1)
+    assert comp.competition_key and len(comp.competition_key) == 64
+
+
+def test_silver_v2_explicit_pyarrow_zstd_and_timeline_stages(tmp_path) -> None:
+    """Verify v2 export_silver_parquet writes 3 ZSTD Parquet files with explicit schemas and true nulls."""
+    from datetime import UTC, datetime
+
+    import pyarrow as pa
+    import pyarrow.parquet as pq
+
+    from acdp.v2.gold_star_schema import (
+        SILVER_COMPETITIONS_ARROW_SCHEMA,
+        SILVER_PRIZES_ARROW_SCHEMA,
+        SILVER_TIMELINE_STAGES_ARROW_SCHEMA,
+        _deduplicate_competition_payloads,
+        export_silver_parquet,
+    )
+
+    # Simulate legacy v1 JSON payload with _metadata to verify backward compatibility + lineage enrichment
+    v1_payload = {
+        "_metadata": {
+            "source_url": "https://codetour.org/",
+            "source_key": "bronze/codetour.org/year=2026/month=11/day=23/1795416946.html",
+            "extracted_at": datetime(2026, 11, 23, 8, 0, tzinfo=UTC).isoformat(),
+        },
+        "is_competition": True,
+        "competitions": [
+            {
+                "name": "Code Tour 2026",
+                "url": "https://codetour.org/",
+                "summary": "Cuộc thi lập trình thuật toán.",
+                "organizers": ["VNG"],
+                "category": ["Competitive Programming"],
+                "registration_deadline": "25/09/2026",
+                "prizes": [
+                    {"tier": "Giải Ba", "reward": "5.000.000 VND", "quantity": 2, "estimated_value_vnd": 5_000_000},
+                ],
+                "timeline_stages": [
+                    {"stage_name": "Warm-up", "start_date": "01/09/2026", "end_date": "10/09/2026"},
+                ],
+            }
+        ],
     }
-    if not all(missing_for_end_product.values()):
-        pytest.xfail(f"TASK-SLV-02 documented gaps pending TASK-SLV-03: {missing_for_end_product}")
+
+    comps = _deduplicate_competition_payloads([("v1.json", v1_payload)])
+    assert len(comps) == 1
+    assert comps[0].source_url == "https://codetour.org/"
+    assert comps[0].bronze_key == "bronze/codetour.org/year=2026/month=11/day=23/1795416946.html"
+
+    exported = export_silver_parquet(comps, output_dir=tmp_path)
+    comp_path = tmp_path / "competitions.parquet"
+    prizes_path = tmp_path / "prizes.parquet"
+    stages_path = tmp_path / "timeline_stages.parquet"
+    assert set(exported) == {comp_path, prizes_path, stages_path}
+
+    comp_tbl = pq.read_table(comp_path)
+    prize_tbl = pq.read_table(prizes_path)
+    stage_tbl = pq.read_table(stages_path)
+
+    assert comp_tbl.schema.equals(SILVER_COMPETITIONS_ARROW_SCHEMA)
+    assert prize_tbl.schema.equals(SILVER_PRIZES_ARROW_SCHEMA)
+    assert stage_tbl.schema.equals(SILVER_TIMELINE_STAGES_ARROW_SCHEMA)
+
+    # Verify ZSTD compression
+    for p in (comp_path, prizes_path, stages_path):
+        meta = pq.read_metadata(p)
+        assert meta.row_group(0).column(0).compression == "ZSTD"
+
+    # Verify true null preservation (not coerced to "") and ISO date32
+    assert comp_tbl["tagline"].null_count == 1
+    assert comp_tbl["location"].null_count == 1
+    assert pa.types.is_date32(comp_tbl.schema.field("registration_deadline_date").type)
+    assert comp_tbl["total_prize_vnd"].to_pylist() == [10_000_000]
+    assert prize_tbl["quantity"].to_pylist() == [2]
+    assert stage_tbl["stage_name"].to_pylist() == ["Warm-up"]
+    assert pa.types.is_date32(stage_tbl.schema.field("start_date_iso").type)
