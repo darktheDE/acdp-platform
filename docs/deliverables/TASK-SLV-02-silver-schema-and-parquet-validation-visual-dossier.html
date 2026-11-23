@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TASK-SLV-02 — Kiểm chứng Schema Lớp Bạc &amp; Lưu trữ Parquet | ACDP</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <style>
+    body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+    .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 antialiased">
+  <header class="bg-slate-900 text-white border-b border-slate-800">
+    <div class="max-w-6xl mx-auto px-6 py-7 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+        <div class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-amber-300 mb-2">
+          <span class="px-2 py-0.5 rounded bg-amber-500/20 border border-amber-400/30">TASK-SLV-02</span>
+          <span>Cycle 06 · Silver Layer · TLCN Phase 1</span>
+        </div>
+        <h1 class="text-2xl md:text-3xl font-bold tracking-tight">Kiểm chứng Schema Lớp Bạc &amp; Lưu trữ Parquet</h1>
+        <p class="text-slate-300 text-sm mt-1">Đối chiếu <span class="mono text-amber-200">src/acdp/schemas.py</span> + R2 <span class="mono text-amber-200">silver/*.parquet</span> với 6 tính năng mục tiêu (DIR-011 Audit)</p>
+      </div>
+      <div class="text-xs text-slate-300 bg-slate-800/70 border border-slate-700 rounded-lg px-4 py-3">
+        <div><strong>Nhóm thực hiện:</strong> Đỗ Kiến Hưng &amp; Nguyễn Văn Quang Duy</div>
+        <div><strong>Đơn vị:</strong> FIT · HCM-UTE · 2026-11-23</div>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-6 py-8 space-y-8">
+    <!-- Tier 1: 1-Minute Executive KPI Cards -->
+    <section>
+      <h2 class="text-lg font-bold text-slate-800 mb-3">1. Tóm tắt điều hành (1-Minute KPI)</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+          <div class="text-xs text-slate-500 uppercase font-semibold">R2 Silver Competitions</div>
+          <div class="text-2xl font-bold text-slate-900 mt-1">15 <span class="text-sm font-normal text-slate-500">dòng · 25 cột</span></div>
+          <div class="text-xs text-emerald-700 mt-1">15/15 khóa duy nhất · 22.9 KB</div>
+        </div>
+        <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+          <div class="text-xs text-slate-500 uppercase font-semibold">R2 Silver Prizes</div>
+          <div class="text-2xl font-bold text-slate-900 mt-1">50 <span class="text-sm font-normal text-slate-500">hạng giải</span></div>
+          <div class="text-xs text-emerald-700 mt-1">0 bản ghi mồ côi · 6.7 KB</div>
+        </div>
+        <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+          <div class="text-xs text-slate-500 uppercase font-semibold">Ngày sai chuẩn ISO 8601</div>
+          <div class="text-2xl font-bold text-rose-600 mt-1">100% <span class="text-sm font-normal text-slate-500">deadline</span></div>
+          <div class="text-xs text-rose-700 mt-1">12/12 dùng DD/MM/YYYY (G1)</div>
+        </div>
+        <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+          <div class="text-xs text-slate-500 uppercase font-semibold">Lỗ hổng phát hiện</div>
+          <div class="text-2xl font-bold text-amber-600 mt-1">8 <span class="text-sm font-normal text-slate-500">G1 – G8</span></div>
+          <div class="text-xs text-slate-600 mt-1">Màn hình GV &amp; Ghép đội thiếu trường</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tier 2: Visual Diagrams & Charts -->
+    <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+        <h2 class="text-base font-bold text-slate-800 mb-2">2. Truy vết: Tính năng cuối $\rightarrow$ Silver Schema</h2>
+        <p class="text-xs text-slate-500 mb-3">Màu xanh: Đã đáp ứng | Vàng: Thiếu một phần | Đỏ: Thiếu trường cốt lõi</p>
+        <div class="mermaid">
+flowchart LR
+  S["Silver Layer&lt;br/&gt;competitions.parquet + prizes.parquet"] --> E["Explorer&lt;br/&gt;Thiếu ISO Date (G1) &amp; timeline_stages (G8)"]
+  S --> T["Ghép đội (OLTP)&lt;br/&gt;Có team_size; Thiếu eligibility (G2) &amp; skills (G3)"]
+  S --> L["Màn hình gửi GVHD&lt;br/&gt;Thiếu rules_url, contact, requires_advisor (G4)"]
+  S --> N["Thông báo cuộc thi mới&lt;br/&gt;Thiếu extracted_at (G6) &amp; deadline_iso (G1)"]
+  S --> A["Analytics Gold&lt;br/&gt;Thiếu quantity/currency (G5) &amp; HK1/HK2 date (G1)"]
+  S --> R["RAG Chatbot&lt;br/&gt;Thiếu source_url, bronze_key lineage (G6)"]
+  classDef warn fill:#fef3c7,stroke:#d97706,color:#78350f
+  classDef miss fill:#fee2e2,stroke:#dc2626,color:#7f1d1d
+  class E,T,A,R warn
+  class L,N miss
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+        <h2 class="text-base font-bold text-slate-800 mb-2">3. Hồ sơ chất lượng dữ liệu thực tế trên R2 (%)</h2>
+        <p class="text-xs text-slate-500 mb-3">Đo trực tiếp trên 15 cuộc thi &amp; 50 hạng giải (23/11/2026)</p>
+        <div class="h-72">
+          <canvas id="profileChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tier 3: Collapsible Technical Specs & Schema v2 Diff -->
+    <section class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-4">
+      <h2 class="text-base font-bold text-slate-800">4. Tổng hợp Lỗ hổng (G1–G8) &amp; Đề xuất Schema v2</h2>
+
+      <details open class="border border-slate-200 rounded-lg p-4 bg-slate-50/60">
+        <summary class="font-semibold text-sm text-slate-800 cursor-pointer">Bảng lỗ hổng G1–G8 &amp; khuyến nghị lưu trữ Parquet</summary>
+        <div class="overflow-x-auto mt-3">
+          <table class="w-full text-xs text-left border-collapse">
+            <thead>
+              <tr class="border-b border-slate-300 text-slate-600">
+                <th class="py-2 pr-3">Mã</th>
+                <th class="py-2 pr-3">Vấn đề</th>
+                <th class="py-2 pr-3">Tác động sản phẩm</th>
+                <th class="py-2">Hướng xử lý (TASK-SLV-03)</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200">
+              <tr><td class="py-2 pr-3 font-bold">G1</td><td class="py-2 pr-3">Ngày dạng <span class="mono">str</span> tự do (100% DD/MM/YYYY)</td><td class="py-2 pr-3">Hỏng sort/filter Explorer &amp; mùa HK1/HK2</td><td class="py-2">Giữ <span class="mono">*_raw</span> + thêm <span class="mono">*_date: date</span> (ISO)</td></tr>
+              <tr><td class="py-2 pr-3 font-bold">G2</td><td class="py-2 pr-3">Thiếu điều kiện dự thi cấu trúc</td><td class="py-2 pr-3">Không lọc được theo ngành/bậc học ở Ghép đội</td><td class="py-2">Thêm <span class="mono">eligibility_level, allowed_majors, is_individual_allowed</span></td></tr>
+              <tr><td class="py-2 pr-3 font-bold">G3</td><td class="py-2 pr-3">Thiếu <span class="mono">required_skills</span></td><td class="py-2 pr-3">Không đối chiếu được skill từ CV <span class="mono">/profile</span></td><td class="py-2">Thêm <span class="mono">required_skills: list[str]</span></td></tr>
+              <tr><td class="py-2 pr-3 font-bold">G4</td><td class="py-2 pr-3">Thiếu trường Màn hình gửi GVHD</td><td class="py-2 pr-3">Sinh viên thiếu link thể lệ &amp; email BTC</td><td class="py-2">Thêm <span class="mono">official_rules_url, organizer_contact, requires_advisor</span></td></tr>
+              <tr><td class="py-2 pr-3 font-bold">G5</td><td class="py-2 pr-3"><span class="mono">PrizeTier</span> thiếu <span class="mono">quantity, currency, prize_type</span></td><td class="py-2 pr-3">Không nhân đúng tổng giải nhiều suất</td><td class="py-2">Bổ sung các trường tùy chọn vào <span class="mono">PrizeTier</span></td></tr>
+              <tr><td class="py-2 pr-3 font-bold">G6</td><td class="py-2 pr-3">Thiếu lineage &amp; <span class="mono">extracted_at</span></td><td class="py-2 pr-3">Khó audit RAG &amp; thông báo cuộc thi mới</td><td class="py-2">Thêm <span class="mono">source_url, bronze_key, extracted_at, schema_version</span></td></tr>
+              <tr><td class="py-2 pr-3 font-bold">G7</td><td class="py-2 pr-3"><span class="mono">PrizeTier</span> ép <span class="mono">None -&gt; ""</span></td><td class="py-2 pr-3">Lọt hạng giải rỗng qua validation</td><td class="py-2">Loại hạng giải rỗng tại validator</td></tr>
+              <tr><td class="py-2 pr-3 font-bold">G8</td><td class="py-2 pr-3">Suy luận Arrow động, mất <span class="mono">timeline_stages</span></td><td class="py-2 pr-3">Thiếu <span class="mono">timeline_stages.parquet</span> cho Gold/Explorer</td><td class="py-2">Dùng <span class="mono">pa.schema</span> tường minh + xuất 3 bảng chuẩn hóa (ZSTD)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+
+      <details class="border border-slate-200 rounded-lg p-4 bg-slate-50/60">
+        <summary class="font-semibold text-sm text-slate-800 cursor-pointer">Đề xuất Diff Silver Schema v2 (Backward-Compatible · Chờ phản biện)</summary>
+        <pre class="mt-3 p-3 rounded bg-slate-900 text-slate-100 text-xs mono overflow-x-auto">class PrizeTier(BaseModel):
+    tier: str
+    reward: str
+    tier_rank: int | None = None
+    quantity: int = Field(default=1, ge=1)
+    currency: Literal["VND", "USD", "OTHER"] = "VND"
+    prize_type: Literal["cash", "scholarship", "credits", "merch", "mixed"] = "cash"
+    estimated_value_vnd: float | None = Field(default=None, ge=0)
+    is_scholarship: bool = False
+
+class Competition(BaseModel):
+    # ... existing fields kept ...
+    registration_start_date: date | None = None
+    registration_deadline_date: date | None = None
+    event_start_date: date | None = None
+    event_end_date: date | None = None
+    is_individual_allowed: bool | None = None
+    eligibility_level: Literal["undergraduate", "all_students", "open", "unknown"] = "unknown"
+    allowed_majors: list[str] = Field(default_factory=list)
+    required_skills: list[str] = Field(default_factory=list)
+    official_rules_url: str | None = None
+    organizer_contact: str | None = None
+    requires_advisor: bool | None = None
+    team_registration_deadline_date: date | None = None
+    source_url: str | None = None
+    bronze_key: str | None = None
+    extracted_at: datetime | None = None
+    extractor_model: str | None = None
+    schema_version: str = "2.0"</pre>
+      </details>
+    </section>
+  </main>
+
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+    new Chart(document.getElementById('profileChart'), {
+      type: 'bar',
+      data: {
+        labels: [
+          'deadline không phải ISO',
+          'event_start không phải ISO',
+          'partners_and_sponsors trống',
+          'team_size_max null',
+          'total_prize_vnd = 0',
+          'registration_start trống',
+          'prizes value = 0'
+        ],
+        datasets: [{
+          label: 'Tỷ lệ (%) trên dữ liệu R2',
+          data: [100, 93, 46, 33, 27, 26, 26],
+          backgroundColor: ['#e11d48', '#e11d48', '#f59e0b', '#f59e0b', '#64748b', '#94a3b8', '#64748b'],
+          borderRadius: 6
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: { x: { max: 100, ticks: { callback: v => v + '%' } } }
+      }
+    });
+  </script>
+</body>
+</html>

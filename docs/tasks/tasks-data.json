@@ -130,7 +130,7 @@
       "task_type": "Architecture",
       "is_no_code": false,
       "owner": "Hung & Duy",
-      "status": "todo",
+      "status": "done",
       "priority": "medium",
       "problem_statement": "Kiểm chứng schema key-value cuộc thi và prizes ở Lớp Bạc đã thực sự đúng, đầy đủ và phục vụ mục tiêu cuối cùng của sản phẩm (Explorer, Ghép đội, Màn hình gửi Giảng viên, Analytics) hay chưa.",
       "research_questions": [
@@ -140,9 +140,12 @@
       "acceptance_criteria": [
         "Hoàn thành bảng đối soát Schema Coverage Matrix từ Silver -> Gold -> Serving UI."
       ],
-      "deliverables": ["docs/deliverables/TASK-SLV-02-silver-schema-and-parquet-validation.md"],
-      "notes": "",
-      "updated_at": "2026-11-22"
+      "deliverables": [
+        "docs/deliverables/TASK-SLV-02-silver-schema-and-parquet-validation.md",
+        "docs/deliverables/TASK-SLV-02-silver-schema-and-parquet-validation-visual-dossier.html"
+      ],
+      "notes": "Đã kiểm chứng 15 cuộc thi & 50 hạng giải thực tế trên R2; phát hiện 8 lỗ hổng G1-G8 và đề xuất Schema v2 chờ phản biện trước TASK-SLV-03.",
+      "updated_at": "2026-11-23"
     },
     {
       "id": "TASK-GLD-01",
@@ -211,6 +214,32 @@
         "src/acdp/3_ingest_to_qdrant.py"
       ],
       "notes": "Phụ thuộc TASK-BRZ-01 và TASK-SLV-01.",
+      "updated_at": "2026-11-23"
+    },
+    {
+      "id": "TASK-SLV-04",
+      "title": "Triển khai Silver Schema v2 (G1–G8) & PyArrow Explicit Parquet (schemas.py, 4_analytics_gold.py)",
+      "cycle": "Cycle 06",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Silver",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "high",
+      "problem_statement": "Hiện thực hóa đề xuất từ TASK-SLV-02 sau khi phản biện: nâng cấp src/acdp/schemas.py lên Schema v2 (chuẩn hóa ngày ISO date, bổ sung eligibility/skills cho Ghép đội, trường Màn hình gửi Giảng viên, quantity/currency cho PrizeTier, lineage) và cập nhật export_silver_parquet() dùng PyArrow pa.schema tường minh + nén ZSTD + xuất thêm silver/timeline_stages.parquet.",
+      "research_questions": [],
+      "acceptance_criteria": [
+        "Cập nhật Competition, PrizeTier, TimelineStage trong src/acdp/schemas.py giải quyết G1–G7 (giữ tương thích ngược).",
+        "Cập nhật export_silver_parquet() trong src/acdp/4_analytics_gold.py dùng pa.schema tường minh, nén ZSTD, giữ None chuẩn và xuất đủ 3 tệp: competitions.parquet, prizes.parquet, timeline_stages.parquet.",
+        "Gỡ bỏ xfail trong tests/test_silver_schema.py và toàn bộ test Silver pass 100%."
+      ],
+      "deliverables": [
+        "src/acdp/schemas.py",
+        "src/acdp/4_analytics_gold.py",
+        "tests/test_silver_schema.py"
+      ],
+      "notes": "Phụ thuộc TASK-SLV-02 (chờ Hưng & Duy phản biện Schema v2 trước khi code).",
       "updated_at": "2026-11-23"
     },
     {

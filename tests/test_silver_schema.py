@@ -189,3 +189,101 @@ def test_json_roundtrip_integrity() -> None:
     assert len(reloaded.competitions) == 1
     assert reloaded.competitions[0].name == "RMIT Hackathon 2026"
     assert reloaded.competitions[0].prizes[0].estimated_value_vnd == 30_000_000.0
+
+
+# ---------------------------------------------------------------------------
+# TASK-SLV-02: Silver Parquet Contract & Gap Documentation Tests
+# ---------------------------------------------------------------------------
+
+
+def test_silver_parquet_contract_and_referential_integrity(tmp_path) -> None:
+    """Verify export_silver_parquet produces valid competitions & prizes Parquet with unique keys and no orphans."""
+    import importlib.util
+    from pathlib import Path
+
+    import pyarrow.parquet as pq
+
+    mod_path = Path(__file__).resolve().parents[1] / "src" / "acdp" / "4_analytics_gold.py"
+    spec = importlib.util.spec_from_file_location("analytics_gold", mod_path)
+    assert spec and spec.loader
+    gold_mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(gold_mod)
+
+    sample = [
+        Competition(
+            name="Code Tour 2026",
+            url="https://codetour.org",
+            summary="Cuộc thi lập trình thuật toán.",
+            organizers=["VNG"],
+            category=["Competitive Programming"],
+            mode="hybrid",
+            team_size_min=1,
+            team_size_max=1,
+            total_prize_pool="100.000.000 VND",
+            registration_deadline="25/09/2026",
+            prizes=[
+                PrizeTier(tier="Quán quân", reward="30.000.000 VND", estimated_value_vnd=30_000_000.0),
+            ],
+            timeline_stages=[
+                TimelineStage(stage_name="Warm-up", start_date="2026-09-01", end_date="2026-09-10"),
+            ],
+        )
+    ]
+
+    exported = gold_mod.export_silver_parquet(sample, output_dir=tmp_path)
+    comp_path = tmp_path / "competitions.parquet"
+    prizes_path = tmp_path / "prizes.parquet"
+    assert comp_path in exported and prizes_path in exported
+
+    comp_tbl = pq.read_table(comp_path)
+    prize_tbl = pq.read_table(prizes_path)
+
+    required_comp_cols = {
+        "competition_key",
+        "name",
+        "url",
+        "summary",
+        "organizers",
+        "partners_and_sponsors",
+        "category",
+        "target_audience",
+        "team_size_min",
+        "team_size_max",
+        "mode",
+        "location",
+        "participation_fee",
+        "total_prize_vnd",
+        "registration_status",
+        "registration_deadline",
+        "challenge_overview",
+        "submission_platform",
+    }
+    assert required_comp_cols.issubset(set(comp_tbl.column_names))
+
+    comp_keys = comp_tbl["competition_key"].to_pylist()
+    assert len(comp_keys) == len(set(comp_keys)) == 1
+
+    prize_keys = set(prize_tbl["competition_key"].to_pylist())
+    assert prize_keys.issubset(set(comp_keys))
+    assert {"competition_key", "tier_rank", "tier", "reward", "estimated_value_vnd", "is_scholarship"}.issubset(
+        set(prize_tbl.column_names)
+    )
+
+
+def test_silver_schema_v2_gap_g1_g4_documented() -> None:
+    """Document known Silver schema gaps (G1-G8) audited in TASK-SLV-02 until resolved in TASK-SLV-03."""
+    import pytest
+
+    comp_fields = set(Competition.model_fields.keys())
+    prize_fields = set(PrizeTier.model_fields.keys())
+
+    missing_for_end_product = {
+        "G1_iso_dates": "registration_deadline_date" in comp_fields,
+        "G2_eligibility": "eligibility_level" in comp_fields and "allowed_majors" in comp_fields,
+        "G3_skills": "required_skills" in comp_fields,
+        "G4_lecturer_screen": "official_rules_url" in comp_fields and "requires_advisor" in comp_fields,
+        "G5_prize_quantity": "quantity" in prize_fields and "currency" in prize_fields,
+        "G6_lineage": "source_url" in comp_fields and "extracted_at" in comp_fields,
+    }
+    if not all(missing_for_end_product.values()):
+        pytest.xfail(f"TASK-SLV-02 documented gaps pending TASK-SLV-03: {missing_for_end_product}")

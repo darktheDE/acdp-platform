@@ -2,8 +2,8 @@
 
 This ledger is auto-generated from [`tasks-data.json`](./tasks-data.json) and synchronized with the interactive portal [`index.html`](./index.html) per **DIR-018**.
 
-- **Total tasks**: `46` (`28` completed)
-- **Scope distribution**: `42` TLCN (Phase 1) | `6` KLTN (Phase 2)
+- **Total tasks**: `47` (`29` completed)
+- **Scope distribution**: `43` TLCN (Phase 1) | `6` KLTN (Phase 2)
 - **Last updated**: `2026-11-22`
 
 ---
@@ -42,10 +42,11 @@ This ledger is auto-generated from [`tasks-data.json`](./tasks-data.json) and sy
 | **TASK-ING-01** | Cycle 06 | TLCN (Phase 1) | Discovery | Nghiên cứu Search Pattern & Kỹ thuật Cào Tối ưu trên Free Tier (Scale nhỏ) | Hung & Duy | [`TASK-ING-01-search-pattern-and-crawling-tradeoffs.md`](../../docs/deliverables/TASK-ING-01-search-pattern-and-crawling-tradeoffs.md), [`TASK-ING-01-search-pattern-and-crawling-tradeoffs-visual-dossier.html`](../../docs/deliverables/TASK-ING-01-search-pattern-and-crawling-tradeoffs-visual-dossier.html) | ✅ Done |
 | **TASK-BRZ-01** | Cycle 06 | TLCN (Phase 1) | Bronze | Kiểm định Lý thuyết Lớp Đồng (Bronze Purity: Raw HTML vs Pre-processed Markdown) | Hung & Duy | [`TASK-BRZ-01-bronze-raw-vs-markdown-justification.md`](../../docs/deliverables/TASK-BRZ-01-bronze-raw-vs-markdown-justification.md), [`TASK-BRZ-01-bronze-raw-vs-markdown-justification-visual-dossier.html`](../../docs/deliverables/TASK-BRZ-01-bronze-raw-vs-markdown-justification-visual-dossier.html) | ✅ Done |
 | **TASK-SLV-01** | Cycle 06 | TLCN (Phase 1) | Silver | Bảo vệ Tính chất Data Engineering & Tối ưu Tỷ lệ Sử dụng LLM ở Lớp Bạc | Hung & Duy | [`TASK-SLV-01-hybrid-de-vs-llm-extraction-study.md`](../../docs/deliverables/TASK-SLV-01-hybrid-de-vs-llm-extraction-study.md), [`TASK-SLV-01-hybrid-de-vs-llm-extraction-study-visual-dossier.html`](../../docs/deliverables/TASK-SLV-01-hybrid-de-vs-llm-extraction-study-visual-dossier.html) | ✅ Done |
-| **TASK-SLV-02** | Cycle 06 | TLCN (Phase 1) | Silver | Kiểm chứng Schema Lớp Bạc (Competition + PrizeTier) & Lưu trữ Parquet | Hung & Duy | `docs/deliverables/TASK-SLV-02-silver-schema-and-parquet-validation.md` | ⏳ Todo |
+| **TASK-SLV-02** | Cycle 06 | TLCN (Phase 1) | Silver | Kiểm chứng Schema Lớp Bạc (Competition + PrizeTier) & Lưu trữ Parquet | Hung & Duy | [`TASK-SLV-02-silver-schema-and-parquet-validation.md`](../../docs/deliverables/TASK-SLV-02-silver-schema-and-parquet-validation.md), [`TASK-SLV-02-silver-schema-and-parquet-validation-visual-dossier.html`](../../docs/deliverables/TASK-SLV-02-silver-schema-and-parquet-validation-visual-dossier.html) | ✅ Done |
 | **TASK-GLD-01** | Cycle 06 | TLCN (Phase 1) | Gold | Phản biện & Bảo vệ Mô hình Lớp Vàng (Kimball Star Schema vs OBT / Alternatives) | Hung & Duy | `docs/deliverables/TASK-GLD-01-kimball-star-schema-audit-and-alternatives.md` | ⏳ Todo |
 | **TASK-BRZ-02** | Cycle 06 | TLCN (Phase 1) | Bronze | Triển khai Lưu trữ Raw Rendered HTML ở Lớp Đồng (1_crawl_to_bronze.py) | Hung & Duy | [`1_crawl_to_bronze.py`](../../src/acdp/1_crawl_to_bronze.py) | ⏳ Todo |
 | **TASK-SLV-03** | Cycle 06 | TLCN (Phase 1) | Silver | Triển khai Hybrid Deterministic Sandwich & Clean Markdown ở Lớp Bạc (2_instruction.py) | Hung & Duy | [`2_instruction.py`](../../src/acdp/2_instruction.py), [`3_ingest_to_qdrant.py`](../../src/acdp/3_ingest_to_qdrant.py) | ⏳ Todo |
+| **TASK-SLV-04** | Cycle 06 | TLCN (Phase 1) | Silver | Triển khai Silver Schema v2 (G1–G8) & PyArrow Explicit Parquet (schemas.py, 4_analytics_gold.py) | Hung & Duy | [`schemas.py`](../../src/acdp/schemas.py), [`4_analytics_gold.py`](../../src/acdp/4_analytics_gold.py), [`test_silver_schema.py`](../../tests/test_silver_schema.py) | ⏳ Todo |
 | **TASK-CLD-01** | Cycle 07 | TLCN (Phase 1) | Cloud & Infra | Đồng nhất Qdrant Cloud & Xác định Vai trò Qdrant Docker Local | Hung & Duy | [`docker-compose.yml`](../../docker-compose.yml), [`config.py`](../../src/acdp/config.py) | ⏳ Todo |
 | **TASK-CLD-02** | Cycle 07 | TLCN (Phase 1) | Cloud & Infra | Phân định Ranh giới Vai trò giữa Web Dashboard và Metabase | Hung & Duy | [`T15_metabase_and_prefect_lightweight_architecture.md`](../../docs/rd-tasks/T15_metabase_and_prefect_lightweight_architecture.md) | ⏳ Todo |
 | **TASK-CLD-03** | Cycle 07 | TLCN -> KLTN | Cloud & Infra | Kiến trúc Đồng bộ Full Cloud Free-Tier (Giải quyết Hybrid Local vs Cloud) | Hung & Duy | `docs/deliverables/TASK-CLD-03-full-cloud-free-tier-architecture.md` | ⏳ Todo |
