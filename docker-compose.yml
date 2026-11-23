@@ -69,11 +69,17 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     environment:
+      POSTGRES_MODE: ${POSTGRES_MODE:-auto}
+      SUPABASE_DATABASE_URL: ${SUPABASE_DATABASE_URL:-}
+      DATABASE_URL: ${DATABASE_URL:-}
+      POSTGRES_POOL_MODE: ${POSTGRES_POOL_MODE:-auto}
+      POSTGRES_SSL_MODE: ${POSTGRES_SSL_MODE:-auto}
       POSTGRES_USER: ${POSTGRES_USER:-acdp}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-acdp_local_dev_only}
       POSTGRES_DB: ${POSTGRES_DB:-acdp_app}
       POSTGRES_HOST: postgres
       POSTGRES_PORT: "5432"
+      DUCKDB_R2_TABLE_CACHE: ${DUCKDB_R2_TABLE_CACHE:-true}
       BRONZE_STORAGE_BACKEND: cloudflare_r2
       BUCKET_NAME: ${BUCKET_NAME:-acdp-lakehouse}
       AWS_ENDPOINT_URL: ${AWS_ENDPOINT_URL:-}

@@ -9,7 +9,7 @@ This document maintains the immediate context, active tasks, and session state f
 - **Master Task Registry**: [`docs/tasks/task-registry.md`](./task-registry.md) (synced from [`tasks-data.json`](./tasks-data.json) per **DIR-018**).
 - **Backlog Highlights (from `.scratchpad/22112026.md`)**:
   - **Cycle 06 (TLCN)**: `TASK-ING-01` (Search Pattern & Free-Tier Crawl), `TASK-BRZ-01` (Bronze Raw vs `.md` Purity), `TASK-SLV-01` (Hybrid DE vs LLM), `TASK-SLV-02` (Silver Schema Fit), `TASK-GLD-01` (Kimball Star Schema Audit).
-  - **Cycle 07 (TLCN -> KLTN)**: `TASK-CLD-01` (Qdrant Cloud Unification), `TASK-CLD-02` (Web Dashboard vs Metabase), `TASK-CLD-03` & `TASK-CLD-04` (Full Cloud Free-Tier: Next.js, Supabase, R2, Cloudflare AI).
+  - **Cycle 07 (TLCN -> KLTN)**: `TASK-CLD-01` (Qdrant Cloud Unification), `TASK-CLD-02` (Web Dashboard vs Metabase), `TASK-CLD-03` & `TASK-CLD-07` (`ADR-0002` + MotherDuck Lite), `TASK-CLD-04` (Supabase OLTP & DuckDB Direct-on-R2 Done).
   - **Cycle 08 (TLCN)**: `TASK-SRV-01` (`/profile` Mini-CV), `TASK-SRV-02` (Non-AI OLTP Team Creation/Join), `TASK-SRV-03` (Team & Contest Summary Screen for Advisor), `TASK-SRV-04` (RAG Personal Fit).
   - **Cycle 09–10 (KLTN)**: `TASK-ING-02` (GitHub Actions Crawl), `TASK-SRV-05` (Mail Notification), `TASK-OPS-01` (Branding & Fanpage), `TASK-OPS-02` (External No-Code Feedback/Ticket Form).
 

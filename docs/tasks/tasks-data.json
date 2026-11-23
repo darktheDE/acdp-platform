@@ -393,7 +393,7 @@
       "task_type": "Engineering",
       "is_no_code": false,
       "owner": "Hung",
-      "status": "todo",
+      "status": "done",
       "priority": "medium",
       "problem_statement": "Kết nối FastAPI/Next.js với Supabase PostgreSQL và cấu hình DuckDB đọc trực tiếp Gold Parquet trên Cloudflare R2.",
       "research_questions": [
@@ -402,9 +402,14 @@
       "acceptance_criteria": [
         "API chạy thông suốt với Supabase và R2 không phụ thuộc ổ đĩa local."
       ],
-      "deliverables": ["src/acdp/config.py", "src/acdp/api"],
-      "notes": "",
-      "updated_at": "2026-11-22"
+      "deliverables": [
+        "src/acdp/config.py",
+        "src/acdp/api",
+        "docs/deliverables/TASK-CLD-04-supabase-oltp-and-duckdb-r2-implementation.md",
+        "docs/deliverables/TASK-CLD-04-supabase-oltp-and-duckdb-r2-implementation-visual-dossier.html"
+      ],
+      "notes": "Hoàn tất Dual-Flow POSTGRES_MODE (auto/cloud/local), tự động phát hiện Supavisor Transaction Pooler (:6543) dùng NullPool + statement_cache_size=0 + TLS và Session Pooler (:5432) dùng QueuePool + TLS; tối ưu DuckDB Direct-on-R2 (:memory: TABLE nạp từ s3://acdp-lakehouse/gold/*.parquet giúp warm overview đạt 5.0 ms so với 1500.9 ms ở chế độ VIEW trực tiếp, 24 cuộc thi). Đã kiểm chứng E2E trực tiếp trên Supabase Cloud (aws-1-ap-southeast-1.pooler.supabase.com:5432) + Cloudflare R2: 12/12 pytest PASSED.",
+      "updated_at": "2026-11-23"
     },
     {
       "id": "TASK-CLD-05",

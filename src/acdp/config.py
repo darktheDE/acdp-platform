@@ -4,8 +4,8 @@ Conforms to SPEC-0001 (Pydantic v2 Settings) and supports Dual-Storage backends:
 Local POSIX and Cloudflare R2 (Cloud S3).
 """
 
-from typing import Literal
-from urllib.parse import urlparse
+from typing import Any, Literal
+from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -26,7 +26,31 @@ class AppConfig(BaseSettings):
         description="Runtime environment (development, staging, production)",
     )
 
-    # Relational Database (PostgreSQL 18 OLTP - SPEC-0004 & SPEC-0006)
+    # Relational Database (PostgreSQL 18 / Supabase OLTP - SPEC-0004, SPEC-0006, ADR-0002)
+    postgres_mode: Literal["auto", "cloud", "local"] = Field(
+        default="auto",
+        description="PostgreSQL routing mode: 'auto'/'cloud' prioritizes SUPABASE_DATABASE_URL/DATABASE_URL; 'local' forces local Docker Postgres backup",
+    )
+    database_url: str = Field(
+        default="",
+        description="Optional full PostgreSQL/Supabase connection URI override",
+    )
+    supabase_database_url: str = Field(
+        default="",
+        description="Supabase Supavisor connection pooler URI (:6543 transaction or :5432 session)",
+    )
+    supabase_direct_url: str = Field(
+        default="",
+        description="Optional Supabase direct/session connection URI (:5432) for migrations and pg_dump",
+    )
+    postgres_pool_mode: Literal["auto", "transaction", "session"] = Field(
+        default="auto",
+        description="Connection pool mode: 'auto' detects port 6543 or pgbouncer=true as transaction mode",
+    )
+    postgres_ssl_mode: Literal["auto", "require", "disable"] = Field(
+        default="auto",
+        description="SSL mode for asyncpg connections ('auto' enables TLS for cloud hosts)",
+    )
     postgres_user: str = Field(default="acdp")
     postgres_password: str = Field(default="acdp_local_dev_only")
     postgres_db: str = Field(default="acdp_app")
@@ -45,6 +69,10 @@ class AppConfig(BaseSettings):
     duckdb_threads: int = Field(
         default=2,
         description="Per-connection DuckDB thread cap for read-only API queries",
+    )
+    duckdb_r2_table_cache: bool = Field(
+        default=True,
+        description="Materialize R2 Gold Parquets into DuckDB :memory: tables on init to avoid per-query HTTP round-trips",
     )
     usd_to_vnd_rate: int = Field(
         default=25400,
@@ -218,12 +246,77 @@ class AppConfig(BaseSettings):
             return f"md:{db}?motherduck_token={token}"
         return f"md:{db}"
 
-    def get_database_url(self) -> str:
-        """Build asyncpg SQLAlchemy connection URI for PostgreSQL 18 OLTP."""
+    def _resolve_raw_postgres_url(self) -> str:
+        """Select active PostgreSQL/Supabase connection string based on postgres_mode."""
+        mode = (self.postgres_mode or "auto").strip().lower()
+        if mode != "local":
+            if self.supabase_database_url.strip():
+                return self.supabase_database_url.strip()
+            if self.database_url.strip():
+                return self.database_url.strip()
         return (
             f"postgresql+asyncpg://{self.postgres_user}:{self.postgres_password}"
             f"@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"
         )
+
+    @staticmethod
+    def _normalize_asyncpg_scheme(raw_url: str) -> str:
+        """Normalize postgres:// and postgresql:// URIs to postgresql+asyncpg://."""
+        if raw_url.startswith("postgres://"):
+            return "postgresql+asyncpg://" + raw_url[len("postgres://") :]
+        if raw_url.startswith("postgresql://"):
+            return "postgresql+asyncpg://" + raw_url[len("postgresql://") :]
+        return raw_url
+
+    def is_postgres_cloud_active(self) -> bool:
+        """Return True when resolved PostgreSQL host targets an external cloud database (Supabase/Neon)."""
+        parsed = urlparse(self._normalize_asyncpg_scheme(self._resolve_raw_postgres_url()))
+        host = (parsed.hostname or "").strip().lower()
+        return host not in {"", "localhost", "127.0.0.1", "postgres", "::1"}
+
+    def is_transaction_pooler_active(self) -> bool:
+        """Return True when targeting a Supavisor/PgBouncer transaction pooler (e.g., port 6543)."""
+        pool_mode = (self.postgres_pool_mode or "auto").strip().lower()
+        if pool_mode == "transaction":
+            return True
+        if pool_mode == "session":
+            return False
+        parsed = urlparse(self._normalize_asyncpg_scheme(self._resolve_raw_postgres_url()))
+        if parsed.port == 6543:
+            return True
+        query_map = dict(parse_qsl(parsed.query, keep_blank_values=True))
+        return (
+            query_map.get("prepared_statement_cache_size") == "0"
+            or query_map.get("pgbouncer", "").lower() == "true"
+        )
+
+    def get_database_url(self) -> str:
+        """Build asyncpg SQLAlchemy connection URI for Supabase Cloud or local PostgreSQL 18 OLTP."""
+        normalized = self._normalize_asyncpg_scheme(self._resolve_raw_postgres_url())
+        parsed = urlparse(normalized)
+        filtered_params = [
+            (k, v)
+            for k, v in parse_qsl(parsed.query, keep_blank_values=True)
+            if k.lower() not in {"sslmode", "pgbouncer"}
+        ]
+        if self.is_transaction_pooler_active():
+            filtered_params = [
+                (k, v) for k, v in filtered_params if k != "prepared_statement_cache_size"
+            ]
+            filtered_params.append(("prepared_statement_cache_size", "0"))
+        rebuilt_query = urlencode(filtered_params)
+        return urlunparse(parsed._replace(query=rebuilt_query))
+
+    def get_asyncpg_connect_args(self) -> dict[str, Any]:
+        """Return asyncpg connect_args disabling statement caching for transaction poolers and enabling Cloud TLS."""
+        connect_args: dict[str, Any] = {}
+        if self.is_transaction_pooler_active():
+            connect_args["statement_cache_size"] = 0
+
+        ssl_mode = (self.postgres_ssl_mode or "auto").strip().lower()
+        if ssl_mode == "require" or (ssl_mode == "auto" and self.is_postgres_cloud_active()):
+            connect_args["ssl"] = "require"
+        return connect_args
 
     def create_r2_client(self):
         """Create a configured boto3 S3/R2 client from unified settings."""

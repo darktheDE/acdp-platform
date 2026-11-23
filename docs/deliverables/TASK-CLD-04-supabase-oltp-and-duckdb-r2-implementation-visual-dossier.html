@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TASK-CLD-04: Supabase OLTP &amp; DuckDB Direct-on-R2 Visual Dossier</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 antialiased">
+  <div class="max-w-6xl mx-auto px-6 py-10 space-y-10">
+    <header class="border-b border-slate-800 pb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+        <span class="inline-block px-3 py-1 text-xs font-semibold tracking-wider uppercase rounded-full bg-sky-500/15 text-sky-300 border border-sky-500/30">
+          TASK-CLD-04 · Cycle 07 · ADR-0002 Implementation · 2026-11-23
+        </span>
+        <h1 class="text-3xl font-bold mt-3 text-white">Kết nối Supabase OLTP &amp; DuckDB Direct-on-R2 (<code>s3://</code>)</h1>
+        <p class="text-slate-400 mt-1">Khoa CNTT — Trường Đại học Công nghệ Kỹ thuật TP.HCM (HCM-UTE) · Đỗ Kiến Hưng</p>
+      </div>
+      <div class="text-sm text-slate-400 bg-slate-900 border border-slate-800 rounded-xl px-4 py-3">
+        <div>R2 Gold Lakehouse: <span class="text-emerald-400 font-semibold">15 Parquets · 24 Cuộc thi</span></div>
+        <div>OLTP Routing: <span class="text-sky-400 font-semibold">Supabase :6543 + Local Backup</span></div>
+      </div>
+    </header>
+
+    <!-- Tier 1: Executive Summary KPI Cards -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+        <div class="text-xs uppercase tracking-wider text-slate-400">Warm Analytics Latency</div>
+        <div class="text-2xl font-bold text-emerald-400 mt-2">5.0 ms</div>
+        <p class="text-xs text-slate-400 mt-2">Nhanh hơn 300x so với 1,500.9 ms khi quét VIEW qua httpfs</p>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+        <div class="text-xs uppercase tracking-wider text-slate-400">Cloud R2 Gold Entities</div>
+        <div class="text-2xl font-bold text-sky-400 mt-2">15 / 15 Tables</div>
+        <p class="text-xs text-slate-400 mt-2">Đọc 100% từ s3://acdp-lakehouse/gold/ · 0 byte đĩa local</p>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+        <div class="text-xs uppercase tracking-wider text-slate-400">Supavisor Pooler Guard</div>
+        <div class="text-2xl font-bold text-amber-400 mt-2">NullPool + TLS</div>
+        <p class="text-xs text-slate-400 mt-2">Tắt đồng thời statement_cache_size &amp; prepared_statement_cache_size</p>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+        <div class="text-xs uppercase tracking-wider text-slate-400">Live E2E Verification</div>
+        <div class="text-2xl font-bold text-emerald-400 mt-2">12 / 12 Passed</div>
+        <p class="text-xs text-slate-400 mt-2">Supabase Pooler + R2 (24 cuộc thi · 6.998 Tỷ VND) · 0 lint errors</p>
+      </div>
+    </section>
+
+    <!-- Tier 2: Interactive Diagrams & Benchmark Charts -->
+    <section class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+      <div class="lg:col-span-3 bg-slate-900 border border-slate-800 rounded-xl p-5">
+        <h2 class="text-lg font-semibold text-white mb-3">Luồng Định tuyến Dual-Flow OLTP &amp; DuckDB R2</h2>
+        <div class="mermaid bg-slate-950 rounded-lg p-3 overflow-x-auto">
+flowchart LR
+    API["FastAPI Gateway<br/>(src/acdp/api)"] --> CFG["AppConfig<br/>POSTGRES_MODE &amp; DUCKDB_R2_TABLE_CACHE"]
+    CFG -->|"auto/cloud :6543<br/>NullPool + statement_cache=0"| SUPA[("Supabase Supavisor<br/>TLS Required")]
+    CFG -.->|"local fallback :5432<br/>QueuePool(5)"| PG[("Docker PG 18.7")]
+    CFG -->|"httpfs s3://gold/*.parquet<br/>:memory: TABLE (5.0 ms)"| R2[("Cloudflare R2<br/>15 Gold Parquets")]
+        </div>
+      </div>
+
+      <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-xl p-5 flex flex-col justify-between">
+        <div>
+          <h2 class="text-lg font-semibold text-white mb-2">Benchmark Độ trễ Truy vấn trên R2 (ms)</h2>
+          <p class="text-xs text-slate-400 mb-4">Đo trực tiếp trên s3://acdp-lakehouse/gold/ (24 cuộc thi)</p>
+        </div>
+        <canvas id="r2LatencyChart" height="220"></canvas>
+      </div>
+    </section>
+
+    <!-- Tier 3: Collapsible Deep Technical Specs & Manual Setup Playbook -->
+    <section class="bg-slate-900 border border-slate-800 rounded-xl p-6 space-y-4">
+      <h2 class="text-lg font-semibold text-white">Chi tiết Kỹ thuật &amp; Hướng dẫn Kích hoạt Supabase</h2>
+
+      <details open class="bg-slate-950 border border-slate-800 rounded-lg p-4">
+        <summary class="cursor-pointer font-medium text-sky-300">1. Bảng Benchmark Thực nghiệm DuckDB Direct-on-R2 (`VIEW` vs `:memory: TABLE`)</summary>
+        <div class="overflow-x-auto mt-4">
+          <table class="w-full text-sm text-left border-collapse">
+            <thead>
+              <tr class="border-b border-slate-800 text-slate-400">
+                <th class="py-2 pr-4">Thao tác / Endpoint</th>
+                <th class="py-2 px-4">R2 Direct VIEW (`httpfs`)</th>
+                <th class="py-2 px-4">R2 Memory Table (`s3://` hydrated)</th>
+                <th class="py-2 pl-4">Hệ số nhanh hơn</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/70">
+              <tr>
+                <td class="py-2 pr-4">Khởi tạo 15 Gold Entities (`init`)</td>
+                <td class="py-2 px-4 text-slate-300">6,579.1 ms</td>
+                <td class="py-2 px-4 text-slate-300">7,796.1 ms</td>
+                <td class="py-2 pl-4 text-slate-400">1 lần khi boot</td>
+              </tr>
+              <tr>
+                <td class="py-2 pr-4">Cold `fetch_analytics_overview()`</td>
+                <td class="py-2 px-4 text-amber-400">1,827.5 ms</td>
+                <td class="py-2 px-4 text-emerald-400 font-semibold">5.3 ms</td>
+                <td class="py-2 pl-4 text-emerald-300">344.8x</td>
+              </tr>
+              <tr>
+                <td class="py-2 pr-4">Warm `fetch_analytics_overview()`</td>
+                <td class="py-2 px-4 text-amber-400">1,500.9 ms</td>
+                <td class="py-2 px-4 text-emerald-400 font-semibold">5.0 ms</td>
+                <td class="py-2 pl-4 text-emerald-300">300.2x</td>
+              </tr>
+              <tr>
+                <td class="py-2 pr-4">Warm `fetch_competitions(page_size=50)`</td>
+                <td class="py-2 px-4 text-amber-400">1,177.3 ms</td>
+                <td class="py-2 px-4 text-emerald-400 font-semibold">6.7 ms</td>
+                <td class="py-2 pl-4 text-emerald-300">175.7x</td>
+              </tr>
+              <tr>
+                <td class="py-2 pr-4">Warm `fetch_competition_detail()`</td>
+                <td class="py-2 px-4 text-amber-400">1,254.5 ms</td>
+                <td class="py-2 px-4 text-emerald-400 font-semibold">8.1 ms</td>
+                <td class="py-2 pl-4 text-emerald-300">154.9x</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+
+      <details class="bg-slate-950 border border-slate-800 rounded-lg p-4">
+        <summary class="cursor-pointer font-medium text-emerald-300">2. Các bước thủ công gắn Supabase Shared Pooler vào `.env`</summary>
+        <ol class="list-decimal list-inside space-y-2 mt-3 text-sm text-slate-300">
+          <li>Tạo project miễn phí trên Supabase Dashboard (Region: Singapore <code>ap-southeast-1</code>).</li>
+          <li>Bấm <strong>Connect &rarr; Connection String &rarr; URI</strong>, bỏ qua dòng Direct connection (chỉ IPv6) và cuộn xuống mục <strong>Shared Pooler</strong> (<code>aws-*-ap-southeast-1.pooler.supabase.com:5432</code> hoặc <code>:6543</code>).</li>
+          <li>Sao chép URI, thay mật khẩu DB và dán vào <code>SUPABASE_DATABASE_URL=</code> trong <code>.env</code>.</li>
+          <li>Khởi chạy API: <code>uv run uvicorn acdp.api.main:app --port 8000</code> để tự động khởi tạo 5 bảng OLTP trên Supabase.</li>
+          <li>Chạy kiểm thử tích hợp: <code>uv run pytest tests/api/ tests/test_infra_spec0006.py -v</code> (đã kiểm chứng thực tế 12/12 PASSED).</li>
+        </ol>
+      </details>
+    </section>
+  </div>
+
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+    const ctx = document.getElementById('r2LatencyChart');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Cold Overview', 'Warm Overview', 'Warm List (50)', 'Warm Detail'],
+        datasets: [
+          {
+            label: 'R2 Direct VIEW (ms)',
+            data: [1827.5, 1500.9, 1177.3, 1254.5],
+            backgroundColor: 'rgba(245, 158, 11, 0.75)',
+            borderRadius: 6
+          },
+          {
+            label: 'R2 Memory Table (ms)',
+            data: [5.3, 5.0, 6.7, 8.1],
+            backgroundColor: 'rgba(16, 185, 129, 0.85)',
+            borderRadius: 6
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { labels: { color: '#cbd5e1' } }
+        },
+        scales: {
+          x: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(148,163,184,0.1)' } },
+          y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(148,163,184,0.1)' } }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

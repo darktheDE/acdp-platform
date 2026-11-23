@@ -118,3 +118,62 @@ def test_app_config_qdrant_resolution_and_env_example(monkeypatch) -> None:
     assert example_cfg.get_qdrant_collection() == "acdp_competitions_bge_m3"
     assert example_cfg.get_embedding_model() == "@cf/baai/bge-m3"
     assert example_cfg.get_chat_model() == "gemini-3.5-flash-lite"
+
+
+def test_supabase_oltp_pooler_and_duckdb_r2_config(monkeypatch) -> None:
+    """Verify Supabase Transaction/Session Pooler resolution, NullPool selection, and local fallback (TASK-CLD-04)."""
+    from sqlalchemy.pool import AsyncAdaptedQueuePool, NullPool
+
+    from acdp.api.db.postgres import build_async_engine
+
+    for key in (
+        "POSTGRES_MODE",
+        "SUPABASE_DATABASE_URL",
+        "DATABASE_URL",
+        "POSTGRES_POOL_MODE",
+        "POSTGRES_SSL_MODE",
+    ):
+        monkeypatch.delenv(key, raising=False)
+
+    # 1. Supabase Supavisor Transaction Pooler (:6543) with postgres:// scheme & pgbouncer=true
+    tx_cfg = AppConfig(
+        _env_file=None,
+        postgres_mode="auto",
+        supabase_database_url="postgres://postgres.projref:secret@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true",
+    )
+    assert tx_cfg.is_postgres_cloud_active() is True
+    assert tx_cfg.is_transaction_pooler_active() is True
+    tx_url = tx_cfg.get_database_url()
+    assert tx_url.startswith("postgresql+asyncpg://")
+    assert "prepared_statement_cache_size=0" in tx_url
+    assert "pgbouncer=" not in tx_url
+    assert tx_cfg.get_asyncpg_connect_args() == {"statement_cache_size": 0, "ssl": "require"}
+    tx_engine = build_async_engine(tx_cfg)
+    assert isinstance(tx_engine.pool, NullPool)
+
+    # 2. Supabase Session Pooler (:5432) -> keeps QueuePool with Cloud TLS
+    sess_cfg = AppConfig(
+        _env_file=None,
+        postgres_mode="auto",
+        supabase_database_url="postgresql://postgres.projref:secret@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres?sslmode=require",
+    )
+    assert sess_cfg.is_postgres_cloud_active() is True
+    assert sess_cfg.is_transaction_pooler_active() is False
+    sess_url = sess_cfg.get_database_url()
+    assert "sslmode=" not in sess_url
+    assert sess_cfg.get_asyncpg_connect_args() == {"ssl": "require"}
+    sess_engine = build_async_engine(sess_cfg)
+    assert isinstance(sess_engine.pool, AsyncAdaptedQueuePool)
+
+    # 3. Local backup mode overrides Supabase URL and disables Cloud TLS
+    local_cfg = AppConfig(
+        _env_file=None,
+        postgres_mode="local",
+        supabase_database_url="postgres://postgres.projref:secret@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres",
+    )
+    assert local_cfg.is_postgres_cloud_active() is False
+    assert local_cfg.is_transaction_pooler_active() is False
+    assert local_cfg.get_database_url() == "postgresql+asyncpg://acdp:acdp_local_dev_only@localhost:5432/acdp_app"
+    assert local_cfg.get_asyncpg_connect_args() == {}
+    local_engine = build_async_engine(local_cfg)
+    assert isinstance(local_engine.pool, AsyncAdaptedQueuePool)
