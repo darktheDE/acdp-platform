@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ACDP — In-Repo Task & Deliverables Portal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            navy: '#1E3A8A',
+            coral: '#C2410C',
+          }
+        }
+      }
+    };
+  </script>
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen antialiased">
+  <!-- Top Bar -->
+  <header class="sticky top-0 z-30 border-b border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-lg bg-navy text-white flex items-center justify-center font-bold text-sm">ACDP</div>
+        <div>
+          <h1 class="text-base sm:text-lg font-bold tracking-tight">In-Repo Task &amp; Deliverables Portal</h1>
+          <p class="text-xs text-slate-500 dark:text-slate-400">DIR-018 • Code &amp; Medallion Tasks Managed Directly in Git • HCM-UTE</p>
+        </div>
+      </div>
+      <div class="flex flex-wrap items-center gap-2">
+        <button id="btnNewTask" class="px-3 py-1.5 rounded-lg bg-navy hover:bg-blue-900 text-white text-xs font-semibold transition cursor-pointer">+ Tạo Task Mới</button>
+        <button id="btnLoadJson" class="px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-semibold transition cursor-pointer">Mở tasks-data.json</button>
+        <button id="btnSaveJson" class="px-3 py-1.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold transition cursor-pointer">Lưu tasks-data.json</button>
+        <button id="btnExportMd" class="px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-semibold transition cursor-pointer">Xuất task-registry.md</button>
+        <button id="btnTheme" class="px-2.5 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 text-xs font-semibold cursor-pointer" title="Đổi giao diện Sáng/Tối">🌓</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+    <!-- KPI Row -->
+    <section class="grid grid-cols-2 md:grid-cols-5 gap-3">
+      <div class="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+        <div class="text-xs text-slate-500 dark:text-slate-400">Tổng số Tasks</div>
+        <div id="kpiTotal" class="text-2xl font-bold mt-1">0</div>
+      </div>
+      <div class="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+        <div class="text-xs text-slate-500 dark:text-slate-400">Hoàn thành</div>
+        <div id="kpiDone" class="text-2xl font-bold text-emerald-600 mt-1">0</div>
+      </div>
+      <div class="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+        <div class="text-xs text-slate-500 dark:text-slate-400">TLCN (Phase 1)</div>
+        <div id="kpiTlcn" class="text-2xl font-bold text-blue-700 dark:text-blue-400 mt-1">0</div>
+      </div>
+      <div class="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+        <div class="text-xs text-slate-500 dark:text-slate-400">KLTN (Phase 2)</div>
+        <div id="kpiKltn" class="text-2xl font-bold text-coral mt-1">0</div>
+      </div>
+      <div class="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+        <div class="text-xs text-slate-500 dark:text-slate-400">No-Code Tasks</div>
+        <div id="kpiNoCode" class="text-2xl font-bold text-amber-600 mt-1">0</div>
+      </div>
+    </section>
+
+    <!-- View Tabs & Filters -->
+    <section class="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div class="flex flex-wrap gap-1.5" role="tablist">
+          <button data-view="cycles" class="view-tab px-3 py-1.5 rounded-lg text-xs font-semibold bg-navy text-white cursor-pointer">Chu trình (Cycles)</button>
+          <button data-view="kanban" class="view-tab px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 cursor-pointer">Kanban Board</button>
+          <button data-view="medallion" class="view-tab px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 cursor-pointer">Medallion Architecture</button>
+          <button data-view="deliverables" class="view-tab px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 cursor-pointer">Deliverables &amp; Artifacts</button>
+        </div>
+        <span id="draftNotice" class="text-xs text-amber-600 dark:text-amber-400 hidden">● Có thay đổi cục bộ chưa lưu ra file JSON</span>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5">
+        <input id="filterSearch" type="text" placeholder="Tìm mã task, tiêu đề, câu hỏi..." class="px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-transparent text-xs" />
+        <select id="filterScope" class="px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs">
+          <option value="ALL">Tất cả Phạm vi (TLCN &amp; KLTN)</option>
+          <option value="TLCN">TLCN (Phase 1)</option>
+          <option value="KLTN">KLTN (Phase 2)</option>
+        </select>
+        <select id="filterLayer" class="px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs">
+          <option value="ALL">Tất cả Tầng Kiến trúc</option>
+          <option value="Discovery">Discovery</option>
+          <option value="Bronze">Bronze</option>
+          <option value="Silver">Silver</option>
+          <option value="Gold">Gold</option>
+          <option value="Serving & Web">Serving &amp; Web</option>
+          <option value="Cloud & Infra">Cloud &amp; Infra</option>
+          <option value="Academic & Ops">Academic &amp; Ops</option>
+        </select>
+        <select id="filterStatus" class="px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs">
+          <option value="ALL">Tất cả Trạng thái</option>
+          <option value="todo">Todo</option>
+          <option value="in_progress">In Progress</option>
+          <option value="review">Peer Review</option>
+          <option value="done">Done</option>
+        </select>
+        <select id="filterCodeType" class="px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs">
+          <option value="ALL">Code + No-Code</option>
+          <option value="CODE">Chỉ Code / Research Tasks</option>
+          <option value="NOCODE">Chỉ No-Code Tasks</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- Dynamic Content Container -->
+    <section id="viewContainer" class="space-y-4"></section>
+  </main>
+
+  <!-- Task Writer / Editor Modal -->
+  <div id="taskModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+        <h2 id="modalTitle" class="text-lg font-bold">Tạo / Chỉnh sửa Task</h2>
+        <button id="btnCloseModal" class="text-slate-400 hover:text-slate-600 text-xl cursor-pointer">&times;</button>
+      </div>
+      <form id="taskForm" class="space-y-3 text-xs">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div>
+            <label class="block font-semibold mb-1">Mã Task (ID)</label>
+            <input name="id" required placeholder="TASK-ING-03" class="w-full px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-transparent" />
+          </div>
+          <div>
+            <label class="block font-semibold mb-1">Chu trình (Cycle)</label>
+            <input name="cycle" required placeholder="Cycle 06" class="w-full px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-transparent" />
+          </div>
+          <div>
+            <label class="block font-semibold mb-1">Phạm vi (Scope)</label>
+            <select name="scope" class="w-full px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900">
+              <option value="TLCN (Phase 1)">TLCN (Phase 1)</option>
+              <option value="KLTN (Phase 2)">KLTN (Phase 2)</option>
+              <option value="TLCN -> KLTN">TLCN -&gt; KLTN</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block font-semibold mb-1">Tiêu đề Task</label>
+          <input name="title" required class="w-full px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-transparent" />
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div>
+            <label class="block font-semibold mb-1">Tầng Kiến trúc</label>
+            <select name="layer" class="w-full px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900">
+              <option>Discovery</option><option>Bronze</option><option>Silver</option><option>Gold</option>
+              <option>Serving &amp; Web</option><option>Cloud &amp; Infra</option><option>Academic &amp; Ops</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-semibold mb-1">Trạng thái</label>
+            <select name="status" class="w-full px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900">
+              <option value="todo">Todo</option><option value="in_progress">In Progress</option>
+              <option value="review">Peer Review</option><option value="done">Done</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-semibold mb-1">Người phụ trách</label>
+            <input name="owner" value="Hung & Duy" class="w-full px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-transparent" />
+          </div>
+          <div class="flex items-end pb-1.5">
+            <label class="inline-flex items-center gap-2 font-semibold cursor-pointer">
+              <input type="checkbox" name="is_no_code" class="rounded" />
+              <span>No-Code Task</span>
+            </label>
+          </div>
+        </div>
+        <div>
+          <label class="block font-semibold mb-1">Vấn đề cần giải quyết (Problem Statement)</label>
+          <textarea name="problem_statement" rows="2" required class="w-full px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-transparent"></textarea>
+        </div>
+        <div>
+          <label class="block font-semibold mb-1">Deliverables / Artifacts (mỗi đường dẫn 1 dòng)</label>
+          <textarea name="deliverables" rows="2" placeholder="docs/deliverables/TASK-ING-01.md" class="w-full px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-transparent font-mono"></textarea>
+        </div>
+        <div>
+          <label class="block font-semibold mb-1">Ghi chú Markdown (In-Browser Notes)</label>
+          <textarea name="notes" rows="3" class="w-full px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-transparent font-mono"></textarea>
+        </div>
+        <div class="flex justify-end gap-2 pt-2 border-t border-slate-200 dark:border-slate-800">
+          <button type="button" id="btnCancelModal" class="px-4 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer">Hủy</button>
+          <button type="submit" class="px-4 py-1.5 rounded-lg bg-navy text-white font-semibold cursor-pointer">Lưu Task</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'acdp_in_repo_tasks_v1';
+    let appData = { version: '1.0.0', cycles: [], tasks: [] };
+    let currentView = 'cycles';
+    let editingId = null;
+
+    mermaid.initialize({ startOnLoad: false, theme: document.documentElement.classList.contains('dark') ? 'dark' : 'default' });
+
+    async function loadInitialData() {
+      try {
+        const res = await fetch('./tasks-data.json', { cache: 'no-store' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        appData = await res.json();
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+        render();
+        return;
+      } catch (err) {
+        const cached = localStorage.getItem(STORAGE_KEY);
+        if (cached) { appData = JSON.parse(cached); render(); return; }
+        document.getElementById('viewContainer').innerHTML = '<div class="p-6 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800 text-sm space-y-2"><div class="font-bold text-amber-900 dark:text-amber-200">Không thể tự động fetch <code>./tasks-data.json</code> qua giao thức <code>file:///</code></div><p class="text-xs text-amber-800 dark:text-amber-300">Mở qua local server (VD: <code>python -m http.server</code> hoặc VS Code Live Preview), hoặc bấm nút <strong>Mở tasks-data.json</strong> trên thanh công cụ để nạp trực tiếp file.</p></div>';
+      }
+    }
+
+    document.getElementById('btnLoadJson').onclick = async () => {
+      if (window.showOpenFilePicker) {
+        try {
+          const [handle] = await window.showOpenFilePicker({ types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }] });
+          const file = await handle.getFile();
+          appData = JSON.parse(await file.text());
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+          document.getElementById('draftNotice').classList.add('hidden');
+          render();
+          return;
+        } catch (err) { if (err.name === 'AbortError') return; }
+      }
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.json,application/json';
+      input.onchange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        appData = JSON.parse(await file.text());
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+        render();
+      };
+      input.click();
+    };
+
+    function saveLocal() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+      document.getElementById('draftNotice').classList.remove('hidden');
+      render();
+    }
+
+    function getFilteredTasks() {
+      const q = document.getElementById('filterSearch').value.toLowerCase().trim();
+      const sc = document.getElementById('filterScope').value;
+      const ly = document.getElementById('filterLayer').value;
+      const st = document.getElementById('filterStatus').value;
+      const ct = document.getElementById('filterCodeType').value;
+
+      return (appData.tasks || []).filter(t => {
+        if (sc !== 'ALL' && !t.scope.includes(sc)) return false;
+        if (ly !== 'ALL' && t.layer !== ly) return false;
+        if (st !== 'ALL' && t.status !== st) return false;
+        if (ct === 'CODE' && t.is_no_code) return false;
+        if (ct === 'NOCODE' && !t.is_no_code) return false;
+        if (q) {
+          const hay = `${t.id} ${t.title} ${t.problem_statement} ${(t.research_questions || []).join(' ')}`.toLowerCase();
+          if (!hay.includes(q)) return false;
+        }
+        return true;
+      });
+    }
+
+    function statusBadge(st) {
+      const map = {
+        done: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300',
+        in_progress: 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300',
+        review: 'bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300',
+        todo: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300'
+      };
+      return `<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold ${map[st] || map.todo}">${st}</span>`;
+    }
+
+    function scopeBadge(sc) {
+      const isKltn = sc.startsWith('KLTN');
+      const cls = isKltn ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-300' : 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/40 dark:text-indigo-300';
+      return `<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold ${cls}">${sc}</span>`;
+    }
+
+    function copyPrompt(id) {
+      const t = appData.tasks.find(x => x.id === id);
+      if (!t) return;
+      const prompt = `@AGENTS.md Triển khai ${t.id}: ${t.title}\n- Phạm vi: ${t.scope} | Tầng: ${t.layer}\n- Vấn đề: ${t.problem_statement}\n- Deliverables mục tiêu: ${(t.deliverables || []).join(', ')}`;
+      navigator.clipboard.writeText(prompt);
+      alert(`Đã copy AI Prompt cho ${t.id}!`);
+    }
+
+    function taskCard(t) {
+      const delivs = (t.deliverables || []).map(d =>
+        `<a href="../../${d}" target="_blank" class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-[11px] font-mono text-blue-700 dark:text-blue-300">📄 ${d}</a>`
+      ).join(' ');
+      const noCodeBadge = t.is_no_code ? `<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300">No-Code</span>` : '';
+      return `
+        <div class="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-2.5 shadow-sm">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div class="flex flex-wrap items-center gap-1.5">
+              <span class="font-mono text-xs font-bold text-navy dark:text-blue-400">${t.id}</span>
+              ${scopeBadge(t.scope)}
+              ${statusBadge(t.status)}
+              ${noCodeBadge}
+              <span class="text-[11px] text-slate-500">• ${t.layer} • ${t.owner}</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <button onclick="copyPrompt('${t.id}')" class="px-2 py-1 rounded border border-slate-200 dark:border-slate-700 text-[11px] hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer">Copy Prompt</button>
+              <button onclick="openEdit('${t.id}')" class="px-2 py-1 rounded border border-slate-200 dark:border-slate-700 text-[11px] hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer">Sửa</button>
+            </div>
+          </div>
+          <h3 class="font-semibold text-sm">${t.title}</h3>
+          <p class="text-xs text-slate-600 dark:text-slate-400">${t.problem_statement}</p>
+          ${delivs ? `<div class="flex flex-wrap gap-1.5 pt-1">${delivs}</div>` : ''}
+        </div>
+      `;
+    }
+
+    function render() {
+      const all = appData.tasks || [];
+      document.getElementById('kpiTotal').textContent = all.length;
+      document.getElementById('kpiDone').textContent = all.filter(t => t.status === 'done').length;
+      document.getElementById('kpiTlcn').textContent = all.filter(t => t.scope.includes('TLCN')).length;
+      document.getElementById('kpiKltn').textContent = all.filter(t => t.scope.includes('KLTN')).length;
+      document.getElementById('kpiNoCode').textContent = all.filter(t => t.is_no_code).length;
+
+      const tasks = getFilteredTasks();
+      const container = document.getElementById('viewContainer');
+
+      if (currentView === 'cycles') {
+        const grouped = {};
+        tasks.forEach(t => { (grouped[t.cycle] = grouped[t.cycle] || []).push(t); });
+        const cycleNames = Object.keys(grouped).sort().reverse();
+        container.innerHTML = cycleNames.map(c => `
+          <div class="space-y-3">
+            <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-1.5">
+              <h2 class="text-sm font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">${c} (${grouped[c].length})</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">${grouped[c].map(taskCard).join('')}</div>
+          </div>
+        `).join('') || '<p class="text-sm text-slate-500">Không có task nào khớp bộ lọc.</p>';
+      } else if (currentView === 'kanban') {
+        const cols = ['todo', 'in_progress', 'review', 'done'];
+        const labels = { todo: 'Todo / Backlog', in_progress: 'In Progress', review: 'Peer Review', done: 'Done' };
+        container.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-4 gap-4">` + cols.map(c => {
+          const items = tasks.filter(t => t.status === c);
+          return `<div class="p-3 rounded-xl bg-slate-100/70 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 space-y-2.5">
+            <div class="text-xs font-bold uppercase tracking-wider">${labels[c]} (${items.length})</div>
+            ${items.map(taskCard).join('')}
+          </div>`;
+        }).join('') + `</div>`;
+      } else if (currentView === 'medallion') {
+        container.innerHTML = `
+          <div class="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-4">
+            <h2 class="text-sm font-bold">Bản đồ Lý thuyết &amp; Kiểm định Kiến trúc Medallion</h2>
+            <pre class="mermaid">
+flowchart LR
+  D["Discovery (TASK-ING-01/02)"] --> B["Bronze (TASK-BRZ-01)"]
+  B --> S["Silver (TASK-SLV-01/02)"]
+  S --> G["Gold (TASK-GLD-01)"]
+  G --> SRV["Serving &amp; Team (TASK-SRV-01..05)"]
+  SRV --> CLD["Cloud Free-Tier (TASK-CLD-01..04)"]
+            </pre>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">${tasks.map(taskCard).join('')}</div>
+          </div>`;
+        mermaid.run({ nodes: container.querySelectorAll('.mermaid') });
+      } else if (currentView === 'deliverables') {
+        container.innerHTML = `
+          <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                <tr><th class="p-3">ID</th><th class="p-3">Tiêu đề</th><th class="p-3">Scope</th><th class="p-3">Deliverables</th><th class="p-3">Trạng thái</th></tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
+                ${tasks.map(t => `
+                  <tr>
+                    <td class="p-3 font-mono font-bold">${t.id}</td>
+                    <td class="p-3">${t.title}</td>
+                    <td class="p-3">${scopeBadge(t.scope)}</td>
+                    <td class="p-3 font-mono">${(t.deliverables || []).map(d => `<a href="../../${d}" target="_blank" class="text-blue-600 dark:text-blue-400 underline block">${d}</a>`).join('')}</td>
+                    <td class="p-3">${statusBadge(t.status)}</td>
+                  </tr>`).join('')}
+              </tbody>
+            </table>
+          </div>`;
+      }
+    }
+
+    function openEdit(id) {
+      editingId = id;
+      const t = appData.tasks.find(x => x.id === id);
+      const f = document.getElementById('taskForm');
+      document.getElementById('modalTitle').textContent = t ? `Chỉnh sửa ${t.id}` : 'Tạo Task Mới';
+      f.id.value = t ? t.id : '';
+      f.id.readOnly = !!t;
+      f.cycle.value = t ? t.cycle : 'Cycle 06';
+      f.scope.value = t ? t.scope : 'TLCN (Phase 1)';
+      f.title.value = t ? t.title : '';
+      f.layer.value = t ? t.layer : 'Discovery';
+      f.status.value = t ? t.status : 'todo';
+      f.owner.value = t ? t.owner : 'Hung & Duy';
+      f.is_no_code.checked = t ? !!t.is_no_code : false;
+      f.problem_statement.value = t ? t.problem_statement : '';
+      f.deliverables.value = t ? (t.deliverables || []).join('\n') : '';
+      f.notes.value = t ? (t.notes || '') : '';
+      document.getElementById('taskModal').classList.remove('hidden');
+    }
+
+    document.getElementById('btnNewTask').onclick = () => openEdit(null);
+    document.getElementById('btnCloseModal').onclick = () => document.getElementById('taskModal').classList.add('hidden');
+    document.getElementById('btnCancelModal').onclick = () => document.getElementById('taskModal').classList.add('hidden');
+    document.getElementById('btnTheme').onclick = () => document.documentElement.classList.toggle('dark');
+
+    document.getElementById('taskForm').onsubmit = (e) => {
+      e.preventDefault();
+      const f = e.target;
+      const entry = {
+        id: f.id.value.trim(),
+        title: f.title.value.trim(),
+        cycle: f.cycle.value.trim(),
+        scope: f.scope.value,
+        layer: f.layer.value,
+        task_type: f.is_no_code.checked ? 'No-Code / External Integration' : 'Engineering',
+        is_no_code: f.is_no_code.checked,
+        owner: f.owner.value.trim(),
+        status: f.status.value,
+        priority: 'medium',
+        problem_statement: f.problem_statement.value.trim(),
+        deliverables: f.deliverables.value.split('\n').map(s => s.trim()).filter(Boolean),
+        notes: f.notes.value.trim(),
+        updated_at: new Date().toISOString().slice(0, 10)
+      };
+      if (editingId) {
+        const idx = appData.tasks.findIndex(x => x.id === editingId);
+        if (idx >= 0) appData.tasks[idx] = { ...appData.tasks[idx], ...entry };
+      } else {
+        appData.tasks.push(entry);
+      }
+      document.getElementById('taskModal').classList.add('hidden');
+      saveLocal();
+    };
+
+    async function saveToFile(filename, content, mime) {
+      if (window.showSaveFilePicker) {
+        try {
+          const handle = await window.showSaveFilePicker({ suggestedName: filename });
+          const writable = await handle.createWritable();
+          await writable.write(content);
+          await writable.close();
+          document.getElementById('draftNotice').classList.add('hidden');
+          return;
+        } catch (err) {
+          if (err.name === 'AbortError') return;
+        }
+      }
+      const blob = new Blob([content], { type: mime });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      a.click();
+    }
+
+    document.getElementById('btnSaveJson').onclick = () =>
+      saveToFile('tasks-data.json', JSON.stringify(appData, null, 2), 'application/json');
+
+    document.getElementById('btnExportMd').onclick = () => {
+      const rows = (appData.tasks || []).map(t =>
+        `| **${t.id}** | ${t.cycle} | ${t.scope} | ${t.layer} | ${t.title}${t.is_no_code ? ' *(No-Code)*' : ''} | ${t.owner} | ${t.status} |`
+      ).join('\n');
+      const md = `# In-repo task registry & deliverables ledger\n\n| Task ID | Cycle | Scope | Layer | Title | Owner | Status |\n| :---: | :---: | :---: | :---: | :--- | :---: | :---: |\n${rows}\n`;
+      saveToFile('task-registry.md', md, 'text/markdown');
+    };
+
+    document.querySelectorAll('.view-tab').forEach(btn => {
+      btn.onclick = () => {
+        currentView = btn.dataset.view;
+        document.querySelectorAll('.view-tab').forEach(b => {
+          b.className = b === btn
+            ? 'view-tab px-3 py-1.5 rounded-lg text-xs font-semibold bg-navy text-white cursor-pointer'
+            : 'view-tab px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 cursor-pointer';
+        });
+        render();
+      };
+    });
+
+    ['filterSearch', 'filterScope', 'filterLayer', 'filterStatus', 'filterCodeType'].forEach(id => {
+      document.getElementById(id).addEventListener('input', render);
+      document.getElementById(id).addEventListener('change', render);
+    });
+
+    loadInitialData();
+  </script>
+</body>
+</html>

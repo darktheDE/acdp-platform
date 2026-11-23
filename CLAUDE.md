@@ -26,13 +26,14 @@ All operations in this repository are governed by the master specifications:
 - Visual Dossiers & HTML Reports: `.agents/skills/visual-dossier-reporter/SKILL.md`
 - Open Models & Ollama: `.agents/skills/ollama-bridge/SKILL.md`
 - Decision Sync & Doc Governance: `.agents/skills/doc-decision-sync/SKILL.md`
+- In-Repo Task Management: `.agents/skills/repo-task-manager/SKILL.md`
 
 ---
 
 ## Invariant Guardrails
 - **Git Policy**: Never execute mutating git commands (`git add`, `git commit`, `git push`). Read-only inspection (`git status`, `git log`, `git diff`, `git show`) is allowed.
 - **No Empty Directories**: Folders are created strictly Just-In-Time.
-- **Notion Sync**: Log deliverables to `docs/deliverables/NT-XXXX-[slug].md` and update `docs/tasks/notion-task-mapping.md`.
+- **In-Repo Task Sync**: Log deliverables to `docs/deliverables/[TASK_ID]-[slug].md` and update `docs/tasks/tasks-data.json` + `docs/tasks/task-registry.md` (`DIR-018`).
 - **Zero Parametric Trust**: Never trust pre-trained model weights blindly. Always search Google/internet/scholar first to ground and verify claims.
 - **Institutional Naming**: Always use **Trường Đại học Công nghệ Kỹ thuật TP.HCM (HCM-UTE)**.
 - **Team Directives & Memory**: Strictly follow [`docs/frameworks/TEAM_DIRECTIVES.md`](./docs/frameworks/TEAM_DIRECTIVES.md) and persist newly given user rules immediately.

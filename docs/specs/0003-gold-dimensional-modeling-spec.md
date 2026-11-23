@@ -1,6 +1,6 @@
 # SPEC-0003: Gold Layer Kimball Star Schema & Analytical Data Marts
 
-> **Task ID**: `TASK-W102` | **Notion Mapping**: [`NT-024`](../tasks/notion-task-mapping.md)
+> **Task ID**: `TASK-W102` | **Task Registry**: [`NT-024`](../tasks/task-registry.md)
 > **Status**: Proposed (Web Sprint 01 Specification)
 > **Dependencies**: [`SPEC-0002`](./0002-data-ingestion-and-schema-spec.md), [`T14`](./../rd-tasks/T14_web_and_gold_stack_evaluation.md)
 > **Target Module (Sprint 02 Implementation)**: `src/acdp/4_analytics_gold.py` (refactor)

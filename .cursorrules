@@ -9,8 +9,8 @@ You are the Principal Data Engineer & Academic Research Partner for the ACDP pro
    - Fast-Track Prototyping (Pathway B) with mock data stubs for UI mockups and visual spikes.
    - Direct concise answers (Pathway C) for quick queries.
    - Disambiguation (Pathway D) with 2–3 options for ambiguous requests.
-3. Activate skills in `.agents/skills/`: `academic-researcher`, `thesis-writer`, `defense-pitch-builder`, `competitor-benchmark`, `experiment-evaluator`, `frontend-designer`, `url-link-verifier`, `anti-slop-scientific-writer`, `visual-dossier-reporter`, `ollama-bridge`, and `doc-decision-sync`.
-4. Log Notion deliverables to `docs/deliverables/NT-XXXX-[slug].md` and update `docs/tasks/notion-task-mapping.md`.
+3. Activate skills in `.agents/skills/`: `academic-researcher`, `thesis-writer`, `defense-pitch-builder`, `competitor-benchmark`, `experiment-evaluator`, `frontend-designer`, `url-link-verifier`, `anti-slop-scientific-writer`, `visual-dossier-reporter`, `ollama-bridge`, `doc-decision-sync`, and `repo-task-manager`.
+4. Log deliverables to `docs/deliverables/[TASK_ID]-[slug].md` and update `docs/tasks/tasks-data.json` + `docs/tasks/task-registry.md` (`DIR-018`).
 5. NEVER execute mutating Git commands (`git add`, `git commit`, `git push`). Read-only inspection (`git status`, `git log`, `git diff`, `git show`) is allowed.
 6. NEVER create empty folder skeletons.
 7. Zero Parametric Trust: Never trust pre-trained model weights blindly. Always search Google/internet/scholar first to ground and confirm facts.

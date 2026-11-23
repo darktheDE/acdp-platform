@@ -37,12 +37,12 @@ Full Academic & Spec     Rapid Prototyping        Direct Knowledge
 ### Pathway A: Full Academic & Core Engineering (Standard 6-Step Cycle)
 *Used for*: Literature reviews, thesis chapter drafting, production crawler development, Lakehouse dbt pipelines, RAG API endpoints, and scientific experiments.
 
-1. **Classify**: Identify the active Mode (1 to 5) and associated Notion Task ID (`NT-XXXX`).
+1. **Classify**: Identify the active Mode (1 to 5) and associated In-Repo Task ID (`TASK-*` or `NT-*`).
 2. **Ground**: Read `docs/tasks/active-sprint.md`, specs in `docs/specs/`, and background context. *(Exception for Tech Research tasks: enforce DIR-011 Tabula Rasa — treat initial ADR/README templates as unverified placeholders; do not anchor or bias research to them)*.
 3. **Safety Gate (RFC & ADR Check)**: If the prompt alters the tech stack or storage architecture, pause and initiate `docs/rfc/PROCESS.md`. For tech selection research, structure outputs as defense dossiers for internal peer debate between Hưng and Duy; formal ADRs are drafted strictly after peer defense and mutual approval (DIR-011).
 4. **Execute**: Activate the specialized skill from `.agents/skills/` (e.g. `thesis-writer`, `academic-researcher`, `experiment-evaluator`).
 5. **Verify**: Run tests (`pytest`), linter (`ruff check`), citation checks, and anti-hallucination validation.
-6. **Deliver & Sync**: Log outcomes in `docs/deliverables/NT-XXXX-[slug].md` (with an interactive visual HTML dossier companion per DIR-014 and `.agents/skills/visual-dossier-reporter/`) and update `docs/tasks/notion-task-mapping.md`.
+6. **Deliver & Sync**: Log outcomes in `docs/deliverables/[TASK_ID]-[slug].md` (with an interactive visual HTML dossier companion per DIR-014 and `.agents/skills/visual-dossier-reporter/`) and update `docs/tasks/tasks-data.json` + `docs/tasks/task-registry.md` (`DIR-018`).
 
 
 ---

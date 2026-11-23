@@ -1,6 +1,6 @@
 # SPEC-0005: Frontend Design System, SVG Brand Identity & UI/UX Architecture
 
-> **Task ID**: `TASK-W104` | **Notion Mapping**: [`NT-026`](../tasks/notion-task-mapping.md)
+> **Task ID**: `TASK-W104` | **Task Registry**: [`NT-026`](../tasks/task-registry.md)
 > **Status**: Implemented (Web Sprint 02)
 > **Dependencies**: [`SPEC-0003`](./0003-gold-dimensional-modeling-spec.md), [`SPEC-0004`](./0004-serving-api-and-oltp-spec.md), [`.agents/skills/frontend-designer/references/design_tokens.md`](../../.agents/skills/frontend-designer/references/design_tokens.md)
 > **Target Directory (Sprint 02 Implementation)**: `apps/web/`

@@ -1,6 +1,6 @@
 # DELIVERABLE: Academic Competition Landscape Survey, Previous Work & Generalized Adaptive Ingestion Architecture
 
-- **Notion Task ID**: `NT-014`
+- **Task ID**: `NT-014`
 - **Related Sprint**: Sprint 01 (Week 1–Week 3: Foundation, Harness & Ingestion Design)
 - **Primary Owner**: Do Kien Hung & Nguyen Van Quang Duy
 - **Date Completed**: 2026-09-11

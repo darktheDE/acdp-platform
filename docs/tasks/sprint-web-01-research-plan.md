@@ -15,7 +15,7 @@
 
 Mục tiêu của Sprint 01 là xây dựng đầy đủ luận cứ kỹ thuật, bản thiết kế chi tiết cho cả hai lớp dữ liệu (Gold OLAP + PostgreSQL OLTP), bộ quy chuẩn giao diện và quy trình kiểm thử để bạn nắm vững từng bước vận hành hệ thống dù AI là người hỗ trợ triển khai mã nguồn.
 
-| Mã Task | Notion ID | Nội dung trọng tâm | Tài liệu / Đầu ra bắt buộc | Skills kích hoạt | Định nghĩa hoàn thành (DoD) |
+| Mã Task | Registry ID | Nội dung trọng tâm | Tài liệu / Đầu ra bắt buộc | Skills kích hoạt | Định nghĩa hoàn thành (DoD) |
 | :---: | :---: | :--- | :--- | :--- | :--- |
 | **TASK-W101** | `NT-023` | Nghiên cứu đối sánh & bảo vệ lựa chọn Tech Stack (2026–2027 LTS) | `docs/rd-tasks/T14_web_and_gold_stack_evaluation.md` | `academic-researcher`, `anti-slop-scientific-writer` | Hoàn thành 5 ma trận so sánh công nghệ kèm số liệu RAM, độ trễ và lý do loại bỏ phương án thay thế. |
 | **TASK-W102** | `NT-024` | Thiết kế chuẩn hóa Kimball Star Schema Lớp Vàng & OLAP Marts | `docs/specs/0003-gold-dimensional-modeling-spec.md` | `experiment-evaluator` | Đặc tả xong `4 dim_*`, `3 fact_*`, `2 bridge_*`, `4–6 mart_*` và thuật toán xử lý 5 lỗi hiện tại của `4_analytics_gold.py`. |

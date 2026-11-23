@@ -52,7 +52,7 @@ Every visual dossier must structure content into 3 progressive tiers:
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
 │ TIER 1: EXECUTIVE SUMMARY & METRIC SCORECARDS (1-Minute Scan)          │
-│ - Target task ID, Notion mapping link, status badge                    │
+│ - Target task ID, task-registry.md link, status badge                   │
 │ - 3 to 4 prominent KPI metric cards (RAM, Storage Savings, Latency)   │
 │ - TL;DR conclusion in 2-3 concise sentences                            │
 ├────────────────────────────────────────────────────────────────────────┤
@@ -79,9 +79,9 @@ Every visual dossier must structure content into 3 progressive tiers:
    - *Rule*: Never commit `.scratchpad/` to git (enforced by `.gitignore`).
 
 2. **Official Repository Deliverables (`docs/deliverables/`)**:
-   - When the visual report serves as an official project milestone deliverable accompanying a Notion Task:
+   - When the visual report serves as an official project milestone deliverable accompanying an In-Repo Task:
    - Output to: `docs/deliverables/<task-id>-<slug>-visual-dossier.html`.
-   - Update `docs/tasks/notion-task-mapping.md` with the link.
+   - Update `docs/tasks/tasks-data.json` and run `sync_tasks.py --sync` to update `docs/tasks/task-registry.md`.
 
 ---
 

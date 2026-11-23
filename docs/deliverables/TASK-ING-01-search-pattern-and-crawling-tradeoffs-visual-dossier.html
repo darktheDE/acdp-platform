@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TASK-ING-01: Search Pattern &amp; Free-Tier Crawling Visual Dossier</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    .mermaid svg { max-width: 100%; height: auto; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen antialiased">
+
+  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center space-x-3">
+        <span class="px-2.5 py-1 text-xs font-semibold uppercase tracking-wider rounded-md bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
+          TASK-ING-01 | Discovery
+        </span>
+        <h1 class="text-lg font-bold text-white tracking-tight">Search Pattern &amp; Free-Tier Crawling Dossier</h1>
+      </div>
+      <div class="flex items-center space-x-3 text-xs text-slate-400">
+        <span>Đỗ Kiến Hưng &amp; Nguyễn Văn Quang Duy</span>
+        <span class="text-slate-600">|</span>
+        <span>Khoa CNTT - Trường ĐH Công nghệ Kỹ thuật TP.HCM (HCM-UTE)</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+    <!-- TIER 1: Executive KPI Cards -->
+    <section>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm">
+          <div class="text-xs font-medium text-slate-400 uppercase tracking-wider">Quota Miễn Phí Hàng Tháng</div>
+          <div class="mt-2 flex items-baseline gap-2">
+            <span class="text-3xl font-extrabold text-emerald-400">3.500+</span>
+            <span class="text-xs text-slate-400">queries/tháng</span>
+          </div>
+          <p class="mt-1 text-xs text-slate-500">Tavily (1.000) + Exa.ai (~2.500)</p>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm">
+          <div class="text-xs font-medium text-slate-400 uppercase tracking-wider">Ngân Sách Thực Tế ACDP</div>
+          <div class="mt-2 flex items-baseline gap-2">
+            <span class="text-3xl font-extrabold text-indigo-400">48</span>
+            <span class="text-xs text-slate-400">queries/tháng</span>
+          </div>
+          <p class="mt-1 text-xs text-slate-500">Chỉ dùng &lt; 5% hạn mức miễn phí</p>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm">
+          <div class="text-xs font-medium text-slate-400 uppercase tracking-wider">Chi Phí Discovery &amp; Crawl</div>
+          <div class="mt-2 flex items-baseline gap-2">
+            <span class="text-3xl font-extrabold text-sky-400">0 VNĐ</span>
+            <span class="text-xs text-slate-400">Không cần thẻ</span>
+          </div>
+          <p class="mt-1 text-xs text-slate-500">Kết hợp Crawl4AI + Hubs + GDELT</p>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm">
+          <div class="text-xs font-medium text-slate-400 uppercase tracking-wider">RAM Cào Tại Chỗ</div>
+          <div class="mt-2 flex items-baseline gap-2">
+            <span class="text-3xl font-extrabold text-teal-400">&lt; 450 MB</span>
+            <span class="text-xs text-slate-400">Playwright</span>
+          </div>
+          <p class="mt-1 text-xs text-slate-500">Dự phòng 0 MB qua Jina Reader</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Navigation Tabs -->
+    <div class="border-b border-slate-800 flex space-x-6 text-sm font-medium">
+      <button onclick="switchTab('tab-architecture')" id="btn-architecture" class="tab-btn pb-3 text-indigo-400 border-b-2 border-indigo-500 transition">
+        Kiến Trúc Discovery 3 Tầng
+      </button>
+      <button onclick="switchTab('tab-benchmarks')" id="btn-benchmarks" class="tab-btn pb-3 text-slate-400 hover:text-slate-200 transition">
+        Biểu Đồ So Sánh Free Tier
+      </button>
+      <button onclick="switchTab('tab-specs')" id="btn-specs" class="tab-btn pb-3 text-slate-400 hover:text-slate-200 transition">
+        Bộ Search Pattern Chuẩn
+      </button>
+    </div>
+
+    <!-- TIER 2A: Architecture Tab -->
+    <div id="tab-architecture" class="tab-content space-y-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+        <h3 class="text-base font-semibold text-white mb-4">Luồng Khám Phá &amp; Cào Dữ Liệu Tối Ưu Free Tier (TLCN &rarr; KLTN)</h3>
+        <div class="mermaid text-center">
+flowchart TD
+    subgraph T1["Tầng 1: Nguồn 0 Quota (Ưu tiên)"]
+        S1["Sitemap XML &amp; RSSHub"]
+        S2["Hubs VN: Ybox, KhoaHocTre, VNOI, TopDev"]
+        S3["API Mở: Eventbrite, Luma, GDELT 2.0"]
+    end
+
+    subgraph T2["Tầng 2: Search API Free Tier (48 lượt/tháng)"]
+        S4["Tavily (1.000/tháng) &amp; Exa.ai (2.500/tháng)"]
+        S5["Serper.dev (2.500 lượt dự phòng Google SERP)"]
+    end
+
+    subgraph T3["Tầng 3: Lọc &amp; Cào Thích Ứng"]
+        F1["HTTP HEAD / ETag (304 Not Modified)"]
+        C1["Crawl4AI AdaptiveCrawler (Playwright + BGE-M3)"]
+        C2["Jina Reader r.jina.ai (Fallback 0 RAM)"]
+    end
+
+    B["Lớp Đồng: Raw UTF-8 Markdown trên Cloudflare R2 / Local"]
+
+    T1 --> F1
+    T2 --> F1
+    F1 -->|"Có thay đổi"| C1
+    C1 -->|"Lỗi RAM / Timeout"| C2
+    C1 --> B
+    C2 --> B
+        </div>
+      </div>
+    </div>
+
+    <!-- TIER 2B: Benchmarks Tab -->
+    <div id="tab-benchmarks" class="tab-content hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+          <h3 class="text-base font-semibold text-white mb-4">Hạn Mức Free Tier Hàng Tháng (Queries/Tháng)</h3>
+          <div class="h-64">
+            <canvas id="quotaChart"></canvas>
+          </div>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+          <h3 class="text-base font-semibold text-white mb-4">Mức Tiêu Thụ RAM Cục Bộ Của Công Cụ Cào (MB)</h3>
+          <div class="h-64">
+            <canvas id="ramChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TIER 3: Search Patterns Tab -->
+    <div id="tab-specs" class="tab-content hidden space-y-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 space-y-4">
+        <h3 class="text-base font-semibold text-white">4 Nhóm Search Pattern Chuẩn Hóa Cho Cuộc Thi Việt Nam</h3>
+        <div class="bg-slate-950 p-4 rounded-lg font-mono text-xs text-slate-300 overflow-x-auto border border-slate-800 space-y-2">
+          <div><span class="text-indigo-400"># Nhóm A: Đại học &amp; Học viện (.edu.vn)</span></div>
+          <div>site:edu.vn ("phát động cuộc thi" OR "thể lệ cuộc thi" OR "hackathon") (CNTT OR AI OR "dữ liệu") 2026 -filetype:pdf -"lịch thi" -"đề cương"</div>
+          <div class="pt-2"><span class="text-indigo-400"># Nhóm B: Sở KH&amp;CN &amp; Cơ quan nhà nước (.gov.vn)</span></div>
+          <div>site:gov.vn ("cuộc thi" OR "hội thi" OR "giải thưởng") ("trí tuệ nhân tạo" OR "chuyển đổi số" OR "sáng tạo") 2026</div>
+          <div class="pt-2"><span class="text-indigo-400"># Nhóm C: Doanh nghiệp &amp; Hackathon</span></div>
+          <div>("hackathon" OR "datathon" OR "coding challenge") ("Vietnam" OR "TP.HCM" OR "Hà Nội") ("sinh viên" OR "students") 2026</div>
+          <div class="pt-2"><span class="text-indigo-400"># Nhóm D: GDELT Doc 2.0 API (Miễn phí không cần key)</span></div>
+          <div>https://api.gdeltproject.org/api/v2/doc/doc?query=hackathon%20vietnam&amp;mode=artlist&amp;format=json</div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('text-indigo-400', 'border-b-2', 'border-indigo-500');
+        btn.classList.add('text-slate-400');
+      });
+      document.getElementById(tabId).classList.remove('hidden');
+      const activeBtn = document.getElementById(tabId.replace('tab-', 'btn-'));
+      if (activeBtn) {
+        activeBtn.classList.remove('text-slate-400');
+        activeBtn.classList.add('text-indigo-400', 'border-b-2', 'border-indigo-500');
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const ctxQuota = document.getElementById('quotaChart');
+      if (ctxQuota) {
+        new Chart(ctxQuota, {
+          type: 'bar',
+          data: {
+            labels: ['Exa.ai (Lite)', 'Tavily', 'Brave (Cần thẻ)', 'Google CSE (Đóng 2027)'],
+            datasets: [{
+              label: 'Queries miễn phí / tháng',
+              data: [2500, 1000, 1000, 3000],
+              backgroundColor: ['#10b981', '#6366f1', '#f59e0b', '#ef4444']
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              y: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } },
+              x: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } }
+            }
+          }
+        });
+      }
+
+      const ctxRam = document.getElementById('ramChart');
+      if (ctxRam) {
+        new Chart(ctxRam, {
+          type: 'bar',
+          data: {
+            labels: ['Jina Reader (Cloud)', 'Firecrawl (Cloud)', 'Scrapling (Local)', 'Crawl4AI (Playwright)'],
+            datasets: [{
+              label: 'RAM cục bộ (MB)',
+              data: [0, 0, 120, 420],
+              backgroundColor: ['#38bdf8', '#94a3b8', '#10b981', '#6366f1']
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              y: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } },
+              x: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } }
+            }
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 # T14: Đánh Giá Tech Stack Web Application, OLTP Backend & Gold Layer Star Schema (2026–2027)
 
-> **Task ID**: `TASK-W101` | **Notion Mapping**: [`NT-023`](../tasks/notion-task-mapping.md)
+> **Task ID**: `TASK-W101` | **Task Registry**: [`NT-023`](../tasks/task-registry.md)
 > **Người thực hiện**: Đỗ Kiến Hưng (`@darktheDE`) & Nguyễn Văn Quang Duy (`@QuangDuyReal`)
 > **Mốc tham chiếu công nghệ**: Q4/2026 – 2027 (`DIR-012`, `DIR-015`, `DIR-016`)
 > **Học phần & Đơn vị**: Tiểu luận Chuyên ngành Kỹ thuật Dữ liệu, Khoa CNTT, Trường Đại học Công nghệ Kỹ thuật TP.HCM (HCM-UTE)

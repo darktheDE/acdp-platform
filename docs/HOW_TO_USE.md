@@ -16,6 +16,8 @@ During the 15-week Special Topic Project (*Tiểu luận chuyên ngành*), the t
 3. **In-Process OLAP Analytics**: Queries Silver/Gold Parquet datasets directly via **DuckDB** without requiring heavy container daemons (`PostgreSQL`, `dbt-core`, or `SeaweedFS`).
 4. **RAG Vector Indexing & Web Copilot**: Bronze-to-Qdrant semantic chunking (`src/acdp/3_ingest_to_qdrant.py` with Cloudflare Workers AI `@cf/baai/bge-m3`) served via Next.js `/copilot` + FastAPI (`src/acdp/api/services/rag_service.py` with `gemini-3.5-flash-lite`).
 5. **Student Portal & Faculty Dashboard MVP**: FastAPI backend (DuckDB `httpfs` over R2 Gold Parquet + PostgreSQL 18 OLTP) and Next.js 16 web interface.
+4. **RAG Regulation Copilot**: Vector retrieval (`Qdrant` + `SemanticChunker` + `Gemini` + `Gradio` UI) grounded in official contest rulebooks (`src/acdp/3_chatbot_mvp.py`).
+5. **Student Portal & Faculty Dashboard MVP**: FastAPI backend and Next.js 16 web interface.
 
 ### Phase 2: KLTN Full-Scale Scope (Graduation Thesis)
 High-volume automated crawling (periodic batch jobs, seasonality scheduler, HTTP `ETag` polling, realtime webhooks), multi-channel fuzzy entity deduplication, teammate matchmaking, and faculty advisor alignment are scheduled for Phase 2 (*Khóa luận tốt nghiệp*).
@@ -47,19 +49,19 @@ acdp-platform/
     ├── academic/           <-- TLCN report manuscript, GVHD progress report, BibTeX, proposal
     ├── research/           <-- Competitor analysis (Devpost, Unstop, Ybox)
     ├── experiments/        <-- Empirical benchmarks (Ragas scorecards, query latency)
-    ├── deliverables/       <-- Notion task outputs & Cloudflare R2 technical guide
+    ├── deliverables/       <-- Project task outputs & Cloudflare R2 technical guide
     ├── adr/                <-- Architecture Decision Records
     ├── specs/              <-- SPEC-0001 (Foundation) & SPEC-0002 (Lean Ingestion & Schema)
     ├── rd-tasks/           <-- R&D research dossiers (T01, T02, T08_v2, T13)
-    ├── tasks/              <-- Notion task mapping, 15-week roadmap, and active sprint (with Code TODOs)
+    ├── tasks/              <-- Interactive task portal (index.html), task-registry.md, roadmap & active sprint
     └── rfc/                <-- Change management protocol (RFC process)
 ```
 
 ---
 
-## 3. Notion Task Synchronization & Quality Verification
+## 3. In-Repo Task Synchronization & Quality Verification
 
-- **Notion Task Mapping**: Consult [`docs/tasks/notion-task-mapping.md`](./tasks/notion-task-mapping.md) and [`docs/tasks/active-sprint.md`](./tasks/active-sprint.md) before starting work.
+- **In-Repo Task Registry**: Consult [`docs/tasks/task-registry.md`](./tasks/task-registry.md), [`docs/tasks/index.html`](./tasks/index.html), and [`docs/tasks/active-sprint.md`](./tasks/active-sprint.md) before starting work.
 - **Automated Verification Commands**:
   ```bash
   # 1. Run unit tests for Bronze and Silver schemas

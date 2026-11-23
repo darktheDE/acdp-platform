@@ -57,7 +57,7 @@ uv run python .agents/skills/doc-decision-sync/scripts/audit_doc_drift.py --impa
 ### Step 3: Propagate Across Tiers 1–3 Atomically
 Update every affected file identified in Step 1 and in the Blast-Radius Matrix:
 1. Tier 1 (Agent Contracts). Sync `AGENTS.md`, `GEMINI.md`, `CLAUDE.md`, `.cursorrules`, `docs/frameworks/PROMPT_EXECUTION_FRAMEWORK.md`, and `.agents/skills/README.md`.
-2. Tier 2 (Specs & Task Ledgers). Sync `docs/specs/SPEC.md`, `docs/specs/0001..0006-*.md`, `docs/tasks/active-sprint.md`, `docs/tasks/notion-task-mapping.md`, and `README.md`.
+2. Tier 2 (Specs & Task Ledgers). Sync `docs/specs/SPEC.md`, `docs/specs/0001..0006-*.md`, `docs/tasks/active-sprint.md`, `docs/tasks/task-registry.md`, and `README.md`.
 3. Tier 3 (Skills & Academic Outputs). Sync affected `.agents/skills/*/SKILL.md` files and active deliverables.
 
 ### Step 4: Run Deterministic Audit & Anti-Slop Gate

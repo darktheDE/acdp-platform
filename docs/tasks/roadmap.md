@@ -20,7 +20,7 @@ In accordance with **DIR-015**, Phase 1 (TLCN) focuses on simulating the end-to-
 ---
 
 ## Phase 2 Outlook: Graduation Thesis (Khóa luận tốt nghiệp - KLTN)
-- Automated large-scale ingestion (periodic batch jobs, seasonality scheduler, HTTP `ETag` polling, and realtime webhooks) across nationwide university portals and fanpages.
-- High-volume small-file optimization (`zstandard` payload compression, `delta-rs` bin-packing `OPTIMIZE`, and self-hosted `SeaweedFS` object storage) and multi-channel fuzzy entity deduplication.
-- Production teammate recommendation engine and faculty advisor research alignment.
-- Historical repository of winning solutions and automated student activity credit (*điểm rèn luyện*) reporting.
+- Automated large-scale ingestion via GitHub Actions cron (`TASK-ING-02`) and new-contest email notifications (`TASK-SRV-05`).
+- Full Cloud Free-Tier unification (`TASK-CLD-03`, `TASK-CLD-04`: Supabase OLTP, Cloudflare R2, Cloudflare Workers AI, Qdrant Cloud).
+- Media branding, Fanpage (`TASK-OPS-01`), and external No-Code user feedback/ticketing platform (`TASK-OPS-02`).
+- Interactive task tracking across all cycles: [`docs/tasks/index.html`](./index.html) and [`docs/tasks/task-registry.md`](./task-registry.md).

@@ -4,7 +4,18 @@ This document maintains the immediate context, active tasks, and session state f
 
 ---
 
-## Current Sprint: Web Sprint 01 / Sprint 05 (Weeks 11–12) - Research, Gold Star Schema & Web Architecture Inception
+## Current Sprint: Cycle 06–08 (Medallion Theory Audit, Cloud-Native Unification & Team Builder)
+- **Interactive Task Portal**: Open [`docs/tasks/index.html`](./index.html) in a browser to filter `TLCN` vs `KLTN` cycles, inspect deliverables, or edit tasks directly.
+- **Master Task Registry**: [`docs/tasks/task-registry.md`](./task-registry.md) (synced from [`tasks-data.json`](./tasks-data.json) per **DIR-018**).
+- **Backlog Highlights (from `.scratchpad/22112026.md`)**:
+  - **Cycle 06 (TLCN)**: `TASK-ING-01` (Search Pattern & Free-Tier Crawl), `TASK-BRZ-01` (Bronze Raw vs `.md` Purity), `TASK-SLV-01` (Hybrid DE vs LLM), `TASK-SLV-02` (Silver Schema Fit), `TASK-GLD-01` (Kimball Star Schema Audit).
+  - **Cycle 07 (TLCN -> KLTN)**: `TASK-CLD-01` (Qdrant Cloud Unification), `TASK-CLD-02` (Web Dashboard vs Metabase), `TASK-CLD-03` & `TASK-CLD-04` (Full Cloud Free-Tier: Next.js, Supabase, R2, Cloudflare AI).
+  - **Cycle 08 (TLCN)**: `TASK-SRV-01` (`/profile` Mini-CV), `TASK-SRV-02` (Non-AI OLTP Team Creation/Join), `TASK-SRV-03` (Team & Contest Summary Screen for Advisor), `TASK-SRV-04` (RAG Personal Fit).
+  - **Cycle 09–10 (KLTN)**: `TASK-ING-02` (GitHub Actions Crawl), `TASK-SRV-05` (Mail Notification), `TASK-OPS-01` (Branding & Fanpage), `TASK-OPS-02` (External No-Code Feedback/Ticket Form).
+
+---
+
+## Previous Sprint: Web Sprint 01 / Sprint 05 (Weeks 11–12) - Research, Gold Star Schema & Web Architecture Inception
 - **Sprint Goal**: Research and document 2026–2027 tech benchmarks, Kimball Star Schema for Gold Layer (18 competitions), FastAPI + PostgreSQL 18 (OLTP) Spec-Driven Architecture, Next.js 16 + Tailwind v4 UI/UX design system, Docker resource budget (`<= 2.0 GB` core profile), and 4-tier testing procedures before coding the Web application.
 - **Master Playbook**: [`docs/tasks/sprint-web-01-research-plan.md`](./sprint-web-01-research-plan.md)
 - **Master Product Spec**: [`docs/specs/SPEC.md`](../specs/SPEC.md) (Business value, user personas, dashboard ROI, and end-to-end user flows)
