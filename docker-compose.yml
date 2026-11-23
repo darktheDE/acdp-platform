@@ -76,14 +76,18 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-acdp_app}
       POSTGRES_HOST: postgres
       POSTGRES_PORT: "5432"
-      DUCKDB_DATABASE_PATH: /app/data/lakehouse/acdp.duckdb
+      BRONZE_STORAGE_BACKEND: cloudflare_r2
+      BUCKET_NAME: ${BUCKET_NAME:-acdp-lakehouse}
+      AWS_ENDPOINT_URL: ${AWS_ENDPOINT_URL:-}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
+      AWS_REGION: ${AWS_REGION:-auto}
       QDRANT_URL: http://qdrant:6333
       QDRANT_CLUSTER_ENDPOINT: ${QDRANT_CLUSTER_ENDPOINT:-}
       QDRANT_API_KEY: ${QDRANT_API_KEY:-}
       QDRANT_COLLECTION: ${QDRANT_BGE_COLLECTION:-acdp_competitions_bge_m3}
       CLOUDFLARE_API_TOKEN: ${CLOUDFLARE_API_TOKEN:-}
       CLOUDFLARE_ACCOUNT_ID: ${CLOUDFLARE_ACCOUNT_ID:-}
-      AWS_ENDPOINT_URL: ${AWS_ENDPOINT_URL:-}
       EMBEDDING_MODEL: ${CLOUDFLARE_EMBEDDING_MODEL:-@cf/baai/bge-m3}
       CHAT_MODEL: ${CHAT_MODEL:-gemini-3.5-flash-lite}
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
@@ -92,8 +96,6 @@ services:
       CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000}
     ports:
       - "8000:8000"
-    volumes:
-      - ./data/lakehouse:/app/data/lakehouse:ro
     healthcheck:
       test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/health')\""]
       interval: 15s
@@ -137,10 +139,14 @@ services:
       JAVA_TOOL_OPTIONS: "-Xmx768m -Xms256m"
       MB_DB_FILE: /metabase-data/metabase.db
       MB_ANON_TRACKING_ENABLED: "false"
+      BUCKET_NAME: ${BUCKET_NAME:-acdp-lakehouse}
+      AWS_ENDPOINT_URL: ${AWS_ENDPOINT_URL:-}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
+      AWS_REGION: ${AWS_REGION:-auto}
     ports:
       - "3001:3000"
     volumes:
-      - ./data/lakehouse:/data/lakehouse:ro
       - metabase_data:/metabase-data
     deploy:
       resources:

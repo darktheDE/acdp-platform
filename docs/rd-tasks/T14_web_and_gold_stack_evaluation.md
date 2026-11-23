@@ -9,7 +9,7 @@
 
 ## 1. Why this task exists ?
 
-Giai đoạn 1 của dự án ACDP (Tiểu luận Chuyên ngành, TLCN) đã hoàn thiện chuỗi xử lý Bronze và Silver với 17 nguồn mục tiêu thu thập được 18 bản ghi cuộc thi học thuật hợp lệ tại `data/extractions/extractions_2026-11-15_1794720683.json` và lớp tìm kiếm ngữ nghĩa RAG trên Qdrant (`src/acdp/3_chatbot_mvp.py`). Tuy nhiên, lớp phục vụ người dùng cuối (Web Application) và tầng phân tích dữ liệu (Gold Layer) vẫn tồn tại 4 điểm nghẽn kỹ thuật cần nghiên cứu và chuẩn hóa trước khi viết mã nguồn ứng dụng (`apps/web/`, `src/acdp/api/`):
+Giai đoạn 1 của dự án ACDP (Tiểu luận Chuyên ngành, TLCN) đã hoàn thiện chuỗi xử lý Bronze và Silver với 17 nguồn mục tiêu thu thập được 18 bản ghi cuộc thi học thuật hợp lệ tại `data/extractions/extractions_2026-11-15_1794720683.json` và lớp tìm kiếm ngữ nghĩa RAG trên Qdrant (`src/acdp/3_ingest_to_qdrant.py`). Tuy nhiên, lớp phục vụ người dùng cuối (Web Application) và tầng phân tích dữ liệu (Gold Layer) vẫn tồn tại 4 điểm nghẽn kỹ thuật cần nghiên cứu và chuẩn hóa trước khi viết mã nguồn ứng dụng (`apps/web/`, `src/acdp/api/`):
 
 1. **Tầng Gold (`src/acdp/4_analytics_gold.py`) chưa đạt chuẩn Data Engineering.** Mã nguồn hiện tại tạo các bảng phẳng mang tính mô phỏng Silver, thiếu tách biệt Dimension/Fact theo mô hình Kimball Star Schema, làm mất dữ liệu `timeline_stages` và `partners_and_sponsors`, đồng thời dính lỗi nhân đôi tổng giá trị giải thưởng khi thực hiện `unnest(category)`.
 2. **Thiếu ranh giới OLTP và OLAP.** Việc ghép dữ liệu đăng nhập thí sinh, phiên trò chuyện RAG hoặc bookmark cuộc thi trực tiếp vào DuckDB sẽ gây khóa ghi file (single-writer lock) và xung đột mô hình giao dịch.

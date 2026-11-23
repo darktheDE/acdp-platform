@@ -42,12 +42,18 @@ def test_docker_compose_version_pinning_and_profiles() -> None:
     assert "postgres_data:/var/lib/postgresql" in services["postgres"]["volumes"]
     assert services["qdrant"]["image"] == "qdrant/qdrant:v1.13.4"
     assert "3001:3000" in services["metabase"]["ports"]
-    assert "./data/lakehouse:/app/data/lakehouse:ro" in services["api"]["volumes"]
-    assert "./data/lakehouse:/data/lakehouse:ro" in services["metabase"]["volumes"]
+    # DIR-018: API & Metabase query Gold Parquet directly from Cloudflare R2 via DuckDB httpfs (no local lakehouse mount)
+    assert "volumes" not in services["api"]
+    assert "metabase_data:/metabase-data" in services["metabase"]["volumes"]
+    assert "./data/lakehouse:/data/lakehouse:ro" not in services["metabase"]["volumes"]
+    for svc_name in ("api", "metabase"):
+        env = services[svc_name]["environment"]
+        for key in ("BUCKET_NAME", "AWS_ENDPOINT_URL", "AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY"):
+            assert key in env, f"Missing R2 env var '{key}' in service '{svc_name}'"
 
 
 def test_dockerignore_and_dockerfile_api_hardening() -> None:
-    """Verify .dockerignore excludes runtime lakehouse/secrets and Dockerfile.api runs non-root."""
+    """Verify .dockerignore excludes runtime lakehouse/secrets and Dockerfile.api runs non-root with httpfs."""
     dockerignore = (ROOT / ".dockerignore").read_text(encoding="utf-8").splitlines()
     for required in (".git", ".venv", "data/lakehouse", "node_modules", ".env", "*.duckdb", "*.parquet"):
         assert required in dockerignore, f"Missing '{required}' in .dockerignore"
@@ -56,12 +62,15 @@ def test_dockerignore_and_dockerfile_api_hardening() -> None:
     assert "FROM python:3.13-slim-bookworm" in dockerfile_api
     assert "USER appuser" in dockerfile_api
     assert "acdp.api.main:app" in dockerfile_api
+    assert "DUCKDB_EXTENSION_DIRECTORY" in dockerfile_api
+    assert "INSTALL httpfs" in dockerfile_api
 
 
 def test_app_config_qdrant_resolution_and_env_example(monkeypatch) -> None:
-    """Verify AppConfig Qdrant endpoint priority and .env.example compatibility."""
+    """Verify AppConfig Qdrant/R2 resolution and .env.example compatibility."""
     monkeypatch.delenv("POSTGRES_DB", raising=False)
     monkeypatch.delenv("DUCKDB_MEMORY_LIMIT", raising=False)
+    monkeypatch.delenv("BRONZE_STORAGE_BACKEND", raising=False)
 
     cloud_cfg = AppConfig(
         _env_file=None,
@@ -81,5 +90,9 @@ def test_app_config_qdrant_resolution_and_env_example(monkeypatch) -> None:
     assert local_cfg.get_qdrant_url() == "http://localhost:6333"
 
     example_cfg = AppConfig(_env_file=str(ROOT / ".env.example"))
+    assert example_cfg.bronze_storage_backend == "cloudflare_r2"
     assert example_cfg.postgres_db == "acdp_app"
     assert example_cfg.duckdb_memory_limit == "256MB"
+    assert example_cfg.get_qdrant_collection() == "acdp_competitions_bge_m3"
+    assert example_cfg.get_embedding_model() == "@cf/baai/bge-m3"
+    assert example_cfg.get_chat_model() == "gemini-3.5-flash-lite"

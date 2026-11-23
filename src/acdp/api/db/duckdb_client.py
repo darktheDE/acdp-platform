@@ -1,12 +1,9 @@
-"""Per-request DuckDB read-only connection manager with Parquet fallback (SPEC-0004 EC-A1)."""
+"""Per-request DuckDB in-memory connection manager reading Gold Parquet directly from Cloudflare R2 via httpfs."""
 
 from __future__ import annotations
 
-import random
-import time
 from collections.abc import Iterator
 from contextlib import contextmanager
-from pathlib import Path
 
 import duckdb
 
@@ -31,45 +28,31 @@ _PARQUET_ENTITIES = (
 )
 
 
-def _open_parquet_fallback(gold_dir: Path) -> duckdb.DuckDBPyConnection:
-    """Open an in-memory DuckDB connection backed by Gold Parquet files."""
+def _open_r2_parquet_connection() -> duckdb.DuckDBPyConnection:
+    """Open an in-memory DuckDB connection backed by Gold Parquet files on Cloudflare R2 via httpfs."""
+    if not settings.bucket_name:
+        raise RuntimeError("BUCKET_NAME is required for DuckDB R2 httpfs Gold queries.")
+
     con = duckdb.connect(":memory:")
-    con.execute(f"SET memory_limit='{settings.duckdb_memory_limit}'")
-    con.execute(f"SET threads={settings.duckdb_threads}")
-    for entity in _PARQUET_ENTITIES:
-        pq_path = gold_dir / f"{entity}.parquet"
-        if pq_path.exists():
-            escaped = str(pq_path).replace("\\", "/")
-            con.execute(f"CREATE OR REPLACE VIEW {entity} AS SELECT * FROM read_parquet('{escaped}')")
-    return con
+    try:
+        con.execute(f"SET memory_limit='{settings.duckdb_memory_limit}'")
+        con.execute(f"SET threads={settings.duckdb_threads}")
+        settings.configure_duckdb_r2(con)
+
+        bucket = settings.bucket_name.strip().strip("/")
+        for entity in _PARQUET_ENTITIES:
+            s3_uri = f"s3://{bucket}/gold/{entity}.parquet"
+            con.execute(f"CREATE OR REPLACE VIEW {entity} AS SELECT * FROM read_parquet('{s3_uri}')")
+        return con
+    except Exception:
+        con.close()
+        raise
 
 
 @contextmanager
 def get_duckdb_conn() -> Iterator[duckdb.DuckDBPyConnection]:
-    """Open DuckDB in read_only=True mode with 256MB cap and EC-A1 Parquet fallback."""
-    db_path = Path(settings.duckdb_database_path)
-    gold_dir = db_path.parent / "gold"
-
-    con: duckdb.DuckDBPyConnection | None = None
-    last_exc: Exception | None = None
-
-    if db_path.exists():
-        for _attempt in range(3):
-            try:
-                con = duckdb.connect(str(db_path), read_only=True)
-                con.execute(f"SET memory_limit='{settings.duckdb_memory_limit}'")
-                con.execute(f"SET threads={settings.duckdb_threads}")
-                break
-            except duckdb.IOException as exc:
-                last_exc = exc
-                time.sleep(0.05 + random.uniform(0.0, 0.03))
-
-    if con is None:
-        if gold_dir.exists() and any(gold_dir.glob("*.parquet")):
-            con = _open_parquet_fallback(gold_dir)
-        else:
-            raise RuntimeError(f"DuckDB lakehouse unavailable at {db_path}") from last_exc
-
+    """Open an in-memory DuckDB connection over Cloudflare R2 Gold Parquet with 256MB memory cap."""
+    con = _open_r2_parquet_connection()
     try:
         yield con
     finally:

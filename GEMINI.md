@@ -77,6 +77,9 @@ All agents operating in this workspace must strictly abide by the rules and adap
     - Serving & Frontend: **FastAPI** (`fastapi[standard]`, Python 3.11+/3.13+, Pydantic v2) + **Next.js 16** (Active LTS `16.4.x`, or `15.5.x` Maintenance LTS) + TypeScript + Tailwind CSS v4 + Recharts.
 18. **Atomic Decision Propagation & Zero Doc Drift (DIR-017)**:
     - Whenever any architectural decision, `DIR-XXX`, `ADR`, `SPEC`, tech version, or module path changes, scan impact with `audit_doc_drift.py --impact <keyword>`, update all Tier 0–3 documents atomically, and verify `python .agents/skills/doc-decision-sync/scripts/audit_doc_drift.py --strict` passes with `0` violations.
+19. **Cloudflare R2-Exclusive Lakehouse & Dedicated Qdrant Ingestion (DIR-018)**:
+    - All Medallion tiers (`bronze/`, `silver/`, `gold/`) run strictly on Cloudflare R2 with zero local disk persistence; FastAPI and Metabase read Gold Parquet directly from R2 via DuckDB `httpfs`.
+    - Gradio is removed; `src/acdp/3_ingest_to_qdrant.py` handles Bronze-to-Qdrant (`@cf/baai/bge-m3`) ingestion while Web `/copilot` (`src/acdp/api/services/rag_service.py`) serves RAG chat with `gemini-3.5-flash-lite`.
 
 
 

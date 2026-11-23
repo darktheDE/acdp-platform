@@ -32,7 +32,7 @@ This document maintains the immediate context, active tasks, and session state f
 - [x] **TODO-CODE-03 & Gold Star Schema (SPEC-0003)**: Added Silver Parquet export (`--save-parquet`) to `src/acdp/2_instruction.py`, removed deprecated `src/acdp/2-1_instruction.py` and `zstandard`/`deltalake` packages, and refactored `src/acdp/4_analytics_gold.py` to Kimball Star Schema + 6 `mart_*` marts (`tests/test_gold_star_schema.py`).
 
 ### Next Up (Backlog for Upcoming Weeks)
-- [ ] **TASK-0502** *(Duy)*: Run formal Ragas evaluation over `src/acdp/3_chatbot_mvp.py` (faithfulness, answer relevancy, context precision) and document results in `docs/experiments/0001-rag-baseline-evaluation.md`.
+- [ ] **TASK-0502** *(Duy)*: Run formal Ragas evaluation over `src/acdp/3_ingest_to_qdrant.py` (faithfulness, answer relevancy, context precision) and document results in `docs/experiments/0001-rag-baseline-evaluation.md`.
 
 ### Completed (Web Sprint 02 - Serving API, PostgreSQL 18 & Next.js 16 Portal)
 - [x] **TASK-0601 (`NT-029`)**: Implemented & hardened Docker infrastructure pinning (`SPEC-0006`, `postgres:18.7-alpine3.23`, `qdrant:v1.13.4`, `985 MB` slim `acdp-platform-api` image, `235.38 MiB` core RAM, Metabase BI `:3001` verified), FastAPI + PostgreSQL 18 OLTP + DuckDB RO + OpenAPI 3.1 gateway (`src/acdp/api/`, `tests/api/`), Gold expired `"open"` normalization (`2/18` open), and Next.js 16 + Tailwind v4 + Recharts portal (`apps/web/`, `23/23` UI component checks, `32/32` pytest passed, `ruff` 0 errors).
@@ -52,7 +52,7 @@ This document maintains the immediate context, active tasks, and session state f
 - [x] **TASK-0400**: Implement `src/acdp/1_crawl_to_bronze.py` (`Crawl4AI AdaptiveCrawler` uploading raw UTF-8 Markdown of 7 competitions to Cloudflare R2).
 - [x] **TODO-CODE-01**: Remove `zstandard` overhead and prune deprecated `src/acdp/lakehouse/` folder in favor of clean `src/acdp/schemas.py`.
 - [x] **TASK-0401**: Implement `src/acdp/2_instruction.py` using `instructor` + Pydantic v2 `CompetitionExtractionResult` with few-shot extraction and offline fallback.
-- [x] **TASK-0403**: Implement `src/acdp/3_chatbot_mvp.py` featuring RAG Chatbot MVP with Gradio ChatInterface, Qdrant vector store, `SemanticChunker`, Ollama embeddings, and Gemini generation.
+- [x] **TASK-0403**: Implement `src/acdp/3_ingest_to_qdrant.py` featuring RAG Chatbot MVP with Gradio ChatInterface, Qdrant vector store, `SemanticChunker`, Ollama embeddings, and Gemini generation.
 - [x] **TASK-0404**: Realign unit test suite (`tests/test_silver_schema.py` and `tests/test_bronze_storage.py`) with `src/acdp/schemas.py` and Lean Bronze storage (14/14 tests passed, 100% ruff clean).
 - [x] **TASK-0402**: Implement Gold Layer DuckDB Analytics & Parquet persistence (`src/acdp/4_analytics_gold.py`) materializing analytical views (`gold_category_summary`, `gold_mode_distribution`, `gold_seasonality`, `gold_top_prizes`).
 - [x] **TASK-0501**: Implement Prefect 3.x Medallion workflow pipeline (`src/acdp/flows/medallion_pipeline.py`) and configure Metabase with MotherDuck DuckDB driver in `docker-compose.yml`.

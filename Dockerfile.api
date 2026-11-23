@@ -29,7 +29,12 @@ COPY --from=builder --chown=appuser:appgroup /app/src /app/src
 
 ENV PATH="/app/.venv/bin:$PATH" \
     PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
+    PYTHONUNBUFFERED=1 \
+    DUCKDB_EXTENSION_DIRECTORY=/app/.duckdb
+
+RUN mkdir -p /app/.duckdb && \
+    python -c "import duckdb; con = duckdb.connect(':memory:'); con.execute(\"SET extension_directory='/app/.duckdb'\"); con.execute('INSTALL httpfs')" && \
+    chown -R appuser:appgroup /app/.duckdb
 
 USER appuser
 EXPOSE 8000

@@ -273,7 +273,7 @@ class RagChatResponse(BaseModel):
 
 ### 3.3. Tích hợp RAG Copilot & Chống Ảo giác (`DIR-004`)
 
-1. Tầng API bao bọc hàm `generate_answer(message, session_id)` trong `src/acdp/3_chatbot_mvp.py` bằng `asyncio.to_thread(...)` để không làm nghẽn vòng lặp sự kiện asyncio trong lúc chờ model embedding (`qwen3-embedding:4b`) hoặc LLM (`gemini-3.5-flash-lite` / Ollama).
+1. Tầng API bao bọc hàm `generate_answer(message, session_id)` trong `src/acdp/3_ingest_to_qdrant.py` bằng `asyncio.to_thread(...)` để không làm nghẽn vòng lặp sự kiện asyncio trong lúc chờ model embedding (`qwen3-embedding:4b`) hoặc LLM (`gemini-3.5-flash-lite` / Ollama).
 2. Mọi `Document` trả về từ Qdrant (`collection = acdp_competitions`, chỉ mục `metadata.domain`) được chuyển hóa thành `RagCitationDTO` chứa tiêu đề, URL nguồn gốc và đoạn trích ngắn.
 3. Nếu danh sách tài liệu truy xuất rỗng hoặc điểm tương đồng dưới ngưỡng tin cậy, API trả về `grounded = False` cùng thông điệp từ chối suy diễn thể lệ cuộc thi (`DIR-004`).
 4. Khi có `user_id` hợp lệ, tin nhắn người dùng và phản hồi kèm `citations_json` được ghi nguyên vẹn vào `chat_sessions` và `chat_messages` trong PostgreSQL.

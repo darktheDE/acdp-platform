@@ -172,47 +172,86 @@ def test_star_schema_bridge_allocation_and_edge_cases(tmp_path: Path) -> None:
         con.close()
 
 
-def test_real_18_competitions_star_schema_integrity(tmp_path: Path) -> None:
-    """Verify full Kimball Star Schema build against real repository Silver extractions."""
-    extractions_dir = Path("data/extractions")
-    competitions, source_label = gold.load_silver_competitions_with_source(extractions_dir)
-    assert len(competitions) == 18
-    assert all("vnquantum" not in (c.url or "").lower() for c in competitions)
+def test_r2_end_to_end_silver_to_gold_zero_local_disk(monkeypatch) -> None:
+    """Verify R2-only Silver JSON load -> Silver Parquet upload -> in-memory Gold Star Schema upload (Zero local files)."""
+    import io
+    from unittest.mock import MagicMock
 
-    db_path = tmp_path / "real_gold.duckdb"
-    gold.build_gold_star_schema(db_path, competitions, source_batch_file=source_label, gold_dir=None)
+    sample_json_old = {
+        "is_competition": True,
+        "competitions": [
+            {
+                "name": "Zalo AI Challenge 2026 (Old)",
+                "url": "https://challenge.zalo.ai/",
+                "summary": "Old snapshot.",
+                "organizers": ["Zalo"],
+                "category": ["AI"],
+            }
+        ],
+    }
+    sample_json_new = {
+        "is_competition": True,
+        "competitions": [
+            {
+                "name": "Zalo AI Challenge 2026",
+                "url": "https://challenge.zalo.ai/",
+                "summary": "Cuộc thi Agentic AI quy mô toàn quốc do Zalo tổ chức.",
+                "organizers": ["Zalo AI"],
+                "category": ["Artificial Intelligence"],
+                "mode": "online",
+                "participation_fee": "Miễn phí",
+                "total_prize_pool": "USD 12,000",
+                "prizes": [{"tier": "First", "reward": "$12,000", "estimated_value_vnd": 304800000}],
+                "registration_deadline": "2026-11-25",
+                "registration_status": "open",
+            }
+        ],
+    }
 
-    con = duckdb.connect(str(db_path), read_only=True)
-    try:
-        kpi = con.execute(
-            "SELECT total_competitions, total_prize_pool_vnd, unique_domains, unique_organizers FROM mart_kpi_overview"
-        ).fetchone()
-        assert kpi[0] == 18
-        assert kpi[1] > 0
-        assert kpi[2] == 5
-        assert kpi[3] > 20
+    r2_objects = {
+        "silver/extractions/challenge.zalo.ai/year=2026/month=11/day=20/1000.json": json.dumps(sample_json_old).encode("utf-8"),
+        "silver/extractions/challenge.zalo.ai/year=2026/month=11/day=21/2000.json": json.dumps(sample_json_new).encode("utf-8"),
+    }
+    uploaded_keys: dict[str, bytes] = {}
 
-        unclassified = con.execute(
-            "SELECT COUNT(*) FROM bridge_competition_domain WHERE domain_sk = -1"
-        ).fetchone()[0]
-        assert unclassified == 0
+    fake_s3 = MagicMock()
+    fake_paginator = MagicMock()
+    fake_paginator.paginate.return_value = [
+        {"Contents": [{"Key": k, "Size": len(v)} for k, v in r2_objects.items()]}
+    ]
+    fake_s3.get_paginator.return_value = fake_paginator
+    fake_s3.get_object.side_effect = lambda Bucket, Key: {"Body": io.BytesIO(r2_objects[Key])}
+    fake_s3.put_object.side_effect = lambda Bucket, Key, Body, **kw: uploaded_keys.__setitem__(Key, Body)
 
-        domain_sum = con.execute("SELECT SUM(allocated_prize_vnd) FROM mart_domain_analytics").fetchone()[0]
-        assert abs(float(domain_sum) - float(kpi[1])) <= 1.0
+    monkeypatch.setattr(gold.settings, "bucket_name", "acdp-test-bucket")
+    monkeypatch.setattr(type(gold.settings), "create_r2_client", lambda self: fake_s3)
 
-        # Ensure backward-compatible Gold views query cleanly
-        for view_name in (
-            "gold_competitions",
-            "gold_prizes",
-            "gold_category_summary",
-            "gold_mode_distribution",
-            "gold_seasonality",
-            "gold_top_prizes",
-        ):
-            cnt = con.execute(f"SELECT COUNT(*) FROM {view_name}").fetchone()[0]
-            assert cnt > 0
-    finally:
-        con.close()
+    comps, source_label = gold.load_silver_competitions_from_r2()
+    assert len(comps) == 1
+    assert comps[0].name == "Zalo AI Challenge 2026"
+    assert "r2:silver/extractions" in source_label
+
+    silver_uris = gold.export_silver_parquet(comps, output_dir=None)
+    assert len(silver_uris) == 2
+    assert "silver/competitions.parquet" in uploaded_keys
+    assert "silver/prizes.parquet" in uploaded_keys
+
+    gold_uris = gold.build_gold_star_schema(
+        db_path=None,
+        competitions=comps,
+        source_batch_file=source_label,
+        gold_dir=None,
+        sync_r2=True,
+    )
+    assert len(gold_uris) == 21
+    assert "gold/dim_competition.parquet" in uploaded_keys
+    assert "gold/mart_kpi_overview.parquet" in uploaded_keys
+    assert len(uploaded_keys["gold/mart_kpi_overview.parquet"]) > 0
+
+    sql_snippet = gold.build_metabase_r2_init_sql()
+    assert "INSTALL httpfs;" in sql_snippet
+    assert "CREATE OR REPLACE PERSISTENT SECRET r2_secret" in sql_snippet
+    assert "s3://acdp-test-bucket/gold/mart_kpi_overview.parquet" in sql_snippet
 
 
 def test_expired_open_status_normalizes_to_closed() -> None:

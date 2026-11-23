@@ -1,4 +1,4 @@
-"""Integration Pattern Example for src/acdp/3_chatbot_mvp.py with Ollama.
+"""Integration Pattern Example for src/acdp/3_ingest_to_qdrant.py with Ollama.
 
 Demonstrates:
 1. Local embedding with BatchedRetryEmbeddings.

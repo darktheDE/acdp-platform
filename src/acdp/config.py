@@ -51,10 +51,10 @@ class AppConfig(BaseSettings):
         description="Reference USD to VND exchange rate for Gold prize normalization",
     )
 
-    # Lakehouse Storage Configuration
-    bronze_storage_backend: Literal["local", "cloudflare_r2"] = Field(
+    # Lakehouse Storage Configuration (Cloudflare R2 Exclusive - DIR-018)
+    bronze_storage_backend: Literal["cloudflare_r2"] = Field(
         default="cloudflare_r2",
-        description="Storage backend: 'local' (POSIX SSD) or 'cloudflare_r2' (Cloud S3)",
+        description="Storage backend locked exclusively to Cloudflare R2 ('cloudflare_r2')",
     )
     bronze_storage_uri: str = Field(
         default="s3://acdp-lakehouse/bronze",
@@ -192,11 +192,59 @@ class AppConfig(BaseSettings):
             region_name=self.aws_region or "auto",
         )
 
+    def get_r2_endpoint_host(self) -> str:
+        """Return Cloudflare R2 endpoint host without scheme (e.g. <account_id>.r2.cloudflarestorage.com)."""
+        raw = self.aws_endpoint_url.strip()
+        if not raw:
+            return ""
+        parsed = urlparse(raw)
+        return (parsed.netloc or raw.split("://")[-1]).rstrip("/")
+
+    def configure_duckdb_r2(self, con) -> None:
+        """Configure DuckDB httpfs extension and S3 secret for direct Cloudflare R2 Parquet I/O."""
+        import os
+
+        ext_dir = os.getenv("DUCKDB_EXTENSION_DIRECTORY", "").strip()
+        if ext_dir:
+            escaped_dir = ext_dir.replace("'", "''")
+            con.execute(f"SET extension_directory='{escaped_dir}'")
+
+        try:
+            con.execute("LOAD httpfs")
+        except Exception:
+            con.execute("INSTALL httpfs")
+            con.execute("LOAD httpfs")
+
+        endpoint_host = self.get_r2_endpoint_host()
+        if not endpoint_host or not self.aws_access_key_id or not self.aws_secret_access_key:
+            raise RuntimeError(
+                "Cloudflare R2 credentials (AWS_ENDPOINT_URL, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY) "
+                "are required for DuckDB httpfs queries."
+            )
+
+        key_id = self.aws_access_key_id.replace("'", "''")
+        secret = self.aws_secret_access_key.replace("'", "''")
+        endpoint = endpoint_host.replace("'", "''")
+        region = (self.aws_region or "auto").replace("'", "''")
+        use_ssl = "false" if self.aws_allow_http else "true"
+
+        con.execute(
+            f"""
+            CREATE OR REPLACE SECRET r2_secret (
+                TYPE s3,
+                PROVIDER config,
+                KEY_ID '{key_id}',
+                SECRET '{secret}',
+                ENDPOINT '{endpoint}',
+                REGION '{region}',
+                URL_STYLE 'path',
+                USE_SSL {use_ssl}
+            )
+            """
+        )
+
     def get_storage_options(self) -> dict[str, str]:
         """Generate S3/R2 storage options dictionary for PyArrow and boto3."""
-        if self.bronze_storage_backend == "local" and not self.bronze_storage_uri.startswith(("s3://", "r2://")):
-            return {}
-
         options: dict[str, str] = {
             "AWS_S3_ALLOW_UNSAFE_RENAME": "true" if self.aws_s3_allow_unsafe_rename else "false",
         }

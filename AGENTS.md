@@ -113,6 +113,10 @@ All agents operating in this repository must strictly adhere to the continuous d
    - Serving & Frontend baseline: **FastAPI** (`fastapi[standard]`, Python 3.11+/3.13+, Pydantic v2) and **Next.js 16** (Active LTS `16.4.x`, or `15.5.x` Maintenance LTS) + TypeScript + Tailwind CSS v4 + Recharts.
 12. 🔄 **Atomic Decision Propagation & Zero Doc Drift (DIR-017)**:
    - Whenever any directive (`DIR-XXX`), `ADR`, `SPEC`, tech version, or file path changes, scan blast radius via `audit_doc_drift.py --impact <keyword>`, propagate edits across Tiers 0–3 in the same turn, and verify `python .agents/skills/doc-decision-sync/scripts/audit_doc_drift.py --strict` returns `0` violations.
+13. ☁️ **Cloudflare R2-Exclusive Lakehouse & Dedicated Qdrant Ingestion (DIR-018)**:
+   - All Medallion tiers (Bronze `bronze/`, Silver `silver/extractions/` + `silver/*.parquet`, Gold `gold/*.parquet`) live exclusively on Cloudflare R2 (legacy `"local"` backend removed).
+   - FastAPI (`duckdb_client.py`) and Metabase query Gold Parquet directly from R2 via DuckDB `httpfs`.
+   - Gradio UI is removed; `src/acdp/3_ingest_to_qdrant.py` handles Bronze-to-Qdrant BGE-M3 indexing exclusively while Web `/copilot` + `src/acdp/api/services/rag_service.py` serve live RAG queries.
 
 
 

@@ -2,7 +2,7 @@
 name: ollama-bridge
 description: >-
   Set up, configure, and orchestrate Ollama local and cloud open models, embeddings,
-  and OpenAI-compatible endpoints for the ACDP platform and RAG chatbot MVP (src/acdp/3_chatbot_mvp.py).
+  and OpenAI-compatible endpoints for the ACDP platform and RAG chatbot MVP (src/acdp/3_ingest_to_qdrant.py).
   Use when the user asks to: set up Ollama, switch LLM provider to Ollama, run open models locally,
   use Ollama Cloud (:cloud), pull embedding models (qwen3-embedding, bge-m3), or troubleshoot Ollama connection.
   DO NOT use for: Cloudflare R2 object storage setup, Next.js frontend styling, or database migrations.
@@ -12,7 +12,7 @@ compatibility: Ollama v0.40+, LangChain v1.0+, langchain-ollama v1.1+, Python 3.
 # Ollama Bridge: Open Models & Embeddings Orchestration Playbook
 
 > **Repository**: `acdp-platform` | Faculty of Information Technology, HCMUTE  
-> **Target Module**: [`src/acdp/3_chatbot_mvp.py`](../../../src/acdp/3_chatbot_mvp.py)  
+> **Target Module**: [`src/acdp/3_ingest_to_qdrant.py`](../../../src/acdp/3_ingest_to_qdrant.py)  
 > **Hardware Boundary**: AMD Ryzen 5 PRO 4650U (6C/12T) | Integrated AMD Radeon Graphics (512MB VRAM) | 12GB RAM  
 > **Authoritative References**: [Ollama Quickstart](https://docs.ollama.com/quickstart.md) | [Ollama GPU Support](https://docs.ollama.com/gpu.md) | [Ollama Cloud](https://docs.ollama.com/cloud.md)
 
@@ -67,7 +67,7 @@ ollama pull bge-m3
   ollama pull qwen2.5:3b
   ```
 
-### Step 3: Wire into `src/acdp/3_chatbot_mvp.py`
+### Step 3: Wire into `src/acdp/3_ingest_to_qdrant.py`
 Configure environment variables in `.env` or application config:
 ```bash
 # Vector Embedding (Local Ollama)

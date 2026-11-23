@@ -35,7 +35,6 @@ ingest = [
     "pypdf>=6.20.0",
 ]
 rag-ui = [
-    "gradio>=6.31.0",
     "langchain>=1.4.9",
     "langchain-experimental>=0.4.2",
     "langchain-qdrant>=1.1.0",
