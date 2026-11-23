@@ -42,7 +42,7 @@ def test_docker_compose_version_pinning_and_profiles() -> None:
     assert "postgres_data:/var/lib/postgresql" in services["postgres"]["volumes"]
     assert services["qdrant"]["image"] == "qdrant/qdrant:v1.13.4"
     assert "3001:3000" in services["metabase"]["ports"]
-    # DIR-018: API & Metabase query Gold Parquet directly from Cloudflare R2 via DuckDB httpfs (no local lakehouse mount)
+    # DIR-021: API & Metabase query Gold Parquet directly from Cloudflare R2 via DuckDB httpfs (no local lakehouse mount)
     assert "volumes" not in services["api"]
     assert "metabase_data:/metabase-data" in services["metabase"]["volumes"]
     assert "./data/lakehouse:/data/lakehouse:ro" not in services["metabase"]["volumes"]

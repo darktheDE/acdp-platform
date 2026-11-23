@@ -5,7 +5,7 @@
 | Mã Sprint | Web-Sprint-01 (Giai đoạn Khởi tạo Nghiên cứu & Kiến trúc) |
 | Đơn vị thực hiện | Khoa Công nghệ Thông tin, Trường Đại học Công nghệ Kỹ thuật TP.HCM (HCM-UTE) |
 | Chuyên ngành | Kỹ thuật Dữ liệu (Data Engineering) |
-| Phạm vi dữ liệu nền | 17 domains / 18 cuộc thi thực tế tại [`data/extractions/`](../../data/extractions/extractions_2026-11-15_1794720683.json) |
+| Phạm vi dữ liệu nền | 17 domains / 18 cuộc thi thực tế tại Cloudflare R2 (`silver/extractions/`) |
 | Mốc thời gian tham chiếu | Tháng 11/2026 (Chuẩn LTS & Best Practices 2026–2027) |
 | Nguyên tắc vận hành | Tập trung 100% vào nghiên cứu đối sánh, chuẩn hóa lược đồ dữ liệu, thiết kế đặc tả (Spec-Driven Development) và khóa hạ tầng trước khi viết mã ứng dụng Web. |
 

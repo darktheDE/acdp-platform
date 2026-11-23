@@ -51,7 +51,7 @@ class AppConfig(BaseSettings):
         description="Reference USD to VND exchange rate for Gold prize normalization",
     )
 
-    # Lakehouse Storage Configuration (Cloudflare R2 Exclusive - DIR-018)
+    # Lakehouse Storage Configuration (Cloudflare R2 Exclusive - DIR-021)
     bronze_storage_backend: Literal["cloudflare_r2"] = Field(
         default="cloudflare_r2",
         description="Storage backend locked exclusively to Cloudflare R2 ('cloudflare_r2')",

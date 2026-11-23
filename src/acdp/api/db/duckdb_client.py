@@ -1,7 +1,8 @@
-"""Per-request DuckDB in-memory connection manager reading Gold Parquet directly from Cloudflare R2 via httpfs."""
+"""Shared-connection DuckDB cursor manager reading Gold Parquet directly from Cloudflare R2 via httpfs."""
 
 from __future__ import annotations
 
+import threading
 from collections.abc import Iterator
 from contextlib import contextmanager
 
@@ -27,33 +28,44 @@ _PARQUET_ENTITIES = (
     "mart_competition_explorer",
 )
 
+_conn_lock = threading.Lock()
+_shared_con: duckdb.DuckDBPyConnection | None = None
 
-def _open_r2_parquet_connection() -> duckdb.DuckDBPyConnection:
-    """Open an in-memory DuckDB connection backed by Gold Parquet files on Cloudflare R2 via httpfs."""
-    if not settings.bucket_name:
-        raise RuntimeError("BUCKET_NAME is required for DuckDB R2 httpfs Gold queries.")
 
-    con = duckdb.connect(":memory:")
-    try:
-        con.execute(f"SET memory_limit='{settings.duckdb_memory_limit}'")
-        con.execute(f"SET threads={settings.duckdb_threads}")
-        settings.configure_duckdb_r2(con)
+def _get_or_init_shared_connection() -> duckdb.DuckDBPyConnection:
+    """Initialize a process-wide in-memory DuckDB connection with R2 httpfs views once."""
+    global _shared_con
+    if _shared_con is not None:
+        return _shared_con
 
-        bucket = settings.bucket_name.strip().strip("/")
-        for entity in _PARQUET_ENTITIES:
-            s3_uri = f"s3://{bucket}/gold/{entity}.parquet"
-            con.execute(f"CREATE OR REPLACE VIEW {entity} AS SELECT * FROM read_parquet('{s3_uri}')")
-        return con
-    except Exception:
-        con.close()
-        raise
+    with _conn_lock:
+        if _shared_con is not None:
+            return _shared_con
+        if not settings.bucket_name:
+            raise RuntimeError("BUCKET_NAME is required for DuckDB R2 httpfs Gold queries.")
+
+        con = duckdb.connect(":memory:")
+        try:
+            con.execute(f"SET memory_limit='{settings.duckdb_memory_limit}'")
+            con.execute(f"SET threads={settings.duckdb_threads}")
+            settings.configure_duckdb_r2(con)
+
+            bucket = settings.bucket_name.strip().strip("/")
+            for entity in _PARQUET_ENTITIES:
+                s3_uri = f"s3://{bucket}/gold/{entity}.parquet"
+                con.execute(f"CREATE OR REPLACE VIEW {entity} AS SELECT * FROM read_parquet('{s3_uri}')")
+            _shared_con = con
+            return _shared_con
+        except Exception:
+            con.close()
+            raise
 
 
 @contextmanager
 def get_duckdb_conn() -> Iterator[duckdb.DuckDBPyConnection]:
-    """Open an in-memory DuckDB connection over Cloudflare R2 Gold Parquet with 256MB memory cap."""
-    con = _open_r2_parquet_connection()
+    """Yield an isolated DuckDB cursor over the shared R2-backed Gold Parquet views."""
+    cursor = _get_or_init_shared_connection().cursor()
     try:
-        yield con
+        yield cursor
     finally:
-        con.close()
+        cursor.close()

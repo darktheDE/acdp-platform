@@ -20,7 +20,7 @@ from acdp.config import AppConfig
 
 
 def test_local_backend_rejected_under_r2_exclusive_policy() -> None:
-    """Verify legacy 'local' storage backend is disallowed under DIR-018 R2-exclusive policy."""
+    """Verify legacy 'local' storage backend is disallowed under DIR-021 R2-exclusive policy."""
     with pytest.raises(ValidationError):
         AppConfig(
             _env_file=None,
