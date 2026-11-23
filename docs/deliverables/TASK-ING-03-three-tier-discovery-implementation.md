@@ -75,7 +75,7 @@ flowchart TD
 3. `"GDELT Doc 2.0 API" api.gdeltproject.org/api/v2/doc/doc query mode artlist format json`
 
 ### 4.2. Tài liệu & Mã nguồn liên quan
-- Mã nguồn Discovery v2: [`src/acdp/v2/0_discover_urls.py`](../../src/acdp/v2/0_discover_urls.py), [`src/acdp/v2/discovery_sources.py`](../../src/acdp/v2/discovery_sources.py)
+- Mã nguồn Discovery v2: [`src/acdp/v2/discovery.py`](../../src/acdp/v2/discovery.py), [`src/acdp/v2/discovery_sources.py`](../../src/acdp/v2/discovery_sources.py)
 - Bộ kiểm thử: [`tests/test_discovery_v2.py`](../../tests/test_discovery_v2.py)
 - Báo cáo trực quan HTML: [`TASK-ING-03-three-tier-discovery-implementation-visual-dossier.html`](./TASK-ING-03-three-tier-discovery-implementation-visual-dossier.html)
 - Tài liệu nghiên cứu nền: [`TASK-ING-01-search-pattern-and-crawling-tradeoffs.md`](./TASK-ING-01-search-pattern-and-crawling-tradeoffs.md)

@@ -143,10 +143,9 @@ def test_upload_to_bronze_r2_and_empty_skip(monkeypatch: pytest.MonkeyPatch) -> 
 
 def test_v2_package_bronze_html_with_boundaries() -> None:
     """Verify ACDP v2 packages multi-page CrawlResult HTML with ACDP_PAGE_BOUNDARY."""
-    import importlib
     from types import SimpleNamespace
 
-    v2_bronze = importlib.import_module("acdp.v2.1_crawl_to_bronze")
+    from acdp.v2 import bronze_crawl as v2_bronze
     records = [
         SimpleNamespace(
             url="https://example.org/contest",
@@ -180,9 +179,8 @@ def test_v2_package_bronze_html_with_boundaries() -> None:
 
 def test_v2_upload_to_bronze_raw_html_r2_and_empty_skip(monkeypatch: pytest.MonkeyPatch) -> None:
     """Verify ACDP v2 uploads Raw Rendered HTML (.html) to R2 and skips empty payloads."""
-    import importlib
 
-    v2_bronze = importlib.import_module("acdp.v2.1_crawl_to_bronze")
+    from acdp.v2 import bronze_crawl as v2_bronze
     fake_s3 = MagicMock()
     monkeypatch.setattr(v2_bronze.settings, "bucket_name", "acdp-test-bucket")
     monkeypatch.setattr(type(v2_bronze.settings), "create_r2_client", lambda self: fake_s3)

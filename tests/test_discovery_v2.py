@@ -8,14 +8,13 @@ and direct Cloudflare R2 manifest upload.
 from __future__ import annotations
 
 import asyncio
-import importlib
 import json
 from unittest.mock import MagicMock
 
 import httpx
 import pytest
 
-discover_mod = importlib.import_module("acdp.v2.0_discover_urls")
+from acdp.v2 import discovery as discover_mod
 
 
 def test_canonicalize_url_and_noise_filter() -> None:
