@@ -104,7 +104,7 @@
       "task_type": "Research & Theory",
       "is_no_code": false,
       "owner": "Hung & Duy",
-      "status": "todo",
+      "status": "done",
       "priority": "high",
       "problem_statement": "Lớp Bạc hiện dùng Pydantic + LLM liên tục để bóc tách JSON/Parquet. Cần làm rõ việc phụ thuộc LLM liên tục có làm giảm đi tính chất của ngành Kỹ thuật Dữ liệu (DE) hay không, và thiết kế hướng kết hợp kỹ thuật DE tất định.",
       "research_questions": [
@@ -114,9 +114,12 @@
       "acceptance_criteria": [
         "Xây dựng kiến trúc Hybrid DE + LLM Extraction có căn cứ khoa học và tỷ lệ fallback định lượng."
       ],
-      "deliverables": ["docs/deliverables/TASK-SLV-01-hybrid-de-vs-llm-extraction-study.md"],
+      "deliverables": [
+        "docs/deliverables/TASK-SLV-01-hybrid-de-vs-llm-extraction-study.md",
+        "docs/deliverables/TASK-SLV-01-hybrid-de-vs-llm-extraction-study-visual-dossier.html"
+      ],
       "notes": "",
-      "updated_at": "2026-11-22"
+      "updated_at": "2026-11-23"
     },
     {
       "id": "TASK-SLV-02",
@@ -163,6 +166,52 @@
       "deliverables": ["docs/deliverables/TASK-GLD-01-kimball-star-schema-audit-and-alternatives.md"],
       "notes": "",
       "updated_at": "2026-11-22"
+    },
+    {
+      "id": "TASK-BRZ-02",
+      "title": "Triển khai Lưu trữ Raw Rendered HTML ở Lớp Đồng (1_crawl_to_bronze.py)",
+      "cycle": "Cycle 06",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Bronze",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "high",
+      "problem_statement": "Hiện thực hóa quyết định từ TASK-BRZ-01: chuyển 1_crawl_to_bronze.py sang lưu Raw Rendered HTML (result.html) và đóng gói ACDP_PAGE_BOUNDARY lên Cloudflare R2 bronze/ thay vì raw_markdown.",
+      "research_questions": [],
+      "acceptance_criteria": [
+        "1_crawl_to_bronze.py lưu tệp .html nguyên bản (text/html; charset=utf-8) lên R2 bronze/.",
+        "Hỗ trợ đóng gói nhiều trang con từ AdaptiveCrawler bằng thẻ phân cách ACDP_PAGE_BOUNDARY."
+      ],
+      "deliverables": ["src/acdp/1_crawl_to_bronze.py"],
+      "notes": "Phụ thuộc TASK-BRZ-01.",
+      "updated_at": "2026-11-23"
+    },
+    {
+      "id": "TASK-SLV-03",
+      "title": "Triển khai Hybrid Deterministic Sandwich & Clean Markdown ở Lớp Bạc (2_instruction.py)",
+      "cycle": "Cycle 06",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Silver",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "high",
+      "problem_statement": "Hiện thực hóa quyết định từ TASK-BRZ-01 và TASK-SLV-01: 2_instruction.py đọc Raw HTML từ bronze/, chạy DefaultMarkdownGenerator() trong RAM xuất silver/markdown/, trích xuất tất định JSON-LD/og:*/Regex trước khi gọi Bounded LLM (Instructor), và chuyển luồng RAG (3_ingest_to_qdrant.py) sang đọc từ silver/markdown/.",
+      "research_questions": [],
+      "acceptance_criteria": [
+        "2_instruction.py xuất Clean Markdown lên R2 silver/markdown/ và tương thích ngược với các object .md lịch sử trên bronze/.",
+        "Tích hợp tầng tiền trích xuất tất định (JSON-LD, og:*, Regex) và pre-filter trước khi gọi Instructor LLM.",
+        "3_ingest_to_qdrant.py đọc Markdown sạch từ silver/markdown/ thay vì đọc tắt từ bronze/."
+      ],
+      "deliverables": [
+        "src/acdp/2_instruction.py",
+        "src/acdp/3_ingest_to_qdrant.py"
+      ],
+      "notes": "Phụ thuộc TASK-BRZ-01 và TASK-SLV-01.",
+      "updated_at": "2026-11-23"
     },
     {
       "id": "TASK-CLD-01",
