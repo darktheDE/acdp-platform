@@ -207,7 +207,7 @@
       "task_type": "Engineering",
       "is_no_code": false,
       "owner": "Hung & Duy",
-      "status": "todo",
+      "status": "done",
       "priority": "high",
       "problem_statement": "Hiện thực hóa quyết định từ TASK-BRZ-01, TASK-SLV-01 và DIR-022 tại src/acdp/v2/silver_transform.py: đọc Raw HTML từ bronze/, chạy DefaultMarkdownGenerator() trong RAM xuất silver/markdown/, trích xuất tất định JSON-LD/og:*/Regex + lọc scope (CNTT/AI/Sinh viên/năm hiện tại ± 1, loại cuộc thi không có trang web chính thức, khử trùng lặp bài truyền thông về trang chính thức) trước khi gọi Bounded LLM (Instructor), và chuyển luồng RAG (src/acdp/v2/rag_ingest.py) sang đọc từ silver/markdown/.",
       "research_questions": [],
@@ -218,9 +218,12 @@
       ],
       "deliverables": [
         "src/acdp/v2/silver_transform.py",
-        "src/acdp/v2/rag_ingest.py"
+        "src/acdp/v2/rag_ingest.py",
+        "tests/test_silver_transform_v2.py",
+        "docs/deliverables/TASK-SLV-03-hybrid-sandwich-and-rag-silver-implementation.md",
+        "docs/deliverables/TASK-SLV-03-hybrid-sandwich-and-rag-silver-implementation-visual-dossier.html"
       ],
-      "notes": "Phụ thuộc TASK-BRZ-01 và TASK-SLV-01. Triển khai tại src/acdp/v2.",
+      "notes": "Phụ thuộc TASK-BRZ-01 và TASK-SLV-01. Triển khai tại src/acdp/v2. Chạy thật trên R2 & Qdrant Cloud ngày 2026-11-23: 33 HTML Bronze -> 26 Clean Markdown + Silver JSON (7 bị loại theo DIR-022) -> 648 chunks (26 domain) nạp vào Qdrant Cloud; pytest 29 passed (1 xfailed của TASK-SLV-04).",
       "updated_at": "2026-11-23"
     },
     {

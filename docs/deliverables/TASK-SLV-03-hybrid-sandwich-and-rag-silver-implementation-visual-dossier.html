@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TASK-SLV-03 — Hybrid Deterministic Sandwich &amp; Silver RAG Visual Dossier</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 antialiased">
+  <div class="max-w-6xl mx-auto px-6 py-10 space-y-10">
+    <!-- Header -->
+    <header class="border-b border-slate-800 pb-6">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <span class="inline-block px-3 py-1 text-xs font-semibold tracking-wider uppercase rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+            TASK-SLV-03 • Cycle 06 • TLCN Phase 1
+          </span>
+          <h1 class="mt-3 text-3xl font-bold text-white">
+            Hybrid Deterministic Sandwich &amp; Silver-to-Qdrant RAG
+          </h1>
+          <p class="mt-2 text-slate-400 text-sm">
+            ACDP Platform • Khoa CNTT — Trường ĐH Công nghệ Kỹ thuật TP.HCM (HCM-UTE) • Ngày hoàn tất: 2026-11-23
+          </p>
+        </div>
+        <div class="text-right text-xs text-slate-400">
+          <div>Tác giả: Đỗ Kiến Hưng &amp; Nguyễn Văn Quang Duy</div>
+          <div>Deliverables: <code class="text-emerald-300">v2/silver_transform.py</code>, <code class="text-emerald-300">v2/rag_ingest.py</code></div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Tier 1: Executive KPI Cards -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="p-5 rounded-xl bg-slate-900 border border-slate-800">
+        <div class="text-xs uppercase text-slate-400">Bronze HTML Đầu vào</div>
+        <div class="mt-2 text-3xl font-bold text-white">33</div>
+        <div class="mt-1 text-xs text-slate-400">Snapshot ngày 2026-11-23 trên R2</div>
+      </div>
+      <div class="p-5 rounded-xl bg-slate-900 border border-slate-800">
+        <div class="text-xs uppercase text-slate-400">Silver Hợp lệ &amp; Đã lọc</div>
+        <div class="mt-2 text-3xl font-bold text-emerald-400">26 / 7</div>
+        <div class="mt-1 text-xs text-slate-400">26 đạt chuẩn DIR-022 • 7 bị loại</div>
+      </div>
+      <div class="p-5 rounded-xl bg-slate-900 border border-slate-800">
+        <div class="text-xs uppercase text-slate-400">Qdrant Vector Chunks</div>
+        <div class="mt-2 text-3xl font-bold text-sky-400">648</div>
+        <div class="mt-1 text-xs text-slate-400">Từ 26 Clean Markdown (@cf/baai/bge-m3)</div>
+      </div>
+      <div class="p-5 rounded-xl bg-slate-900 border border-slate-800">
+        <div class="text-xs uppercase text-slate-400">Kiểm thử &amp; Drift Audit</div>
+        <div class="mt-2 text-3xl font-bold text-violet-400">29 / 0</div>
+        <div class="mt-1 text-xs text-slate-400">29 pytest passed (1 xfail) • 0 drift</div>
+      </div>
+    </section>
+
+    <!-- Tier 2: Architecture Diagram & Benchmark Chart -->
+    <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="lg:col-span-2 p-6 rounded-xl bg-slate-900 border border-slate-800">
+        <h2 class="text-lg font-semibold text-white mb-4">Kiến trúc Hybrid Deterministic Sandwich (v2)</h2>
+        <div class="mermaid bg-slate-950/60 p-4 rounded-lg overflow-x-auto">
+flowchart LR
+    B["R2 bronze/*.html<br/>(33 snapshots)"] --> E1["1. Deterministic Extract<br/>DefaultMarkdownGenerator (RAM)<br/>JSON-LD / og:* / Regex"]
+    E1 --> G{"2. Scope Gate (DIR-022)<br/>CNTT/AI • SV ĐH • 2025-2027<br/>Official Site &amp; Dedup"}
+    G -- "7 dropped" --> R["silver/_reports/"]
+    G -- "26 passed" --> L["3. Bounded LLM<br/>(Instructor + Context)"]
+    L --> V["4. Validate &amp; Load<br/>silver/markdown/ (26 .md)<br/>silver/extractions/ (26 .json)"]
+    V --> Q["v2/rag_ingest.py<br/>648 chunks -> Qdrant Cloud"]
+        </div>
+      </div>
+      <div class="p-6 rounded-xl bg-slate-900 border border-slate-800 flex flex-col justify-between">
+        <div>
+          <h2 class="text-lg font-semibold text-white mb-4">Phân bổ Kết quả Lọc (33 Snapshots)</h2>
+          <canvas id="filterChart" height="240"></canvas>
+        </div>
+        <p class="mt-4 text-xs text-slate-400">
+          7 bản ghi bị loại gồm: 3 ngoài CNTT/AI, 1 không dành cho SV ĐH, 1 thiếu trang chính thức, 1 trùng bài truyền thông (ybox.vn &rarr; ai-arena), 1 hậu kiểm LLM.
+        </p>
+      </div>
+    </section>
+
+    <!-- Tier 3: Collapsible Technical Details -->
+    <section class="space-y-4">
+      <details open class="p-5 rounded-xl bg-slate-900 border border-slate-800">
+        <summary class="cursor-pointer font-semibold text-white">Chi tiết kỹ thuật &amp; Lệnh vận hành</summary>
+        <div class="mt-4 space-y-3 text-sm text-slate-300">
+          <p><strong>1. Gom nhóm đa URL trên cùng domain:</strong> Phân rã URL từ thẻ <code>ACDP_PAGE_BOUNDARY</code> để giữ nguyên 2 bài đăng khác nhau trên <code>ybox.vn</code> trước khi đối chiếu trang chính thức.</p>
+          <p><strong>2. RAG đọc thuần từ Silver:</strong> <code>src/acdp/v2/rag_ingest.py</code> chỉ đọc <code>silver/markdown/</code> và làm giàu <code>canonical_url</code> từ <code>silver/extractions/</code>, loại bỏ hoàn toàn việc đọc tắt từ <code>bronze/</code>.</p>
+          <pre class="p-3 rounded-lg bg-slate-950 text-xs text-emerald-300 overflow-x-auto">uv run python -m acdp.v2.silver_transform --date 2026-11-23 --extract
+uv run python -m acdp.v2.rag_ingest --date 2026-11-23</pre>
+        </div>
+      </details>
+    </section>
+  </div>
+
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+    new Chart(document.getElementById('filterChart'), {
+      type: 'doughnut',
+      data: {
+        labels: [
+          'Hợp lệ (26)',
+          'Ngoài CNTT/AI (3)',
+          'Không phải SV ĐH (1)',
+          'Thiếu web chính thức (1)',
+          'Trùng truyền thông (1)',
+          'Hậu kiểm LLM (1)'
+        ],
+        datasets: [{
+          data: [26, 3, 1, 1, 1, 1],
+          backgroundColor: ['#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#3b82f6', '#64748b'],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        plugins: {
+          legend: { position: 'bottom', labels: { color: '#cbd5e1', font: { size: 11 } } }
+        }
+      }
+    });
+  </script>
+</body>
+</html>
