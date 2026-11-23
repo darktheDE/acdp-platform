@@ -348,7 +348,7 @@
       "task_type": "Architecture",
       "is_no_code": false,
       "owner": "Hung & Duy",
-      "status": "todo",
+      "status": "done",
       "priority": "high",
       "problem_statement": "Theo góp ý của Giảng viên, dữ liệu cuộc thi không quá bảo mật như doanh nghiệp nên để Hybrid (DuckDB + Metabase ở local kết hợp Cloud) sẽ khó quản lý và thiếu đồng bộ. Cần thiết kế kiến trúc đồng bộ lên Cloud Free Tier (Next.js, Supabase, TailwindCSS, R2, Cloudflare BGE-M3, Qdrant Cloud, Prefect/GitHub Actions).",
       "research_questions": [
@@ -357,9 +357,12 @@
       "acceptance_criteria": [
         "Hoàn thành bản thiết kế kiến trúc Full Cloud Free-Tier kèm bảng quota và lộ trình chuyển đổi từ TLCN sang KLTN."
       ],
-      "deliverables": ["docs/deliverables/TASK-CLD-03-full-cloud-free-tier-architecture.md"],
-      "notes": "",
-      "updated_at": "2026-11-22"
+      "deliverables": [
+        "docs/deliverables/TASK-CLD-03-full-cloud-free-tier-architecture.md",
+        "docs/deliverables/TASK-CLD-03-full-cloud-free-tier-architecture-visual-dossier.html"
+      ],
+      "notes": "Hoàn tất thiết kế Full Cloud Free-Tier ($0/tháng, Cardless/Hard-Cap an toàn thẻ 0đ): giữ DuckDB httpfs + TTL Cache, thay Metabase bằng MotherDuck Lite + Next.js Recharts; đưa ra PA-1 (FastAPI trên HF Spaces 16GB RAM) và PA-2 (Next.js BFF + Supabase), bác bỏ Rust rewrite; kèm Keep-Alive 3 ngày và Failover Neon/pgvector/Groq/OpenRouter.",
+      "updated_at": "2026-11-23"
     },
     {
       "id": "TASK-CLD-04",
@@ -382,6 +385,70 @@
       "deliverables": ["src/acdp/config.py", "src/acdp/api"],
       "notes": "",
       "updated_at": "2026-11-22"
+    },
+    {
+      "id": "TASK-CLD-05",
+      "title": "Triển khai Serving API (PA-1: HF Spaces / PA-2: Next.js BFF) & Frontend lên Vercel Hobby kèm TTL Cache",
+      "cycle": "Cycle 07",
+      "scope": "TLCN -> KLTN",
+      "layer": "Cloud & Infra",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "high",
+      "problem_statement": "Hiện thực hóa kiến trúc TASK-CLD-03: đưa tầng Serving API (FastAPI + DuckDB httpfs lên Hugging Face Spaces Docker 16GB RAM theo PA-1, hoặc gộp Next.js Route Handlers theo PA-2) và Frontend Next.js 16 lên Vercel Hobby, bổ sung In-Memory TTL Cache (5-15 phút) cho 6 bảng mart_*.",
+      "research_questions": [],
+      "acceptance_criteria": [
+        "Frontend truy cập được qua URL công khai Vercel Hobby, kết nối thông suốt với API trên Cloud.",
+        "Bật TTL Cache cho Gold Marts giúp giảm >95% lượt gọi httpfs lặp lại sang Cloudflare R2."
+      ],
+      "deliverables": ["Dockerfile.api", "apps/web/next.config.ts", "src/acdp/api/services/gold_queries.py"],
+      "notes": "Phụ thuộc TASK-CLD-03, TASK-CLD-04 và TASK-CLD-07.",
+      "updated_at": "2026-11-23"
+    },
+    {
+      "id": "TASK-CLD-06",
+      "title": "Thiết lập GitHub Actions Keep-Alive, Backup pg_dump & Chuỗi Fallback LLM/Vector",
+      "cycle": "Cycle 07",
+      "scope": "TLCN -> KLTN",
+      "layer": "Cloud & Infra",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "high",
+      "problem_statement": "Phòng ngừa rủi ro R1, R2, R4 từ TASK-CLD-03: chống ngủ đông/xóa cụm (Supabase 7 ngày, Qdrant Cloud 7/28 ngày, HF Spaces 48h), tự động backup OLTP và cấu hình fallback đa nhà cung cấp AI.",
+      "research_questions": [],
+      "acceptance_criteria": [
+        "Workflow .github/workflows/keep-alive.yml chạy định kỳ mỗi 3 ngày ping API, Supabase và Qdrant Cloud thành công.",
+        "Workflow backup pg_dump hàng tuần lưu snapshot OLTP an toàn lên R2 private hoặc Private Artifact.",
+        "Cấu hình LiteLLM fallback chain (Gemini -> Groq -> OpenRouter :free) hoạt động khi gặp HTTP 429."
+      ],
+      "deliverables": [".github/workflows/keep-alive.yml", "src/acdp/api/services/rag_service.py"],
+      "notes": "Phụ thuộc TASK-CLD-03 và TASK-CLD-05.",
+      "updated_at": "2026-11-23"
+    },
+    {
+      "id": "TASK-CLD-07",
+      "title": "Chốt Phản biện Kiến trúc Full Cloud (PA-1 vs PA-2), Cấu hình MotherDuck Lite & Ban hành ADR-0002",
+      "cycle": "Cycle 07",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Cloud & Infra",
+      "task_type": "Architecture",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "high",
+      "problem_statement": "Thực hiện phản biện nội bộ (DIR-011) giữa Hưng và Duy để chốt phương án PA-1 (giữ FastAPI) hoặc PA-2 (Next.js BFF + Supabase), thiết lập MotherDuck Lite Free thay thế Metabase local, và ban hành ADR-0002 chính thức.",
+      "research_questions": [],
+      "acceptance_criteria": [
+        "Hai tác giả ký duyệt lựa chọn PA-1 hoặc PA-2 và ban hành docs/adr/0002-full-cloud-free-tier-architecture.md.",
+        "MotherDuck Lite kết nối đọc thành công Gold Parquet trên R2."
+      ],
+      "deliverables": ["docs/adr/0002-full-cloud-free-tier-architecture.md"],
+      "notes": "Phụ thuộc TASK-CLD-03; mở khóa TASK-CLD-05.",
+      "updated_at": "2026-11-23"
     },
     {
       "id": "TASK-SRV-01",
@@ -556,6 +623,127 @@
       "deliverables": ["docs/tasks/task-registry.md"],
       "notes": "Marked as No-Code task: không viết code backend/frontend ticketing.",
       "updated_at": "2026-11-22"
+    },
+    {
+      "id": "TASK-ING-03",
+      "title": "Triển khai Module Discovery 3 Tầng (Sitemap/RSS/GDELT + Tavily/Exa Free Tier)",
+      "cycle": "Cycle 06",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Discovery",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "medium",
+      "problem_statement": "Hiện thực hóa kết quả nghiên cứu từ TASK-ING-01 thành module Python tự động phát hiện URL cuộc thi mới (Sitemap/RSS/GDELT kết hợp Tavily/Exa Free Tier), thay thế việc nhập danh sách URL thủ công ở 1_crawl_to_bronze.py.",
+      "research_questions": [],
+      "acceptance_criteria": [
+        "Module src/acdp/0_discover_urls.py chạy được 3 tầng discovery trong hạn mức < 5% Free Tier và xuất danh sách URL khử trùng."
+      ],
+      "deliverables": ["src/acdp/0_discover_urls.py"],
+      "notes": "Phụ thuộc TASK-ING-01; làm tiền đề cho TASK-ING-02 ở KLTN.",
+      "updated_at": "2026-11-23"
+    },
+    {
+      "id": "TASK-TST-01",
+      "title": "Kiểm thử E2E Toàn luồng Cloud & Diễn tập Demo Day (T-15 phút)",
+      "cycle": "Cycle 08",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Serving & Web",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "high",
+      "problem_statement": "Kiểm thử tích hợp toàn luồng người dùng (Auth -> /profile -> Tạo/Tham gia đội -> One-Pager -> RAG Chatbot) trên hạ tầng Full Cloud (Vercel + HF Spaces + Supabase + Qdrant Cloud) và diễn tập kịch bản Pre-warm T-15 phút trước khi bảo vệ.",
+      "research_questions": [],
+      "acceptance_criteria": [
+        "Toàn bộ luồng E2E chạy thông suốt trên URL công khai không lỗi 500/CORS.",
+        "Hoàn thành checklist Pre-warm T-15 phút và kiểm chứng fallback local-offline."
+      ],
+      "deliverables": ["tests/api"],
+      "notes": "Phụ thuộc TASK-CLD-05, TASK-SRV-01..04.",
+      "updated_at": "2026-11-23"
+    },
+    {
+      "id": "TASK-ACD-01",
+      "title": "Xây dựng Slide Bảo vệ Cuối kỳ TLCN & Bộ Q&A Phản biện Hội đồng",
+      "cycle": "Cycle 08",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Academic & Ops",
+      "task_type": "Academic",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "high",
+      "problem_statement": "Xây dựng bộ slide bảo vệ cuối kỳ TLCN tổng hợp các kết quả đạt được (Medallion R2, Two-Tier Gold, Hybrid DE+LLM, Full Cloud Free-Tier, Ghép đội OLTP & RAG) kèm ngân hàng câu hỏi phản biện từ Hội đồng.",
+      "research_questions": [],
+      "acceptance_criteria": [
+        "Xuất bản docs/academic/Slide_BaoVe_TLCN.html và hoàn thiện kịch bản thuyết trình."
+      ],
+      "deliverables": ["docs/academic/Slide_BaoVe_TLCN.html"],
+      "notes": "Bổ sung cho NT-021 (Báo cáo TLCN).",
+      "updated_at": "2026-11-23"
+    },
+    {
+      "id": "TASK-EVL-01",
+      "title": "Thực nghiệm Định lượng Quy mô KLTN (100–500 Cuộc thi): Ragas Scorecard & Ablation Study",
+      "cycle": "Cycle 09",
+      "scope": "KLTN (Phase 2)",
+      "layer": "Serving & Web",
+      "task_type": "Research & Theory",
+      "is_no_code": false,
+      "owner": "Duy & Hung",
+      "status": "todo",
+      "priority": "high",
+      "problem_statement": "Thực hiện đánh giá định lượng toàn diện trên tập dữ liệu KLTN (100–500 cuộc thi): đo Faithfulness/Answer Relevance bằng Ragas, đo P95 Latency trên Cloud và thực hiện Ablation Study so sánh Hybrid DE+LLM với Pure LLM.",
+      "research_questions": [],
+      "acceptance_criteria": [
+        "Có bảng số liệu thực nghiệm đầy đủ (Ragas, Latency, Token Cost) phục vụ Chương 4 Luận văn KLTN."
+      ],
+      "deliverables": ["docs/experiments/0002-kltn-quantitative-evaluation.md"],
+      "notes": "Mở rộng từ NT-012 cho quy mô KLTN.",
+      "updated_at": "2026-11-23"
+    },
+    {
+      "id": "TASK-OPS-03",
+      "title": "Bảo vệ API Public & Giám sát Quota Free Tier (Rate Limiting / Cloudflare Turnstile)",
+      "cycle": "Cycle 10",
+      "scope": "KLTN (Phase 2)",
+      "layer": "Cloud & Infra",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung",
+      "status": "todo",
+      "priority": "medium",
+      "problem_statement": "Khi mở public cho 500–1.000 sinh viên sử dụng ở KLTN, cần triển khai Rate Limiting trên /copilot và /auth (kèm Cloudflare Turnstile nếu cần) để bảo vệ hạn mức 10–15 RPM của Gemini và 100 GB bandwidth của Vercel.",
+      "research_questions": [],
+      "acceptance_criteria": [
+        "Áp dụng Rate Limiting cho các endpoint AI và Auth; kiểm chứng chặn request spam trả về HTTP 429."
+      ],
+      "deliverables": ["src/acdp/api/main.py"],
+      "notes": "",
+      "updated_at": "2026-11-23"
+    },
+    {
+      "id": "TASK-KLT-01",
+      "title": "Soạn thảo Luận văn Khóa luận Tốt nghiệp (FIT-HCMUTE) & Slide Bảo vệ KLTN",
+      "cycle": "Cycle 10",
+      "scope": "KLTN (Phase 2)",
+      "layer": "Academic & Ops",
+      "task_type": "Academic",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "high",
+      "problem_statement": "Hoàn thiện toàn văn Luận văn Khóa luận Tốt nghiệp (Chương 1–5 chuẩn FIT-HCMUTE) và Slide bảo vệ KLTN dựa trên kết quả thực nghiệm KLTN.",
+      "research_questions": [],
+      "acceptance_criteria": [
+        "Hoàn thiện bản thảo Luận văn KLTN và Slide bảo vệ KLTN."
+      ],
+      "deliverables": ["docs/academic/KhoaLuan_TotNghiep_KTDL.md", "docs/academic/Slide_BaoVe_KLTN.html"],
+      "notes": "",
+      "updated_at": "2026-11-23"
     }
   ]
 }

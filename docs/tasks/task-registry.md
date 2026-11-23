@@ -2,8 +2,8 @@
 
 This ledger is auto-generated from [`tasks-data.json`](./tasks-data.json) and synchronized with the interactive portal [`index.html`](./index.html) per **DIR-018**.
 
-- **Total tasks**: `49` (`30` completed)
-- **Scope distribution**: `44` TLCN (Phase 1) | `7` KLTN (Phase 2)
+- **Total tasks**: `58` (`31` completed)
+- **Scope distribution**: `50` TLCN (Phase 1) | `12` KLTN (Phase 2)
 - **Last updated**: `2026-11-22`
 
 ---
@@ -51,8 +51,11 @@ This ledger is auto-generated from [`tasks-data.json`](./tasks-data.json) and sy
 | **TASK-GLD-03** | Cycle 09 | KLTN (Phase 2) | Gold | Nâng cấp SCD Type 2 & CDC Delta Events ở Lớp Vàng phục vụ Mail Alert (4_analytics_gold.py) | Hung & Duy | [`4_analytics_gold.py`](../../src/acdp/4_analytics_gold.py), [`test_gold_star_schema.py`](../../tests/test_gold_star_schema.py) | ⏳ Todo |
 | **TASK-CLD-01** | Cycle 07 | TLCN (Phase 1) | Cloud & Infra | Đồng nhất Qdrant Cloud & Xác định Vai trò Qdrant Docker Local | Hung & Duy | [`docker-compose.yml`](../../docker-compose.yml), [`config.py`](../../src/acdp/config.py) | ⏳ Todo |
 | **TASK-CLD-02** | Cycle 07 | TLCN (Phase 1) | Cloud & Infra | Phân định Ranh giới Vai trò giữa Web Dashboard và Metabase | Hung & Duy | [`T15_metabase_and_prefect_lightweight_architecture.md`](../../docs/rd-tasks/T15_metabase_and_prefect_lightweight_architecture.md) | ⏳ Todo |
-| **TASK-CLD-03** | Cycle 07 | TLCN -> KLTN | Cloud & Infra | Kiến trúc Đồng bộ Full Cloud Free-Tier (Giải quyết Hybrid Local vs Cloud) | Hung & Duy | `docs/deliverables/TASK-CLD-03-full-cloud-free-tier-architecture.md` | ⏳ Todo |
+| **TASK-CLD-03** | Cycle 07 | TLCN -> KLTN | Cloud & Infra | Kiến trúc Đồng bộ Full Cloud Free-Tier (Giải quyết Hybrid Local vs Cloud) | Hung & Duy | [`TASK-CLD-03-full-cloud-free-tier-architecture.md`](../../docs/deliverables/TASK-CLD-03-full-cloud-free-tier-architecture.md), [`TASK-CLD-03-full-cloud-free-tier-architecture-visual-dossier.html`](../../docs/deliverables/TASK-CLD-03-full-cloud-free-tier-architecture-visual-dossier.html) | ✅ Done |
 | **TASK-CLD-04** | Cycle 07 | TLCN -> KLTN | Cloud & Infra | Triển khai Kết nối Supabase OLTP & DuckDB Direct-on-R2 (s3://) | Hung | [`config.py`](../../src/acdp/config.py), [`api`](../../src/acdp/api) | ⏳ Todo |
+| **TASK-CLD-05** | Cycle 07 | TLCN -> KLTN | Cloud & Infra | Triển khai Serving API (PA-1: HF Spaces / PA-2: Next.js BFF) & Frontend lên Vercel Hobby kèm TTL Cache | Hung & Duy | [`Dockerfile.api`](../../Dockerfile.api), [`next.config.ts`](../../apps/web/next.config.ts), [`gold_queries.py`](../../src/acdp/api/services/gold_queries.py) | ⏳ Todo |
+| **TASK-CLD-06** | Cycle 07 | TLCN -> KLTN | Cloud & Infra | Thiết lập GitHub Actions Keep-Alive, Backup pg_dump & Chuỗi Fallback LLM/Vector | Hung & Duy | `.github/workflows/keep-alive.yml`, [`rag_service.py`](../../src/acdp/api/services/rag_service.py) | ⏳ Todo |
+| **TASK-CLD-07** | Cycle 07 | TLCN (Phase 1) | Cloud & Infra | Chốt Phản biện Kiến trúc Full Cloud (PA-1 vs PA-2), Cấu hình MotherDuck Lite & Ban hành ADR-0002 | Hung & Duy | `docs/adr/0002-full-cloud-free-tier-architecture.md` | ⏳ Todo |
 | **TASK-SRV-01** | Cycle 08 | TLCN (Phase 1) | Serving & Web | Xây dựng Trang Hồ sơ Cá nhân Sinh viên (/profile — Định dạng Mini-CV) | Hung | `apps/web/app/profile/page.tsx`, [`api`](../../src/acdp/api) | ⏳ Todo |
 | **TASK-SRV-02** | Cycle 08 | TLCN (Phase 1) | Serving & Web | Hệ thống Tạo Đội & Xin Tham Gia Đội trên từng Cuộc thi (Thuần OLTP — Không AI) | Hung | [`competitions`](../../apps/web/app/competitions), [`api`](../../src/acdp/api) | ⏳ Todo |
 | **TASK-SRV-03** | Cycle 08 | TLCN (Phase 1) | Serving & Web | Màn hình Tổng hợp Thông tin Cuộc thi & Đội thi (Team Summary để gửi Giảng viên) | Hung | `apps/web/app/teams` | ⏳ Todo |
@@ -61,6 +64,12 @@ This ledger is auto-generated from [`tasks-data.json`](./tasks-data.json) and sy
 | **TASK-SRV-05** | Cycle 09 | KLTN (Phase 2) | Serving & Web | Hệ thống Thông báo & Mail Service Tự động khi có Cuộc thi Mới | Hung | [`services`](../../src/acdp/api/services) | ⏳ Todo |
 | **TASK-OPS-01** | Cycle 10 | KLTN (Phase 2) | Academic & Ops | Triển khai Truyền thông Bài bản, Bộ Nhận diện Thương hiệu & Fanpage *(No-Code)* | Duy & Hung | [`task-registry.md`](../../docs/tasks/task-registry.md) | ⏳ Todo |
 | **TASK-OPS-02** | Cycle 10 | KLTN (Phase 2) | Academic & Ops | Nền tảng Quản lý Ticket & Phản hồi Người dùng (External No-Code Platform) *(No-Code)* | Hung & Duy | [`task-registry.md`](../../docs/tasks/task-registry.md) | ⏳ Todo |
+| **TASK-ING-03** | Cycle 06 | TLCN (Phase 1) | Discovery | Triển khai Module Discovery 3 Tầng (Sitemap/RSS/GDELT + Tavily/Exa Free Tier) | Hung & Duy | `src/acdp/0_discover_urls.py` | ⏳ Todo |
+| **TASK-TST-01** | Cycle 08 | TLCN (Phase 1) | Serving & Web | Kiểm thử E2E Toàn luồng Cloud & Diễn tập Demo Day (T-15 phút) | Hung & Duy | [`api`](../../tests/api) | ⏳ Todo |
+| **TASK-ACD-01** | Cycle 08 | TLCN (Phase 1) | Academic & Ops | Xây dựng Slide Bảo vệ Cuối kỳ TLCN & Bộ Q&A Phản biện Hội đồng | Hung & Duy | `docs/academic/Slide_BaoVe_TLCN.html` | ⏳ Todo |
+| **TASK-EVL-01** | Cycle 09 | KLTN (Phase 2) | Serving & Web | Thực nghiệm Định lượng Quy mô KLTN (100–500 Cuộc thi): Ragas Scorecard & Ablation Study | Duy & Hung | `docs/experiments/0002-kltn-quantitative-evaluation.md` | ⏳ Todo |
+| **TASK-OPS-03** | Cycle 10 | KLTN (Phase 2) | Cloud & Infra | Bảo vệ API Public & Giám sát Quota Free Tier (Rate Limiting / Cloudflare Turnstile) | Hung | [`main.py`](../../src/acdp/api/main.py) | ⏳ Todo |
+| **TASK-KLT-01** | Cycle 10 | KLTN (Phase 2) | Academic & Ops | Soạn thảo Luận văn Khóa luận Tốt nghiệp (FIT-HCMUTE) & Slide Bảo vệ KLTN | Hung & Duy | `docs/academic/KhoaLuan_TotNghiep_KTDL.md`, `docs/academic/Slide_BaoVe_KLTN.html` | ⏳ Todo |
 
 ---
 
