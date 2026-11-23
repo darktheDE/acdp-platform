@@ -48,7 +48,7 @@ acdp-platform/
 │   ├── academic/             # TLCN report draft, registration & NCKH proposal
 │   ├── specs/                # Master SPEC.md & technical specs (SPEC-0001..0006)
 │   └── tasks/                # Active sprint context, In-Repo task registry (index.html) & 15-week roadmap
-├── docker-compose.yml        # Docker profiles: core (Web+API+PG18+Qdrant), bi (Metabase)
+├── docker-compose.yml        # Docker profiles: core (Web+API+PG18), local-backup (Qdrant), bi (Metabase), pipeline (Prefect)
 ├── Dockerfile.api            # Slim FastAPI production image (985 MB)
 ├── openapi.json              # Exported OpenAPI 3.1 contract for Frontend codegen
 ├── pyproject.toml            # Python dependencies & optional extras (uv)
@@ -92,9 +92,9 @@ uv run python -m src.acdp.4_analytics_gold --build --verify
 # 6. Launch Full-Stack Web Portal & API (Docker core profile: :3000 & :8000)
 docker compose --profile core up -d --build
 
-# 7. (Optional) Launch Metabase BI (:3001) & generate DuckDB httpfs R2 init SQL
-docker compose --profile bi up -d
-uv run python -m src.acdp.4_analytics_gold --print-metabase-sql
+# 7. (Optional On-Demand DataOps BI) Generate DuckDB R2 views for MotherDuck Lite / local Metabase (:3001)
+uv run python -m acdp.v2.gold_star_schema --metabase-sql
+docker compose --profile bi up -d metabase
 ```
 
 ---

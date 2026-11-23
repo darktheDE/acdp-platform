@@ -342,7 +342,7 @@
       "task_type": "Architecture",
       "is_no_code": false,
       "owner": "Hung & Duy",
-      "status": "todo",
+      "status": "done",
       "priority": "medium",
       "problem_statement": "Trên Web Portal đã có Dashboard phân tích bằng Recharts, nên cần làm rõ vai trò thực sự của Metabase là gì hoặc có nên loại bỏ hoàn toàn.",
       "research_questions": [
@@ -351,9 +351,13 @@
       "acceptance_criteria": [
         "Chốt quyết định chính thức trong T15 và đồng bộ tài liệu kiến trúc."
       ],
-      "deliverables": ["docs/rd-tasks/T15_metabase_and_prefect_lightweight_architecture.md"],
-      "notes": "",
-      "updated_at": "2026-11-22"
+      "deliverables": [
+        "docs/rd-tasks/T15_metabase_and_prefect_lightweight_architecture.md",
+        "docs/deliverables/TASK-CLD-02-web-dashboard-vs-metabase-boundary.md",
+        "docs/deliverables/TASK-CLD-02-web-dashboard-vs-metabase-boundary-visual-dossier.html"
+      ],
+      "notes": "Chốt kiến trúc 3 tầng BI trong T15: (1) Web /dashboard (Next.js 16 + Recharts) đọc 6 bảng mart_* phục vụ Sinh viên & Giảng viên (<20ms warm); (2) MotherDuck Lite Free (10GB, 10h Pulse/tháng, $0) thay Metabase trên Cloud để DE chạy ad-hoc SQL & Data Quality Audit trên 9 bảng Star Schema; (3) Metabase Docker (--profile bi, :3001, 1024MB JVM) tắt mặc định (0MB RAM), chỉ bật on-demand khi demo Self-Service BI trước Hội đồng hoặc dự phòng offline.",
+      "updated_at": "2026-11-23"
     },
     {
       "id": "TASK-CLD-03",

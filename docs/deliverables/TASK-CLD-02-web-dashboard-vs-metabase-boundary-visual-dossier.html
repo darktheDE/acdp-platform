@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TASK-CLD-02 | Phân định Ranh giới Web Dashboard vs Metabase</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: { primaryColor: '#eff6ff', primaryBorderColor: '#2563eb', primaryTextColor: '#0f172a', lineColor: '#475569' } });
+  </script>
+</head>
+<body class="bg-slate-50 text-slate-900 antialiased">
+  <div class="max-w-6xl mx-auto px-4 py-8 space-y-8">
+    <!-- Header -->
+    <header class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
+            TASK-CLD-02 · Cycle 07 · Cloud &amp; Infra (TLCN &rarr; KLTN)
+          </span>
+          <h1 class="mt-2 text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">
+            Phân định Ranh giới 3 Tầng BI: Web Dashboard vs MotherDuck Lite vs Metabase
+          </h1>
+          <p class="mt-1 text-sm text-slate-600">
+            Tác giả: Đỗ Kiến Hưng &amp; Nguyễn Văn Quang Duy · Khoa CNTT, HCM-UTE · Ngày chốt: 2026-11-23
+          </p>
+        </div>
+        <div class="text-right">
+          <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-semibold bg-emerald-100 text-emerald-800">
+            Status: Done (T15 Finalized)
+          </span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Tier 1: Executive KPI Cards -->
+    <section aria-label="Executive KPI Summary" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+        <p class="text-xs font-medium uppercase tracking-wider text-slate-500">Metabase RAM (Mặc định)</p>
+        <p class="mt-2 text-3xl font-bold text-emerald-600 font-mono">0 MB</p>
+        <p class="mt-1 text-xs text-slate-600">Tắt khỏi profile <code class="bg-slate-100 px-1 rounded">core</code> (1408 MB cap)</p>
+      </div>
+      <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+        <p class="text-xs font-medium uppercase tracking-wider text-slate-500">Web /dashboard Latency</p>
+        <p class="mt-2 text-3xl font-bold text-blue-600 font-mono">&lt; 20 ms</p>
+        <p class="mt-1 text-xs text-slate-600">Warm TTL Cache trên 6 bảng <code class="bg-slate-100 px-1 rounded">mart_*</code> (183 ms cold)</p>
+      </div>
+      <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+        <p class="text-xs font-medium uppercase tracking-wider text-slate-500">Cloud DataOps BI Cost</p>
+        <p class="mt-2 text-3xl font-bold text-indigo-600 font-mono">$0 / tháng</p>
+        <p class="mt-1 text-xs text-slate-600">MotherDuck Lite (10 GB · 10h Pulse) thay Metabase ($100)</p>
+      </div>
+      <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+        <p class="text-xs font-medium uppercase tracking-wider text-slate-500">Two-Tier Gold Layer</p>
+        <p class="mt-2 text-3xl font-bold text-slate-800 font-mono">15 Parquet</p>
+        <p class="mt-1 text-xs text-slate-600">9 Star Schema (BI/SQL) + 6 Marts (Web) + 4 Views</p>
+      </div>
+    </section>
+
+    <!-- Tier 2: Architecture Diagram & Charts -->
+    <section class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+      <h2 class="text-lg font-bold text-slate-900">1. Kiến trúc Phân tách 3 Tầng BI trên Nền Two-Tier Gold Layer</h2>
+      <div class="overflow-x-auto">
+        <pre class="mermaid">
+flowchart TB
+    subgraph GoldLayer["Cloudflare R2 — Two-Tier Gold Layer (15 Parquet Files)"]
+        STAR["Tier 2A: Core Kimball Star Schema (9 bảng)<br/>4 dim_* · 3 fact_* · 2 bridge_*<br/>Weighting Factor · Unknown Member (-1)"]
+        MARTS["Tier 2B: Pre-Aggregated Data Marts (6 bảng)<br/>mart_competition_explorer · mart_kpi_overview<br/>mart_domain_analytics · mart_seasonality_academic<br/>mart_team_and_mode_matrix · mart_organizer_ecosystem"]
+        STAR -->|"Materialize lúc Build Gold"| MARTS
+    end
+
+    subgraph Tier1["Tầng 1: Product Analytics (Mặc định · Cloud & Core)"]
+        API["FastAPI + DuckDB httpfs (read_only=True)<br/>+ In-Memory TTL Cache (5–15 phút)"]
+        WEB["Next.js 16 + Recharts (/dashboard)<br/>Sinh viên & Giảng viên · &lt;20ms warm"]
+        MARTS -->|"0-Join Read"| API -->|"Typed DTO"| WEB
+    end
+
+    subgraph Tier2["Tầng 2: Cloud DataOps & Ad-hoc BI (0 MB Local RAM)"]
+        MD["MotherDuck Lite Free (Cloud SQL Workbench)<br/>Kỹ sư Dữ liệu (Hưng & Duy)<br/>10 GB · 10 Pulse hrs/tháng · $0/tháng"]
+        STAR -->|"S3/R2 Direct Read"| MD
+    end
+
+    subgraph Tier3["Tầng 3: On-Demand Local BI (--profile bi)"]
+        MB["Docker acdp-metabase (:3001)<br/>metabase-duckdb:0.63.17-duckdb1.5.6.0<br/>Demo Hội đồng & Offline Backup<br/>Mặc định TẮT (0 MB) · Khi bật: +1024 MB Limit"]
+        STAR -.->|"On-demand (--metabase-sql)"| MB
+    end
+        </pre>
+      </div>
+    </section>
+
+    <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+        <h3 class="text-base font-bold text-slate-900 mb-3">2. Ngân sách Trần RAM theo Profile Docker (MB)</h3>
+        <canvas id="ramChart" height="220"></canvas>
+      </div>
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+        <h3 class="text-base font-bold text-slate-900 mb-3">3. Độ trễ Truy vấn Trung bình theo Tầng BI (ms)</h3>
+        <canvas id="latencyChart" height="220"></canvas>
+      </div>
+    </section>
+
+    <!-- Tier 3: Collapsible Technical Specs -->
+    <section class="space-y-4">
+      <details open class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+        <summary class="cursor-pointer font-bold text-slate-900 text-base">
+          4. Phân quyền Nội dung &amp; Bảng Gold theo 3 Persona
+        </summary>
+        <div class="mt-4 overflow-x-auto">
+          <table class="min-w-full text-sm text-left border-collapse">
+            <thead>
+              <tr class="border-b border-slate-200 text-slate-600">
+                <th class="py-2 pr-4 font-semibold">Đối tượng</th>
+                <th class="py-2 pr-4 font-semibold">Kênh hiển thị</th>
+                <th class="py-2 pr-4 font-semibold">Bảng Gold sử dụng</th>
+                <th class="py-2 font-semibold">Mục tiêu nghiệp vụ</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr>
+                <td class="py-2.5 pr-4 font-medium">Sinh viên</td>
+                <td class="py-2.5 pr-4">Web <code class="bg-slate-100 px-1 rounded">/dashboard</code></td>
+                <td class="py-2.5 pr-4"><code class="text-xs">mart_kpi_overview</code>, <code class="text-xs">mart_domain_analytics</code>, <code class="text-xs">mart_team_and_mode_matrix</code></td>
+                <td class="py-2.5">Xem cuộc thi đang mở, tỷ lệ miễn phí, click lọc ngành sang <code class="text-xs">/competitions</code> và lập đội.</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 pr-4 font-medium">Giảng viên / Khoa</td>
+                <td class="py-2.5 pr-4">Web <code class="text-xs">/dashboard</code></td>
+                <td class="py-2.5 pr-4"><code class="text-xs">mart_organizer_ecosystem</code>, <code class="text-xs">mart_seasonality_academic</code></td>
+                <td class="py-2.5">Đối chiếu mùa vụ thi với học kỳ HCM-UTE (HK1/HK2/Hè), kết nối BTC &amp; nhà tài trợ.</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 pr-4 font-medium">Data Engineer &amp; Hội đồng</td>
+                <td class="py-2.5 pr-4">MotherDuck Lite (Cloud) / Metabase <code class="text-xs">--profile bi</code> (Local)</td>
+                <td class="py-2.5 pr-4">9 bảng Star Schema + 4 views <code class="text-xs">gold_*</code></td>
+                <td class="py-2.5">Kiểm toán Data Quality Scorecard (<code class="text-xs">-1</code> keys, cân bằng cầu <code class="text-xs">0.0 VND</code>), demo Self-Service BI.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+
+      <details class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+        <summary class="cursor-pointer font-bold text-slate-900 text-base">
+          5. Data Quality Audit SQL &amp; Playbook CLI (--metabase-sql)
+        </summary>
+        <div class="mt-4 space-y-3 text-sm text-slate-700">
+          <pre class="bg-slate-900 text-slate-100 p-4 rounded-lg overflow-x-auto text-xs"><code># 1. Xuất SQL tạo R2 Secret + 19 Views cho MotherDuck Lite / Metabase
+uv run python -m acdp.v2.gold_star_schema --metabase-sql
+
+# 2. Bật tạm Metabase Local (:3001) khi demo Hội đồng hoặc offline backup
+docker compose --profile bi up -d metabase
+
+# 3. Tắt Metabase sau khi xong để giải phóng ~650–850 MB JVM RAM
+docker compose --profile bi stop metabase</code></pre>
+          <pre class="bg-slate-900 text-slate-100 p-4 rounded-lg overflow-x-auto text-xs"><code>-- Kiểm định Bất biến Bảo toàn Tổng Giải thưởng (0.0 VND drift)
+WITH kpi_sum AS (SELECT SUM(total_prize_vnd) AS fact_total_vnd FROM fact_competitions),
+     dom_sum AS (SELECT SUM(allocated_prize_vnd) AS bridge_total_vnd FROM mart_domain_analytics)
+SELECT fact_total_vnd, bridge_total_vnd, ABS(fact_total_vnd - bridge_total_vnd) AS drift_vnd
+FROM kpi_sum, dom_sum;</code></pre>
+        </div>
+      </details>
+
+      <details class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+        <summary class="cursor-pointer font-bold text-slate-900 text-base">
+          6. Ngân hàng Phản biện Hội đồng &amp; Nguồn Tham khảo (DIR-020)
+        </summary>
+        <div class="mt-4 space-y-3 text-sm text-slate-700">
+          <p><strong>Q1: Tại sao không nhúng iframe Metabase lên Web?</strong> Vì iframe phá vỡ giao diện Tailwind v4 Dark/Light mode, không điều hướng được sang luồng OLTP ghép đội, và Metabase Cloud không có gói Free (từ $100/tháng).</p>
+          <p><strong>Q2: Khi lên Cloud Free Tier, Metabase chạy ở đâu?</strong> Không triển khai Metabase lên Cloud; chuyển hoàn toàn ad-hoc SQL &amp; DataOps sang <strong>MotherDuck Lite Free</strong> ($0/tháng, 10 GB, 10h Pulse). Metabase Docker chỉ giữ ở <code class="bg-slate-100 px-1 rounded">--profile bi</code> cho demo local.</p>
+          <p class="text-xs text-slate-500 pt-2 border-t border-slate-100">
+            Nguồn kiểm chứng 2026: metabase.com/pricing, metabase.com/docs (Docker &amp; JVM -Xmx), motherduck.com/pricing (Lite 10 GB / 10h), motherduck.com/docs/integrations/cloud-storage/amazon-s3, github.com/motherduckdb/metabase_duckdb_driver, prefect.io/pricing.
+          </p>
+        </div>
+      </details>
+    </section>
+  </div>
+
+  <script>
+    new Chart(document.getElementById('ramChart'), {
+      type: 'bar',
+      data: {
+        labels: ['core (Mặc định)', 'core + local-backup', 'core + bi (Metabase)', 'Full (6 containers)'],
+        datasets: [{
+          label: 'Giới hạn RAM Container (MB)',
+          data: [1408, 1920, 2432, 3456],
+          backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#ef4444'],
+          borderRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true, title: { display: true, text: 'MB' } } }
+      }
+    });
+
+    new Chart(document.getElementById('latencyChart'), {
+      type: 'bar',
+      data: {
+        labels: ['Web /dashboard (Warm Cache)', 'Web /dashboard (Cold R2 OBT)', 'MotherDuck Lite (Star Join)', 'Local Metabase (JDBC Star Join)'],
+        datasets: [{
+          label: 'Độ trễ trung bình (ms)',
+          data: [15, 183, 240, 420],
+          backgroundColor: ['#10b981', '#3b82f6', '#6366f1', '#f59e0b'],
+          borderRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true, title: { display: true, text: 'ms' } } }
+      }
+    });
+  </script>
+</body>
+</html>

@@ -41,7 +41,7 @@ Bốn mục tiêu bắt buộc của đặc tả hạ tầng gồm:
 | `web` | `core` | `512M` | `0.75` | `120–220 MB` | `NODE_OPTIONS="--max-old-space-size=384"` |
 | **Tổng Profile `core` (Cloud-First)** | **`core`** | **`1408M (~1.38 GB)`** | **`2.25 vCPU`** | **`380–650 MB`** | **Giảm 512 MB nhờ dùng Qdrant Cloud mặc định (`TASK-CLD-01`)** |
 | `qdrant` | `local-backup` | `512M` | `0.75` | `150–250 MB` | `QDRANT__STORAGE__PERFORMANCE__MAX_SEARCH_THREADS=2` (bật khi `QDRANT_MODE=local`) |
-| `metabase` | `bi` | `1024M` | `1.00` | `650–850 MB` | `JAVA_TOOL_OPTIONS="-Xmx768m -Xms256m"` |
+| `metabase` | `bi` | `1024M` | `1.00` | `650–850 MB` | `JAVA_TOOL_OPTIONS="-Xmx768m -Xms256m"` (Tắt mặc định; Cloud dùng MotherDuck Lite theo `TASK-CLD-02`) |
 | `prefect-server` | `pipeline` | `512M` | `0.50` | `250–350 MB` | Tắt mặc định; chỉ bật khi kiểm thử lịch trình ETL |
 
 ### 2.3. Kiến trúc Docker Multi-Stage & Non-Root
@@ -318,7 +318,7 @@ Do Next.js 16 giữ cổng mặc định `3000` ở chế độ `core`, dịch v
 
 1. Chạy phát triển Web hàng ngày dùng Qdrant Cloud (`core`): `docker compose --profile core up -d --build`
 2. Chạy luồng dự phòng Full Local Backup (`core` + `local-backup`): `$env:QDRANT_MODE="local"; docker compose --profile core --profile local-backup up -d`
-3. Bật thêm Metabase kiểm tra Star Schema (`core` + `bi`): `docker compose --profile core --profile bi up -d`
+3. Bật tạm Metabase local kiểm định Star Schema hoặc demo offline (`core` + `bi`, xem [`T15`](../rd-tasks/T15_metabase_and_prefect_lightweight_architecture.md)): `docker compose --profile core --profile bi up -d` (kèm `uv run python -m acdp.v2.gold_star_schema --metabase-sql`)
 4. Xem mức RAM thực tế của từng container: `docker stats --no-stream --format "table {{.Name}}\t{{.MemUsage}}\t{{.MemPerc}}\t{{.CPUPerc}}"`
 
 ---
