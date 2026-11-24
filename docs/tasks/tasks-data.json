@@ -803,7 +803,7 @@
       "task_type": "Engineering",
       "is_no_code": false,
       "owner": "Hung & Duy",
-      "status": "todo",
+      "status": "done",
       "priority": "high",
       "problem_statement": "Khắc phục các lỗ hổng OWASP Top 10 (2025/2026) và LLM10:2025 Unbounded Consumption trước khi deploy public: khóa /rag/chat & /query chỉ cho tài khoản đã đăng ký, triển khai Multi-Tier Rate Limiting (AI 5/phút + 30/ngày/user + Global 10 RPM; Auth 10/phút/IP; Public 60/phút/IP), giới hạn max_output_tokens=600, ẩn /docs & /openapi.json khi ENVIRONMENT=production, bật Fail-Fast JWT Secret Check, Security Headers và Global Exception Masking.",
       "research_questions": [
@@ -821,7 +821,7 @@
         "tests/api/test_security_owasp.py",
         "docs/deliverables/TASK-SEC-00-pre-deployment-security-and-owasp-report.md"
       ],
-      "notes": "Xem chi tiết thiết kế tại docs/deliverables/TASK-SEC-00-pre-deployment-security-and-owasp-report.md.",
+      "notes": "Hoàn tất OWASP Top 10 (2025/2026) & LLM10:2025 Hardening (Gates G2, G3, G4, G5, G7): Auth-Only /rag/chat & /query (401), MultiTierRateLimiter (AI 5/min + 30/day/user + 10 RPM global; Auth 10/min/IP; Public 60/min/IP), max_output_tokens=600 (Gemini/Groq/OpenRouter/LiteLLM), ẩn /docs /redoc /openapi.json khi ENVIRONMENT=production, Fail-Fast JWT Secret Check, OWASP Security Headers & Global Exception Masking (500). Kiểm chứng 18/18 pytest API PASSED và 0 lỗi ruff.",
       "updated_at": "2026-11-24"
     },
     {

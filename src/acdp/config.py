@@ -10,6 +10,8 @@ from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+DEFAULT_DEV_JWT_SECRET = "acdp-local-dev-secret-change-in-prod-32bytes"
+
 
 class AppConfig(BaseSettings):
     """Global application configuration loaded from environment and .env."""
@@ -232,10 +234,10 @@ class AppConfig(BaseSettings):
     serper_api_key: str = Field(default="")
     discovery_max_queries_per_run: int = Field(default=12)
 
-    # Serving API & Auth (SPEC-0004)
+    # Serving API & Auth (SPEC-0004, TASK-SEC-01)
     api_host: str = Field(default="0.0.0.0")
     api_port: int = Field(default=8000)
-    jwt_secret_key: str = Field(default="acdp-local-dev-secret-change-in-prod-32bytes")
+    jwt_secret_key: str = Field(default=DEFAULT_DEV_JWT_SECRET)
     jwt_algorithm: str = Field(default="HS256")
     access_token_expire_minutes: int = Field(default=15)
     refresh_token_expire_days: int = Field(default=7)
@@ -245,6 +247,50 @@ class AppConfig(BaseSettings):
         description="Regex matching allowed Vercel Hobby preview/production origins",
     )
     internal_api_url: str = Field(default="http://localhost:8000")
+
+    # OWASP & LLM10:2025 Security Hardening (TASK-SEC-01)
+    rag_max_output_tokens: int = Field(
+        default=600,
+        ge=64,
+        le=2048,
+        description="Hard ceiling on LLM output tokens to mitigate OWASP LLM10:2025 Unbounded Consumption",
+    )
+    rate_limit_enabled: bool = Field(
+        default=True,
+        description="Enable Multi-Tier Sliding-Window Rate Limiting (AI / Auth / Public)",
+    )
+    rate_limit_ai_per_minute: int = Field(default=5, ge=1)
+    rate_limit_ai_per_day: int = Field(default=30, ge=1)
+    rate_limit_ai_global_rpm: int = Field(default=10, ge=1)
+    rate_limit_auth_per_minute: int = Field(default=10, ge=1)
+    rate_limit_public_per_minute: int = Field(default=60, ge=1)
+
+    @property
+    def is_production(self) -> bool:
+        """Return True when running in production environment."""
+        return (self.environment or "").strip().lower() == "production"
+
+    def validate_production_security(self) -> None:
+        """Fail-fast check (OWASP A04:2025 / Gate G2): reject weak or default JWT_SECRET_KEY in production."""
+        if not self.is_production:
+            return
+        secret = (self.jwt_secret_key or "").strip()
+        insecure_defaults = {
+            DEFAULT_DEV_JWT_SECRET,
+            "changeme",
+            "secret",
+            "your-secret-key",
+        }
+        if (
+            len(secret) < 32
+            or secret in insecure_defaults
+            or "local-dev-secret" in secret
+            or "change-in-prod" in secret
+        ):
+            raise RuntimeError(
+                "SECURITY FAIL-FAST (OWASP A04:2025 / Gate G2): ENVIRONMENT=production requires "
+                "a strong custom JWT_SECRET_KEY with at least 32 characters."
+            )
 
     def get_qdrant_url(self) -> str:
         """Resolve Qdrant endpoint: Cloud endpoint first in 'auto'/'cloud' mode, or local URL in 'local' backup mode."""

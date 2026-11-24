@@ -2,7 +2,7 @@
 
 This ledger is auto-generated from [`tasks-data.json`](./tasks-data.json) and synchronized with the interactive portal [`index.html`](./index.html) per **DIR-018**.
 
-- **Total tasks**: `61` (`42` completed)
+- **Total tasks**: `61` (`43` completed)
 - **Scope distribution**: `53` TLCN (Phase 1) | `12` KLTN (Phase 2)
 - **Last updated**: `2026-11-22`
 
@@ -70,7 +70,7 @@ This ledger is auto-generated from [`tasks-data.json`](./tasks-data.json) and sy
 | **TASK-EVL-01** | Cycle 09 | KLTN (Phase 2) | Serving & Web | Thực nghiệm Định lượng Quy mô KLTN (100–500 Cuộc thi): Ragas Scorecard & Ablation Study | Duy & Hung | `docs/experiments/0002-kltn-quantitative-evaluation.md` | ⏳ Todo |
 | **TASK-OPS-03** | Cycle 10 | KLTN (Phase 2) | Cloud & Infra | Bảo vệ API Public & Giám sát Quota Free Tier (Rate Limiting / Cloudflare Turnstile) | Hung | [`main.py`](../../src/acdp/api/main.py) | ⏳ Todo |
 | **TASK-KLT-01** | Cycle 10 | KLTN (Phase 2) | Academic & Ops | Soạn thảo Luận văn Khóa luận Tốt nghiệp (FIT-HCMUTE) & Slide Bảo vệ KLTN | Hung & Duy | `docs/academic/KhoaLuan_TotNghiep_KTDL.md`, `docs/academic/Slide_BaoVe_KLTN.html` | ⏳ Todo |
-| **TASK-SEC-01** | Cycle 07 | TLCN (Phase 1) | Cloud & Infra | Hardening Bảo mật OWASP Top 10 (2025/2026), Khóa /docs Production & Bảo vệ Quota AI | Hung & Duy | `src/acdp/api/middleware/security.py`, [`rag.py`](../../src/acdp/api/routers/rag.py), [`main.py`](../../src/acdp/api/main.py), `tests/api/test_security_owasp.py`, [`TASK-SEC-00-pre-deployment-security-and-owasp-report.md`](../../docs/deliverables/TASK-SEC-00-pre-deployment-security-and-owasp-report.md) | ⏳ Todo |
+| **TASK-SEC-01** | Cycle 07 | TLCN (Phase 1) | Cloud & Infra | Hardening Bảo mật OWASP Top 10 (2025/2026), Khóa /docs Production & Bảo vệ Quota AI | Hung & Duy | [`security.py`](../../src/acdp/api/middleware/security.py), [`rag.py`](../../src/acdp/api/routers/rag.py), [`main.py`](../../src/acdp/api/main.py), [`test_security_owasp.py`](../../tests/api/test_security_owasp.py), [`TASK-SEC-00-pre-deployment-security-and-owasp-report.md`](../../docs/deliverables/TASK-SEC-00-pre-deployment-security-and-owasp-report.md) | ✅ Done |
 | **TASK-SEC-02** | Cycle 08 | TLCN (Phase 1) | Serving & Web | Phân quyền RBAC (Admin/Lecturer/Student), Admin API & Trang Quản trị (/admin) | Hung & Duy | [`dependencies.py`](../../src/acdp/api/dependencies.py), `src/acdp/api/routers/admin.py`, `apps/web/app/admin/page.tsx`, [`page.tsx`](../../apps/web/app/copilot/page.tsx) | ⏳ Todo |
 | **TASK-SEC-03** | Cycle 08 | TLCN (Phase 1) | Cloud & Infra | Checklist Kiểm toán Bảo mật Trước Triển khai (Pre-Deployment Security Gate CLI) | Hung & Duy | `src/acdp/v2/security_audit.py`, [`TASK-SEC-00-pre-deployment-security-and-owasp-report.md`](../../docs/deliverables/TASK-SEC-00-pre-deployment-security-and-owasp-report.md), [`TASK-SEC-00-pre-deployment-security-and-owasp-report-visual-dossier.html`](../../docs/deliverables/TASK-SEC-00-pre-deployment-security-and-owasp-report-visual-dossier.html) | ⏳ Todo |
 

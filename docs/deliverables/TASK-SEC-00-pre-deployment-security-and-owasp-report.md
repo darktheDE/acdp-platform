@@ -57,14 +57,18 @@ Khi đặt `ENVIRONMENT=production`, các đường dẫn `/docs`, `/redoc` và 
 
 ## 4. Checklist 8 Chốt Bắt buộc Trước Khi Deploy (`G1`–`G8`)
 
-- [ ] **G1 — Secret Isolation**: Không có biến nhạy cảm nào (`SUPABASE_DATABASE_URL`, `AWS_*`, `GEMINI_API_KEY`, `GROQ_API_KEY`, `OPENROUTER_API_KEY`, `QDRANT_API_KEY`, `JWT_SECRET_KEY`) mang tiền tố `NEXT_PUBLIC_` hoặc tồn tại trong lịch sử Git.
-- [ ] **G2 — Fail-Fast JWT & Cookie Hardening**: `ENVIRONMENT=production` bắt buộc `len(JWT_SECRET_KEY) >= 32` (khác giá trị dev mặc định) và ép `Secure=True, HttpOnly=True, SameSite=Lax` cho cookie refresh token.
-- [ ] **G3 — Auth-Only RAG Gate**: `POST /api/v1/rag/chat` và `/query` trả về `401 Unauthorized` nếu thiếu Bearer JWT hợp lệ (`is_active=True`).
-- [ ] **G4 — Multi-Tier Rate Limiting & Token Cap**: Vượt `5 req/phút/user` hoặc `30 req/ngày/user` trên `/rag/chat`, hoặc `10 req/phút/IP` trên `/auth/login` phải trả `429 Too Many Requests` + header `Retry-After`; LLM bị giới hạn `max_output_tokens <= 600`.
-- [ ] **G5 — Hidden Public Docs**: Khi `ENVIRONMENT=production`, `GET /docs`, `GET /redoc`, `GET /openapi.json` trả `404 Not Found`; chỉ Admin truy cập được `/api/v1/admin/*`.
-- [ ] **G6 — Admin RBAC & Kill-Switch**: Tài khoản trong `ADMIN_EMAILS` truy cập được `/admin` để xem telemetry rate-limit/cache, làm mới DuckDB/RAG cache, và khóa (`is_active=False`) tài khoản spam ngay lập tức.
-- [ ] **G7 — Strict CORS & Security Headers**: Whitelist chính xác origin Vercel; gắn `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`, và che stack trace ở lỗi `500`.
+- [ ] **G1 — Secret Isolation**: Không có biến nhạy cảm nào (`SUPABASE_DATABASE_URL`, `AWS_*`, `GEMINI_API_KEY`, `GROQ_API_KEY`, `OPENROUTER_API_KEY`, `QDRANT_API_KEY`, `JWT_SECRET_KEY`) mang tiền tố `NEXT_PUBLIC_` hoặc tồn tại trong lịch sử Git *(kiểm tra tự động tại `TASK-SEC-03`)*.
+- [x] **G2 — Fail-Fast JWT & Cookie Hardening (`TASK-SEC-01`)**: `ENVIRONMENT=production` bắt buộc `len(JWT_SECRET_KEY) >= 32` (khác giá trị dev mặc định qua `AppConfig.validate_production_security()`) và ép `Secure=True, HttpOnly=True, SameSite=Lax` cho cookie refresh token.
+- [x] **G3 — Auth-Only RAG Gate (`TASK-SEC-01`)**: `POST /api/v1/rag/chat` và `/query` khóa bằng `Depends(get_current_user)` và trả về `401 Unauthorized` nếu thiếu Bearer JWT hợp lệ (`is_active=True`).
+- [x] **G4 — Multi-Tier Rate Limiting & Token Cap (`TASK-SEC-01`)**: Triển khai `MultiTierRateLimiter` (`5 req/phút/user` + `30 req/ngày/user` + `Global 10 RPM` trên AI; `10 req/phút/IP` trên `/auth/login`, `/auth/register`; `60 req/phút/IP` trên Public API trừ `/health`), trả `429 Too Many Requests` + `Retry-After` trước khi gọi LLM/Qdrant; ép cứng `max_output_tokens=600` qua `Gemini`, `Groq/OpenRouter` và `LiteLLM`.
+- [x] **G5 — Hidden Public Docs (`TASK-SEC-01`)**: Khi `ENVIRONMENT=production`, `GET /docs`, `GET /redoc`, `GET /openapi.json` trả `404 Not Found` (cả tại app init lẫn qua `SecurityHardeningMiddleware`); Admin Swagger `/api/v1/admin/docs` sẽ bổ sung tại `TASK-SEC-02`.
+- [ ] **G6 — Admin RBAC & Kill-Switch (`TASK-SEC-02`)**: Tài khoản trong `ADMIN_EMAILS` truy cập được `/admin` để xem telemetry rate-limit/cache, làm mới DuckDB/RAG cache, và khóa (`is_active=False`) tài khoản spam ngay lập tức.
+- [x] **G7 — Strict CORS & Security Headers (`TASK-SEC-01`)**: Whitelist chính xác origin Vercel; gắn `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy`, `Content-Security-Policy`, `Strict-Transport-Security` (production), và che stack trace + secret ở lỗi `500` qua `SecurityHardeningMiddleware` + `register_security_exception_handlers`.
 - [ ] **G8 — Free-Tier Hard-Cap Guardrail**: Toàn bộ API key AI/Cloud dùng gói Free `$0` không thẻ trả sau (an toàn 0 đồng).
+
+### Kết quả Kiểm chứng Thực nghiệm `TASK-SEC-01`
+- Bộ kiểm thử API (`tests/api/test_security_owasp.py`, `test_rag_and_openapi.py`, `test_auth_and_bookmarks.py`, `test_health_and_analytics.py`): **18/18 `PASSED`**.
+- Kiểm tra tĩnh (`uv run ruff check src/acdp/config.py src/acdp/api/ tests/api/`): **0 lỗi**.
 
 ---
 

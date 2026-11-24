@@ -98,6 +98,7 @@ async def test_rag_chat_persistence_ungrounded_and_outage(api_client: AsyncClien
         r3 = await api_client.post(
             "/api/v1/rag/chat",
             json={"message": "Test timeout"},
+            headers=headers,
         )
     assert r3.status_code == 503
 

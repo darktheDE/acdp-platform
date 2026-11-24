@@ -475,6 +475,7 @@ def _generate_with_openai_compatible(
         "model": model,
         "messages": _build_openai_messages(user_prompt, history),
         "temperature": 0.2,
+        "max_tokens": settings.rag_max_output_tokens,
     }
     client = http_client or httpx.Client(timeout=20.0)
     close_after = http_client is None
@@ -510,6 +511,7 @@ def _generate_with_litellm_router(
         messages=messages,
         fallbacks=fallbacks,
         temperature=0.2,
+        max_tokens=settings.rag_max_output_tokens,
     )
     choices = getattr(response, "choices", None) or response["choices"]
     text = (choices[0].message.content or "").strip()
@@ -562,7 +564,11 @@ def _generate_answer_with_fallback(
                 response = client.models.generate_content(
                     model=model_name,
                     contents=contents,
-                    config=genai_types.GenerateContentConfig(system_instruction=SYSTEM_PROMPT, temperature=0.2),
+                    config=genai_types.GenerateContentConfig(
+                        system_instruction=SYSTEM_PROMPT,
+                        temperature=0.2,
+                        max_output_tokens=settings.rag_max_output_tokens,
+                    ),
                 )
                 answer = (response.text or "").strip() or "Xin lỗi, tôi chưa tạo được câu trả lời."
                 return answer, "gemini"
