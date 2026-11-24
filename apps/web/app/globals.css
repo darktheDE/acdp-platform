@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: var(--font-jakarta), var(--font-be-vietnam), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, monospace;
+
+  --color-canvas: #FAF8F5;
+  --color-surface: #FFFFFF;
+  --color-surface-subtle: #F1F5F9;
+  --color-border: #E2E8F0;
+
+  --color-text-primary: #0F172A;
+  --color-text-muted: #475569;
+  --color-brand-primary: #1E3A8A;
+  --color-brand-accent: #C2410C;
+  --color-status-success: #15803D;
+  --color-status-warning: #B45309;
+
+  --color-chart-1: #1E3A8A;
+  --color-chart-2: #C2410C;
+  --color-chart-3: #15803D;
+  --color-chart-4: #B45309;
+  --color-chart-5: #475569;
+}
+
+:root {
+  color-scheme: light dark;
+}
+
+:root:has(> head > meta[name="color-scheme"][content="dark"]) {
+  color-scheme: dark;
+}
+
+:root:has(> head > meta[name="color-scheme"][content="light"]) {
+  color-scheme: light;
+}
+
+.dark {
+  --color-canvas: #0F172A;
+  --color-surface: #1E293B;
+  --color-surface-subtle: #334155;
+  --color-border: #334155;
+
+  --color-text-primary: #F8FAFC;
+  --color-text-muted: #94A3B8;
+  --color-brand-primary: #60A5FA;
+  --color-brand-accent: #FB923C;
+  --color-status-success: #4ADE80;
+  --color-status-warning: #FBBF24;
+
+  --color-chart-1: #60A5FA;
+  --color-chart-2: #FB923C;
+  --color-chart-3: #4ADE80;
+  --color-chart-4: #FBBF24;
+  --color-chart-5: #94A3B8;
+}
+
+body {
+  background-color: var(--color-canvas);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+}
+
+.visually-hidden:where(:not(:focus-within, :active)) {
+  position: absolute !important;
+  clip-path: inset(50%) !important;
+  overflow: hidden !important;
+  width: 1px !important;
+  height: 1px !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  white-space: nowrap !important;
+}
+
+input:user-invalid,
+textarea:user-invalid,
+select:user-invalid {
+  border-color: var(--color-brand-accent);
+}

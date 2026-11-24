@@ -1,0 +1,16 @@
+.git
+.venv
+venv
+__pycache__
+*.pyc
+.pytest_cache
+.ruff_cache
+.scratchpad
+data/lakehouse
+data/raw
+data/extractions
+node_modules
+apps/web/.next
+.env
+*.duckdb
+*.parquet

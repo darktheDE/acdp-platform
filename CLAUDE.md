@@ -1,0 +1,41 @@
+# CLAUDE.md: Claude Code Configuration & Standing Brief
+
+## Behavioral Contract
+All operations in this repository are governed by the master specifications:
+👉 **Read [`AGENTS.md`](./AGENTS.md) and [`docs/frameworks/PROMPT_EXECUTION_FRAMEWORK.md`](./docs/frameworks/PROMPT_EXECUTION_FRAMEWORK.md)**.
+
+---
+
+## The 4 Adaptive Execution Pathways
+1. **Full Pipeline (Pathway A)**: Research, thesis drafting, core Lakehouse/RAG development.
+2. **Rapid Prototyping (Pathway B)**: UI mockups, visual HTML previews with mock data stubs.
+3. **Direct Knowledge (Pathway C)**: Concise 2–3 paragraph answers for quick inquiries.
+4. **Disambiguation (Pathway D)**: Offer 2–3 actionable choices when instructions are underspecified.
+
+---
+
+## Specialized Skills (`.agents/skills/`)
+- Literature Review & BibTeX: `.agents/skills/academic-researcher/SKILL.md`
+- Thesis Writing (FIT-HCMUTE): `.agents/skills/thesis-writer/SKILL.md`
+- Presentation & Defense: `.agents/skills/defense-pitch-builder/SKILL.md`
+- Competitor Benchmarks: `.agents/skills/competitor-benchmark/SKILL.md`
+- Experiment Evaluation: `.agents/skills/experiment-evaluator/SKILL.md`
+- Frontend UI/UX: `.agents/skills/frontend-designer/SKILL.md`
+- URL & Domain Verifier: `.agents/skills/url-link-verifier/SKILL.md`
+- Scientific Prose & Anti-Slop: `.agents/skills/anti-slop-scientific-writer/SKILL.md`
+- Visual Dossiers & HTML Reports: `.agents/skills/visual-dossier-reporter/SKILL.md`
+- Open Models & Ollama: `.agents/skills/ollama-bridge/SKILL.md`
+- Decision Sync & Doc Governance: `.agents/skills/doc-decision-sync/SKILL.md`
+- In-Repo Task Management: `.agents/skills/repo-task-manager/SKILL.md`
+
+---
+
+## Invariant Guardrails
+- **Git Policy**: Never execute mutating git commands (`git add`, `git commit`, `git push`). Read-only inspection (`git status`, `git log`, `git diff`, `git show`) is allowed.
+- **No Empty Directories**: Folders are created strictly Just-In-Time.
+- **In-Repo Task Sync**: Log deliverables to `docs/deliverables/[TASK_ID]-[slug].md` and update `docs/tasks/tasks-data.json` + `docs/tasks/task-registry.md` (`DIR-018`).
+- **Zero Parametric Trust**: Never trust pre-trained model weights blindly. Always search Google/internet/scholar first to ground and verify claims.
+- **Institutional Naming**: Always use **Trường Đại học Công nghệ Kỹ thuật TP.HCM (HCM-UTE)**.
+- **Team Directives & Memory**: Strictly follow [`docs/frameworks/TEAM_DIRECTIVES.md`](./docs/frameworks/TEAM_DIRECTIVES.md) and persist newly given user rules immediately.
+- **Data Storage Policy**: Runtime lakehouse tiers (`bronze/`, `silver/`, `gold/`) run strictly on Cloudflare R2 (`DIR-021`); local `data/` and `.parquet`/`.duckdb` files are never committed.
+

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TASK-ING-03: 3-Tier URL Discovery Implementation Dossier</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 antialiased">
+  <div class="max-w-6xl mx-auto px-6 py-10 space-y-8">
+    <!-- Header -->
+    <header class="border-b border-slate-800 pb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+          TASK-ING-03 • Cycle 06 • Done
+        </span>
+        <h1 class="text-3xl font-bold mt-3 text-white">Module Discovery 3 Tầng (`src/acdp/v2/0_discover_urls.py`)</h1>
+        <p class="text-slate-400 mt-1">Triển khai thực tế &amp; kiểm chứng trên Cloudflare R2 — FIT-HCMUTE</p>
+      </div>
+      <div class="text-sm text-slate-400">
+        <div>Ngày hoàn thành: <strong class="text-slate-200">2026-11-23</strong></div>
+        <div>Ngân sách: <strong class="text-emerald-400">&lt; 5% Free Tier (0 VNĐ)</strong></div>
+      </div>
+    </header>
+
+    <!-- Tier 1: Executive KPI Cards -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+        <p class="text-xs uppercase tracking-wider text-slate-400">Unit Tests &amp; Lint</p>
+        <p class="text-2xl font-bold text-emerald-400 mt-2">13 / 13 Passed</p>
+        <p class="text-xs text-slate-400 mt-1">pytest + ruff check sạch 100%</p>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+        <p class="text-xs uppercase tracking-wider text-slate-400">Ngân sách Tavily / Exa</p>
+        <p class="text-2xl font-bold text-sky-400 mt-2">2.0% / 0.8%</p>
+        <p class="text-xs text-slate-400 mt-1">5 queries mỗi API / lần chạy tuần</p>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+        <p class="text-xs uppercase tracking-wider text-slate-400">Live R2 Output</p>
+        <p class="text-2xl font-bold text-amber-300 mt-2">25 URLs</p>
+        <p class="text-xs text-slate-400 mt-1">Khử trùng từ 82 ứng viên thô</p>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+        <p class="text-xs uppercase tracking-wider text-slate-400">R2 Persistence</p>
+        <p class="text-2xl font-bold text-violet-300 mt-2">DIR-021</p>
+        <p class="text-xs text-slate-400 mt-1">bronze/_discovery/latest_manifest.json</p>
+      </div>
+    </section>
+
+    <!-- Tier 2: Step-by-Step Mermaid & Chart -->
+    <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-xl p-6">
+        <h2 class="text-lg font-semibold text-white mb-4">Quy trình Step-by-Step (3-Tier Discovery)</h2>
+        <div class="mermaid">
+flowchart LR
+  S["1. Nguồn cấu hình<br/>discovery_sources.py"] --> T1["2A. Tầng 1 (0 Quota)<br/>Sitemap, Hubs VN, GDELT"]
+  S --> T2["2B. Tầng 2 (Free Tier)<br/>Tavily + Exa + Serper"]
+  T1 --> G["3. Gatekeeper<br/>Canonicalize + Word-Boundary + Dedup"]
+  T2 --> G
+  G --> H["4. HTTP HEAD<br/>ETag / 304 / &lt; 400"]
+  H --> R2["5. Cloudflare R2<br/>latest_manifest.json"]
+        </div>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+        <h2 class="text-lg font-semibold text-white mb-4">Mức tiêu thụ Free Tier (%/tháng)</h2>
+        <canvas id="budgetChart" height="220"></canvas>
+      </div>
+    </section>
+
+    <!-- Tier 3: Collapsible Technical Details -->
+    <section class="bg-slate-900 border border-slate-800 rounded-xl p-6 space-y-4">
+      <details open class="group">
+        <summary class="cursor-pointer font-semibold text-white flex items-center justify-between">
+          <span>Chi tiết kỹ thuật &amp; Các lỗi thực tế đã xử lý</span>
+          <span class="text-xs text-slate-400">Nhấn để thu gọn/mở</span>
+        </summary>
+        <div class="mt-4 text-sm text-slate-300 space-y-3 leading-relaxed">
+          <p><strong>1. Word-Boundary Guard:</strong> Khắc phục lỗi substring <code>"ai"</code> khớp nhầm vào <code>"tai-cuoc-thi"</code> bằng regex <code>\bai\b</code>, loại bỏ triệt để các cuộc thi ngoài ngành CNTT trên Ybox.</p>
+          <p><strong>2. Lọc nhiễu học vụ &amp; tin tổng kết:</strong> Chặn URL chứa <code>/tag/</code>, <code>tong-ket</code>, <code>trao-giai</code>, <code>dat-giai</code>, <code>thcs</code> và tự động đặt <code>needs_crawl=False</code> khi HTTP status <code>&gt;= 400</code> hoặc <code>304</code>.</p>
+          <p><strong>3. Tách module cấu hình:</strong> Toàn bộ danh sách URL hạt giống, hub, query Tầng 2 và từ khóa lọc được tách gọn sang <code>src/acdp/v2/discovery_sources.py</code>, giữ nguyên pipeline v1.</p>
+        </div>
+      </details>
+    </section>
+  </div>
+
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+    new Chart(document.getElementById('budgetChart'), {
+      type: 'bar',
+      data: {
+        labels: ['Tavily (1k/mo)', 'Exa (2.5k/mo)', 'Serper (Fallback)', 'Ngưỡng trần'],
+        datasets: [{
+          label: '% Quota / tháng',
+          data: [2.0, 0.8, 0.0, 5.0],
+          backgroundColor: ['#38bdf8', '#34d399', '#a78bfa', '#f43f5e']
+        }]
+      },
+      options: {
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { beginAtZero: true, max: 6, ticks: { color: '#94a3b8' }, grid: { color: '#1e293b' } },
+          x: { ticks: { color: '#94a3b8' }, grid: { display: false } }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

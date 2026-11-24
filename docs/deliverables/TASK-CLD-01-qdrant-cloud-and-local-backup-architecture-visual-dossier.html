@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TASK-CLD-01: Qdrant Cloud &amp; Local Backup Visual Dossier</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 antialiased">
+  <div class="max-w-6xl mx-auto px-6 py-10 space-y-10">
+    <!-- Header -->
+    <header class="border-b border-slate-800 pb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+          TASK-CLD-01 · Cycle 07 · TLCN Phase 1
+        </span>
+        <h1 class="text-2xl md:text-3xl font-bold mt-3 text-white">
+          Đồng nhất Qdrant Cloud &amp; Hạ tầng Dự phòng Local Backup
+        </h1>
+        <p class="text-slate-400 text-sm mt-1">
+          Kiến trúc 2 luồng (Cloud-First Default vs Full Local Backup) · HCM-UTE Data Engineering
+        </p>
+      </div>
+      <div class="text-xs text-slate-400 bg-slate-900 border border-slate-800 rounded-lg px-4 py-3">
+        <div><strong class="text-slate-200">Owners:</strong> Hung &amp; Duy</div>
+        <div><strong class="text-slate-200">Date:</strong> 2026-11-23</div>
+        <div><strong class="text-slate-200">Status:</strong> <span class="text-emerald-400 font-semibold">Done</span></div>
+      </div>
+    </header>
+
+    <!-- Tier 1: Executive KPI Cards -->
+    <section>
+      <h2 class="text-lg font-semibold text-slate-200 mb-4">1. Tóm tắt Điều hành (1-Minute KPIs)</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+          <div class="text-xs text-slate-400 uppercase tracking-wider">Core Profile RAM</div>
+          <div class="text-3xl font-bold text-emerald-400 mt-2">1,408 MB</div>
+          <div class="text-xs text-slate-400 mt-1">Giảm 512 MB (-26.7%) so với 1,920 MB</div>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+          <div class="text-xs text-slate-400 uppercase tracking-wider">Qdrant Cloud Free</div>
+          <div class="text-3xl font-bold text-sky-400 mt-2">1 GB RAM</div>
+          <div class="text-xs text-slate-400 mt-1">4 GB Disk · Mức dùng TLCN &lt; 0.3%</div>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+          <div class="text-xs text-slate-400 uppercase tracking-wider">Failover Rebuild RTO</div>
+          <div class="text-3xl font-bold text-amber-400 mt-2">&lt; 60 giây</div>
+          <div class="text-xs text-slate-400 mt-1">Tái tạo 100% vector từ Cloudflare R2</div>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+          <div class="text-xs text-slate-400 uppercase tracking-wider">Chuyển mạch .env</div>
+          <div class="text-3xl font-bold text-violet-400 mt-2">1 Biến</div>
+          <div class="text-xs text-slate-400 mt-1">QDRANT_MODE=auto | cloud | local</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tier 2: Mermaid Architecture & Chart.js Benchmarks -->
+    <section class="space-y-6">
+      <h2 class="text-lg font-semibold text-slate-200">2. Kiến trúc 2 Luồng &amp; Biểu đồ Benchmark</h2>
+
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+        <h3 class="text-sm font-semibold text-slate-300 mb-3">Sơ đồ Điều phối QDRANT_MODE (Cloud-First vs Local Backup)</h3>
+        <div class="mermaid">
+flowchart LR
+    ENV["QDRANT_MODE<br/>auto | cloud | local"] --> CFG["AppConfig (src/acdp/config.py)<br/>get_qdrant_url() &amp; get_qdrant_api_key()"]
+    CFG -->|"auto / cloud (Mặc định)"| QC[("Luồng 1: Qdrant Cloud Free<br/>HTTPS + API Key<br/>1 GB RAM · 4 GB Disk")]
+    CFG -->|"local (--profile local-backup)"| QL[("Luồng 2: Docker acdp-qdrant<br/>HTTP :6333 · api_key=None<br/>512 MB RAM Limit")]
+    R2[("Cloudflare R2 (SSOT)<br/>silver/markdown/")] -->|"python -m acdp.v2.rag_ingest"| CFG
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+          <h3 class="text-sm font-semibold text-slate-300 mb-4">Ngân sách RAM Docker Compose theo Profile (MB)</h3>
+          <canvas id="ramChart" height="220"></canvas>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+          <h3 class="text-sm font-semibold text-slate-300 mb-4">Dung lượng Vector (MB) &amp; Thời gian Rebuild từ R2 (giây)</h3>
+          <canvas id="scaleChart" height="220"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tier 3: Collapsible Technical Specs & CLI Playbook -->
+    <section class="space-y-4">
+      <h2 class="text-lg font-semibold text-slate-200">3. Đặc tả Kỹ thuật &amp; Lệnh Vận hành</h2>
+
+      <details open class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+        <summary class="cursor-pointer font-semibold text-slate-200">Ma trận Phân giải Qdrant trong AppConfig</summary>
+        <div class="overflow-x-auto mt-4">
+          <table class="w-full text-sm text-left text-slate-300">
+            <thead class="text-xs uppercase bg-slate-800 text-slate-400">
+              <tr>
+                <th class="px-4 py-2">QDRANT_MODE</th>
+                <th class="px-4 py-2">QDRANT_CLUSTER_ENDPOINT</th>
+                <th class="px-4 py-2">URL Phân giải</th>
+                <th class="px-4 py-2">API Key</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800">
+              <tr>
+                <td class="px-4 py-2 font-mono text-emerald-400">auto / cloud</td>
+                <td class="px-4 py-2">https://*.cloud.qdrant.io:6333</td>
+                <td class="px-4 py-2">Qdrant Cloud Endpoint</td>
+                <td class="px-4 py-2">Có (HTTPS)</td>
+              </tr>
+              <tr>
+                <td class="px-4 py-2 font-mono text-amber-400">local</td>
+                <td class="px-4 py-2">Bất kể (bỏ qua)</td>
+                <td class="px-4 py-2">http://qdrant:6333 hoặc localhost:6333</td>
+                <td class="px-4 py-2">None (HTTP an toàn)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+
+      <details class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+        <summary class="cursor-pointer font-semibold text-slate-200">CLI Playbook: Chuyển đổi 2 Luồng</summary>
+        <pre class="mt-4 bg-slate-950 border border-slate-800 rounded-lg p-4 text-xs text-slate-300 overflow-x-auto"><code># Luồng 1 (Mặc định): Full Cloud Qdrant (1,408 MB RAM)
+docker compose --profile core up -d --build
+
+# Luồng 2 (Dự phòng): Full Local Backup (1,920 MB RAM) + Nạp lại từ Cloudflare R2
+$env:QDRANT_MODE = "local"
+docker compose --profile core --profile local-backup up -d
+uv run python -m acdp.v2.rag_ingest</code></pre>
+      </details>
+    </section>
+  </div>
+
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+
+    new Chart(document.getElementById('ramChart'), {
+      type: 'bar',
+      data: {
+        labels: ['Trước (core cũ)', 'Sau (core Cloud-First)', 'core + local-backup', 'Full 6 containers'],
+        datasets: [{
+          label: 'Giới hạn RAM (MB)',
+          data: [1920, 1408, 1920, 3456],
+          backgroundColor: ['#64748b', '#10b981', '#f59e0b', '#38bdf8'],
+          borderRadius: 6
+        }]
+      },
+      options: {
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { beginAtZero: true, grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } },
+          x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+        }
+      }
+    });
+
+    new Chart(document.getElementById('scaleChart'), {
+      type: 'bar',
+      data: {
+        labels: ['TLCN (20 cuộc thi)', 'KLTN (500 cuộc thi)'],
+        datasets: [
+          {
+            label: 'Dung lượng Vector (MB)',
+            data: [2.5, 75],
+            backgroundColor: '#38bdf8',
+            borderRadius: 6
+          },
+          {
+            label: 'Thời gian Rebuild từ R2 (giây)',
+            data: [35, 420],
+            backgroundColor: '#a78bfa',
+            borderRadius: 6
+          }
+        ]
+      },
+      options: {
+        scales: {
+          y: { beginAtZero: true, grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } },
+          x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,19 +1,56 @@
 [project]
 name = "acdp"
 version = "0.1.0"
-description = "Add your description here"
+description = "Academic Competition Discovery Platform (ACDP) — Medallion Lakehouse, RAG Copilot & Serving Portal"
 readme = "README.md"
 authors = [
     { name = "Duy Nguyễn", email = "fansjaki@gmail.com" }
 ]
 requires-python = ">=3.11"
 dependencies = [
+    "asyncpg>=0.30.0",
+    "boto3>=1.43.111",
+    "defusedxml>=0.7.1",
+    "duckdb==1.5.6",
+    "fastapi[standard]>=0.115.0",
+    "google-genai>=2.34.0",
+    "greenlet>=3.1.0",
+    "httpx>=0.28.0",
+    "langchain-ollama>=1.1.0",
+    "pwdlib[argon2]>=0.2.1",
+    "pyarrow>=26.0.0",
+    "pydantic>=2.14.0",
+    "pydantic-settings>=2.15.0",
+    "pyjwt>=2.10.0",
+    "qdrant-client>=1.20.0",
+    "sqlmodel>=0.0.22",
+    "tzdata>=2026.5",
+]
+
+[project.optional-dependencies]
+ingest = [
     "crawl4ai>=0.9.4",
     "ddgs>=9.16.0",
     "instructor>=1.17.0",
+    "jsonref>=1.1.0",
     "litellm>=1.104.2",
-    "pydantic>=2.14.0",
     "pypdf>=6.20.0",
+]
+rag-ui = [
+    "langchain>=1.4.9",
+    "langchain-experimental>=0.4.2",
+    "langchain-qdrant>=1.1.0",
+    "langchain-text-splitters>=1.1.3",
+]
+pipeline = [
+    "prefect>=3.0.0",
+]
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28.0",
+    "openapi-spec-validator>=0.7.1",
+    "pytest>=9.1.1",
     "ruff>=0.17.0",
 ]
 
@@ -23,3 +60,15 @@ acdp = "acdp:main"
 [build-system]
 requires = ["uv_build>=0.12.7,<0.13.0"]
 build-backend = "uv_build"
+
+[tool.ruff]
+target-version = "py311"
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+"src/acdp/api/**/*.py" = ["B008"]
+"src/acdp/1_crawl_to_bronze.py" = ["B023"]

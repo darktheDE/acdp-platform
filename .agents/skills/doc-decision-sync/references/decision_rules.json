@@ -1,0 +1,172 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2026-11-15",
+  "directive_source": "docs/frameworks/TEAM_DIRECTIVES.md",
+  "agent_contract_files": [
+    "AGENTS.md",
+    "GEMINI.md"
+  ],
+  "required_directives_in_agent_contracts": [
+    "DIR-007",
+    "DIR-008",
+    "DIR-011",
+    "DIR-012",
+    "DIR-013",
+    "DIR-014",
+    "DIR-015",
+    "DIR-016",
+    "DIR-017",
+    "DIR-018",
+    "DIR-019",
+    "DIR-020",
+    "DIR-021",
+    "DIR-022"
+  ],
+  "scoped_directives": [
+    "DIR-001",
+    "DIR-002",
+    "DIR-003",
+    "DIR-004",
+    "DIR-005",
+    "DIR-006",
+    "DIR-009",
+    "DIR-010"
+  ],
+  "skill_registry_targets": [
+    "AGENTS.md",
+    "GEMINI.md",
+    "CLAUDE.md",
+    ".agents/skills/README.md"
+  ],
+  "skill_count_banner": {
+    "file": ".agents/skills/README.md",
+    "pattern": "Toàn bộ (\\d+) kỹ năng",
+    "rule_id": "DRIFT-004"
+  },
+  "internal_link_scan_paths": [
+    "AGENTS.md",
+    "GEMINI.md",
+    "CLAUDE.md",
+    "README.md",
+    "docs/**/*.md",
+    ".agents/skills/**/*.md"
+  ],
+  "drift_rules": [
+    {
+      "id": "DRIFT-001",
+      "description": "Deprecated lakehouse package path removed in TODO-CODE-01 and DIR-015",
+      "targets": [
+        "docs/specs/*.md",
+        "README.md",
+        "AGENTS.md",
+        "GEMINI.md"
+      ],
+      "pattern": "src/acdp/lakehouse/",
+      "exclude_if_line_contains": [
+        "deprecated",
+        "Pruned",
+        "pruned",
+        "removed legacy",
+        "Removed legacy"
+      ],
+      "message": "Deprecated path 'src/acdp/lakehouse/' referenced; replaced by 'src/acdp/schemas.py' per TODO-CODE-01 and DIR-015."
+    },
+    {
+      "id": "DRIFT-002",
+      "description": "Outdated Next.js 15 primary target superseded by Next.js 16 Active LTS in DIR-016 and SPEC-0005",
+      "targets": [
+        "AGENTS.md",
+        "GEMINI.md",
+        ".agents/skills/README.md",
+        ".agents/skills/*/SKILL.md",
+        "docs/frameworks/PROMPT_EXECUTION_FRAMEWORK.md"
+      ],
+      "pattern": "Next\\.js 15(?!\\.5| Maintenance LTS)",
+      "exclude_if_line_contains": [
+        "upgrading"
+      ],
+      "message": "Outdated frontend version 'Next.js 15' referenced; locked to 'Next.js 16' (Active LTS) per DIR-016 and SPEC-0005."
+    },
+    {
+      "id": "DRIFT-003",
+      "description": "SPEC-0001 must not exclude PostgreSQL after DIR-016 adopted PostgreSQL 18 for Web OLTP",
+      "targets": [
+        "docs/specs/0001-system-foundation-spec.md"
+      ],
+      "pattern": "SeaweedFS[^\\n]*PostgreSQL[^\\n]*excluded",
+      "exclude_if_line_contains": [],
+      "message": "Contradicts DIR-016 and SPEC-0004: PostgreSQL 18 is the active OLTP App DB (only SeaweedFS and dbt-core are excluded from Bronze-to-Gold ETL)."
+    },
+    {
+      "id": "DRIFT-005",
+      "description": "Institutional name standard enforced by DIR-001",
+      "targets": [
+        "AGENTS.md",
+        "GEMINI.md",
+        "CLAUDE.md",
+        "README.md",
+        "docs/**/*.md",
+        ".agents/skills/**/*.md"
+      ],
+      "pattern": "(?:Đại học|ĐH) Sư phạm Kỹ thuật",
+      "exclude_if_line_contains": [
+        "tên cũ",
+        "đổi tên",
+        "Decision",
+        "Quyết định",
+        "từng là",
+        "trước đây"
+      ],
+      "message": "Legacy university name used without historical rename context; use 'Trường Đại học Công nghệ Kỹ thuật TP.HCM (HCM-UTE)' per DIR-001."
+    },
+    {
+      "id": "DRIFT-006",
+      "description": "In-Repo Task Management replaces Notion per DIR-018",
+      "targets": [
+        "AGENTS.md",
+        "GEMINI.md",
+        "CLAUDE.md",
+        "README.md",
+        "docs/**/*.md",
+        ".agents/skills/**/*.md"
+      ],
+      "pattern": "\\bNotion\\b|notion-task-mapping\\.md",
+      "exclude_if_line_contains": [
+        "Decommissioning",
+        "Phi-Notion",
+        "Never reference Notion",
+        "loại bỏ"
+      ],
+      "message": "Deprecated 'Notion' reference found; manage code tasks in docs/tasks/task-registry.md and docs/tasks/index.html per DIR-018."
+    }
+  ],
+  "tier_classification": {
+    "Tier 0 (Decision Origins)": [
+      "docs/frameworks/TEAM_DIRECTIVES.md",
+      "docs/adr/",
+      "docs/rfc/"
+    ],
+    "Tier 1 (Agent Contracts & Harness)": [
+      "AGENTS.md",
+      "GEMINI.md",
+      "CLAUDE.md",
+      ".cursorrules",
+      "docs/frameworks/",
+      ".agents/skills/README.md"
+    ],
+    "Tier 2 (Technical Specs & Ledgers)": [
+      "docs/specs/",
+      "docs/tasks/",
+      "docs/README.md",
+      "README.md"
+    ],
+    "Tier 3 (Skills & Academic Outputs)": [
+      ".agents/skills/",
+      "docs/academic/",
+      "docs/deliverables/",
+      "docs/rd-tasks/",
+      "docs/research/",
+      "docs/experiments/"
+    ]
+  }
+}

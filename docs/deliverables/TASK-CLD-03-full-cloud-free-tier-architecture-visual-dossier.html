@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TASK-CLD-03 — Kiến trúc Đồng bộ Full Cloud Free-Tier | ACDP</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <style>
+    body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+    .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 antialiased">
+  <header class="bg-slate-900 text-white border-b border-slate-800">
+    <div class="max-w-6xl mx-auto px-6 py-7 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+        <div class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-sky-300 mb-2">
+          <span class="px-2 py-0.5 rounded bg-sky-500/20 border border-sky-400/30">TASK-CLD-03</span>
+          <span>Cycle 07 · Cloud &amp; Infra · TLCN &rarr; KLTN</span>
+        </div>
+        <h1 class="text-2xl md:text-3xl font-bold tracking-tight">Kiến trúc Đồng bộ 100% Cloud Free-Tier</h1>
+        <p class="text-slate-300 text-sm mt-1">Giải quyết Hybrid Local–Cloud · Thẩm định DuckDB, FastAPI, Rust &amp; Kế hoạch Backup An toàn Thẻ 0đ</p>
+      </div>
+      <div class="text-xs text-slate-300 bg-slate-800/70 border border-slate-700 rounded-lg px-4 py-3">
+        <div><strong>Nhóm thực hiện:</strong> Đỗ Kiến Hưng &amp; Nguyễn Văn Quang Duy</div>
+        <div><strong>Đơn vị:</strong> FIT · HCM-UTE · 2026-11-23</div>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-6 py-8 space-y-8">
+    <!-- Tier 1: Executive Summary & KPI Cards -->
+    <section>
+      <h2 class="text-lg font-bold text-slate-800 mb-3">1. Tóm tắt điều hành (1-Minute KPI)</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+          <div class="text-xs text-slate-500 uppercase font-semibold">Chi phí vận hành</div>
+          <div class="text-2xl font-bold text-emerald-700 mt-1">0 USD <span class="text-sm font-normal text-slate-500">/ tháng</span></div>
+          <div class="text-xs text-slate-600 mt-1">100% Hard-Cap / Cardless Free Tier</div>
+        </div>
+        <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+          <div class="text-xs text-slate-500 uppercase font-semibold">Compute API Cloud</div>
+          <div class="text-2xl font-bold text-indigo-700 mt-1">16 GB <span class="text-sm font-normal text-slate-500">RAM · 2 vCPU</span></div>
+          <div class="text-xs text-slate-600 mt-1">HF Spaces Docker (vs 512 MB Render)</div>
+        </div>
+        <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+          <div class="text-xs text-slate-500 uppercase font-semibold">Mức dùng Quota TLCN</div>
+          <div class="text-2xl font-bold text-sky-700 mt-1">&lt; 5% <span class="text-sm font-normal text-slate-500">mọi tầng</span></div>
+          <div class="text-xs text-slate-600 mt-1">R2 10 GB · Supabase 500 MB · Qdrant 1 GB</div>
+        </div>
+        <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+          <div class="text-xs text-slate-500 uppercase font-semibold">Rủi ro thẻ 0đ</div>
+          <div class="text-2xl font-bold text-rose-600 mt-1">0% <span class="text-sm font-normal text-slate-500">nợ phát sinh</span></div>
+          <div class="text-xs text-rose-700 mt-1">Loại bỏ Cloud Run &amp; Oracle PAYG ($100 hold)</div>
+        </div>
+      </div>
+
+      <div class="mt-4 bg-slate-900 text-slate-100 rounded-xl p-4 text-sm leading-relaxed space-y-2">
+        <div>
+          <strong class="text-sky-300">Phán quyết tối ưu Tech Stack (Đợt kiểm tra 2):</strong> Giữ <strong>DuckDB (<span class="mono">httpfs</span> trên R2)</strong> làm bộ máy OLAP lõi kèm TTL Cache 5–15 phút; thay Metabase local bằng <strong>Next.js Recharts + MotherDuck Lite Free</strong> (<span class="mono">10 GB · 10h/tháng</span>).
+        </div>
+        <div>
+          <strong class="text-amber-300">Tầng Serving (Chờ Hưng &amp; Duy chọn 1 theo DIR-011):</strong> <strong>PA-1 (Khuyến nghị)</strong> giữ FastAPI trên HF Spaces Docker để tái sử dụng 100% code Sprint 02; <strong>PA-2 (Tối giản)</strong> gộp bỏ FastAPI vào Next.js BFF + Supabase Auth trên Vercel Hobby. Không chuyển toàn bộ sang Rust để bảo toàn tốc độ phát triển KLTN.
+        </div>
+      </div>
+    </section>
+
+    <!-- Tier 2: Interactive Architecture Diagram & Charts -->
+    <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+        <h2 class="text-base font-bold text-slate-800 mb-2">2. Kiến trúc Full Cloud Free-Tier &amp; Luồng Failover</h2>
+        <p class="text-xs text-slate-500 mb-3">Cloudflare R2 làm nguồn chân lý bất biến (SSOT); GitHub Actions giữ ấm định kỳ 3 ngày/lần</p>
+        <div class="mermaid">
+flowchart TD
+  WEB["Next.js 16 + Tailwind v4&lt;br/&gt;Vercel Hobby (100 GB)"] --&gt;|"PA-1: REST/SSE"| API["FastAPI + DuckDB httpfs&lt;br/&gt;HF Spaces (16 GB RAM)"]
+  WEB -.-&gt;|"PA-2: BFF Option"| BFF["Next.js Route Handlers"]
+  API --&gt;|"Parquet Range Scan"| R2[("Cloudflare R2&lt;br/&gt;10 GB · 0đ Egress")]
+  API &lt;--&gt;|"asyncpg Pooler"| SUPA[("Supabase Free&lt;br/&gt;500 MB · Pause 7d")]
+  SUPA -.-&gt;|"Backup"| NEON[("Neon Free (1 GB)")]
+  API --&gt;|"Vector Search"| QDR[("Qdrant Cloud Free&lt;br/&gt;1 GB · Del 28d")]
+  QDR -.-&gt;|"Fallback"| PGV[("Supabase pgvector / Vectorize")]
+  GHA["GitHub Actions&lt;br/&gt;Crawl + ETL + Keep-Alive 3d"] --&gt; R2
+  GHA --&gt; QDR
+  GHA --&gt; SUPA
+  MD["MotherDuck Lite (10 GB)&lt;br/&gt;Thay Metabase BI"] --&gt; R2
+  classDef cloud fill:#e0f2fe,stroke:#0369a1,color:#0c4a6e
+  classDef store fill:#dcfce7,stroke:#15803d,color:#14532d
+  classDef backup fill:#fef3c7,stroke:#d97706,color:#78350f
+  class WEB,API,GHA,MD cloud
+  class R2,SUPA,QDR store
+  class NEON,PGV,BFF backup
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm flex flex-col justify-between">
+        <div>
+          <h2 class="text-base font-bold text-slate-800 mb-2">3. Mức tiêu thụ Hạn mức Free Tier (%): TLCN vs KLTN</h2>
+          <p class="text-xs text-slate-500 mb-3">Tỷ lệ sử dụng tài nguyên dự kiến so với trần miễn phí năm 2026</p>
+          <div class="h-64">
+            <canvas id="quotaChart"></canvas>
+          </div>
+        </div>
+        <div class="mt-4 pt-3 border-t border-slate-100 text-xs text-slate-600">
+          Ngay cả ở quy mô KLTN (500 cuộc thi, 1.000 sinh viên), toàn bộ các tầng lưu trữ và tính toán vẫn nằm dưới mức <span class="mono">40%</span> ngưỡng miễn phí.
+        </div>
+      </div>
+    </section>
+
+    <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+        <h2 class="text-base font-bold text-slate-800 mb-2">4. So sánh RAM &amp; Thời gian ngủ đông của PaaS Miễn phí</h2>
+        <p class="text-xs text-slate-500 mb-3">Lý do chọn HF Spaces Docker cho FastAPI + DuckDB thay vì Render/Koyeb 512 MB</p>
+        <div class="h-64">
+          <canvas id="paasChart"></canvas>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+        <h2 class="text-base font-bold text-slate-800 mb-2">5. Đối sánh Lựa chọn Query Engine &amp; Backend API</h2>
+        <div class="overflow-x-auto mt-3">
+          <table class="w-full text-xs text-left border-collapse">
+            <thead>
+              <tr class="border-b border-slate-200 text-slate-500 uppercase">
+                <th class="py-2 pr-3">Thành phần</th>
+                <th class="py-2 pr-3">Phương án giữ / chọn</th>
+                <th class="py-2">Lý do kỹ thuật &amp; Free Tier</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr>
+                <td class="py-2 pr-3 font-semibold text-slate-800">Query Engine</td>
+                <td class="py-2 pr-3"><span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-medium">DuckDB httpfs + TTL Cache</span></td>
+                <td class="py-2 text-slate-600">Vectorized OLAP; đọc Parquet trực tiếp trên R2; <span class="mono">pg_duckdb</span> chưa mở trên Supabase Cloud; <span class="mono">hyparquet</span> thiếu SQL JOIN.</td>
+              </tr>
+              <tr>
+                <td class="py-2 pr-3 font-semibold text-slate-800">Cloud BI</td>
+                <td class="py-2 pr-3"><span class="px-1.5 py-0.5 rounded bg-sky-100 text-sky-800 font-medium">MotherDuck Lite + Recharts</span></td>
+                <td class="py-2 text-slate-600">Metabase Cloud tối thiểu 100 USD/tháng (0 có gói Free). MotherDuck Lite miễn phí 10 GB và 10 giờ Pulse/tháng.</td>
+              </tr>
+              <tr>
+                <td class="py-2 pr-3 font-semibold text-slate-800">Serving API</td>
+                <td class="py-2 pr-3"><span class="px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-800 font-medium">PA-1 FastAPI / PA-2 Next.js</span></td>
+                <td class="py-2 text-slate-600">PA-1 bảo toàn mã nguồn Python Sprint 02; PA-2 gộp TypeScript 1 server nếu bỏ Python API. Không chuyển sang Rust để giữ tốc độ KLTN.</td>
+              </tr>
+              <tr>
+                <td class="py-2 pr-3 font-semibold text-slate-800">Bảo vệ Thẻ 0đ</td>
+                <td class="py-2 pr-3"><span class="px-1.5 py-0.5 rounded bg-rose-100 text-rose-800 font-medium">Cardless / Hard-Cap Only</span></td>
+                <td class="py-2 text-slate-600">Tránh Cloud Run (khóa billing khi vượt) và Oracle PAYG (giữ cọc 100 USD).</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tier 3: Collapsible Deep Technical Specifications & Risk Matrix -->
+    <section class="space-y-4">
+      <h2 class="text-lg font-bold text-slate-800">6. Chi tiết Quản trị Rủi ro &amp; Kế hoạch Dự phòng (Mở rộng)</h2>
+
+      <details open class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+        <summary class="font-semibold text-slate-800 cursor-pointer select-none">6.1. Ma trận Rủi ro Free Tier &amp; Kịch bản Failover (R1 – R6)</summary>
+        <div class="overflow-x-auto mt-4">
+          <table class="w-full text-xs text-left border-collapse">
+            <thead>
+              <tr class="border-b border-slate-200 text-slate-500 uppercase">
+                <th class="py-2 pr-3">Mã</th>
+                <th class="py-2 pr-3">Rủi ro &amp; Ngưỡng kích hoạt</th>
+                <th class="py-2 pr-3">Phòng ngừa chủ động</th>
+                <th class="py-2">Phương án Backup / Khôi phục</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr>
+                <td class="py-2 pr-3 font-mono font-bold text-rose-700">R1</td>
+                <td class="py-2 pr-3">Ngủ đông &amp; xóa cụm (Supabase pause 7d, Qdrant xóa 28d, HF Spaces ngủ 48h)</td>
+                <td class="py-2 pr-3">GitHub Actions <span class="mono">keep-alive.yml</span> chạy 3 ngày/lần ping API, Supabase &amp; Qdrant</td>
+                <td class="py-2">Neon Free standby (OLTP); Supabase <span class="mono">pgvector</span> / Vectorize (Vector); tái nạp Qdrant từ R2 trong &lt;60s</td>
+              </tr>
+              <tr>
+                <td class="py-2 pr-3 font-mono font-bold text-amber-700">R2</td>
+                <td class="py-2 pr-3">Hết quota AI / lỗi 429 (Gemini 10–15 RPM, CF 10k Neurons/ngày)</td>
+                <td class="py-2 pr-3">TTL Cache câu hỏi RAG; Deterministic Sandwich giảm 70% gọi LLM</td>
+                <td class="py-2">Chuỗi fallback <span class="mono">LiteLLM</span>: Gemini &rarr; Groq (30 RPM) &rarr; OpenRouter <span class="mono">:free</span>; <span class="mono">fastembed</span> trên GH Actions</td>
+              </tr>
+              <tr>
+                <td class="py-2 pr-3 font-mono font-bold text-indigo-700">R3</td>
+                <td class="py-2 pr-3">Tràn RAM 512 MB hoặc vượt trần 3 MiB Cloudflare Worker</td>
+                <td class="py-2 pr-3">Đặt FastAPI trên HF Spaces 16 GB RAM; Vercel Hobby cho Next.js; DuckDB ép 256 MB</td>
+                <td class="py-2">Tối ưu OBT <span class="mono">mart_*</span> + TTL Cache JSON trên RAM; chuyển Render/Koyeb chỉ khi bật cache tĩnh</td>
+              </tr>
+              <tr>
+                <td class="py-2 pr-3 font-mono font-bold text-slate-700">R4</td>
+                <td class="py-2 pr-3">Mất dữ liệu OLTP (Supabase Free không có auto-backup)</td>
+                <td class="py-2 pr-3">Kiểm thử migration SQL cục bộ trước khi áp dụng</td>
+                <td class="py-2">GitHub Actions chạy <span class="mono">pg_dump</span> hàng tuần lưu lên R2 private / Private Artifact</td>
+              </tr>
+              <tr>
+                <td class="py-2 pr-3 font-mono font-bold text-rose-700">R5</td>
+                <td class="py-2 pr-3">Khóa tài khoản dây chuyền vì thẻ quốc tế 0đ</td>
+                <td class="py-2 pr-3">Không gắn thẻ vào dịch vụ không ngắt cứng (GCP Cloud Run, Oracle PAYG)</td>
+                <td class="py-2">100% dịch vụ chính dùng gói Free Hard-Cap tự dừng ở 0 USD</td>
+              </tr>
+              <tr>
+                <td class="py-2 pr-3 font-mono font-bold text-emerald-700">R6</td>
+                <td class="py-2 pr-3">Cold Start hoặc mất Wi-Fi lúc Bảo vệ Hội đồng</td>
+                <td class="py-2 pr-3">Checklist Pre-warm <span class="mono">T-15 phút</span> trước giờ chấm thi</td>
+                <td class="py-2">Giữ profile <span class="mono">local-offline</span> trong <span class="mono">docker-compose.yml</span> làm bản demo dự phòng</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+
+      <details class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+        <summary class="font-semibold text-slate-800 cursor-pointer select-none">6.2. Lộ trình chuyển đổi từ TLCN sang KLTN (Cycle 07 &rarr; Cycle 09)</summary>
+        <div class="mt-3 text-xs text-slate-700 space-y-2 leading-relaxed">
+          <p><strong>Bước 1 (TASK-CLD-01 &amp; CLD-02):</strong> Chốt PA-1 hoặc PA-2 trong phiên phản biện giữa Hưng &amp; Duy; đưa Qdrant &amp; Metabase cục bộ vào profile <span class="mono">local-offline</span>; chuyển vai trò BI ad-hoc sang MotherDuck Lite.</p>
+          <p><strong>Bước 2 (TASK-CLD-04):</strong> Cấu hình Supabase Postgres Pooler + DuckDB <span class="mono">httpfs</span> trên R2 kèm In-Memory TTL Cache; triển khai API lên HF Spaces và Web lên Vercel Hobby.</p>
+          <p><strong>Bước 3 (TASK-ING-02 &amp; SRV-05 — KLTN):</strong> Bật GitHub Actions định kỳ chạy Crawl4AI + Medallion ETL + <span class="mono">keep-alive.yml</span> + <span class="mono">pg_dump</span> hàng tuần; tích hợp Resend Free (<span class="mono">100 mail/ngày</span>) gửi thông báo từ bảng CDC <span class="mono">gold_change_events</span>.</p>
+        </div>
+      </details>
+    </section>
+
+    <footer class="text-xs text-slate-500 border-t border-slate-200 pt-5 pb-8 flex flex-col sm:flex-row justify-between gap-2">
+      <div>Hồ sơ kỹ thuật: <a class="text-sky-700 underline" href="./TASK-CLD-03-full-cloud-free-tier-architecture.md">TASK-CLD-03-full-cloud-free-tier-architecture.md</a></div>
+      <div>Sổ cái tác vụ: <a class="text-sky-700 underline" href="../tasks/task-registry.md">docs/tasks/task-registry.md</a></div>
+    </footer>
+  </main>
+
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: 'default', securityLevel: 'loose' });
+
+    const quotaCtx = document.getElementById('quotaChart').getContext('2d');
+    new Chart(quotaCtx, {
+      type: 'bar',
+      data: {
+        labels: ['R2 Storage (10 GB)', 'Supabase DB (500 MB)', 'Qdrant RAM (1 GB)', 'Workers AI (10k/d)', 'Vercel Transfer (100 GB)', 'MotherDuck (10h/mo)'],
+        datasets: [
+          {
+            label: 'TLCN (15–20 cuộc thi)',
+            data: [0.1, 4.0, 1.0, 1.0, 2.0, 8.0],
+            backgroundColor: '#0ea5e9',
+            borderRadius: 4
+          },
+          {
+            label: 'KLTN (500 cuộc thi / 1k SV)',
+            data: [3.0, 24.0, 3.0, 5.0, 15.0, 38.0],
+            backgroundColor: '#6366f1',
+            borderRadius: 4
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: { beginAtZero: true, max: 50, title: { display: true, text: '% Hạn mức Free Tier' } }
+        }
+      }
+    });
+
+    const paasCtx = document.getElementById('paasChart').getContext('2d');
+    new Chart(paasCtx, {
+      type: 'bar',
+      data: {
+        labels: ['HF Spaces Docker', 'Koyeb Eco', 'Render Free', 'Vercel Serverless (PA-2)'],
+        datasets: [
+          {
+            label: 'RAM tối đa (GB)',
+            data: [16.0, 0.5, 0.5, 1.024],
+            backgroundColor: '#10b981',
+            borderRadius: 4
+          },
+          {
+            label: 'Thời gian giữ ấm trước khi ngủ (Giờ)',
+            data: [48.0, 1.0, 0.25, 24.0],
+            backgroundColor: '#f59e0b',
+            borderRadius: 4
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

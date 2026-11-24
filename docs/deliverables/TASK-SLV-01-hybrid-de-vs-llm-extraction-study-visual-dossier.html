@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TASK-SLV-01: Hybrid DE vs LLM Extraction — Visual Dossier</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen p-6 md:p-10 font-sans">
+  <div class="max-w-6xl mx-auto space-y-8">
+    <!-- Header -->
+    <header class="border-b border-slate-800 pb-6">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <span class="px-3 py-1 text-xs font-semibold rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+            TASK-SLV-01 · Cycle 06 · Silver Layer
+          </span>
+          <h1 class="text-2xl md:text-3xl font-bold mt-3 text-white">
+            Bảo vệ Tính chất Data Engineering &amp; Tối ưu LLM ở Lớp Bạc
+          </h1>
+          <p class="text-slate-400 text-sm mt-1">
+            Kiến trúc <strong>Deterministic Sandwich</strong> kết hợp DOM/JSON-LD/Regex tất định và Bounded LLM (<code>Instructor</code> + <code>Pydantic v2</code>)
+          </p>
+        </div>
+        <div class="text-right text-xs text-slate-400">
+          <div>HCM-UTE · FIT · Data Engineering</div>
+          <div>2026-11-23</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Tier 1: KPI Cards -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+        <div class="text-xs text-slate-400 uppercase tracking-wider">Tầng Extract / Validate / Load</div>
+        <div class="text-2xl font-bold text-emerald-400 mt-2">100% Tất định</div>
+        <div class="text-xs text-slate-500 mt-1">Python, lxml, Regex, Pydantic v2</div>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+        <div class="text-xs text-slate-400 uppercase tracking-wider">Độ trễ Tiền xử lý HTML</div>
+        <div class="text-2xl font-bold text-sky-400 mt-2">&lt; 5 ms</div>
+        <div class="text-xs text-slate-500 mt-1">Chạy trong RAM, 0 ms mở Browser</div>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+        <div class="text-xs text-slate-400 uppercase tracking-wider">Tiết kiệm Token LLM</div>
+        <div class="text-2xl font-bold text-amber-400 mt-2">~30–60%</div>
+        <div class="text-xs text-slate-500 mt-1">Nhờ Pre-fill Metadata &amp; Pre-filter</div>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+        <div class="text-xs text-slate-400 uppercase tracking-wider">Hallucination Metadata</div>
+        <div class="text-2xl font-bold text-rose-400 mt-2">0%</div>
+        <div class="text-xs text-slate-500 mt-1">URL, og:*, JSON-LD lấy trực tiếp</div>
+      </div>
+    </section>
+
+    <!-- Tier 2: Architecture & Benchmark -->
+    <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+        <h2 class="text-lg font-semibold text-white mb-4">Kiến trúc Deterministic Sandwich (Lớp Bạc)</h2>
+        <div class="mermaid bg-slate-950 p-4 rounded-lg border border-slate-800 overflow-x-auto">
+flowchart TD
+    B["Bronze R2: Raw HTML"] --> E1["1. Deterministic Extract<br>(JSON-LD, og:*, Regex, Clean MD)"]
+    E1 --> E2{"Hợp lệ?"}
+    E2 -- "404 / Rỗng" --> S["Skip (0 Token)"]
+    E2 -- "Có" --> T1["2. Bounded LLM<br>(Instructor + Pre-fill)"]
+    T1 --> V1["3. Pydantic v2 Validate"]
+    V1 --> L1["4. Load Parquet -> Silver R2"]
+        </div>
+      </div>
+
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+        <h2 class="text-lg font-semibold text-white mb-4">So sánh 3 Phương pháp Trích xuất (Thang điểm 1–10)</h2>
+        <canvas id="tradeoffChart" height="220"></canvas>
+      </div>
+    </section>
+
+    <!-- Tier 3: Collapsible Field Matrix -->
+    <section class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+      <details open>
+        <summary class="text-lg font-semibold text-white cursor-pointer select-none">
+          Ma trận Phân bổ Trách nhiệm theo Trường (Competition &amp; PrizeTier)
+        </summary>
+        <div class="mt-4 overflow-x-auto">
+          <table class="w-full text-sm text-left border-collapse">
+            <thead>
+              <tr class="border-b border-slate-800 text-slate-400">
+                <th class="py-2 px-3">Nhóm trường</th>
+                <th class="py-2 px-3">Trường (schemas.py)</th>
+                <th class="py-2 px-3">Cơ chế chính</th>
+                <th class="py-2 px-3">Vai trò LLM</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/60 text-slate-300">
+              <tr>
+                <td class="py-2 px-3 font-medium">Định danh</td>
+                <td class="py-2 px-3"><code>url</code>, <code>og:image</code></td>
+                <td class="py-2 px-3 text-emerald-400">100% Tất định</td>
+                <td class="py-2 px-3">Không dùng (0 token)</td>
+              </tr>
+              <tr>
+                <td class="py-2 px-3 font-medium">Tiêu đề</td>
+                <td class="py-2 px-3"><code>name</code>, <code>tagline</code></td>
+                <td class="py-2 px-3 text-emerald-400">Tất định trước (og:title, h1)</td>
+                <td class="py-2 px-3">Chỉ làm sạch nếu nhiễu</td>
+              </tr>
+              <tr>
+                <td class="py-2 px-3 font-medium">Thời gian &amp; Tiền</td>
+                <td class="py-2 px-3"><code>registration_deadline</code>, <code>total_prize_pool</code></td>
+                <td class="py-2 px-3 text-sky-400">Hybrid (Regex + Context)</td>
+                <td class="py-2 px-3">Tránh Wrong-Year Problem</td>
+              </tr>
+              <tr>
+                <td class="py-2 px-3 font-medium">Ngữ nghĩa</td>
+                <td class="py-2 px-3"><code>summary</code>, <code>challenge_overview</code>, <code>category</code></td>
+                <td class="py-2 px-3 text-amber-400">Bounded LLM</td>
+                <td class="py-2 px-3">Tóm tắt &amp; phân loại</td>
+              </tr>
+              <tr>
+                <td class="py-2 px-3 font-medium">Cấu trúc lồng</td>
+                <td class="py-2 px-3"><code>prizes</code>, <code>timeline_stages</code></td>
+                <td class="py-2 px-3 text-amber-400">Bounded LLM + Pydantic</td>
+                <td class="py-2 px-3">Bóc tách bảng; Pydantic ép kiểu</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+    </section>
+  </div>
+
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+    new Chart(document.getElementById('tradeoffChart'), {
+      type: 'radar',
+      data: {
+        labels: ['Độ linh hoạt Layout', 'Tính tất định', 'Tiết kiệm Token', 'Tốc độ', 'Chống Hallucination'],
+        datasets: [
+          {
+            label: 'Pure Rule-based',
+            data: [2, 10, 10, 10, 9],
+            borderColor: '#38bdf8',
+            backgroundColor: 'rgba(56, 189, 248, 0.15)'
+          },
+          {
+            label: 'Pure LLM',
+            data: [9, 3, 2, 3, 4],
+            borderColor: '#fb7185',
+            backgroundColor: 'rgba(251, 113, 133, 0.15)'
+          },
+          {
+            label: 'Hybrid (Deterministic Sandwich)',
+            data: [9, 8, 7, 7, 9],
+            borderColor: '#34d399',
+            backgroundColor: 'rgba(52, 211, 153, 0.2)'
+          }
+        ]
+      },
+      options: {
+        scales: {
+          r: {
+            min: 0,
+            max: 10,
+            grid: { color: '#334155' },
+            angleLines: { color: '#334155' },
+            pointLabels: { color: '#cbd5e1', font: { size: 11 } },
+            ticks: { display: false }
+          }
+        },
+        plugins: { legend: { labels: { color: '#e2e8f0' } } }
+      }
+    });
+  </script>
+</body>
+</html>

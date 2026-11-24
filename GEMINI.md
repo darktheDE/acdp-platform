@@ -1,0 +1,95 @@
+# GEMINI.md: Antigravity & Gemini CLI Workspace Rules
+
+This file is automatically discovered and loaded by Google Antigravity and Gemini CLI agents working in the `acdp-platform` workspace.
+
+---
+
+## 1. Master Agent Contract & Prompt Framework
+
+All agents operating in this workspace must strictly abide by the rules and adaptive execution pathways documented in:
+👉 **[`AGENTS.md`](./AGENTS.md)**  
+👉 **[`docs/frameworks/PROMPT_EXECUTION_FRAMEWORK.md`](./docs/frameworks/PROMPT_EXECUTION_FRAMEWORK.md)**
+
+---
+
+## 2. Antigravity-Specific Operational Directives
+
+1. **Adaptive Pathways**:
+   - For research/thesis/core code $\rightarrow$ Run standard full cycle.
+   - For UI mockups / visual previews $\rightarrow$ Run **Pathway B (Fast-Track)** using mock data stubs.
+   - For quick queries $\rightarrow$ Answer directly in 2–3 paragraphs.
+   - For ambiguous prompts $\rightarrow$ Propose 2–3 concrete options; never guess.
+2. **Specialized Skills Activation**:
+   - Academic Research: `.agents/skills/academic-researcher/SKILL.md`
+   - Thesis Writing (FIT-HCMUTE): `.agents/skills/thesis-writer/SKILL.md`
+   - Presentation & Defense: `.agents/skills/defense-pitch-builder/SKILL.md`
+   - Competitor Analysis: `.agents/skills/competitor-benchmark/SKILL.md`
+   - Experiment Evaluation: `.agents/skills/experiment-evaluator/SKILL.md`
+   - Frontend UI/UX: `.agents/skills/frontend-designer/SKILL.md`
+   - URL & Link Verifier: `.agents/skills/url-link-verifier/SKILL.md`
+   - Scientific Prose & Anti-Slop: `.agents/skills/anti-slop-scientific-writer/SKILL.md`
+   - Visual Dossiers & HTML Reports: `.agents/skills/visual-dossier-reporter/SKILL.md`
+   - Ollama Orchestration: `.agents/skills/ollama-bridge/SKILL.md`
+   - Decision Sync & Doc Governance: `.agents/skills/doc-decision-sync/SKILL.md`
+   - In-Repo Task Management: `.agents/skills/repo-task-manager/SKILL.md`
+
+3. **In-Repo Task Synchronization (`DIR-018`)**: Record deliverables in `docs/deliverables/` and maintain `docs/tasks/tasks-data.json`, `docs/tasks/task-registry.md`, and `docs/tasks/index.html`.
+4. **Skill Engineering Specification**: When creating or upgrading any skill, strictly adhere to [`docs/frameworks/AGENT_SKILL_ENGINEERING_SPEC.md`](./docs/frameworks/AGENT_SKILL_ENGINEERING_SPEC.md). Never create cosmetic or prompt-only skills; always provide structured frontmatter with negative triggers, deterministic scripts (`scripts/`), deep references (`references/`), and verification suites.
+5. **Git Policy (Read-Only Inspection Allowed)**:
+   - Never execute mutating git commands (`git add`, `git commit`, `git push`, branch creation).
+   - Read-only inspection (`git status`, `git log`, `git diff`, `git show`) is allowed.
+6. **Zero Parametric Trust & Verification-First**:
+   - **Never trust model pre-trained weights blindly**: Model pre-trained data can be outdated, inaccurate, or hallucinated.
+   - **MANDATORY FIRST ACTION**: When answering technical questions, contest rules, university facts, or research claims, **FIRST search Google, internet, and Google Scholar** (`search_web`, `read_url_content`) to verify and confirm reality before concluding.
+7. **Institutional Entity Standards**:
+   - University Name: **Trường Đại học Công nghệ Kỹ thuật TP.HCM (HCM-UTE)**.
+   - Faculty: Khoa Công nghệ Thông tin (FIT-HCM-UTE).
+   - Major: Kỹ thuật Dữ liệu (Data Engineering).
+8. **Continuous Directives & Active Memory**:
+   - Consult and respect all standing directives in [`docs/frameworks/TEAM_DIRECTIVES.md`](./docs/frameworks/TEAM_DIRECTIVES.md).
+   - When the user issues any new constraint or preference during chat, immediately apply it AND persist it to [`docs/frameworks/TEAM_DIRECTIVES.md`](./docs/frameworks/TEAM_DIRECTIVES.md).
+9. **Concise Scientific Communication & Anti-Slop (DIR-007)**:
+   - Always lead with the direct technical answer (Answer-First). Never use throat-clearing, preambles, reasoning leaks, or sycophancy.
+   - Author `.md` and `.html` documentation strictly adhering to `.agents/skills/anti-slop-scientific-writer/`.
+10. **Implicit Intent & Auto-Activation (DIR-008)**:
+    - Never demand or wait for the user to explicitly call skills by name. Automatically infer user intent and activate the relevant skill playbooks immediately.
+11. **Tabula Rasa in Tech Research & Peer Defense Before ADR (DIR-011)**:
+    - Treat all existing tech mentions in READMEs and starter templates as unverified placeholders during research tasks; research candidates objectively from first principles.
+    - Research findings must be structured as defense dossiers for internal debate between Hưng and Duy; never draft or adopt formal ADRs until both partners review and reach explicit consensus.
+12. **Temporal Grounding (Project Anchor: September 2026 - DIR-012)**:
+    - Active project execution timestamp is permanently anchored to **September 2026 (Tháng 9/2026)**.
+    - When conducting technical research, verifying library APIs, assessing software licensing, or finding scientific literature, agents MUST anchor all internet queries and knowledge lookups to the **September 2026** reality (covering 2024–2026 advances, releases, and papers), strictly avoiding outdated, legacy information.
+13. **Data & Lakehouse Storage Governance**:
+    - Runtime Lakehouse tiers (`bronze/`, `silver/`, `gold/`) run strictly on Cloudflare R2 (`DIR-021`); local `data/` and `.parquet`/`.duckdb` files must never be committed to Git.
+14. **Personal Scratchpad Governance (`.scratchpad/` - DIR-013)**:
+    - `.scratchpad/` is git-ignored and strictly reserved for author drafts, long prompts, and on-demand visual reports.
+    - Agents NEVER write to `.scratchpad/` autonomously; write operations occur strictly when explicitly instructed by the author.
+15. **Living Visual Dossier & Interactive HTML Reporting (DIR-014)**:
+    - Whenever the user requests research reports, deliverables, architecture deep-dives, or benchmarks, PROACTIVELY PROPOSE or GENERATE a **Single-File Interactive HTML Dossier** (Tailwind CSS CDN + Mermaid.js CDN + Chart.js CDN) alongside markdown to avoid text-heavy visual fatigue.
+    - Structure in 3 tiers: (1) 1-Minute Executive Summary KPI cards, (2) Interactive Mermaid Architecture Diagrams & Chart.js Benchmark Charts, (3) Collapsible deep technical specs & code diffs.
+    - Route output to `.scratchpad/<name>.html` (on-demand personal analysis) or `docs/deliverables/<name>.html` (formal project deliverable).
+16. **Lean TLCN Scope (5–10 Competitions) & Minimalist Tech Stack (DIR-015)**:
+    - Phase 1 (TLCN) strictly targets **5–10 curated competition links** crawled on-demand to prove pipeline feasibility. High-volume and automated realtime/batch crawling belong to Phase 2 (KLTN).
+    - Use the minimalist stack for TLCN Bronze-to-Gold ETL: `Crawl4AI` $\rightarrow$ raw Markdown on `Cloudflare R2` / `Local` $\rightarrow$ `Instructor` + `Pydantic v2` (`SilverCompetitionRecord`) $\rightarrow$ `Parquet/JSON` queried directly by `DuckDB` (no `zstandard` payload compression, `SeaweedFS`, or `dbt`).
+17. **Final Web & OLTP/OLAP Split Stack (DIR-016)**:
+    - Backend App DB (OLTP): **PostgreSQL 18** (`postgres:18-alpine`, 17+ min) for user accounts, sessions, bookmarks, and chat history; keep **DuckDB** (`read_only=True`) for Gold OLAP Star Schema and **Qdrant** for RAG vector search.
+    - Serving & Frontend: **FastAPI** (`fastapi[standard]`, Python 3.11+/3.13+, Pydantic v2) + **Next.js 16** (Active LTS `16.4.x`, or `15.5.x` Maintenance LTS) + TypeScript + Tailwind CSS v4 + Recharts.
+18. **Atomic Decision Propagation & Zero Doc Drift (DIR-017)**:
+    - Whenever any architectural decision, `DIR-XXX`, `ADR`, `SPEC`, tech version, or module path changes, scan impact with `audit_doc_drift.py --impact <keyword>`, update all Tier 0–3 documents atomically, and verify `python .agents/skills/doc-decision-sync/scripts/audit_doc_drift.py --strict` passes with `0` violations.
+19. **In-Repo Task Management & Notion Decommissioning (DIR-018)**:
+    - Manage all code and Medallion tasks directly in `docs/tasks/tasks-data.json`, `docs/tasks/task-registry.md`, and `docs/tasks/index.html`. Never reference Notion in repo docs.
+20. **Reader-First Conciseness & Untrusted Skill Ban (DIR-019)**:
+    - Keep chat responses short, plain, and reader-friendly without jargon overload. Never mention internal skills or announce anti-slop/semantic checks. Never download or execute external untrusted skills, scripts, or binaries.
+21. **Search Provenance & Verifiable References (DIR-020)**:
+    - Every research report and deliverable (`docs/deliverables/`, `docs/rd-tasks/`) must include a **Search Provenance & References** section listing the exact search queries executed and direct source URLs/DOIs for human verification.
+22. **Cloudflare R2-Exclusive Lakehouse & Dedicated Qdrant Ingestion (DIR-021)**:
+    - All Medallion tiers (`bronze/`, `silver/`, `gold/`) run strictly on Cloudflare R2 with zero local disk persistence; FastAPI and Metabase read Gold Parquet directly from R2 via DuckDB `httpfs`.
+    - Gradio is removed; `src/acdp/3_ingest_to_qdrant.py` handles Bronze-to-Qdrant (`@cf/baai/bge-m3`) ingestion while Web `/copilot` (`src/acdp/api/services/rag_service.py`) serves RAG chat with `gemini-3.5-flash-lite`.
+23. **Student Tech Scope, Official Site Resolution & `v2` Pipeline (DIR-022)**:
+    - Strictly target **IT/AI/Data/Security/Programming competitions for university students** within **current year ± 1** (`2025–2027`).
+    - Resolve media-partner/aggregator posts to the **official competition website** and drop competitions lacking an official website at Silver; `.pdf`/`.docx` rules remain optional.
+    - Implement Cycle 06 pipeline upgrades under `src/acdp/v2/`.
+
+
+
+

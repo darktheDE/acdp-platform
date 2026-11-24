@@ -1,0 +1,24 @@
+{
+  "id": "TASK-OPS-02",
+  "title": "Nền tảng Quản lý Ticket & Phản hồi Người dùng (External No-Code Platform)",
+  "cycle": "Cycle 10",
+  "scope": "KLTN (Phase 2)",
+  "layer": "Academic & Ops",
+  "task_type": "No-Code / External Integration",
+  "is_no_code": true,
+  "owner": "Hung & Duy",
+  "status": "todo",
+  "priority": "low",
+  "problem_statement": "Cần kênh tiếp nhận báo lỗi dữ liệu cuộc thi và phản hồi sinh viên mà không tự code hệ thống ticketing phức tạp.",
+  "research_questions": [
+    "Chọn Google Forms hay Plane/external ticket board để nhúng link vào Footer/Header?"
+  ],
+  "acceptance_criteria": [
+    "Hoàn thành form tiếp nhận phản hồi trên nền tảng ngoài (No-Code) và gắn link truy cập từ Web Portal."
+  ],
+  "deliverables": [
+    "docs/tasks/task-registry.md"
+  ],
+  "notes": "No-Code task: không triển khai backend/frontend ticketing tự code.",
+  "updated_at": "2026-11-22"
+}

@@ -1,0 +1,26 @@
+[
+  {
+    "query": "Hạn chót đăng ký cuộc thi ICPC Việt Nam 2026 là ngày nào?",
+    "faithfulness": 0.95,
+    "answer_relevance": 0.92,
+    "context_precision": 0.90,
+    "context_recall": 0.88,
+    "latency_ms": 420
+  },
+  {
+    "query": "Sinh viên năm nhất có được tham gia giải thưởng Euréka không?",
+    "faithfulness": 0.91,
+    "answer_relevance": 0.89,
+    "context_precision": 0.87,
+    "context_recall": 0.84,
+    "latency_ms": 380
+  },
+  {
+    "query": "Số lượng thành viên tối đa trong một đội thi Olympic Tin học là bao nhiêu?",
+    "faithfulness": 0.98,
+    "answer_relevance": 0.94,
+    "context_precision": 0.92,
+    "context_recall": 0.85,
+    "latency_ms": 350
+  }
+]

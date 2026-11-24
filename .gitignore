@@ -4,6 +4,9 @@
 .env.*.local
 *.pem
 *.key
+*mcp_config.json
+.agents/mcp_config.json
+.agents/plugins/
 
 # Python
 __pycache__/
@@ -39,13 +42,14 @@ htmlcov/
 *.duckdb
 *.db
 *.sqlite3
-data/bronze/
-data/silver/
-data/gold/
-lakehouse/
 *.csv
 *.tsv
 *.jsonl
+_delta_log/
+
+# Data Directory Tracking Policy:
+data/
+
 
 # Vector Store local mounts
 qdrant_storage/
@@ -74,3 +78,9 @@ logs/
 .DS_Store
 Thumbs.db
 Desktop.ini
+
+.scratchpad/
+!apps/web/lib/
+.env.backend
+.vercel
+.env*
