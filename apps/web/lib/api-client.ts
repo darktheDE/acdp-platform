@@ -70,8 +70,20 @@ export async function apiFetch<T>(
   if (!res.ok) {
     let detail = `HTTP ${res.status}`;
     try {
-      const errJson = (await res.json()) as { detail?: string };
-      if (errJson?.detail) detail = errJson.detail;
+      const errJson = (await res.json()) as { detail?: unknown };
+      if (typeof errJson?.detail === "string") {
+        detail = errJson.detail;
+      } else if (Array.isArray(errJson?.detail)) {
+        detail = errJson.detail
+          .map((item) =>
+            typeof item === "object" && item !== null && "msg" in item
+              ? String((item as { msg: unknown }).msg)
+              : JSON.stringify(item),
+          )
+          .join("; ");
+      } else if (errJson?.detail !== undefined && errJson?.detail !== null) {
+        detail = JSON.stringify(errJson.detail);
+      }
     } catch {
       // Ignore non-JSON error body
     }

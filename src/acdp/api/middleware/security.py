@@ -337,7 +337,7 @@ class SecurityHardeningMiddleware(BaseHTTPMiddleware):
         path = request.url.path
         is_prod = settings.is_production
 
-        if path in _HIDDEN_PRODUCTION_PATHS:
+        if is_prod and path in _HIDDEN_PRODUCTION_PATHS:
             resp = JSONResponse(
                 status_code=status.HTTP_404_NOT_FOUND,
                 content={"detail": "Not Found"},
