@@ -26,7 +26,7 @@
     {"id": "NT-009", "title": "On-Demand Crawl4AI Feasibility Spike on Curated Competitions & R2 Upload", "cycle": "Cycle 02", "scope": "TLCN (Phase 1)", "layer": "Bronze", "task_type": "Engineering", "is_no_code": false, "owner": "Hung & Duy", "status": "done", "priority": "high", "problem_statement": "Prove Crawl4AI + R2 ingestion feasibility.", "deliverables": ["src/acdp/1_crawl_to_bronze.py", "data/raw/markdown"], "updated_at": "2026-10-15"},
     {"id": "NT-010", "title": "Pydantic Event Schema & Lean Extraction Spec (SPEC-0002)", "cycle": "Cycle 02", "scope": "TLCN (Phase 1)", "layer": "Silver", "task_type": "Architecture", "is_no_code": false, "owner": "Hung & Duy", "status": "done", "priority": "high", "problem_statement": "Define Silver Pydantic v2 contracts.", "deliverables": ["docs/specs/0002-data-ingestion-and-schema-spec.md", "src/acdp/schemas.py"], "updated_at": "2026-10-15"},
     {"id": "NT-011", "title": "Bronze-to-Silver LLM Extraction & DuckDB Gold OLAP Querying", "cycle": "Cycle 03", "scope": "TLCN (Phase 1)", "layer": "Silver", "task_type": "Engineering", "is_no_code": false, "owner": "Hung & Duy", "status": "done", "priority": "high", "problem_statement": "Implement Instructor extraction and DuckDB queries.", "deliverables": ["src/acdp/2_instruction.py", "src/acdp/4_analytics_gold.py"], "updated_at": "2026-11-08"},
-    {"id": "NT-012", "title": "Hybrid Search (BM25 + Qdrant) RAG Prototype & Ragas Scorecard", "cycle": "Cycle 03", "scope": "TLCN (Phase 1)", "layer": "Serving & Web", "task_type": "Engineering", "is_no_code": false, "owner": "Hung & Duy", "status": "in_progress", "priority": "high", "problem_statement": "Evaluate RAG chatbot MVP with Ragas.", "deliverables": ["src/acdp/3_chatbot_mvp.py", "docs/experiments/0001-rag-baseline-evaluation.md"], "updated_at": "2026-11-15"},
+    {"id": "NT-012", "title": "Dual-Layer RAG (v2) & Ragas Baseline Scorecard", "cycle": "Cycle 03", "scope": "TLCN (Phase 1)", "layer": "Serving & Web", "task_type": "Engineering", "is_no_code": false, "owner": "Hung & Duy", "status": "in_progress", "priority": "high", "problem_statement": "Evaluate Dual-Layer RAG (Silver Clean Markdown + Gold OBT metadata pre-filtering on Qdrant Cloud with @cf/baai/bge-m3 and gemini-3.5-flash-lite) via Ragas.", "deliverables": ["src/acdp/v2/rag_ingest.py", "src/acdp/api/services/rag_service.py", "docs/experiments/0001-rag-baseline-evaluation.md"], "updated_at": "2026-11-23"},
     {"id": "NT-013", "title": "Business Requirements, Technical Feasibility & Architectural Review (T01)", "cycle": "Cycle 01", "scope": "TLCN (Phase 1)", "layer": "Discovery", "task_type": "Research & Theory", "is_no_code": false, "owner": "Hung & Duy", "status": "done", "priority": "high", "problem_statement": "Resolve 5 business dilemmas.", "deliverables": ["docs/deliverables/NT-013-business-technical-feasibility-review.md"], "updated_at": "2026-09-11"},
     {"id": "NT-014", "title": "Academic Competition Landscape Survey & Ingestion Scaling Roadmap (T02)", "cycle": "Cycle 01", "scope": "TLCN (Phase 1)", "layer": "Discovery", "task_type": "Research & Theory", "is_no_code": false, "owner": "Hung & Duy", "status": "done", "priority": "high", "problem_statement": "Survey competition landscape and 4-pillar ingestion.", "deliverables": ["docs/deliverables/NT-014-competition-landscape-survey.md"], "updated_at": "2026-09-11"},
     {"id": "NT-017", "title": "Problem Formulation & Thesis Introduction Drafting (T08_v2)", "cycle": "Cycle 01", "scope": "TLCN (Phase 1)", "layer": "Academic & Ops", "task_type": "Academic", "is_no_code": false, "owner": "Hung & Duy", "status": "done", "priority": "medium", "problem_statement": "Draft Chapter 1 thesis introduction.", "deliverables": ["docs/rd-tasks/T08_v2.md"], "updated_at": "2026-09-20"},
@@ -104,7 +104,7 @@
       "task_type": "Research & Theory",
       "is_no_code": false,
       "owner": "Hung & Duy",
-      "status": "todo",
+      "status": "done",
       "priority": "high",
       "problem_statement": "Lớp Bạc hiện dùng Pydantic + LLM liên tục để bóc tách JSON/Parquet. Cần làm rõ việc phụ thuộc LLM liên tục có làm giảm đi tính chất của ngành Kỹ thuật Dữ liệu (DE) hay không, và thiết kế hướng kết hợp kỹ thuật DE tất định.",
       "research_questions": [
@@ -114,9 +114,12 @@
       "acceptance_criteria": [
         "Xây dựng kiến trúc Hybrid DE + LLM Extraction có căn cứ khoa học và tỷ lệ fallback định lượng."
       ],
-      "deliverables": ["docs/deliverables/TASK-SLV-01-hybrid-de-vs-llm-extraction-study.md"],
+      "deliverables": [
+        "docs/deliverables/TASK-SLV-01-hybrid-de-vs-llm-extraction-study.md",
+        "docs/deliverables/TASK-SLV-01-hybrid-de-vs-llm-extraction-study-visual-dossier.html"
+      ],
       "notes": "",
-      "updated_at": "2026-11-22"
+      "updated_at": "2026-11-23"
     },
     {
       "id": "TASK-SLV-02",
@@ -127,7 +130,7 @@
       "task_type": "Architecture",
       "is_no_code": false,
       "owner": "Hung & Duy",
-      "status": "todo",
+      "status": "done",
       "priority": "medium",
       "problem_statement": "Kiểm chứng schema key-value cuộc thi và prizes ở Lớp Bạc đã thực sự đúng, đầy đủ và phục vụ mục tiêu cuối cùng của sản phẩm (Explorer, Ghép đội, Màn hình gửi Giảng viên, Analytics) hay chưa.",
       "research_questions": [
@@ -137,9 +140,12 @@
       "acceptance_criteria": [
         "Hoàn thành bảng đối soát Schema Coverage Matrix từ Silver -> Gold -> Serving UI."
       ],
-      "deliverables": ["docs/deliverables/TASK-SLV-02-silver-schema-and-parquet-validation.md"],
-      "notes": "",
-      "updated_at": "2026-11-22"
+      "deliverables": [
+        "docs/deliverables/TASK-SLV-02-silver-schema-and-parquet-validation.md",
+        "docs/deliverables/TASK-SLV-02-silver-schema-and-parquet-validation-visual-dossier.html"
+      ],
+      "notes": "Đã kiểm chứng 15 cuộc thi & 50 hạng giải thực tế trên R2; phát hiện 8 lỗ hổng G1-G8 và đề xuất Schema v2 chờ phản biện trước TASK-SLV-03.",
+      "updated_at": "2026-11-23"
     },
     {
       "id": "TASK-GLD-01",
@@ -150,7 +156,7 @@
       "task_type": "Research & Theory",
       "is_no_code": false,
       "owner": "Hung & Duy",
-      "status": "todo",
+      "status": "done",
       "priority": "high",
       "problem_statement": "Lớp Vàng đang lưu Parquet Kimball Star Schema (4 dim, 3 fact, 2 bridge, 6 mart). Cần kiểm chứng xem đã đúng chuẩn Kimball chưa, và liệu có bắt buộc phải dùng Kimball hay nên dùng loại schema khác (OBT, Data Vault) cho mục tiêu sản phẩm.",
       "research_questions": [
@@ -160,9 +166,145 @@
       "acceptance_criteria": [
         "Có hồ sơ kiểm định chuẩn Kimball (Grain, Surrogate Keys, Conformed Dimensions, Bridge Weight) và luận cứ bảo vệ."
       ],
-      "deliverables": ["docs/deliverables/TASK-GLD-01-kimball-star-schema-audit-and-alternatives.md"],
-      "notes": "",
-      "updated_at": "2026-11-22"
+      "deliverables": [
+        "docs/deliverables/TASK-GLD-01-kimball-star-schema-audit-and-alternatives.md",
+        "docs/deliverables/TASK-GLD-01-kimball-star-schema-audit-and-alternatives-visual-dossier.html"
+      ],
+      "notes": "Đã kiểm định 21 tệp Gold Parquet trên R2 (106.98 KB, 0.0 VND sai số bridge); chứng minh OBT nhanh hơn Star Join 4.8x cold qua R2 httpfs (182.9 ms vs 880.5 ms); chốt kiến trúc Two-Tier Gold (Kimball Core + OBT Marts), Dual-Layer RAG (Silver Text + Gold Metadata) và phân tách Web Dashboard vs Metabase.",
+      "updated_at": "2026-11-23"
+    },
+    {
+      "id": "TASK-BRZ-02",
+      "title": "Triển khai Lưu trữ Raw Rendered HTML ở Lớp Đồng (v2/bronze_crawl.py)",
+      "cycle": "Cycle 06",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Bronze",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "done",
+      "priority": "high",
+      "problem_statement": "Hiện thực hóa quyết định từ TASK-BRZ-01 tại src/acdp/v2/bronze_crawl.py (giữ nguyên mã nguồn cũ): lưu Raw Rendered HTML (result.html) và đóng gói ACDP_PAGE_BOUNDARY lên Cloudflare R2 bronze/ thay vì raw_markdown.",
+      "research_questions": [],
+      "acceptance_criteria": [
+        "src/acdp/v2/bronze_crawl.py lưu tệp .html nguyên bản (text/html; charset=utf-8) lên R2 bronze/.",
+        "Hỗ trợ đóng gói nhiều trang con từ AdaptiveCrawler bằng thẻ phân cách ACDP_PAGE_BOUNDARY."
+      ],
+      "deliverables": [
+        "src/acdp/v2/bronze_crawl.py",
+        "docs/deliverables/TASK-BRZ-02-raw-html-bronze-implementation.md",
+        "docs/deliverables/TASK-BRZ-02-raw-html-bronze-implementation-visual-dossier.html"
+      ],
+      "notes": "Phụ thuộc TASK-BRZ-01. Triển khai tại src/acdp/v2 (DIR-022). Benchmark full batch (2026-11-23): 33/36 URL OK (31 Adaptive + 2 Fallback), 93 pages, 16.264 MB, 1513.93s (42.05s/URL), lưu tại s3://acdp-lakehouse/bronze/_benchmarks/crawl_bronze_1795418426.json. Ghi chú tối ưu đợt sau: domcontentloaded + cache query expansion + Semaphore(3).",
+      "updated_at": "2026-11-23"
+    },
+    {
+      "id": "TASK-SLV-03",
+      "title": "Triển khai Hybrid Deterministic Sandwich & Clean Markdown ở Lớp Bạc (v2/silver_transform.py)",
+      "cycle": "Cycle 06",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Silver",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "done",
+      "priority": "high",
+      "problem_statement": "Hiện thực hóa quyết định từ TASK-BRZ-01, TASK-SLV-01 và DIR-022 tại src/acdp/v2/silver_transform.py: đọc Raw HTML từ bronze/, chạy DefaultMarkdownGenerator() trong RAM xuất silver/markdown/, trích xuất tất định JSON-LD/og:*/Regex + lọc scope (CNTT/AI/Sinh viên/năm hiện tại ± 1, loại cuộc thi không có trang web chính thức, khử trùng lặp bài truyền thông về trang chính thức) trước khi gọi Bounded LLM (Instructor), và chuyển luồng RAG (src/acdp/v2/rag_ingest.py) sang đọc từ silver/markdown/.",
+      "research_questions": [],
+      "acceptance_criteria": [
+        "src/acdp/v2/silver_transform.py xuất Clean Markdown lên R2 silver/markdown/ và tương thích ngược với các object .md lịch sử trên bronze/.",
+        "Tích hợp tầng tiền trích xuất tất định (JSON-LD, og:*, Regex), lọc scope DIR-022 (CNTT/AI/Sinh viên/năm ± 1, có trang web chính thức) và khử trùng lặp kênh truyền thông trước khi gọi Instructor LLM.",
+        "src/acdp/v2/rag_ingest.py đọc Markdown sạch từ silver/markdown/ thay vì đọc tắt từ bronze/."
+      ],
+      "deliverables": [
+        "src/acdp/v2/silver_transform.py",
+        "src/acdp/v2/rag_ingest.py",
+        "tests/test_silver_transform_v2.py",
+        "docs/deliverables/TASK-SLV-03-hybrid-sandwich-and-rag-silver-implementation.md",
+        "docs/deliverables/TASK-SLV-03-hybrid-sandwich-and-rag-silver-implementation-visual-dossier.html"
+      ],
+      "notes": "Phụ thuộc TASK-BRZ-01 và TASK-SLV-01. Triển khai tại src/acdp/v2. Chạy thật trên R2 & Qdrant Cloud ngày 2026-11-23: 33 HTML Bronze -> 26 Clean Markdown + Silver JSON (7 bị loại theo DIR-022) -> 648 chunks (26 domain) nạp vào Qdrant Cloud; pytest 29 passed (1 xfailed của TASK-SLV-04).",
+      "updated_at": "2026-11-23"
+    },
+    {
+      "id": "TASK-SLV-04",
+      "title": "Triển khai Silver Schema v2 (G1–G8) & PyArrow Explicit Parquet (v2/schemas.py, v2/gold_star_schema.py)",
+      "cycle": "Cycle 06",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Silver",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "done",
+      "priority": "high",
+      "problem_statement": "Hiện thực hóa đề xuất từ TASK-SLV-02 sau khi phản biện tại src/acdp/v2/: nâng cấp schemas.py lên Schema v2 (chuẩn hóa ngày ISO date, bổ sung eligibility/skills cho Ghép đội, trường Màn hình gửi Giảng viên, quantity/currency cho PrizeTier, lineage) và cập nhật export_silver_parquet() dùng PyArrow pa.schema tường minh + nén ZSTD + xuất thêm silver/timeline_stages.parquet.",
+      "research_questions": [],
+      "acceptance_criteria": [
+        "Cập nhật Competition, PrizeTier, TimelineStage trong src/acdp/v2/schemas.py giải quyết G1–G7 (giữ tương thích ngược).",
+        "Cập nhật export_silver_parquet() trong src/acdp/v2/gold_star_schema.py dùng pa.schema tường minh, nén ZSTD, giữ None chuẩn và xuất đủ 3 tệp: competitions.parquet, prizes.parquet, timeline_stages.parquet.",
+        "Gỡ bỏ xfail trong tests/test_silver_schema.py và toàn bộ test Silver pass 100%."
+      ],
+      "deliverables": [
+        "src/acdp/v2/schemas.py",
+        "src/acdp/v2/gold_star_schema.py",
+        "tests/test_silver_schema.py",
+        "docs/deliverables/TASK-SLV-04-silver-schema-v2-and-parquet-implementation.md",
+        "docs/deliverables/TASK-SLV-04-silver-schema-v2-and-parquet-implementation-visual-dossier.html"
+      ],
+      "notes": "Đã triển khai Schema v2 (G1–G8) tại src/acdp/v2/, gỡ xfail (24/24 pytest passed, 0 ruff errors) và đẩy trực tiếp 3 tệp ZSTD Parquet lên Cloudflare R2 ngày 2026-11-23: competitions.parquet (24 rows, 43 cols, 36,040 B), prizes.parquet (90 rows, 10 cols, 8,401 B), timeline_stages.parquet (89 rows, 9 cols, 11,443 B).",
+      "updated_at": "2026-11-23"
+    },
+    {
+      "id": "TASK-GLD-02",
+      "title": "Hiệu chỉnh Two-Tier Gold (A1–A4) & Nạp Metadata Gold cho Dual-Layer RAG (v2/gold_star_schema.py, v2/rag_ingest.py)",
+      "cycle": "Cycle 06",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Gold",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "done",
+      "priority": "high",
+      "problem_statement": "Hiện thực hóa các kiến nghị từ TASK-GLD-01 tại src/acdp/v2/: khắc phục lệch chuẩn A1–A4 trong gold_star_schema.py (bỏ trùng team_size_* ở fact_competitions, tinh gọn dim_competition, rút gọn xuất 15 tệp Gold Parquet thay vì 21 tệp trên R2) và kết nối metadata từ Gold mart_competition_explorer vào Qdrant payload trong rag_ingest.py.",
+      "research_questions": [],
+      "acceptance_criteria": [
+        "Cập nhật SPEC-0003 và src/acdp/v2/gold_star_schema.py xử lý xong A1, A2, A4; pytest tests/test_gold_star_schema.py pass 100%.",
+        "src/acdp/v2/rag_ingest.py đọc Clean Markdown từ silver/markdown/ và làm giàu Qdrant payload từ Gold mart_competition_explorer.",
+        "R2 gold/ chỉ còn 15 tệp Parquet (9 bảng Core + 6 Marts) và giữ nguyên 0.0 VND sai số bridge."
+      ],
+      "deliverables": [
+        "src/acdp/v2/gold_star_schema.py",
+        "src/acdp/v2/rag_ingest.py",
+        "tests/test_gold_star_schema.py",
+        "docs/deliverables/TASK-GLD-02-two-tier-gold-and-dual-layer-rag-implementation.md",
+        "docs/deliverables/TASK-GLD-02-two-tier-gold-and-dual-layer-rag-implementation-visual-dossier.html"
+      ],
+      "notes": "Phụ thuộc TASK-GLD-01 và TASK-SLV-03. Triển khai tại src/acdp/v2. Đã chạy thực tế trên R2: 24 cuộc thi, 15 tệp Gold Parquet ZSTD (0.00 VND bridge diff), 26/26 docs RAG enriched.",
+      "updated_at": "2026-11-23"
+    },
+    {
+      "id": "TASK-GLD-03",
+      "title": "Nâng cấp SCD Type 2 & CDC Delta Events ở Lớp Vàng phục vụ Mail Alert (4_analytics_gold.py)",
+      "cycle": "Cycle 09",
+      "scope": "KLTN (Phase 2)",
+      "layer": "Gold",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "medium",
+      "problem_statement": "Chuyển đổi dim_competition từ SCD Type 1 sang SCD Type 2 (bền vững competition_sk theo effective_from/to/is_current) và sinh bảng CDC Diff (gold_change_events) giữa 2 batch cào tự động liên tiếp để kích hoạt TASK-SRV-05 gửi email thông báo chính xác 1 lần.",
+      "research_questions": [],
+      "acceptance_criteria": [
+        "dim_competition lưu được lịch sử thay đổi registration_status, registration_deadline và total_prize_vnd theo SCD Type 2.",
+        "Sinh bảng gold_change_events phát hiện cuộc thi mới hoặc gia hạn deadline phục vụ TASK-SRV-05."
+      ],
+      "deliverables": [
+        "src/acdp/4_analytics_gold.py",
+        "tests/test_gold_star_schema.py"
+      ],
+      "notes": "Phụ thuộc TASK-GLD-01, TASK-GLD-02 và TASK-ING-02.",
+      "updated_at": "2026-11-23"
     },
     {
       "id": "TASK-CLD-01",
@@ -173,7 +315,7 @@
       "task_type": "Engineering",
       "is_no_code": false,
       "owner": "Hung & Duy",
-      "status": "todo",
+      "status": "done",
       "priority": "high",
       "problem_statement": "Duy đã có Qdrant Online (Qdrant Cloud) hoạt động, nên cần làm rõ Qdrant Docker trong docker-compose.yml đang làm gì và chuyển mặc định hoàn toàn sang Qdrant Cloud.",
       "research_questions": [
@@ -182,9 +324,14 @@
       "acceptance_criteria": [
         "Cập nhật docker-compose.yml và config.py ưu tiên Qdrant Cloud, giảm RAM container core."
       ],
-      "deliverables": ["docker-compose.yml", "src/acdp/config.py"],
-      "notes": "",
-      "updated_at": "2026-11-22"
+      "deliverables": [
+        "docker-compose.yml",
+        "src/acdp/config.py",
+        "docs/deliverables/TASK-CLD-01-qdrant-cloud-and-local-backup-architecture.md",
+        "docs/deliverables/TASK-CLD-01-qdrant-cloud-and-local-backup-architecture-visual-dossier.html"
+      ],
+      "notes": "Đã triển khai mô hình 2 luồng (QDRANT_MODE=auto/cloud mặc định vs local + --profile local-backup), giảm RAM profile core từ 1920 MB xuống 1408 MB.",
+      "updated_at": "2026-11-23"
     },
     {
       "id": "TASK-CLD-02",
@@ -195,7 +342,7 @@
       "task_type": "Architecture",
       "is_no_code": false,
       "owner": "Hung & Duy",
-      "status": "todo",
+      "status": "done",
       "priority": "medium",
       "problem_statement": "Trên Web Portal đã có Dashboard phân tích bằng Recharts, nên cần làm rõ vai trò thực sự của Metabase là gì hoặc có nên loại bỏ hoàn toàn.",
       "research_questions": [
@@ -204,9 +351,13 @@
       "acceptance_criteria": [
         "Chốt quyết định chính thức trong T15 và đồng bộ tài liệu kiến trúc."
       ],
-      "deliverables": ["docs/rd-tasks/T15_metabase_and_prefect_lightweight_architecture.md"],
-      "notes": "",
-      "updated_at": "2026-11-22"
+      "deliverables": [
+        "docs/rd-tasks/T15_metabase_and_prefect_lightweight_architecture.md",
+        "docs/deliverables/TASK-CLD-02-web-dashboard-vs-metabase-boundary.md",
+        "docs/deliverables/TASK-CLD-02-web-dashboard-vs-metabase-boundary-visual-dossier.html"
+      ],
+      "notes": "Chốt kiến trúc 3 tầng BI trong T15: (1) Web /dashboard (Next.js 16 + Recharts) đọc 6 bảng mart_* phục vụ Sinh viên & Giảng viên (<20ms warm); (2) MotherDuck Lite Free (10GB, 10h Pulse/tháng, $0) thay Metabase trên Cloud để DE chạy ad-hoc SQL & Data Quality Audit trên 9 bảng Star Schema; (3) Metabase Docker (--profile bi, :3001, 1024MB JVM) tắt mặc định (0MB RAM), chỉ bật on-demand khi demo Self-Service BI trước Hội đồng hoặc dự phòng offline.",
+      "updated_at": "2026-11-23"
     },
     {
       "id": "TASK-CLD-03",
@@ -217,7 +368,7 @@
       "task_type": "Architecture",
       "is_no_code": false,
       "owner": "Hung & Duy",
-      "status": "todo",
+      "status": "done",
       "priority": "high",
       "problem_statement": "Theo góp ý của Giảng viên, dữ liệu cuộc thi không quá bảo mật như doanh nghiệp nên để Hybrid (DuckDB + Metabase ở local kết hợp Cloud) sẽ khó quản lý và thiếu đồng bộ. Cần thiết kế kiến trúc đồng bộ lên Cloud Free Tier (Next.js, Supabase, TailwindCSS, R2, Cloudflare BGE-M3, Qdrant Cloud, Prefect/GitHub Actions).",
       "research_questions": [
@@ -226,9 +377,12 @@
       "acceptance_criteria": [
         "Hoàn thành bản thiết kế kiến trúc Full Cloud Free-Tier kèm bảng quota và lộ trình chuyển đổi từ TLCN sang KLTN."
       ],
-      "deliverables": ["docs/deliverables/TASK-CLD-03-full-cloud-free-tier-architecture.md"],
-      "notes": "",
-      "updated_at": "2026-11-22"
+      "deliverables": [
+        "docs/deliverables/TASK-CLD-03-full-cloud-free-tier-architecture.md",
+        "docs/deliverables/TASK-CLD-03-full-cloud-free-tier-architecture-visual-dossier.html"
+      ],
+      "notes": "Hoàn tất thiết kế Full Cloud Free-Tier ($0/tháng, Cardless/Hard-Cap an toàn thẻ 0đ): giữ DuckDB httpfs + TTL Cache, thay Metabase bằng MotherDuck Lite + Next.js Recharts; đưa ra PA-1 (FastAPI trên HF Spaces 16GB RAM) và PA-2 (Next.js BFF + Supabase), bác bỏ Rust rewrite; kèm Keep-Alive 3 ngày và Failover Neon/pgvector/Groq/OpenRouter.",
+      "updated_at": "2026-11-23"
     },
     {
       "id": "TASK-CLD-04",
@@ -239,7 +393,7 @@
       "task_type": "Engineering",
       "is_no_code": false,
       "owner": "Hung",
-      "status": "todo",
+      "status": "done",
       "priority": "medium",
       "problem_statement": "Kết nối FastAPI/Next.js với Supabase PostgreSQL và cấu hình DuckDB đọc trực tiếp Gold Parquet trên Cloudflare R2.",
       "research_questions": [
@@ -248,9 +402,90 @@
       "acceptance_criteria": [
         "API chạy thông suốt với Supabase và R2 không phụ thuộc ổ đĩa local."
       ],
-      "deliverables": ["src/acdp/config.py", "src/acdp/api"],
-      "notes": "",
-      "updated_at": "2026-11-22"
+      "deliverables": [
+        "src/acdp/config.py",
+        "src/acdp/api",
+        "docs/deliverables/TASK-CLD-04-supabase-oltp-and-duckdb-r2-implementation.md",
+        "docs/deliverables/TASK-CLD-04-supabase-oltp-and-duckdb-r2-implementation-visual-dossier.html"
+      ],
+      "notes": "Hoàn tất Dual-Flow POSTGRES_MODE (auto/cloud/local), tự động phát hiện Supavisor Transaction Pooler (:6543) dùng NullPool + statement_cache_size=0 + TLS và Session Pooler (:5432) dùng QueuePool + TLS; tối ưu DuckDB Direct-on-R2 (:memory: TABLE nạp từ s3://acdp-lakehouse/gold/*.parquet giúp warm overview đạt 5.0 ms so với 1500.9 ms ở chế độ VIEW trực tiếp, 24 cuộc thi). Đã kiểm chứng E2E trực tiếp trên Supabase Cloud (aws-1-ap-southeast-1.pooler.supabase.com:5432) + Cloudflare R2: 12/12 pytest PASSED.",
+      "updated_at": "2026-11-23"
+    },
+    {
+      "id": "TASK-CLD-05",
+      "title": "Triển khai Serving API (PA-1: HF Spaces / PA-2: Next.js BFF) & Frontend lên Vercel Hobby kèm TTL Cache",
+      "cycle": "Cycle 07",
+      "scope": "TLCN -> KLTN",
+      "layer": "Cloud & Infra",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "done",
+      "priority": "high",
+      "problem_statement": "Hiện thực hóa kiến trúc TASK-CLD-03: đưa tầng Serving API (FastAPI + DuckDB httpfs lên Hugging Face Spaces Docker 16GB RAM theo PA-1, hoặc gộp Next.js Route Handlers theo PA-2) và Frontend Next.js 16 lên Vercel Hobby, bổ sung In-Memory TTL Cache (5-15 phút) cho 6 bảng mart_*.",
+      "research_questions": [],
+      "acceptance_criteria": [
+        "Frontend truy cập được qua URL công khai Vercel Hobby, kết nối thông suốt với API trên Cloud.",
+        "Bật TTL Cache cho Gold Marts giúp giảm >95% lượt gọi httpfs lặp lại sang Cloudflare R2."
+      ],
+      "deliverables": [
+        "Dockerfile.api",
+        "apps/web/next.config.ts",
+        "src/acdp/api/services/gold_queries.py",
+        "docs/deliverables/TASK-CLD-05-cloud-serving-api-and-vercel-ttl-cache.md",
+        "docs/deliverables/TASK-CLD-05-cloud-serving-api-and-vercel-ttl-cache-visual-dossier.html"
+      ],
+      "notes": "Hoàn tất PA-1 theo ADR-0002: bổ sung GoldMartsTTLCache (TTL=600s) bao phủ 6 bảng mart_* (đạt 98.27% hit rate, 0.34 ms warm overview); chuẩn hóa Dockerfile.api non-root UID 1000 & đa cổng (7860/8000); cấu hình Next.js 16 rewrites() proxy + CORS regex cho Vercel Hobby.",
+      "updated_at": "2026-11-24"
+    },
+    {
+      "id": "TASK-CLD-06",
+      "title": "Thiết lập GitHub Actions Keep-Alive, Backup pg_dump & Chuỗi Fallback LLM/Vector",
+      "cycle": "Cycle 07",
+      "scope": "TLCN -> KLTN",
+      "layer": "Cloud & Infra",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "high",
+      "problem_statement": "Phòng ngừa rủi ro R1, R2, R4 từ TASK-CLD-03: chống ngủ đông/xóa cụm (Supabase 7 ngày, Qdrant Cloud 7/28 ngày, HF Spaces 48h), tự động backup OLTP và cấu hình fallback đa nhà cung cấp AI.",
+      "research_questions": [],
+      "acceptance_criteria": [
+        "Workflow .github/workflows/keep-alive.yml chạy định kỳ mỗi 3 ngày ping API, Supabase và Qdrant Cloud thành công.",
+        "Workflow backup pg_dump hàng tuần lưu snapshot OLTP an toàn lên R2 private hoặc Private Artifact.",
+        "Cấu hình LiteLLM fallback chain (Gemini -> Groq -> OpenRouter :free) hoạt động khi gặp HTTP 429."
+      ],
+      "deliverables": [".github/workflows/keep-alive.yml", "src/acdp/api/services/rag_service.py"],
+      "notes": "Phụ thuộc TASK-CLD-03 và TASK-CLD-05.",
+      "updated_at": "2026-11-23"
+    },
+    {
+      "id": "TASK-CLD-07",
+      "title": "Chốt Phản biện Kiến trúc Full Cloud (PA-1 vs PA-2), Cấu hình MotherDuck Lite & Ban hành ADR-0002",
+      "cycle": "Cycle 07",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Cloud & Infra",
+      "task_type": "Architecture",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "done",
+      "priority": "high",
+      "problem_statement": "Thực hiện phản biện nội bộ (DIR-011) giữa Hưng và Duy để chốt phương án PA-1 (giữ FastAPI) hoặc PA-2 (Next.js BFF + Supabase), thiết lập MotherDuck Lite Free thay thế Metabase local, và ban hành ADR-0002 chính thức.",
+      "research_questions": [],
+      "acceptance_criteria": [
+        "Hai tác giả ký duyệt lựa chọn PA-1 hoặc PA-2 và ban hành docs/adr/0002-full-cloud-free-tier-architecture.md.",
+        "MotherDuck Lite kết nối đọc thành công Gold Parquet trên R2."
+      ],
+      "deliverables": [
+        "docs/adr/0002-full-cloud-free-tier-architecture.md",
+        "src/acdp/v2/gold_star_schema.py",
+        "src/acdp/config.py",
+        "docs/deliverables/TASK-CLD-07-adr-0002-and-motherduck-setup.md",
+        "docs/deliverables/TASK-CLD-07-adr-0002-and-motherduck-setup-visual-dossier.html"
+      ],
+      "notes": "Đã chốt PA-1 (FastAPI + DuckDB httpfs + TTL Cache theo chuẩn Low-Footprint đa đích HF Spaces 16GB / Koyeb-Render 512MB), ban hành ADR-0002 thay thế ADR-0001, bổ sung --motherduck-sql & --verify-motherduck kiểm chứng 19 Gold Views trên Cloudflare R2.",
+      "updated_at": "2026-11-23"
     },
     {
       "id": "TASK-SRV-01",
@@ -425,6 +660,133 @@
       "deliverables": ["docs/tasks/task-registry.md"],
       "notes": "Marked as No-Code task: không viết code backend/frontend ticketing.",
       "updated_at": "2026-11-22"
+    },
+    {
+      "id": "TASK-ING-03",
+      "title": "Triển khai Module Discovery 3 Tầng (Sitemap/RSS/GDELT + Tavily/Exa Free Tier)",
+      "cycle": "Cycle 06",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Discovery",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "done",
+      "priority": "medium",
+      "problem_statement": "Hiện thực hóa kết quả nghiên cứu từ TASK-ING-01 thành module Python tự động phát hiện URL cuộc thi mới (Sitemap/RSS/GDELT kết hợp Tavily/Exa Free Tier), thay thế việc nhập danh sách URL thủ công ở 1_crawl_to_bronze.py.",
+      "research_questions": [],
+      "acceptance_criteria": [
+        "Module src/acdp/0_discover_urls.py chạy được 3 tầng discovery trong hạn mức < 5% Free Tier và xuất danh sách URL khử trùng."
+      ],
+      "deliverables": [
+        "src/acdp/v2/discovery.py",
+        "src/acdp/v2/discovery_sources.py",
+        "tests/test_discovery_v2.py",
+        "docs/deliverables/TASK-ING-03-three-tier-discovery-implementation.md",
+        "docs/deliverables/TASK-ING-03-three-tier-discovery-implementation-visual-dossier.html"
+      ],
+      "notes": "Phụ thuộc TASK-ING-01; làm tiền đề cho TASK-ING-02 ở KLTN. Triển khai tại src/acdp/v2/ để giữ nguyên pipeline v1; đã kiểm chứng 13/13 pytest + ruff + upload manifest lên R2 (tavily 2.0%/mo, exa 0.8%/mo).",
+      "updated_at": "2026-11-23"
+    },
+    {
+      "id": "TASK-TST-01",
+      "title": "Kiểm thử E2E Toàn luồng Cloud & Diễn tập Demo Day (T-15 phút)",
+      "cycle": "Cycle 08",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Serving & Web",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "high",
+      "problem_statement": "Kiểm thử tích hợp toàn luồng người dùng (Auth -> /profile -> Tạo/Tham gia đội -> One-Pager -> RAG Chatbot) trên hạ tầng Full Cloud (Vercel + HF Spaces + Supabase + Qdrant Cloud) và diễn tập kịch bản Pre-warm T-15 phút trước khi bảo vệ.",
+      "research_questions": [],
+      "acceptance_criteria": [
+        "Toàn bộ luồng E2E chạy thông suốt trên URL công khai không lỗi 500/CORS.",
+        "Hoàn thành checklist Pre-warm T-15 phút và kiểm chứng fallback local-offline."
+      ],
+      "deliverables": ["tests/api"],
+      "notes": "Phụ thuộc TASK-CLD-05, TASK-SRV-01..04.",
+      "updated_at": "2026-11-23"
+    },
+    {
+      "id": "TASK-ACD-01",
+      "title": "Xây dựng Slide Bảo vệ Cuối kỳ TLCN & Bộ Q&A Phản biện Hội đồng",
+      "cycle": "Cycle 08",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Academic & Ops",
+      "task_type": "Academic",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "high",
+      "problem_statement": "Xây dựng bộ slide bảo vệ cuối kỳ TLCN tổng hợp các kết quả đạt được (Medallion R2, Two-Tier Gold, Hybrid DE+LLM, Full Cloud Free-Tier, Ghép đội OLTP & RAG) kèm ngân hàng câu hỏi phản biện từ Hội đồng.",
+      "research_questions": [],
+      "acceptance_criteria": [
+        "Xuất bản docs/academic/Slide_BaoVe_TLCN.html và hoàn thiện kịch bản thuyết trình."
+      ],
+      "deliverables": ["docs/academic/Slide_BaoVe_TLCN.html"],
+      "notes": "Bổ sung cho NT-021 (Báo cáo TLCN).",
+      "updated_at": "2026-11-23"
+    },
+    {
+      "id": "TASK-EVL-01",
+      "title": "Thực nghiệm Định lượng Quy mô KLTN (100–500 Cuộc thi): Ragas Scorecard & Ablation Study",
+      "cycle": "Cycle 09",
+      "scope": "KLTN (Phase 2)",
+      "layer": "Serving & Web",
+      "task_type": "Research & Theory",
+      "is_no_code": false,
+      "owner": "Duy & Hung",
+      "status": "todo",
+      "priority": "high",
+      "problem_statement": "Thực hiện đánh giá định lượng toàn diện trên tập dữ liệu KLTN (100–500 cuộc thi): đo Faithfulness/Answer Relevance bằng Ragas, đo P95 Latency trên Cloud và thực hiện Ablation Study so sánh Hybrid DE+LLM với Pure LLM.",
+      "research_questions": [],
+      "acceptance_criteria": [
+        "Có bảng số liệu thực nghiệm đầy đủ (Ragas, Latency, Token Cost) phục vụ Chương 4 Luận văn KLTN."
+      ],
+      "deliverables": ["docs/experiments/0002-kltn-quantitative-evaluation.md"],
+      "notes": "Mở rộng từ NT-012 cho quy mô KLTN.",
+      "updated_at": "2026-11-23"
+    },
+    {
+      "id": "TASK-OPS-03",
+      "title": "Bảo vệ API Public & Giám sát Quota Free Tier (Rate Limiting / Cloudflare Turnstile)",
+      "cycle": "Cycle 10",
+      "scope": "KLTN (Phase 2)",
+      "layer": "Cloud & Infra",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung",
+      "status": "todo",
+      "priority": "medium",
+      "problem_statement": "Khi mở public cho 500–1.000 sinh viên sử dụng ở KLTN, cần triển khai Rate Limiting trên /copilot và /auth (kèm Cloudflare Turnstile nếu cần) để bảo vệ hạn mức 10–15 RPM của Gemini và 100 GB bandwidth của Vercel.",
+      "research_questions": [],
+      "acceptance_criteria": [
+        "Áp dụng Rate Limiting cho các endpoint AI và Auth; kiểm chứng chặn request spam trả về HTTP 429."
+      ],
+      "deliverables": ["src/acdp/api/main.py"],
+      "notes": "",
+      "updated_at": "2026-11-23"
+    },
+    {
+      "id": "TASK-KLT-01",
+      "title": "Soạn thảo Luận văn Khóa luận Tốt nghiệp (FIT-HCMUTE) & Slide Bảo vệ KLTN",
+      "cycle": "Cycle 10",
+      "scope": "KLTN (Phase 2)",
+      "layer": "Academic & Ops",
+      "task_type": "Academic",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "high",
+      "problem_statement": "Hoàn thiện toàn văn Luận văn Khóa luận Tốt nghiệp (Chương 1–5 chuẩn FIT-HCMUTE) và Slide bảo vệ KLTN dựa trên kết quả thực nghiệm KLTN.",
+      "research_questions": [],
+      "acceptance_criteria": [
+        "Hoàn thiện bản thảo Luận văn KLTN và Slide bảo vệ KLTN."
+      ],
+      "deliverables": ["docs/academic/KhoaLuan_TotNghiep_KTDL.md", "docs/academic/Slide_BaoVe_KLTN.html"],
+      "notes": "",
+      "updated_at": "2026-11-23"
     }
   ]
 }

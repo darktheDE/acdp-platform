@@ -1,4 +1,4 @@
-"""Async PostgreSQL 18 engine, session dependency, and idempotent schema initialization."""
+"""Async Supabase/PostgreSQL 18 OLTP engine, session dependency, and idempotent schema initialization."""
 
 from __future__ import annotations
 
@@ -11,18 +11,35 @@ from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
     create_async_engine,
 )
+from sqlalchemy.pool import NullPool
 from sqlmodel import SQLModel
 
-from acdp.config import settings
+from acdp.config import AppConfig, settings
 
-engine: AsyncEngine = create_async_engine(
-    settings.get_database_url(),
-    pool_size=5,
-    max_overflow=5,
-    pool_recycle=1800,
-    pool_pre_ping=True,
-    future=True,
-)
+
+def build_async_engine(cfg: AppConfig = settings) -> AsyncEngine:
+    """Create SQLAlchemy AsyncEngine tuned for Supabase Supavisor (:6543) or Session/Local Pool."""
+    db_url = cfg.get_database_url()
+    connect_args = cfg.get_asyncpg_connect_args()
+    if cfg.is_transaction_pooler_active():
+        return create_async_engine(
+            db_url,
+            poolclass=NullPool,
+            connect_args=connect_args,
+            future=True,
+        )
+    return create_async_engine(
+        db_url,
+        pool_size=5,
+        max_overflow=5,
+        pool_recycle=1800,
+        pool_pre_ping=True,
+        connect_args=connect_args,
+        future=True,
+    )
+
+
+engine: AsyncEngine = build_async_engine(settings)
 
 async_session_factory = async_sessionmaker(
     engine,

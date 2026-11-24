@@ -24,6 +24,9 @@ export function getApiBaseUrl(): string {
   if (typeof window === "undefined") {
     return process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
   }
+  if (process.env.NEXT_PUBLIC_USE_REWRITE_PROXY === "true") {
+    return "";
+  }
   return process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 }
 

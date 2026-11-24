@@ -24,8 +24,13 @@ def anyio_backend() -> str:
 
 @pytest.fixture
 async def api_client() -> AsyncGenerator[AsyncClient, None]:
-    """Yield an AsyncClient wired to a NullPool PostgreSQL 18 session and real DuckDB Gold."""
-    test_engine = create_async_engine(settings.get_database_url(), poolclass=NullPool, future=True)
+    """Yield an AsyncClient wired to a NullPool OLTP session (Supabase/PG18) and real R2 DuckDB Gold."""
+    test_engine = create_async_engine(
+        settings.get_database_url(),
+        poolclass=NullPool,
+        connect_args=settings.get_asyncpg_connect_args(),
+        future=True,
+    )
     session_maker = async_sessionmaker(test_engine, class_=AsyncSession, expire_on_commit=False)
 
     async with test_engine.begin() as conn:

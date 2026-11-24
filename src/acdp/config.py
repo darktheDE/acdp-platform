@@ -4,8 +4,8 @@ Conforms to SPEC-0001 (Pydantic v2 Settings) and supports Dual-Storage backends:
 Local POSIX and Cloudflare R2 (Cloud S3).
 """
 
-from typing import Literal
-from urllib.parse import urlparse
+from typing import Any, Literal
+from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -26,7 +26,31 @@ class AppConfig(BaseSettings):
         description="Runtime environment (development, staging, production)",
     )
 
-    # Relational Database (PostgreSQL 18 OLTP - SPEC-0004 & SPEC-0006)
+    # Relational Database (PostgreSQL 18 / Supabase OLTP - SPEC-0004, SPEC-0006, ADR-0002)
+    postgres_mode: Literal["auto", "cloud", "local"] = Field(
+        default="auto",
+        description="PostgreSQL routing mode: 'auto'/'cloud' prioritizes SUPABASE_DATABASE_URL/DATABASE_URL; 'local' forces local Docker Postgres backup",
+    )
+    database_url: str = Field(
+        default="",
+        description="Optional full PostgreSQL/Supabase connection URI override",
+    )
+    supabase_database_url: str = Field(
+        default="",
+        description="Supabase Supavisor connection pooler URI (:6543 transaction or :5432 session)",
+    )
+    supabase_direct_url: str = Field(
+        default="",
+        description="Optional Supabase direct/session connection URI (:5432) for migrations and pg_dump",
+    )
+    postgres_pool_mode: Literal["auto", "transaction", "session"] = Field(
+        default="auto",
+        description="Connection pool mode: 'auto' detects port 6543 or pgbouncer=true as transaction mode",
+    )
+    postgres_ssl_mode: Literal["auto", "require", "disable"] = Field(
+        default="auto",
+        description="SSL mode for asyncpg connections ('auto' enables TLS for cloud hosts)",
+    )
     postgres_user: str = Field(default="acdp")
     postgres_password: str = Field(default="acdp_local_dev_only")
     postgres_db: str = Field(default="acdp_app")
@@ -46,12 +70,40 @@ class AppConfig(BaseSettings):
         default=2,
         description="Per-connection DuckDB thread cap for read-only API queries",
     )
+    duckdb_r2_table_cache: bool = Field(
+        default=True,
+        description="Materialize R2 Gold Parquets into DuckDB :memory: tables on init to avoid per-query HTTP round-trips",
+    )
+    gold_mart_cache_enabled: bool = Field(
+        default=True,
+        description="Enable in-memory TTL cache for the 6 Gold mart_* tables (TASK-CLD-05)",
+    )
+    gold_mart_cache_ttl_seconds: int = Field(
+        default=600,
+        ge=0,
+        le=3600,
+        description="TTL in seconds for Gold mart_* cache (300-900s recommended, default 600s = 10 min)",
+    )
+    gold_mart_cache_max_entries: int = Field(
+        default=256,
+        ge=16,
+        le=4096,
+        description="Maximum cached query keys retained in GoldMartsTTLCache",
+    )
     usd_to_vnd_rate: int = Field(
         default=25400,
         description="Reference USD to VND exchange rate for Gold prize normalization",
     )
+    motherduck_token: str = Field(
+        default="",
+        description="Optional MotherDuck Lite service token for Cloud BI SQL Workbench",
+    )
+    motherduck_database: str = Field(
+        default="acdp_gold",
+        description="Target MotherDuck database name for Gold Star Schema views",
+    )
 
-    # Lakehouse Storage Configuration (Cloudflare R2 Exclusive - DIR-018)
+    # Lakehouse Storage Configuration (Cloudflare R2 Exclusive - DIR-021)
     bronze_storage_backend: Literal["cloudflare_r2"] = Field(
         default="cloudflare_r2",
         description="Storage backend locked exclusively to Cloudflare R2 ('cloudflare_r2')",
@@ -99,7 +151,11 @@ class AppConfig(BaseSettings):
         description="Enable unsafe rename flag for non-AWS S3 providers",
     )
 
-    # Vector Search (Qdrant)
+    # Vector Search (Qdrant: Cloud-first default with local Docker backup mode - TASK-CLD-01)
+    qdrant_mode: Literal["auto", "cloud", "local"] = Field(
+        default="auto",
+        description="Qdrant routing mode: 'auto'/'cloud' prioritizes Qdrant Cloud; 'local' forces local Docker Qdrant backup",
+    )
     qdrant_host: str = Field(default="localhost")
     qdrant_port: int = Field(default=6333)
     qdrant_url: str = Field(default="")
@@ -120,6 +176,12 @@ class AppConfig(BaseSettings):
     gemini_api_key: str = Field(default="")
     google_api_key: str = Field(default="")
 
+    # Discovery 3-Tier Search APIs (TASK-ING-03 - Free Tier)
+    tavily_api_key: str = Field(default="")
+    exa_api_key: str = Field(default="")
+    serper_api_key: str = Field(default="")
+    discovery_max_queries_per_run: int = Field(default=12)
+
     # Serving API & Auth (SPEC-0004)
     api_host: str = Field(default="0.0.0.0")
     api_port: int = Field(default=8000)
@@ -128,15 +190,38 @@ class AppConfig(BaseSettings):
     access_token_expire_minutes: int = Field(default=15)
     refresh_token_expire_days: int = Field(default=7)
     cors_origins: str = Field(default="http://localhost:3000")
+    cors_origin_regex: str = Field(
+        default=r"^https://.*\.vercel\.app$",
+        description="Regex matching allowed Vercel Hobby preview/production origins",
+    )
     internal_api_url: str = Field(default="http://localhost:8000")
 
     def get_qdrant_url(self) -> str:
-        """Resolve Qdrant endpoint: Cloud endpoint first, then explicit URL, then host:port."""
-        if self.qdrant_cluster_endpoint:
-            return self.qdrant_cluster_endpoint
-        if self.qdrant_url:
-            return self.qdrant_url
+        """Resolve Qdrant endpoint: Cloud endpoint first in 'auto'/'cloud' mode, or local URL in 'local' backup mode."""
+        mode = (self.qdrant_mode or "auto").strip().lower()
+        if mode == "local":
+            if self.qdrant_url.strip():
+                return self.qdrant_url.strip()
+            return f"http://{self.qdrant_host}:{self.qdrant_port}"
+        if self.qdrant_cluster_endpoint.strip():
+            return self.qdrant_cluster_endpoint.strip()
+        if self.qdrant_url.strip():
+            return self.qdrant_url.strip()
         return f"http://{self.qdrant_host}:{self.qdrant_port}"
+
+    def get_qdrant_api_key(self) -> str | None:
+        """Return Qdrant API key for HTTPS/Cloud endpoints; omit on local HTTP backup to avoid insecure key warnings."""
+        mode = (self.qdrant_mode or "auto").strip().lower()
+        if mode == "local":
+            return None
+        target_url = self.get_qdrant_url()
+        if target_url.startswith("http://"):
+            return None
+        return self.qdrant_api_key.strip() or None
+
+    def is_qdrant_cloud_active(self) -> bool:
+        """Return True when resolved Qdrant endpoint targets an external HTTPS Qdrant Cloud cluster."""
+        return self.get_qdrant_url().startswith("https://")
 
     def get_qdrant_collection(self) -> str:
         """Resolve target Qdrant collection, redirecting legacy collections to BGE-M3."""
@@ -173,12 +258,85 @@ class AppConfig(BaseSettings):
             return "gemini-3.5-flash-lite"
         return raw
 
-    def get_database_url(self) -> str:
-        """Build asyncpg SQLAlchemy connection URI for PostgreSQL 18 OLTP."""
+    def get_motherduck_dsn(self) -> str:
+        """Return MotherDuck connection URI (`md:<db>`) with token if configured."""
+        db = (self.motherduck_database or "acdp_gold").strip() or "acdp_gold"
+        token = self.motherduck_token.strip()
+        if token:
+            return f"md:{db}?motherduck_token={token}"
+        return f"md:{db}"
+
+    def _resolve_raw_postgres_url(self) -> str:
+        """Select active PostgreSQL/Supabase connection string based on postgres_mode."""
+        mode = (self.postgres_mode or "auto").strip().lower()
+        if mode != "local":
+            if self.supabase_database_url.strip():
+                return self.supabase_database_url.strip()
+            if self.database_url.strip():
+                return self.database_url.strip()
         return (
             f"postgresql+asyncpg://{self.postgres_user}:{self.postgres_password}"
             f"@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"
         )
+
+    @staticmethod
+    def _normalize_asyncpg_scheme(raw_url: str) -> str:
+        """Normalize postgres:// and postgresql:// URIs to postgresql+asyncpg://."""
+        if raw_url.startswith("postgres://"):
+            return "postgresql+asyncpg://" + raw_url[len("postgres://") :]
+        if raw_url.startswith("postgresql://"):
+            return "postgresql+asyncpg://" + raw_url[len("postgresql://") :]
+        return raw_url
+
+    def is_postgres_cloud_active(self) -> bool:
+        """Return True when resolved PostgreSQL host targets an external cloud database (Supabase/Neon)."""
+        parsed = urlparse(self._normalize_asyncpg_scheme(self._resolve_raw_postgres_url()))
+        host = (parsed.hostname or "").strip().lower()
+        return host not in {"", "localhost", "127.0.0.1", "postgres", "::1"}
+
+    def is_transaction_pooler_active(self) -> bool:
+        """Return True when targeting a Supavisor/PgBouncer transaction pooler (e.g., port 6543)."""
+        pool_mode = (self.postgres_pool_mode or "auto").strip().lower()
+        if pool_mode == "transaction":
+            return True
+        if pool_mode == "session":
+            return False
+        parsed = urlparse(self._normalize_asyncpg_scheme(self._resolve_raw_postgres_url()))
+        if parsed.port == 6543:
+            return True
+        query_map = dict(parse_qsl(parsed.query, keep_blank_values=True))
+        return (
+            query_map.get("prepared_statement_cache_size") == "0"
+            or query_map.get("pgbouncer", "").lower() == "true"
+        )
+
+    def get_database_url(self) -> str:
+        """Build asyncpg SQLAlchemy connection URI for Supabase Cloud or local PostgreSQL 18 OLTP."""
+        normalized = self._normalize_asyncpg_scheme(self._resolve_raw_postgres_url())
+        parsed = urlparse(normalized)
+        filtered_params = [
+            (k, v)
+            for k, v in parse_qsl(parsed.query, keep_blank_values=True)
+            if k.lower() not in {"sslmode", "pgbouncer"}
+        ]
+        if self.is_transaction_pooler_active():
+            filtered_params = [
+                (k, v) for k, v in filtered_params if k != "prepared_statement_cache_size"
+            ]
+            filtered_params.append(("prepared_statement_cache_size", "0"))
+        rebuilt_query = urlencode(filtered_params)
+        return urlunparse(parsed._replace(query=rebuilt_query))
+
+    def get_asyncpg_connect_args(self) -> dict[str, Any]:
+        """Return asyncpg connect_args disabling statement caching for transaction poolers and enabling Cloud TLS."""
+        connect_args: dict[str, Any] = {}
+        if self.is_transaction_pooler_active():
+            connect_args["statement_cache_size"] = 0
+
+        ssl_mode = (self.postgres_ssl_mode or "auto").strip().lower()
+        if ssl_mode == "require" or (ssl_mode == "auto" and self.is_postgres_cloud_active()):
+            connect_args["ssl"] = "require"
+        return connect_args
 
     def create_r2_client(self):
         """Create a configured boto3 S3/R2 client from unified settings."""

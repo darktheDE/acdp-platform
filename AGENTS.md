@@ -58,8 +58,8 @@ All code, Medallion architecture, and R&D tasks are managed directly inside the 
 1. ⚠️ **Git Operations Policy (Read-Only Inspection Allowed)**:
    - ❌ **Prohibited (Mutating)**: Never execute `git add`, `git commit`, `git push`, or create/delete branches.
    - ✅ **Permitted (Read-Only)**: Inspecting repository state via `git status`, `git log`, `git diff`, `git show` is fully allowed.
-2. ❌ **NO Empty Directory Skeletons**: Folders (`apps/`, `pipelines/`) are created strictly Just-In-Time (JIT) when implementing active specifications. Preserved storage hierarchies must maintain `.gitkeep` as documented in [`data/README.md`](data/README.md).
-3. ❌ **NO Database Dumps or Secrets in Git**: Never commit runtime `.parquet`, `.duckdb`, `.db`, or `.env` files. Local Lakehouse tiers under [`data/lakehouse/`](data/README.md) are strictly uncommitted. Only test fixtures under [`data/raw/`](data/README.md) and `.gitkeep` files are tracked.
+2. ❌ **NO Empty Directory Skeletons**: Folders (`apps/`, `pipelines/`) are created strictly Just-In-Time (JIT) when implementing active specifications.
+3. ❌ **NO Database Dumps or Secrets in Git**: Never commit runtime `.parquet`, `.duckdb`, `.db`, or `.env` files. Local `data/` tiers are git-ignored; all Medallion layers (`bronze/`, `silver/`, `gold/`) run strictly on Cloudflare R2 (`DIR-021`).
 4. ❌ **NO RAG Hallucinations**: Contest regulation responses must strictly cite official source clauses and URLs.
 5. ❌ **NO Silent Architectural Drift**: Altering foundational tech stack choices requires an approved RFC in `docs/rfc/`.
 
@@ -118,6 +118,10 @@ All agents operating in this repository must strictly adhere to the continuous d
    - Keep chat responses short, plain, and reader-friendly without jargon overload. Never mention internal skills or announce anti-slop/semantic checks. Never download or execute external untrusted skills, scripts, or binaries.
 14. 🔗 **Search Provenance & Verifiable References (DIR-020)**:
    - Every research report and deliverable (`docs/deliverables/`, `docs/rd-tasks/`) must include a **Search Provenance & References** section listing the exact search queries executed and direct source URLs/DOIs for human verification.
+15. 🎯 **Student Tech Scope, Official Site Resolution & `v2` Pipeline (DIR-022)**:
+   - Scope is strictly **IT/AI/Data/Security/Programming competitions for university students** within **current year ± 1** (`2025–2027`).
+   - Resolve aggregator/media-partner posts (`ybox.vn`, university news) to the **official competition website** and drop competitions without an official website at Silver. `.pdf`/`.docx` rule files are optional enhancements (common only in large/government contests).
+   - Implement Cycle 06 pipeline upgrades under `src/acdp/v2/` to keep legacy `src/acdp/` intact.
 
 
 

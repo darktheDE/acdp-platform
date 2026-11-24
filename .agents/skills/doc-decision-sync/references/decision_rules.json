@@ -18,7 +18,9 @@
     "DIR-017",
     "DIR-018",
     "DIR-019",
-    "DIR-020"
+    "DIR-020",
+    "DIR-021",
+    "DIR-022"
   ],
   "scoped_directives": [
     "DIR-001",

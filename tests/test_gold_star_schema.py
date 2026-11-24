@@ -1,15 +1,17 @@
-"""Unit and integration tests for SPEC-0003 Gold Layer Kimball Star Schema."""
+"""Unit and integration tests for SPEC-0003 Two-Tier Gold Star Schema (ACDP v2, A1–A4) & Dual-Layer RAG."""
 
-import importlib
+import io
 import json
 from datetime import date
 from pathlib import Path
+from unittest.mock import MagicMock
 
 import duckdb
+import pyarrow.parquet as pq
 
-from acdp.schemas import Competition, PrizeTier, TimelineStage
-
-gold = importlib.import_module("acdp.4_analytics_gold")
+from acdp.v2 import gold_star_schema as gold
+from acdp.v2 import rag_ingest
+from acdp.v2.schemas import Competition, PrizeTier, TimelineStage
 
 
 def test_currency_normalization_edge_cases() -> None:
@@ -145,12 +147,32 @@ def test_star_schema_bridge_allocation_and_edge_cases(tmp_path: Path) -> None:
     db_path = tmp_path / "test_gold.duckdb"
     gold_dir = tmp_path / "gold"
     exported = gold.build_gold_star_schema(db_path, [c1, c2], source_batch_file="unit_test", gold_dir=gold_dir)
-    assert len(exported) == 21
+    # A4: Strictly 15 Gold Parquet entities (9 Core + 6 Marts)
+    assert len(exported) == 15
+    assert not any(p.name.startswith("gold_") for p in gold_dir.glob("*.parquet"))
     assert not db_path.with_name("test_gold.duckdb.tmp").exists()
 
     con = duckdb.connect(str(db_path), read_only=True)
     try:
-        kpi = con.execute("SELECT total_competitions, open_competitions, total_prize_pool_vnd, scholarship_competitions FROM mart_kpi_overview").fetchone()
+        # A1: team_size_min/max removed from fact_competitions, kept on dim_competition & mart_competition_explorer
+        fact_cols = {row[1] for row in con.execute("PRAGMA table_info('fact_competitions')").fetchall()}
+        assert "team_size_min" not in fact_cols
+        assert "team_size_max" not in fact_cols
+
+        dim_cols = {row[1] for row in con.execute("PRAGMA table_info('dim_competition')").fetchall()}
+        assert "team_size_min" in dim_cols
+        assert "team_size_max" in dim_cols
+        # A2: nested arrays and challenge_overview removed from dim_competition, served via mart_competition_explorer
+        for forbidden in ("raw_categories", "organizers", "partners_and_sponsors", "challenge_overview"):
+            assert forbidden not in dim_cols
+
+        explorer_cols = {row[0] for row in con.execute("DESCRIBE mart_competition_explorer").fetchall()}
+        for expected_col in ("team_size_min", "team_size_max", "organizers", "partners_and_sponsors", "challenge_overview"):
+            assert expected_col in explorer_cols
+
+        kpi = con.execute(
+            "SELECT total_competitions, open_competitions, total_prize_pool_vnd, scholarship_competitions FROM mart_kpi_overview"
+        ).fetchone()
         assert kpi == (2, 1, 100_000_000, 1)
 
         domain_sum = con.execute("SELECT SUM(allocated_prize_vnd) FROM mart_domain_analytics").fetchone()[0]
@@ -173,17 +195,14 @@ def test_star_schema_bridge_allocation_and_edge_cases(tmp_path: Path) -> None:
 
 
 def test_r2_end_to_end_silver_to_gold_zero_local_disk(monkeypatch) -> None:
-    """Verify R2-only Silver JSON load -> Silver Parquet upload -> in-memory Gold Star Schema upload (Zero local files)."""
-    import io
-    from unittest.mock import MagicMock
-
+    """Verify R2-only Silver JSON load -> Silver Parquet upload (3) -> Two-Tier Gold upload (15) & Dual-Layer RAG."""
     sample_json_old = {
         "is_competition": True,
         "competitions": [
             {
                 "name": "Zalo AI Challenge 2026 (Old)",
                 "url": "https://challenge.zalo.ai/",
-                "summary": "Old snapshot.",
+                "summary": "Old summary.",
                 "organizers": ["Zalo"],
                 "category": ["AI"],
             }
@@ -202,26 +221,52 @@ def test_r2_end_to_end_silver_to_gold_zero_local_disk(monkeypatch) -> None:
                 "participation_fee": "Miễn phí",
                 "total_prize_pool": "USD 12,000",
                 "prizes": [{"tier": "First", "reward": "$12,000", "estimated_value_vnd": 304800000}],
-                "registration_deadline": "2026-11-25",
+                "registration_deadline": "2026-12-25",
                 "registration_status": "open",
+                "team_size_min": 1,
+                "team_size_max": 4,
             }
         ],
     }
 
-    r2_objects = {
+    r2_objects: dict[str, bytes] = {
         "silver/extractions/challenge.zalo.ai/year=2026/month=11/day=20/1000.json": json.dumps(sample_json_old).encode("utf-8"),
-        "silver/extractions/challenge.zalo.ai/year=2026/month=11/day=21/2000.json": json.dumps(sample_json_new).encode("utf-8"),
+        "silver/extractions/challenge.zalo.ai/year=2026/month=11/day=23/2000.json": json.dumps(sample_json_new).encode("utf-8"),
+        "silver/markdown/challenge.zalo.ai/year=2026/month=11/day=23/2000.md": b"# Zalo AI Challenge 2026\nTh\xe1\xbb\x83 l\xe1\xbb\x87 cu\xe1\xbb\x99c thi Agentic AI.",
+        "gold/gold_top_prizes.parquet": b"stale-legacy-parquet",
     }
     uploaded_keys: dict[str, bytes] = {}
+    deleted_keys: list[str] = []
+
+    def _paginate(Bucket: str, Prefix: str = ""):
+        return [
+            {
+                "Contents": [
+                    {"Key": k, "Size": len(v)}
+                    for k, v in {**r2_objects, **uploaded_keys}.items()
+                    if k.startswith(Prefix) and k not in deleted_keys
+                ]
+            }
+        ]
+
+    def _get_object(Bucket: str, Key: str):
+        data = uploaded_keys.get(Key) or r2_objects[Key]
+        return {"Body": io.BytesIO(data), "Metadata": {"source_url": "https://challenge.zalo.ai/"}}
+
+    def _put_object(Bucket: str, Key: str, Body: bytes, **kw):
+        uploaded_keys[Key] = Body
+
+    def _delete_object(Bucket: str, Key: str):
+        deleted_keys.append(Key)
+        uploaded_keys.pop(Key, None)
 
     fake_s3 = MagicMock()
     fake_paginator = MagicMock()
-    fake_paginator.paginate.return_value = [
-        {"Contents": [{"Key": k, "Size": len(v)} for k, v in r2_objects.items()]}
-    ]
+    fake_paginator.paginate.side_effect = _paginate
     fake_s3.get_paginator.return_value = fake_paginator
-    fake_s3.get_object.side_effect = lambda Bucket, Key: {"Body": io.BytesIO(r2_objects[Key])}
-    fake_s3.put_object.side_effect = lambda Bucket, Key, Body, **kw: uploaded_keys.__setitem__(Key, Body)
+    fake_s3.get_object.side_effect = _get_object
+    fake_s3.put_object.side_effect = _put_object
+    fake_s3.delete_object.side_effect = _delete_object
 
     monkeypatch.setattr(gold.settings, "bucket_name", "acdp-test-bucket")
     monkeypatch.setattr(type(gold.settings), "create_r2_client", lambda self: fake_s3)
@@ -232,9 +277,10 @@ def test_r2_end_to_end_silver_to_gold_zero_local_disk(monkeypatch) -> None:
     assert "r2:silver/extractions" in source_label
 
     silver_uris = gold.export_silver_parquet(comps, output_dir=None)
-    assert len(silver_uris) == 2
+    assert len(silver_uris) == 3
     assert "silver/competitions.parquet" in uploaded_keys
     assert "silver/prizes.parquet" in uploaded_keys
+    assert "silver/timeline_stages.parquet" in uploaded_keys
 
     gold_uris = gold.build_gold_star_schema(
         db_path=None,
@@ -243,15 +289,58 @@ def test_r2_end_to_end_silver_to_gold_zero_local_disk(monkeypatch) -> None:
         gold_dir=None,
         sync_r2=True,
     )
-    assert len(gold_uris) == 21
+    assert len(gold_uris) == 15
     assert "gold/dim_competition.parquet" in uploaded_keys
     assert "gold/mart_kpi_overview.parquet" in uploaded_keys
-    assert len(uploaded_keys["gold/mart_kpi_overview.parquet"]) > 0
+    assert "gold/mart_competition_explorer.parquet" in uploaded_keys
+    assert "gold/gold_top_prizes.parquet" in deleted_keys
+    assert not any(k.startswith("gold/gold_") for k in uploaded_keys)
+
+    fact_pf = pq.ParquetFile(io.BytesIO(uploaded_keys["gold/fact_competitions.parquet"]))
+    assert "team_size_min" not in fact_pf.schema_arrow.names
+    assert "team_size_max" not in fact_pf.schema_arrow.names
+
+    # Dual-Layer RAG: Silver Clean Markdown + Gold mart_competition_explorer metadata enrichment
+    chosen_date, docs = rag_ingest.load_competition_documents_from_silver(
+        s3_client=fake_s3,
+        bucket_name="acdp-test-bucket",
+        target_date="2026-11-23",
+    )
+    assert chosen_date == "2026-11-23"
+    assert len(docs) == 1
+    meta = docs[0].metadata
+    assert meta["gold_enriched"] is True
+    assert meta["layer"] == "silver+gold"
+    assert meta["domain_slugs"] == ["ai-data-science"]
+    assert meta["mode_canonical"] == "Online"
+    assert meta["is_free"] is True
+    assert meta["total_prize_vnd"] == 304_800_000
+    assert meta["team_profile"] == "Small Team (2-4)"
+    assert meta["competition_key"]
 
     sql_snippet = gold.build_metabase_r2_init_sql()
     assert "INSTALL httpfs;" in sql_snippet
     assert "CREATE OR REPLACE PERSISTENT SECRET r2_secret" in sql_snippet
     assert "s3://acdp-test-bucket/gold/mart_kpi_overview.parquet" in sql_snippet
+
+    md_sql = gold.build_motherduck_r2_init_sql(include_credentials=False)
+    assert "CREATE DATABASE IF NOT EXISTS acdp_gold;" in md_sql
+    assert "CREATE OR REPLACE SECRET r2_secret IN MOTHERDUCK (" in md_sql
+    assert "KEY_ID '<R2_ACCESS_KEY_ID>'" in md_sql
+    assert "SECRET '<R2_SECRET_ACCESS_KEY>'" in md_sql
+    assert "s3://acdp-test-bucket/gold/dim_competition.parquet" in md_sql
+    assert "CREATE OR REPLACE VIEW gold_top_prizes AS" in md_sql
+    assert "JOIN dim_competition d USING (competition_sk)" in md_sql
+
+
+def test_motherduck_cli_sql_output(capsys) -> None:
+    """Verify --motherduck-sql prints MotherDuck IN MOTHERDUCK R2 setup SQL without leaking secrets."""
+    gold.main(["--motherduck-sql"])
+    captured = capsys.readouterr().out
+    assert "CREATE DATABASE IF NOT EXISTS" in captured
+    assert "IN MOTHERDUCK" in captured
+    assert "<R2_ACCESS_KEY_ID>" in captured
+    assert "mart_competition_explorer" in captured
 
 
 def test_expired_open_status_normalizes_to_closed() -> None:

@@ -1,31 +1,32 @@
-# EXP-0001: RAG Baseline Evaluation Protocol (Ragas Framework)
+# EXP-0001: Dual-Layer RAG (v2) Baseline Evaluation Protocol (Ragas Framework)
 
 - **Experiment ID**: `EXP-0001`
-- **Related Spec**: `docs/specs/0003-rag-regulation-assistant-spec.md`
+- **Related Task**: `NT-012`
+- **Related Code**: `src/acdp/v2/rag_ingest.py`, `src/acdp/api/services/rag_service.py`
 - **Target Phase**: Phase 1: TLCN MVP
-- **Responsible**: Nguyen Van Quang Duy
+- **Responsible**: Nguyen Van Quang Duy & Do Kien Hung
 
 ---
 
 ## 1. Hypothesis & Objective
 
-We hypothesize that combining **BM25 Lexical Search with Qdrant Dense Embeddings (Hybrid Search) followed by Cross-Encoder Re-ranking** will outperform pure vector search in answering academic competition rules, achieving a **Faithfulness score $> 0.90$** and an **Answer Relevance score $> 0.85$** evaluated via the Ragas framework.
+We hypothesize that **Dual-Layer RAG** — combining **Silver Clean Markdown** chunks (`SemanticChunker` + Cloudflare Workers AI `@cf/baai/bge-m3`, 1024 dims) with **Gold OBT Metadata Pre-Filtering** (`gold/mart_competition_explorer.parquet` fields such as `domain_groups`, `mode_canonical`, `is_free`, `registration_status`, `team_size_max`) on Qdrant Cloud, synthesized by `gemini-3.5-flash-lite` — will outperform naive dense vector search in answering academic competition rules, achieving a **Faithfulness score $\ge 0.90$** and an **Answer Relevance score $\ge 0.85$** evaluated via the Ragas framework.
 
 ---
 
 ## 2. Experimental Setup
 
 ### Retrieval Architectures Compared
-1. **Baseline A**: Pure Dense Vector Search (cosine similarity on `sentence-transformers/paraphrase-multilingual-mpnet-base-v2`).
-2. **Baseline B**: Pure BM25 Lexical Keyword Search.
-3. **Proposed System (ACDP)**: Reciprocal Rank Fusion (RRF) combining BM25 and Dense Vectors, followed by a Cross-Encoder Re-ranker (`BAAI/bge-reranker-large`).
+1. **Baseline A (Naive Dense)**: Pure Dense Vector Search on Qdrant Cloud (`@cf/baai/bge-m3`, cosine similarity) without metadata pre-filtering.
+2. **Baseline B (Lexical BM25)**: Pure BM25 Lexical Keyword Search over Silver Clean Markdown chunks.
+3. **Proposed System (ACDP v2 Dual-Layer RAG)**: Qdrant Cloud Dense Vector Search (`@cf/baai/bge-m3`) with **Gold Mart Payload Pre-Filtering** (`competition_key`, `domain_groups`, `mode_canonical`, `is_free`, `registration_status`, `team_size_min`, `team_size_max`) + `gemini-3.5-flash-lite` citation-grounded synthesis.
 
 ### Benchmark Dataset
 - 20 synthetic and human-annotated test queries covering:
   - Registration deadlines and date constraints.
   - Team composition restrictions (e.g. max members per team, inter-university rules).
-  - Programming language and framework requirements.
-  - Prize distribution and award criteria.
+  - Domain eligibility (`AI/Data`, `Cybersecurity`, `Programming`, etc.) and participation mode (`online`, `offline`, `hybrid`).
+  - Prize distribution, scholarships, and award criteria.
 
 ---
 
@@ -42,4 +43,4 @@ We hypothesize that combining **BM25 Lexical Search with Qdrant Dense Embeddings
 ---
 
 ## 4. Execution Plan & Results Logging
-Results will be generated via Python test scripts invoking `ragas` and logged in a comparative table here upon completion.
+Results will be generated via Python test scripts invoking `ragas` against `src/acdp/api/services/rag_service.py` and logged in a comparative table here upon completion.
