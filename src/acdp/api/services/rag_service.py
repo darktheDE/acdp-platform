@@ -7,6 +7,7 @@ import copy
 import hashlib
 import logging
 import os
+import re
 import threading
 import time
 from collections import OrderedDict
@@ -308,6 +309,86 @@ def check_qdrant_health() -> str:
 @dataclass
 class _RetrievedPoint:
     payload: dict[str, Any]
+    score: float | None = None
+
+
+@dataclass
+class RetrievalConfig:
+    """Configuration for Dual-Layer RAG retrieval (used by serving API & Ragas eval)."""
+
+    use_gold_filter: bool = True
+    limit: int = 6
+    score_threshold: float = 0.35
+    domain_filter: str | None = None
+    gold_filters: dict[str, Any] | None = None
+
+
+@dataclass
+class RetrievedChunk:
+    """Normalized retrieved chunk with Gold metadata for generation & Ragas evaluation."""
+
+    text: str
+    domain: str
+    source_url: str
+    crawl_date: str
+    score: float | None = None
+    metadata: dict[str, Any] | None = None
+
+
+_DOMAIN_SLUG_PATTERNS: tuple[tuple[re.Pattern[str], str], ...] = (
+    (re.compile(r"\b(ai|trí tuệ nhân tạo|machine learning|deep learning|data science|khoa học dữ liệu|datathon)\b", re.I), "ai-data-science"),
+    (re.compile(r"\b(an toàn thông tin|bảo mật|cyber|security|ctf|iot|nhúng|embedded)\b", re.I), "security-iot-embedded"),
+    (re.compile(r"\b(lập trình|software|web|mobile|hackathon|code tour|thuật toán)\b", re.I), "software-web-mobile"),
+    (re.compile(r"\b(blockchain|web3|fintech)\b", re.I), "web3-blockchain-fintech"),
+    (re.compile(r"\b(khởi nghiệp|startup|ý tưởng|design|kinh doanh)\b", re.I), "startup-design-interdisciplinary"),
+)
+
+
+def infer_gold_filters(message: str) -> dict[str, Any]:
+    """Infer structured Gold OBT payload filters from natural language query without LLM tokens."""
+    text = (message or "").strip()
+    if not text:
+        return {}
+    filters: dict[str, Any] = {}
+    lowered = text.lower()
+
+    if re.search(r"\b(miễn phí|không mất phí|free|0 đồng)\b", lowered):
+        filters["is_free"] = True
+    if re.search(r"\b(trực tuyến|online)\b", lowered):
+        filters["mode_canonical"] = "Online"
+    elif re.search(r"\b(trực tiếp|offline|tại chỗ)\b", lowered):
+        filters["mode_canonical"] = "Offline"
+    elif re.search(r"\bhybrid\b", lowered):
+        filters["mode_canonical"] = "Hybrid"
+
+    if re.search(r"\b(đang mở|còn hạn|mở đăng ký|hiện đang mở)\b", lowered):
+        filters["registration_status"] = "open"
+    elif re.search(r"\b(sắp mở|sắp tới|upcoming)\b", lowered):
+        filters["registration_status"] = "upcoming"
+
+    for pattern, slug in _DOMAIN_SLUG_PATTERNS:
+        if pattern.search(text):
+            filters["domain_slugs"] = slug
+            break
+    return filters
+
+
+def build_gold_filter(
+    domain_filter: str | None = None,
+    gold_filters: dict[str, Any] | None = None,
+) -> Filter | None:
+    """Build Qdrant Filter combining optional domain host and Gold OBT indexed metadata fields."""
+    conditions: list[FieldCondition] = []
+    if domain_filter and domain_filter.strip():
+        conditions.append(FieldCondition(key="metadata.domain", match=MatchValue(value=domain_filter.strip())))
+    if gold_filters:
+        for key in ("mode_canonical", "registration_status", "domain_slugs", "competition_key"):
+            val = gold_filters.get(key)
+            if isinstance(val, str) and val.strip():
+                conditions.append(FieldCondition(key=f"metadata.{key}", match=MatchValue(value=val.strip())))
+        if "is_free" in gold_filters and isinstance(gold_filters["is_free"], bool):
+            conditions.append(FieldCondition(key="metadata.is_free", match=MatchValue(value=gold_filters["is_free"])))
+    return Filter(must=conditions) if conditions else None
 
 
 def _fallback_duckdb_gold_search(message: str, domain_filter: str | None = None, limit: int = 4) -> list[_RetrievedPoint]:
@@ -376,68 +457,168 @@ def _fallback_duckdb_gold_search(message: str, domain_filter: str | None = None,
     return [pt for _, pt in scored[:limit]]
 
 
+def _query_qdrant_with_fallback(
+    query_vec: list[float],
+    collection_name: str,
+    q_filter: Filter | None,
+    limit: int,
+    score_threshold: float,
+) -> list[Any]:
+    try:
+        qc = _get_qdrant()
+        res = qc.query_points(
+            collection_name=collection_name,
+            query=query_vec,
+            query_filter=q_filter,
+            limit=limit,
+            score_threshold=score_threshold,
+            with_payload=True,
+        )
+        return list(res.points)
+    except Exception as primary_qdrant_exc:
+        backup_qc = _get_backup_qdrant()
+        if backup_qc is not None:
+            try:
+                res = backup_qc.query_points(
+                    collection_name=collection_name,
+                    query=query_vec,
+                    query_filter=q_filter,
+                    limit=limit,
+                    score_threshold=score_threshold,
+                    with_payload=True,
+                )
+                logger.warning("Primary Qdrant failed (%s); served from backup Qdrant.", primary_qdrant_exc)
+                return list(res.points)
+            except Exception:
+                pass
+        raise primary_qdrant_exc
+
+
 def _retrieve_context_points(
     message: str,
     domain_filter: str | None = None,
     history: list[dict[str, str]] | None = None,
+    config: RetrievalConfig | None = None,
 ) -> list[Any]:
-    """Retrieve grounded context points via Qdrant Cloud -> Qdrant Backup -> DuckDB Gold fallback."""
+    """Retrieve grounded context points via Qdrant Cloud (with Gold pre-filter) -> Backup -> DuckDB Gold fallback."""
+    cfg = config or RetrievalConfig(domain_filter=domain_filter)
+    active_domain = cfg.domain_filter if cfg.domain_filter is not None else domain_filter
+
     query_text = message
     if history and len(message.split()) < 8:
         last_user = next((h["content"] for h in reversed(history) if h.get("role") == "user"), None)
         if last_user:
             query_text = f"{last_user}\n{message}"
 
-    q_filter = (
-        Filter(must=[FieldCondition(key="metadata.domain", match=MatchValue(value=domain_filter.strip()))])
-        if domain_filter and domain_filter.strip()
-        else None
-    )
+    resolved_gold = cfg.gold_filters if cfg.gold_filters is not None else (infer_gold_filters(message) if cfg.use_gold_filter else {})
+    q_filter = build_gold_filter(domain_filter=active_domain, gold_filters=resolved_gold if cfg.use_gold_filter else None)
     collection_name = settings.get_qdrant_collection()
 
     try:
         emb = _get_embeddings()
         query_vec = emb.embed_query(query_text)
-        try:
-            qc = _get_qdrant()
-            res = qc.query_points(
+        points = _query_qdrant_with_fallback(
+            query_vec=query_vec,
+            collection_name=collection_name,
+            q_filter=q_filter,
+            limit=cfg.limit,
+            score_threshold=cfg.score_threshold,
+        )
+        # If Gold pre-filter is too strict and yields 0 chunks, relax Gold filter while keeping domain_filter
+        if not points and cfg.use_gold_filter and resolved_gold:
+            relaxed_filter = build_gold_filter(domain_filter=active_domain, gold_filters=None)
+            points = _query_qdrant_with_fallback(
+                query_vec=query_vec,
                 collection_name=collection_name,
-                query=query_vec,
-                query_filter=q_filter,
-                limit=6,
-                score_threshold=0.35,
-                with_payload=True,
+                q_filter=relaxed_filter,
+                limit=cfg.limit,
+                score_threshold=cfg.score_threshold,
             )
-            return list(res.points)
-        except Exception as primary_qdrant_exc:
-            backup_qc = _get_backup_qdrant()
-            if backup_qc is not None:
-                try:
-                    res = backup_qc.query_points(
-                        collection_name=collection_name,
-                        query=query_vec,
-                        query_filter=q_filter,
-                        limit=6,
-                        score_threshold=0.35,
-                        with_payload=True,
-                    )
-                    logger.warning("Primary Qdrant failed (%s); served from backup Qdrant.", primary_qdrant_exc)
-                    return list(res.points)
-                except Exception:
-                    pass
-            raise primary_qdrant_exc
+        return points
     except RagUnavailableError:
-        gold_points = _fallback_duckdb_gold_search(message, domain_filter=domain_filter)
+        gold_points = _fallback_duckdb_gold_search(message, domain_filter=active_domain, limit=cfg.limit)
         if gold_points:
             logger.warning("Embedding/Qdrant unavailable; served grounded Gold lexical fallback.")
             return gold_points
         raise
     except Exception as exc:
-        gold_points = _fallback_duckdb_gold_search(message, domain_filter=domain_filter)
+        gold_points = _fallback_duckdb_gold_search(message, domain_filter=active_domain, limit=cfg.limit)
         if gold_points:
             logger.warning("Vector retrieval failed (%s); served grounded Gold lexical fallback.", exc)
             return gold_points
         raise RagUnavailableError(f"Vector retrieval failed: {exc}") from exc
+
+
+def retrieve_contexts(
+    message: str,
+    config: RetrievalConfig | None = None,
+    history: list[dict[str, str]] | None = None,
+) -> list[RetrievedChunk]:
+    """Retrieve normalized context chunks for RAG generation or Ragas evaluation."""
+    points = _retrieve_context_points(
+        message=message,
+        domain_filter=config.domain_filter if config else None,
+        history=history,
+        config=config,
+    )
+    chunks: list[RetrievedChunk] = []
+    for pt in points:
+        payload = pt.payload or {}
+        meta = payload.get("metadata") or {}
+        domain = str(meta.get("domain") or "unknown")
+        source_url = str(meta.get("source_url") or f"https://{domain}")
+        chunks.append(
+            RetrievedChunk(
+                text=str(payload.get("page_content") or ""),
+                domain=domain,
+                source_url=source_url,
+                crawl_date=str(meta.get("crawl_date") or ""),
+                score=getattr(pt, "score", None),
+                metadata=meta,
+            )
+        )
+    return chunks
+
+
+def answer_with_contexts(
+    message: str,
+    contexts: list[RetrievedChunk],
+    history: list[dict[str, str]] | None = None,
+) -> tuple[str, list[RagCitationDTO], str]:
+    """Synthesize a citation-grounded answer from retrieved chunks."""
+    if not contexts:
+        return (
+            "Chưa tìm thấy điều khoản xác thực trong dữ liệu cuộc thi đã thu thập (DIR-004). Vui lòng thử câu hỏi khác hoặc kiểm tra trực tiếp trên trang chính thức của Ban tổ chức.",
+            [],
+            "none",
+        )
+
+    citations: list[RagCitationDTO] = []
+    seen_urls: set[str] = set()
+    context_blocks: list[str] = []
+
+    for idx, chunk in enumerate(contexts, 1):
+        context_blocks.append(
+            f"--- Đoạn {idx} | URL: {chunk.source_url} | Ngày cào: {chunk.crawl_date} ---\n{chunk.text}"
+        )
+        if chunk.source_url not in seen_urls:
+            seen_urls.add(chunk.source_url)
+            citations.append(
+                RagCitationDTO(
+                    title=chunk.domain,
+                    url=chunk.source_url,
+                    domain=chunk.domain,
+                    snippet=chunk.text[:260].strip(),
+                )
+            )
+
+    context_text = "\n\n".join(context_blocks)
+    answer, used_provider = _generate_answer_with_fallback(
+        message=message,
+        context_text=context_text,
+        history=history,
+    )
+    return answer, citations, used_provider
 
 
 def _build_openai_messages(
@@ -611,50 +792,18 @@ def _sync_query_rag(
         return cached_res
 
     points = _retrieve_context_points(message=message, domain_filter=domain_filter, history=history)
-    if not points:
-        elapsed = int((time.perf_counter() - start) * 1000)
-        return RagResult(
-            answer="Chưa tìm thấy điều khoản xác thực trong dữ liệu cuộc thi đã thu thập (DIR-004). Vui lòng thử câu hỏi khác hoặc kiểm tra trực tiếp trên trang chính thức của Ban tổ chức.",
-            citations=[],
-            grounded=False,
-            latency_ms=elapsed,
-            provider="none",
-            cached=False,
+    chunks = [
+        RetrievedChunk(
+            text=str((pt.payload or {}).get("page_content") or ""),
+            domain=str(((pt.payload or {}).get("metadata") or {}).get("domain") or "unknown"),
+            source_url=str(((pt.payload or {}).get("metadata") or {}).get("source_url") or f"https://{((pt.payload or {}).get('metadata') or {}).get('domain') or 'unknown'}"),
+            crawl_date=str(((pt.payload or {}).get("metadata") or {}).get("crawl_date") or ""),
+            score=getattr(pt, "score", None),
+            metadata=(pt.payload or {}).get("metadata") or {},
         )
-
-    citations: list[RagCitationDTO] = []
-    seen_urls: set[str] = set()
-    context_blocks: list[str] = []
-
-    for idx, pt in enumerate(points, 1):
-        payload = pt.payload or {}
-        meta = payload.get("metadata") or {}
-        page_content = str(payload.get("page_content") or "")
-        domain = str(meta.get("domain") or "unknown")
-        source_url = str(meta.get("source_url") or f"https://{domain}")
-        crawl_date = str(meta.get("crawl_date") or "")
-
-        context_blocks.append(
-            f"--- Đoạn {idx} | URL: {source_url} | Ngày cào: {crawl_date} ---\n{page_content}"
-        )
-        if source_url not in seen_urls:
-            seen_urls.add(source_url)
-            citations.append(
-                RagCitationDTO(
-                    title=domain,
-                    url=source_url,
-                    domain=domain,
-                    snippet=page_content[:260].strip(),
-                )
-            )
-
-    context_text = "\n\n".join(context_blocks)
-    answer, used_provider = _generate_answer_with_fallback(
-        message=message,
-        context_text=context_text,
-        history=history,
-    )
-
+        for pt in points
+    ]
+    answer, citations, used_provider = answer_with_contexts(message=message, contexts=chunks, history=history)
     elapsed = int((time.perf_counter() - start) * 1000)
     result = RagResult(
         answer=answer,
@@ -664,7 +813,8 @@ def _sync_query_rag(
         provider=used_provider,
         cached=False,
     )
-    _rag_cache.set(cache_key, result)
+    if result.grounded:
+        _rag_cache.set(cache_key, result)
     return result
 
 

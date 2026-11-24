@@ -215,8 +215,8 @@ def test_rag_llm_fallback_chain_and_ttl_cache(monkeypatch: pytest.MonkeyPatch) -
     )
     chain = cfg.get_llm_fallback_chain()
     assert [t["provider"] for t in chain] == ["gemini", "groq", "openrouter"]
-    assert chain[1]["model"] == "llama-3.3-70b-versatile"
-    assert chain[2]["model"] == "meta-llama/llama-3.3-70b-instruct:free"
+    assert chain[1]["model"] == "qwen/qwen3.8-27b"
+    assert chain[2]["model"] == "google/gemma-4-31b-it:free"
 
     fake_embedder = MagicMock()
     fake_embedder.embed_query.return_value = [0.2] * 1024
@@ -320,6 +320,6 @@ def test_rag_litellm_router_fallback_mode(monkeypatch: pytest.MonkeyPatch) -> No
     call_kwargs = mock_litellm.completion.call_args.kwargs
     assert call_kwargs["model"] == "gemini/gemini-3.5-flash-lite"
     assert call_kwargs["fallbacks"] == [
-        "groq/llama-3.3-70b-versatile",
-        "openrouter/meta-llama/llama-3.3-70b-instruct:free",
+        "groq/qwen/qwen3.8-27b",
+        "openrouter/google/gemma-4-31b-it:free",
     ]

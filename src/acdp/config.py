@@ -182,7 +182,7 @@ class AppConfig(BaseSettings):
         description="Groq Cloud API key for Tier-2 LLM fallback (TASK-CLD-06)",
     )
     groq_chat_model: str = Field(
-        default="llama-3.3-70b-versatile",
+        default="qwen/qwen3.8-27b",
         description="Groq LPU fallback model ID",
     )
     openrouter_api_key: str = Field(
@@ -190,7 +190,7 @@ class AppConfig(BaseSettings):
         description="OpenRouter API key for Tier-3 :free LLM fallback (TASK-CLD-06)",
     )
     openrouter_chat_model: str = Field(
-        default="meta-llama/llama-3.3-70b-instruct:free",
+        default="google/gemma-4-31b-it:free",
         description="OpenRouter :free fallback model ID",
     )
     llm_fallback_enabled: bool = Field(
@@ -382,7 +382,9 @@ class AppConfig(BaseSettings):
             return chain
 
         if self.groq_api_key.strip():
-            groq_model = self.groq_chat_model.strip() or "llama-3.3-70b-versatile"
+            groq_model = self.groq_chat_model.strip() or "qwen/qwen3.8-27b"
+            if groq_model == "llama-3.3-70b-versatile":
+                groq_model = "qwen/qwen3.8-27b"
             chain.append(
                 {
                     "provider": "groq",
@@ -394,7 +396,9 @@ class AppConfig(BaseSettings):
             )
 
         if self.openrouter_api_key.strip():
-            or_model = self.openrouter_chat_model.strip() or "meta-llama/llama-3.3-70b-instruct:free"
+            or_model = self.openrouter_chat_model.strip() or "google/gemma-4-31b-it:free"
+            if or_model == "meta-llama/llama-3.3-70b-instruct:free":
+                or_model = "google/gemma-4-31b-it:free"
             chain.append(
                 {
                     "provider": "openrouter",
