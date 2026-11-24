@@ -252,15 +252,18 @@ async def test_g5_hide_public_docs_and_protect_admin_docs(
     api_client: AsyncClient,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    """Gate G5 (OWASP A02:2025): Public /docs, /redoc, /openapi.json always return 404; /api/v1/admin/docs requires Admin."""
-    for env_name in ("development", "production"):
-        monkeypatch.setattr(settings, "environment", env_name)
-        for hidden_path in ("/docs", "/redoc", "/openapi.json"):
-            resp = await api_client.get(hidden_path)
-            assert resp.status_code == 404
-            assert resp.headers["X-Content-Type-Options"] == "nosniff"
-            if env_name == "production":
-                assert resp.headers["Strict-Transport-Security"].startswith("max-age=63072000")
+    """Gate G5 (OWASP A02:2025): Public /docs, /redoc, /openapi.json return 404 in production; /api/v1/admin/docs requires Admin."""
+    monkeypatch.setattr(settings, "environment", "production")
+    for hidden_path in ("/docs", "/redoc", "/openapi.json"):
+        resp = await api_client.get(hidden_path)
+        assert resp.status_code == 404
+        assert resp.headers["X-Content-Type-Options"] == "nosniff"
+        assert resp.headers["Strict-Transport-Security"].startswith("max-age=63072000")
+
+    monkeypatch.setattr(settings, "environment", "development")
+    assert (await api_client.get("/docs")).status_code == 200
+    assert (await api_client.get("/openapi.json")).status_code == 200
+    assert (await api_client.get("/redoc")).status_code == 404
 
     # Anonymous and non-admin student are blocked from /api/v1/admin/docs and /api/v1/admin/openapi.json
     assert (await api_client.get("/api/v1/admin/docs")).status_code == 401

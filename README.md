@@ -65,14 +65,39 @@ acdp-platform/
 uv sync --all-extras
 ```
 
-### Step 2: Configure Environment
-Copy the template and provide your API keys:
+### Step 2: Configure Environment (Local Dev vs Production)
+- **Local Development**: Use `.env.dev` (forces `POSTGRES_MODE=local` for the `acdp-postgres` container, `ENVIRONMENT=development`, and `http://localhost:3000` CORS):
 ```bash
-cp .env.example .env
+cp .env.dev .env
 ```
-*(Required for Cloudflare R2 & Workers AI: `BUCKET_NAME`, `AWS_ENDPOINT_URL`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `CLOUDFLARE_API_TOKEN`; for LLM extraction & RAG Copilot: `GEMINI_API_KEY`; for Qdrant Cloud: `QDRANT_CLUSTER_ENDPOINT`, `QDRANT_API_KEY`).*
+- **Production**: Never store `.env.prod` locally. Configure production secrets (`SUPABASE_DATABASE_URL`, `QDRANT_CLUSTER_ENDPOINT`, `JWT_SECRET_KEY`, `ENVIRONMENT=production`) directly in **Vercel Environment Variables** (Frontend) and **Hugging Face Spaces Secrets** (Backend).
 
-### Step 3: Run Verification & Pure-R2 Pipeline
+*(Required in `.env` for Cloudflare R2 & Workers AI: `BUCKET_NAME`, `AWS_ENDPOINT_URL`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`; for LLM extraction & RAG Copilot: `GEMINI_API_KEY`; for Qdrant Cloud: `QDRANT_CLUSTER_ENDPOINT`, `QDRANT_API_KEY`).*
+
+### Step 3: Run Local Stack (Docker or Native)
+
+#### Option A: Full-Stack via Docker (Recommended)
+```powershell
+# Launch / update Web (:3000), FastAPI (:8000), and PostgreSQL 18 (:5432) with latest code & base images
+docker compose --profile core up -d --build --pull always --remove-orphans
+
+# Optional: include local Qdrant (:6333) if not using Qdrant Cloud
+docker compose --profile core --profile local-backup up -d --build
+```
+
+#### Option B: Native Local Dev (Hot-Reload)
+```powershell
+# 1. Start PostgreSQL 18 container only
+docker compose --profile core up -d postgres
+
+# 2. Run FastAPI backend (port 8000)
+uv run uvicorn src.acdp.api.main:app --reload --host 0.0.0.0 --port 8000
+
+# 3. Run Next.js 16 frontend (port 3000, in apps/web/)
+npm --prefix apps/web run dev
+```
+
+### Step 4: Run Verification & Pure-R2 Pipeline
 ```bash
 # 1. Run unit tests
 uv run pytest -v

@@ -25,12 +25,14 @@ async def lifespan(_: FastAPI):
     await engine.dispose()
 
 
+_is_prod = settings.environment == "production"
+
 app = FastAPI(
     title="ACDP Serving Gateway",
     description="Unified FastAPI Gateway over DuckDB Gold Star Schema, PostgreSQL 18 OLTP, and Qdrant RAG.",
     version="1.0.0",
-    openapi_url=None,
-    docs_url=None,
+    openapi_url=None if _is_prod else "/openapi.json",
+    docs_url=None if _is_prod else "/docs",
     redoc_url=None,
     lifespan=lifespan,
 )

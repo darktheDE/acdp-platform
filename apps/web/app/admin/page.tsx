@@ -165,6 +165,11 @@ export default function AdminPage() {
     }
   };
 
+  const handleOpenSwaggerDocs = () => {
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    window.open(`${baseUrl}/docs`, "_blank", "noopener,noreferrer");
+  };
+
   if (authLoading || loading) {
     return <div className="h-64 animate-pulse rounded-xl bg-[var(--color-surface)]" />;
   }
@@ -367,6 +372,16 @@ export default function AdminPage() {
           >
             <FileCode2 className="h-4 w-4" aria-hidden="true" />
             <span>{busyAction === "openapi" ? "Đang tải..." : "Kiểm tra Admin OpenAPI (/api/v1/admin/openapi.json)"}</span>
+          </button>
+
+          <button
+            type="button"
+            disabled={busyAction !== null}
+            onClick={() => void handleOpenSwaggerDocs()}
+            className="inline-flex min-h-10 items-center gap-2 rounded-lg bg-[var(--color-brand-primary)] px-3.5 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-60"
+          >
+            <FileCode2 className="h-4 w-4" aria-hidden="true" />
+            <span>{busyAction === "swagger" ? "Đang mở..." : "Mở Swagger UI (/api/v1/admin/docs)"}</span>
           </button>
         </div>
 
