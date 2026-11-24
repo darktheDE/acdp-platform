@@ -11,7 +11,8 @@ from sqlmodel import select
 
 from acdp.api.db.models import ChatMessage, ChatSession, User
 from acdp.api.db.postgres import get_db_session
-from acdp.api.dependencies import get_current_user, get_optional_user
+from acdp.api.dependencies import get_current_user
+from acdp.api.middleware.security import enforce_ai_rate_limit
 from acdp.api.schemas.rag import (
     ChatMessageDTO,
     ChatSessionDTO,
@@ -96,20 +97,22 @@ async def _handle_rag_chat(
 @router.post("/chat", response_model=RagChatResponse)
 async def rag_chat(
     payload: RagChatRequest,
-    current_user: User | None = Depends(get_optional_user),
+    current_user: User = Depends(get_current_user),
+    _rate_limit: None = Depends(enforce_ai_rate_limit),
     db: AsyncSession = Depends(get_db_session),
 ) -> RagChatResponse:
-    """Query competition rules via Qdrant + LLM with grounded URL citations."""
+    """Query competition rules via Qdrant + LLM with grounded URL citations (Auth-Only + AI Rate Limited)."""
     return await _handle_rag_chat(payload, current_user, db)
 
 
 @router.post("/query", response_model=RagChatResponse, include_in_schema=False)
 async def rag_query_alias(
     payload: RagChatRequest,
-    current_user: User | None = Depends(get_optional_user),
+    current_user: User = Depends(get_current_user),
+    _rate_limit: None = Depends(enforce_ai_rate_limit),
     db: AsyncSession = Depends(get_db_session),
 ) -> RagChatResponse:
-    """Alias for /api/v1/rag/chat."""
+    """Alias for /api/v1/rag/chat (Auth-Only + AI Rate Limited)."""
     return await _handle_rag_chat(payload, current_user, db)
 
 

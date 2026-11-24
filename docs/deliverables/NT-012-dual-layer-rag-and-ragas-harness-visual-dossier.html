@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NT-012: Dual-Layer RAG (v2) &amp; Ragas Harness — Visual Dossier</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: { 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca' }
+          }
+        }
+      }
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    .mermaid svg { max-width: 100%; height: auto; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen antialiased">
+
+  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center space-x-3">
+        <span class="px-2.5 py-1 text-xs font-semibold uppercase tracking-wider rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30">
+          Task ID: NT-012 · In Progress
+        </span>
+        <h1 class="text-lg font-bold text-white tracking-tight">Dual-Layer RAG (v2) &amp; Ragas Baseline Harness</h1>
+      </div>
+      <div class="flex items-center space-x-3 text-xs text-slate-400">
+        <span>Tác giả: Đỗ Kiến Hưng &amp; Nguyễn Văn Quang Duy</span>
+        <span class="text-slate-600">|</span>
+        <span>Khoa CNTT · HCM-UTE</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+    <!-- TIER 1: Executive KPI Cards -->
+    <section class="space-y-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm">
+          <div class="text-xs font-medium text-slate-400 uppercase tracking-wider">Qdrant Cloud Vector Index</div>
+          <div class="mt-2 flex items-baseline gap-2">
+            <span class="text-3xl font-extrabold text-emerald-400">778</span>
+            <span class="text-xs text-slate-400">points · 7 indexes</span>
+          </div>
+          <p class="mt-1 text-xs text-slate-500">bge-m3 (1024d) + Gold payload indexes</p>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm">
+          <div class="text-xs font-medium text-slate-400 uppercase tracking-wider">Golden Eval Dataset</div>
+          <div class="mt-2 flex items-baseline gap-2">
+            <span class="text-3xl font-extrabold text-indigo-400">20</span>
+            <span class="text-xs text-slate-400">câu hỏi · 4 nhóm</span>
+          </div>
+          <p class="mt-1 text-xs text-slate-500">Từ 24 cuộc thi Gold trên R2</p>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm">
+          <div class="text-xs font-medium text-slate-400 uppercase tracking-wider">Kiểm Thử &amp; Lint</div>
+          <div class="mt-2 flex items-baseline gap-2">
+            <span class="text-3xl font-extrabold text-teal-400">10/10</span>
+            <span class="text-xs text-slate-400">pytest + ruff clean</span>
+          </div>
+          <p class="mt-1 text-xs text-slate-500">Zero regression trên Serving API</p>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm">
+          <div class="text-xs font-medium text-slate-400 uppercase tracking-wider">Live Ragas Scorecard</div>
+          <div class="mt-2 flex items-baseline gap-2">
+            <span class="text-3xl font-extrabold text-amber-400">Pending</span>
+            <span class="text-xs text-slate-400">Quota Reset</span>
+          </div>
+          <p class="mt-1 text-xs text-slate-500">Gemini 500 RPD · Groq/OR 429</p>
+        </div>
+      </div>
+
+      <div class="bg-slate-900/60 border border-slate-800 rounded-xl p-4 text-sm text-slate-300">
+        <strong class="text-white">Tóm tắt thực thi:</strong> Đã hoàn thiện nâng cấp <strong>Gold OBT Pre-Filtering</strong> (rule-based, 0 token LLM) trong <code>rag_service.py</code>, tạo đủ 7 payload index trên Qdrant Cloud, sửa lỗi model fallback 404 trên Groq/OpenRouter, và xây dựng bộ đo Ragas 3 kiến trúc (<code>rag_eval.py</code>). Phiên chạy live 20 câu tạm dừng do chạm hạn mức Free Tier và sẽ chạy lại ngay khi quota reset.
+      </div>
+    </section>
+
+    <!-- Navigation Tabs -->
+    <div class="border-b border-slate-800 flex flex-wrap gap-6 text-sm font-medium">
+      <button onclick="switchTab('tab-architecture')" id="btn-architecture" class="tab-btn pb-3 text-indigo-400 border-b-2 border-indigo-500 transition">
+        Kiến Trúc Dual-Layer &amp; Ablation
+      </button>
+      <button onclick="switchTab('tab-benchmarks')" id="btn-benchmarks" class="tab-btn pb-3 text-slate-400 hover:text-slate-200 transition">
+        Mục Tiêu Ragas &amp; Tập Dữ Liệu
+      </button>
+      <button onclick="switchTab('tab-specs')" id="btn-specs" class="tab-btn pb-3 text-slate-400 hover:text-slate-200 transition">
+        Chi Tiết Kỹ Thuật &amp; Lệnh Chạy Lại
+      </button>
+    </div>
+
+    <!-- TIER 2A: Architecture -->
+    <div id="tab-architecture" class="tab-content space-y-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+        <h3 class="text-base font-semibold text-white mb-4">Luồng Truy Vấn Dual-Layer RAG (v2) &amp; Ragas Evaluation Harness</h3>
+        <div class="mermaid text-center">
+flowchart LR
+    Q[User / Golden Query] --> Infer[infer_gold_filters<br/>Regex · 0 LLM Tokens]
+    Infer --> C[System C: Dual-Layer<br/>Qdrant bge-m3 + Gold Filter]
+    Q --> A[System A: Naive Dense<br/>Qdrant bge-m3]
+    Q --> B[System B: BM25<br/>rank_bm25 on Chunks]
+    C -->|0 hits fallback| A
+    A &amp; B &amp; C --> LLM[LLM Fallback Chain<br/>Gemini 3.5 -&gt; Groq Qwen3.8 -&gt; Gemma4]
+    LLM --> CK[(Checkpoint JSON)]
+    CK --> Judge[Ragas Judge<br/>Faithfulness · Relevance · Precision · Recall]
+        </div>
+      </div>
+
+      <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+        <div class="px-6 py-4 border-b border-slate-800">
+          <h3 class="text-base font-semibold text-white">So Sánh 3 Kiến Trúc Trong Thí Nghiệm (EXP-0001)</h3>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm text-left text-slate-300">
+            <thead class="text-xs uppercase bg-slate-800/60 text-slate-400">
+              <tr>
+                <th class="px-6 py-3">Hệ thống</th>
+                <th class="px-6 py-3">Cơ chế Truy hồi</th>
+                <th class="px-6 py-3">Pre-Filtering</th>
+                <th class="px-6 py-3">Trạng thái</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800">
+              <tr>
+                <td class="px-6 py-3 font-semibold text-white">Baseline A (Naive Dense)</td>
+                <td class="px-6 py-3">Qdrant Dense Cosine (<code>@cf/baai/bge-m3</code>)</td>
+                <td class="px-6 py-3 text-slate-400">Không lọc Gold</td>
+                <td class="px-6 py-3 text-amber-400">Chờ chạy lại</td>
+              </tr>
+              <tr>
+                <td class="px-6 py-3 font-semibold text-white">Baseline B (Lexical BM25)</td>
+                <td class="px-6 py-3"><code>BM25Okapi</code> trên cùng tập chunk Qdrant</td>
+                <td class="px-6 py-3 text-slate-400">Không lọc Gold</td>
+                <td class="px-6 py-3 text-amber-400">Chờ chạy lại</td>
+              </tr>
+              <tr>
+                <td class="px-6 py-3 font-semibold text-emerald-400">Proposed C (Dual-Layer)</td>
+                <td class="px-6 py-3">Qdrant Dense + Gold OBT Metadata</td>
+                <td class="px-6 py-3 text-emerald-300"><code>is_free</code>, <code>mode_canonical</code>, <code>registration_status</code>, <code>domain_slugs</code></td>
+                <td class="px-6 py-3 text-amber-400">Chờ chạy lại</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TIER 2B: Benchmarks & Dataset -->
+    <div id="tab-benchmarks" class="tab-content hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+          <h3 class="text-base font-semibold text-white mb-4">Ngưỡng Mục Tiêu Ragas (EXP-0001 Target Scorecard)</h3>
+          <div class="h-64">
+            <canvas id="targetChart"></canvas>
+          </div>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+          <h3 class="text-base font-semibold text-white mb-4">Phân Bố 20 Câu Hỏi Chuẩn (0001-golden-queries.jsonl)</h3>
+          <div class="h-64">
+            <canvas id="datasetChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TIER 3: Deep Technical Details -->
+    <div id="tab-specs" class="tab-content hidden space-y-4">
+      <details open class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+        <summary class="cursor-pointer font-semibold text-white">1. Các Lỗi Thực Tế Đã Phát Hiện &amp; Khắc Phục</summary>
+        <ul class="mt-3 space-y-2 text-sm text-slate-300 list-disc list-inside">
+          <li><strong>Qdrant Cloud 400 Index Missing</strong>: Đã tạo đủ 7 payload index trên collection <code>acdp_competitions_bge_m3</code> để hỗ trợ pre-filter.</li>
+          <li><strong>Fallback Model 404</strong>: <code>llama-3.3-70b-versatile</code> (Groq) và <code>meta-llama/llama-3.3-70b-instruct:free</code> (OpenRouter) đã bị ngừng. Đã chuyển sang <code>qwen/qwen3.8-27b</code> và <code>google/gemma-4-31b-it:free</code> trong <code>src/acdp/config.py</code>.</li>
+          <li><strong>Ragas <code>AnswerRelevancy</code> 400</strong>: <code>gemini-3.5-flash-lite</code> không hỗ trợ <code>n &gt; 1</code> candidates; đã đặt <code>strictness=1</code> và bổ sung <code>--judge groq</code>.</li>
+        </ul>
+      </details>
+
+      <details class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+        <summary class="cursor-pointer font-semibold text-white">2. Lệnh Chạy Lại Đánh Giá Khi Quota Reset</summary>
+        <pre class="mt-3 bg-slate-950 border border-slate-800 rounded-lg p-4 text-xs text-emerald-300 overflow-x-auto">uv run python -u -m acdp.v2.rag_eval --systems A B C --sleep 4.2 --judge groq
+# Hoặc chấm lại từ checkpoint đã sinh câu trả lời:
+uv run python -u -m acdp.v2.rag_eval --from-checkpoint --judge groq</pre>
+      </details>
+
+      <details class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+        <summary class="cursor-pointer font-semibold text-white">3. Danh Sách Tệp Liên Quan</summary>
+        <ul class="mt-3 space-y-1 text-sm text-indigo-300">
+          <li><a href="file:///D:/Code/final-thesis/acdp-platform/src/acdp/api/services/rag_service.py" class="hover:underline">src/acdp/api/services/rag_service.py</a></li>
+          <li><a href="file:///D:/Code/final-thesis/acdp-platform/src/acdp/v2/rag_eval.py" class="hover:underline">src/acdp/v2/rag_eval.py</a></li>
+          <li><a href="file:///D:/Code/final-thesis/acdp-platform/src/acdp/config.py" class="hover:underline">src/acdp/config.py</a></li>
+          <li><a href="file:///D:/Code/final-thesis/acdp-platform/docs/experiments/data/0001-golden-queries.jsonl" class="hover:underline">docs/experiments/data/0001-golden-queries.jsonl</a></li>
+          <li><a href="file:///D:/Code/final-thesis/acdp-platform/docs/experiments/0001-rag-baseline-evaluation.md" class="hover:underline">docs/experiments/0001-rag-baseline-evaluation.md</a></li>
+        </ul>
+      </details>
+    </div>
+
+  </main>
+
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('text-indigo-400', 'border-b-2', 'border-indigo-500');
+        btn.classList.add('text-slate-400');
+      });
+      document.getElementById(tabId).classList.remove('hidden');
+      const activeBtn = document.getElementById('btn-' + tabId.replace('tab-', ''));
+      activeBtn.classList.add('text-indigo-400', 'border-b-2', 'border-indigo-500');
+      activeBtn.classList.remove('text-slate-400');
+    }
+
+    new Chart(document.getElementById('targetChart'), {
+      type: 'bar',
+      data: {
+        labels: ['Faithfulness', 'Answer Relevance', 'Context Precision', 'Context Recall'],
+        datasets: [{
+          label: 'Ngưỡng Mục Tiêu (EXP-0001)',
+          data: [0.90, 0.85, 0.85, 0.80],
+          backgroundColor: ['rgba(16, 185, 129, 0.7)', 'rgba(99, 102, 241, 0.7)', 'rgba(56, 189, 248, 0.7)', 'rgba(245, 158, 11, 0.7)'],
+          borderRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: { y: { min: 0, max: 1, ticks: { color: '#94a3b8' }, grid: { color: '#1e293b' } }, x: { ticks: { color: '#cbd5e1' }, grid: { display: false } } },
+        plugins: { legend: { labels: { color: '#cbd5e1' } } }
+      }
+    });
+
+    new Chart(document.getElementById('datasetChart'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Deadline (5)', 'Team Size (5)', 'Domain & Mode (5)', 'Prize & Scholarship (5)'],
+        datasets: [{
+          data: [5, 5, 5, 5],
+          backgroundColor: ['#6366f1', '#10b981', '#0ea5e9', '#f59e0b'],
+          borderColor: '#0f172a',
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { position: 'bottom', labels: { color: '#cbd5e1' } } }
+      }
+    });
+  </script>
+</body>
+</html>

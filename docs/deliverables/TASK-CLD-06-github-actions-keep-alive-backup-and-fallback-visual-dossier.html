@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TASK-CLD-06: Cloud Keep-Alive, Weekly pg_dump & AI Fallback Visual Dossier</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: "neutral", securityLevel: "loose" });
+  </script>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased">
+  <div class="max-w-6xl mx-auto px-4 py-8 space-y-8">
+    <header class="bg-gradient-to-r from-slate-900 via-blue-950 to-indigo-950 text-white rounded-2xl p-6 shadow-lg">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">
+            TASK-CLD-06 · Cycle 07 · Cloud & Infra · $0/Month Guardrail
+          </span>
+          <h1 class="text-2xl md:text-3xl font-bold mt-3">
+            GitHub Actions Keep-Alive, Backup <code>pg_dump</code> & Chuỗi Fallback LLM/Vector
+          </h1>
+          <p class="text-slate-300 text-sm mt-1">
+            Phòng ngừa rủi ro R1 (ngủ đông/xóa cụm), R2 (rate limit HTTP 429) và R4 (mất dữ liệu OLTP) theo ADR-0002.
+          </p>
+        </div>
+        <div class="text-right text-xs text-slate-300 space-y-1">
+          <div><strong class="text-white">Tác giả:</strong> Đỗ Kiến Hưng & Nguyễn Văn Quang Duy</div>
+          <div><strong class="text-white">Đơn vị:</strong> FIT · HCM-UTE</div>
+          <div><strong class="text-white">Cập nhật:</strong> 2026-11-24</div>
+        </div>
+      </div>
+    </header>
+
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
+        <div class="text-xs font-medium text-slate-500 uppercase tracking-wider">Chu kỳ Keep-Alive</div>
+        <div class="text-2xl font-bold text-blue-700 mt-1">24 giờ</div>
+        <p class="text-xs text-slate-600 mt-1">Cron <code>15 2 * * *</code> (an toàn dưới ngưỡng HF 48h & Supabase/Qdrant 7d)</p>
+      </div>
+      <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
+        <div class="text-xs font-medium text-slate-500 uppercase tracking-wider">Qdrant Cloud Vector DQ</div>
+        <div class="text-2xl font-bold text-emerald-600 mt-1">778 pts</div>
+        <p class="text-xs text-slate-600 mt-1">1024-dim BGE-M3 · 0 mẫu lỗi payload (<code>618.5 ms</code>)</p>
+      </div>
+      <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
+        <div class="text-xs font-medium text-slate-500 uppercase tracking-wider">R2 Gold Lakehouse DQ</div>
+        <div class="text-2xl font-bold text-indigo-600 mt-1">15 / 15</div>
+        <p class="text-xs text-slate-600 mt-1">24 cuộc thi · 0 lỗi Bridge Weight · <code>102.41 KB</code> Parquet</p>
+      </div>
+      <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
+        <div class="text-xs font-medium text-slate-500 uppercase tracking-wider">Kiểm thử & Lint</div>
+        <div class="text-2xl font-bold text-emerald-700 mt-1">16 / 16</div>
+        <p class="text-xs text-slate-600 mt-1">Pytest Passed · Ruff 0 lỗi · RAG Fallback & pg_dump verified</p>
+      </div>
+    </section>
+
+    <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div class="lg:col-span-7 bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
+        <h2 class="text-lg font-bold text-slate-900 mb-3">1. Kiến trúc Keep-Alive, Weekly pg_dump & AI Fallback Chain</h2>
+        <div class="mermaid">
+flowchart LR
+    GHA["GitHub Actions<br/>keep-alive.yml"] -->|"Daily 02:15 UTC"| OPS["cloud_ops.py<br/>--keep-alive --check-dq"]
+    GHA -->|"Sunday 02:30 UTC"| BK["pg_dump -Fc<br/>Session Pooler :5432"]
+    OPS --> SUPA[("Supabase OLTP<br/>SELECT 1 + 5 tables")]
+    OPS --> QDR[("Qdrant Cloud<br/>778 vectors 1024d")]
+    OPS --> R2[("Cloudflare R2<br/>15 Gold Parquets")]
+    BK -->|"SHA-256 + 30d prune"| R2B[("R2 backups/oltp/")]
+    RAG["rag_service.py<br/>RagResponseTTLCache"] -->|"Tier 1"| GEM["Gemini 3.5 Flash-Lite"]
+    GEM -->|"HTTP 429"| GROQ["Tier 2: Groq LPU"]
+    GROQ -->|"HTTP 429"| OR["Tier 3: OpenRouter :free"]
+        </div>
+      </div>
+
+      <div class="lg:col-span-5 bg-white rounded-xl p-6 border border-slate-200 shadow-sm flex flex-col justify-between">
+        <div>
+          <h2 class="text-lg font-bold text-slate-900 mb-2">2. Độ trễ Cloud Audit Thực tế (2026-11-24)</h2>
+          <p class="text-xs text-slate-500 mb-4">Đo trực tiếp qua <code>uv run python -m acdp.v2.cloud_ops --keep-alive --check-dq</code></p>
+          <canvas id="dqLatencyChart" height="210"></canvas>
+        </div>
+        <div class="mt-4 text-xs text-slate-600 bg-slate-50 p-3 rounded-lg border border-slate-200">
+          <strong>Lưu ý IPv4 pg_dump:</strong> Runner GitHub Actions chỉ dùng IPv4; <code>AppConfig.get_pg_dump_database_url()</code> tự động chuyển <code>:6543</code> sang Session Pooler <code>:5432</code> kèm <code>sslmode=require</code>.
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-white rounded-xl border border-slate-200 shadow-sm divide-y divide-slate-200">
+      <details open class="p-6">
+        <summary class="font-bold text-slate-900 cursor-pointer">
+          3. Ma trận Phòng ngừa Rủi ro Free Tier (R1, R2, R4)
+        </summary>
+        <div class="mt-4 overflow-x-auto">
+          <table class="min-w-full text-sm text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-100 text-slate-700">
+                <th class="p-3 border border-slate-200">Mã rủi ro</th>
+                <th class="p-3 border border-slate-200">Ngưỡng Free Tier (2026)</th>
+                <th class="p-3 border border-slate-200">Giải pháp đã triển khai</th>
+                <th class="p-3 border border-slate-200">Tệp mã nguồn</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="p-3 border border-slate-200 font-semibold">R1: Inactivity Pause / Delete</td>
+                <td class="p-3 border border-slate-200">Qdrant 7d/28d · Supabase 7d · HF 48h</td>
+                <td class="p-3 border border-slate-200">Cron <code>15 2 * * *</code> + HTTP retry API + SQL <code>SELECT 1</code> + Qdrant <code>scroll()</code></td>
+                <td class="p-3 border border-slate-200"><code>.github/workflows/keep-alive.yml</code></td>
+              </tr>
+              <tr>
+                <td class="p-3 border border-slate-200 font-semibold">R2: AI Quota / HTTP 429</td>
+                <td class="p-3 border border-slate-200">Gemini 10–15 RPM · Workers AI 10k Neurons/d</td>
+                <td class="p-3 border border-slate-200"><code>RagResponseTTLCache</code> (300s) + Fallback Gemini &rarr; Groq &rarr; OpenRouter + DuckDB Lexical Fallback</td>
+                <td class="p-3 border border-slate-200"><code>src/acdp/api/services/rag_service.py</code></td>
+              </tr>
+              <tr>
+                <td class="p-3 border border-slate-200 font-semibold">R4: Mất dữ liệu OLTP</td>
+                <td class="p-3 border border-slate-200">Supabase Free không có Auto-Backup</td>
+                <td class="p-3 border border-slate-200">Weekly <code>pg_dump -Fc</code> qua Session Pooler <code>:5432</code> &rarr; R2 <code>backups/oltp/</code> + Artifact 30d</td>
+                <td class="p-3 border border-slate-200"><code>src/acdp/v2/cloud_ops.py</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+
+      <details class="p-6">
+        <summary class="font-bold text-slate-900 cursor-pointer">
+          4. Nhật ký Tìm kiếm & Nguồn Tham khảo Kiểm chứng (DIR-020)
+        </summary>
+        <ul class="mt-3 text-sm text-slate-700 list-disc pl-5 space-y-1">
+          <li><strong>Supabase Pause & IPv4 Pooler:</strong> <code>https://supabase.com/docs/guides/platform/going-into-prod</code>, <code>https://supabase.com/docs/guides/database/connecting-to-postgres</code></li>
+          <li><strong>Qdrant Cloud Inactivity Policy:</strong> <code>https://qdrant.tech/documentation/cloud/</code></li>
+          <li><strong>Hugging Face Spaces Sleep Policy:</strong> <code>https://huggingface.co/docs/hub/spaces-overview</code></li>
+          <li><strong>Groq & OpenRouter Free Limits:</strong> <code>https://openrouter.ai/docs/api/reference/limits</code></li>
+          <li><strong>Cloudflare R2 Lifecycle Management:</strong> <code>https://developers.cloudflare.com/r2/buckets/object-lifecycles/</code></li>
+        </ul>
+      </details>
+    </section>
+  </div>
+
+  <script>
+    const ctx = document.getElementById("dqLatencyChart").getContext("2d");
+    new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: ["Qdrant Cloud", "Supabase OLTP", "Serving API (Dev Off)", "R2 Gold 15 Parquets"],
+        datasets: [{
+          label: "Latency (ms)",
+          data: [618.5, 1344.4, 8992.7, 9692.0],
+          backgroundColor: ["#10b981", "#3b82f6", "#f59e0b", "#6366f1"],
+          borderRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true, title: { display: true, text: "Milliseconds (ms)" } } }
+      }
+    });
+  </script>
+</body>
+</html>

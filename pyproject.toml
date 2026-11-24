@@ -45,6 +45,12 @@ rag-ui = [
 pipeline = [
     "prefect>=3.0.0",
 ]
+eval = [
+    "datasets>=5.2.0",
+    "langchain-google-genai>=4.4.3",
+    "ragas>=0.3",
+    "rank-bm25>=0.2.2",
+]
 
 [dependency-groups]
 dev = [

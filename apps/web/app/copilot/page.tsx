@@ -13,7 +13,7 @@ export default function CopilotPage() {
           RAG Regulation Copilot
         </h1>
         <p className="mt-1 text-sm text-[var(--color-text-muted)]">
-          Tra cứu điều khoản thể lệ từ kho vector Qdrant (425 đoạn trích / 17 nguồn) kèm nguồn kiểm chứng
+          Tra cứu điều khoản thể lệ từ kho vector Qdrant kèm nguồn kiểm chứng (Yêu cầu đăng nhập tài khoản ACDP)
         </p>
       </div>
       <CopilotWorkspace />

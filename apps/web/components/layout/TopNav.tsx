@@ -3,12 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRef, useState } from "react";
-import { Bookmark, Bot, Compass, LayoutDashboard, LogIn, LogOut, Menu, X } from "lucide-react";
+import { Bookmark, Bot, Compass, LayoutDashboard, LogIn, LogOut, Menu, ShieldCheck, X } from "lucide-react";
 import { LogoFull } from "@/components/brand/AcdpLogo";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { useAuth } from "@/lib/auth-context";
 
-const NAV_ITEMS = [
+const BASE_NAV_ITEMS = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/competitions", label: "Khám phá", icon: Compass },
   { href: "/copilot", label: "RAG Copilot", icon: Bot },
@@ -20,6 +20,11 @@ export function TopNav() {
   const { user, logout } = useAuth();
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const navItems =
+    user?.role === "admin"
+      ? [...BASE_NAV_ITEMS, { href: "/admin", label: "Quản trị", icon: ShieldCheck }]
+      : BASE_NAV_ITEMS;
 
   const openDrawer = () => {
     dialogRef.current?.showModal();
@@ -51,7 +56,7 @@ export function TopNav() {
         </div>
 
         <nav aria-label="Chính" className="hidden items-center gap-1 md:flex">
-          {NAV_ITEMS.map((item) => {
+          {navItems.map((item) => {
             const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
             const Icon = item.icon;
             return (
@@ -76,8 +81,11 @@ export function TopNav() {
           <ThemeToggle />
           {user ? (
             <div className="flex items-center gap-2">
-              <span className="hidden text-xs font-medium text-[var(--color-text-muted)] sm:inline">
-                {user.full_name}
+              <span className="hidden items-center gap-1.5 text-xs font-medium text-[var(--color-text-muted)] sm:inline-flex">
+                <span>{user.full_name}</span>
+                <span className="rounded bg-[var(--color-surface-subtle)] px-1.5 py-0.5 font-mono text-[10px] uppercase text-[var(--color-brand-primary)]">
+                  {user.role}
+                </span>
               </span>
               <button
                 type="button"
@@ -123,7 +131,7 @@ export function TopNav() {
           </button>
         </div>
         <nav aria-label="Di động" className="flex flex-col gap-1 p-3">
-          {NAV_ITEMS.map((item) => {
+          {navItems.map((item) => {
             const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
             const Icon = item.icon;
             return (

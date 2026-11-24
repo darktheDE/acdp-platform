@@ -328,10 +328,130 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/telemetry": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get_admin_telemetry_api_v1_admin_telemetry_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/users": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["list_admin_users_api_v1_admin_users_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/users/{user_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["update_admin_user_api_v1_admin_users__user_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/admin/cache/refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["refresh_admin_caches_api_v1_admin_cache_refresh_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** AdminCacheRefreshDTO */
+        AdminCacheRefreshDTO: {
+            /** @enum {string} */
+            target: "all" | "duckdb_r2" | "rag" | "rate_limit";
+            duckdb_r2?: Record<string, unknown> | null;
+            gold_mart_cache: Record<string, unknown>;
+            rag_cache: Record<string, unknown>;
+            /** @default false */
+            rate_limit_reset: boolean;
+            /** Format: date-time */
+            refreshed_at: string;
+        };
+        /** AdminCacheRefreshRequest */
+        AdminCacheRefreshRequest: {
+            /**
+             * @default all
+             * @enum {string}
+             */
+            target: "all" | "duckdb_r2" | "rag" | "rate_limit";
+        };
+        /** AdminTelemetryDTO */
+        AdminTelemetryDTO: {
+            users_summary: components["schemas"]["AdminUsersSummaryDTO"];
+            rate_limit: Record<string, unknown>;
+            gold_mart_cache: Record<string, unknown>;
+            rag_cache: Record<string, unknown>;
+        };
+        /** AdminUserDTO */
+        AdminUserDTO: {
+            /** Format: uuid */
+            id: string;
+            email: string;
+            full_name: string;
+            /** @enum {string} */
+            role: "student" | "lecturer" | "admin";
+            is_active: boolean;
+            student_or_staff_id?: string | null;
+            /** Format: date-time */
+            created_at: string;
+            /** Format: date-time */
+            updated_at: string;
+        };
+        /** AdminUserUpdateRequest */
+        AdminUserUpdateRequest: {
+            role?: ("student" | "lecturer" | "admin") | null;
+            is_active?: boolean | null;
+        };
+        /** AdminUsersSummaryDTO */
+        AdminUsersSummaryDTO: {
+            total_users: number;
+            active_users: number;
+            blocked_users: number;
+            admin_count: number;
+            lecturer_count: number;
+            student_count: number;
+        };
         /** AnalyticsDashboardDTO */
         AnalyticsDashboardDTO: {
             kpi: components["schemas"]["KpiOverviewDTO"];
@@ -1266,6 +1386,96 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_admin_telemetry_api_v1_admin_telemetry_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminTelemetryDTO"];
+                };
+            };
+        };
+    };
+    list_admin_users_api_v1_admin_users_get: {
+        parameters: {
+            query?: {
+                q?: string | null;
+                role?: string | null;
+                is_active?: boolean | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminUserDTO"][];
+                };
+            };
+        };
+    };
+    update_admin_user_api_v1_admin_users__user_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AdminUserUpdateRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminUserDTO"];
+                };
+            };
+        };
+    };
+    refresh_admin_caches_api_v1_admin_cache_refresh_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["AdminCacheRefreshRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminCacheRefreshDTO"];
                 };
             };
         };

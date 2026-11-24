@@ -1,7 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
-import { AlertTriangle, Bot, ExternalLink, MessageSquarePlus, Send, Trash2 } from "lucide-react";
+import { AlertTriangle, Bot, ExternalLink, Lock, MessageSquarePlus, Send, Trash2 } from "lucide-react";
 import {
   apiFetch,
   ApiError,
@@ -33,7 +34,7 @@ const DOMAIN_SCOPES = [
 ];
 
 export function CopilotWorkspace() {
-  const { accessToken, user } = useAuth();
+  const { accessToken, user, loading: authLoading } = useAuth();
   const [sessions, setSessions] = useState<ChatSessionDTO[]>([]);
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
   const [messages, setMessages] = useState<UiMessage[]>([]);
@@ -145,7 +146,11 @@ export function CopilotWorkspace() {
         },
       ]);
     } catch (err) {
-      if (err instanceof ApiError && err.status === 503) {
+      if (err instanceof ApiError && err.status === 429) {
+        setErrorMsg(`Đã chạm giới hạn truy vấn AI (429): ${err.detail}`);
+      } else if (err instanceof ApiError && err.status === 401) {
+        setErrorMsg("Phiên đăng nhập đã hết hạn hoặc tài khoản bị tạm khóa. Vui lòng đăng nhập lại.");
+      } else if (err instanceof ApiError && err.status === 503) {
         setErrorMsg(err.detail);
       } else {
         setErrorMsg("Lỗi kết nối RAG Copilot. Vui lòng thử lại.");
@@ -154,6 +159,40 @@ export function CopilotWorkspace() {
       setSending(false);
     }
   };
+
+  if (authLoading) {
+    return <div className="h-64 animate-pulse rounded-xl bg-[var(--color-surface)]" />;
+  }
+
+  if (!user || !accessToken) {
+    return (
+      <div className="mx-auto my-8 max-w-lg rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-6 text-center">
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[var(--color-surface-subtle)] text-[var(--color-brand-primary)]">
+          <Lock className="h-6 w-6" aria-hidden="true" />
+        </div>
+        <h2 className="mt-3 text-xl font-bold text-[var(--color-text-primary)]">
+          Đăng nhập để sử dụng RAG Copilot
+        </h2>
+        <p className="mt-2 text-sm text-[var(--color-text-muted)]">
+          Để bảo vệ hạn mức AI (5 lượt/phút, 30 lượt/ngày theo chuẩn OWASP LLM10:2025) và lưu lịch sử hội thoại vào PostgreSQL 18, tính năng này yêu cầu xác thực tài khoản.
+        </p>
+        <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+          <Link
+            href="/login"
+            className="inline-flex min-h-10 items-center rounded-lg bg-[var(--color-brand-primary)] px-4 py-2 text-sm font-semibold text-white dark:text-slate-950"
+          >
+            Đăng nhập / Đăng ký ngay
+          </Link>
+          <Link
+            href="/competitions"
+            className="inline-flex min-h-10 items-center rounded-lg border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-surface-subtle)]"
+          >
+            Xem danh sách cuộc thi
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="grid gap-6 lg:grid-cols-4">
