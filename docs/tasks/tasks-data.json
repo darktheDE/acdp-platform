@@ -420,7 +420,7 @@
       "task_type": "Engineering",
       "is_no_code": false,
       "owner": "Hung & Duy",
-      "status": "todo",
+      "status": "done",
       "priority": "high",
       "problem_statement": "Hiện thực hóa kiến trúc TASK-CLD-03: đưa tầng Serving API (FastAPI + DuckDB httpfs lên Hugging Face Spaces Docker 16GB RAM theo PA-1, hoặc gộp Next.js Route Handlers theo PA-2) và Frontend Next.js 16 lên Vercel Hobby, bổ sung In-Memory TTL Cache (5-15 phút) cho 6 bảng mart_*.",
       "research_questions": [],
@@ -428,9 +428,15 @@
         "Frontend truy cập được qua URL công khai Vercel Hobby, kết nối thông suốt với API trên Cloud.",
         "Bật TTL Cache cho Gold Marts giúp giảm >95% lượt gọi httpfs lặp lại sang Cloudflare R2."
       ],
-      "deliverables": ["Dockerfile.api", "apps/web/next.config.ts", "src/acdp/api/services/gold_queries.py"],
-      "notes": "Phụ thuộc TASK-CLD-03, TASK-CLD-04 và TASK-CLD-07.",
-      "updated_at": "2026-11-23"
+      "deliverables": [
+        "Dockerfile.api",
+        "apps/web/next.config.ts",
+        "src/acdp/api/services/gold_queries.py",
+        "docs/deliverables/TASK-CLD-05-cloud-serving-api-and-vercel-ttl-cache.md",
+        "docs/deliverables/TASK-CLD-05-cloud-serving-api-and-vercel-ttl-cache-visual-dossier.html"
+      ],
+      "notes": "Hoàn tất PA-1 theo ADR-0002: bổ sung GoldMartsTTLCache (TTL=600s) bao phủ 6 bảng mart_* (đạt 98.27% hit rate, 0.34 ms warm overview); chuẩn hóa Dockerfile.api non-root UID 1000 & đa cổng (7860/8000); cấu hình Next.js 16 rewrites() proxy + CORS regex cho Vercel Hobby.",
+      "updated_at": "2026-11-24"
     },
     {
       "id": "TASK-CLD-06",

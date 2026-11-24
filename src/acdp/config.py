@@ -74,6 +74,22 @@ class AppConfig(BaseSettings):
         default=True,
         description="Materialize R2 Gold Parquets into DuckDB :memory: tables on init to avoid per-query HTTP round-trips",
     )
+    gold_mart_cache_enabled: bool = Field(
+        default=True,
+        description="Enable in-memory TTL cache for the 6 Gold mart_* tables (TASK-CLD-05)",
+    )
+    gold_mart_cache_ttl_seconds: int = Field(
+        default=600,
+        ge=0,
+        le=3600,
+        description="TTL in seconds for Gold mart_* cache (300-900s recommended, default 600s = 10 min)",
+    )
+    gold_mart_cache_max_entries: int = Field(
+        default=256,
+        ge=16,
+        le=4096,
+        description="Maximum cached query keys retained in GoldMartsTTLCache",
+    )
     usd_to_vnd_rate: int = Field(
         default=25400,
         description="Reference USD to VND exchange rate for Gold prize normalization",
@@ -174,6 +190,10 @@ class AppConfig(BaseSettings):
     access_token_expire_minutes: int = Field(default=15)
     refresh_token_expire_days: int = Field(default=7)
     cors_origins: str = Field(default="http://localhost:3000")
+    cors_origin_regex: str = Field(
+        default=r"^https://.*\.vercel\.app$",
+        description="Regex matching allowed Vercel Hobby preview/production origins",
+    )
     internal_api_url: str = Field(default="http://localhost:8000")
 
     def get_qdrant_url(self) -> str:

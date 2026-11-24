@@ -21,22 +21,30 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 FROM python:3.13-slim-bookworm AS runtime
 WORKDIR /app
 
-RUN groupadd --gid 10001 appgroup && \
-    useradd --uid 10001 --gid appgroup --shell /usr/sbin/nologin --no-create-home appuser
+# UID 1000 + writable $HOME required by Hugging Face Spaces Docker SDK while keeping SPEC-0006 non-root appuser
+RUN groupadd --gid 1000 appgroup && \
+    useradd --uid 1000 --gid appgroup --create-home --home-dir /home/appuser --shell /bin/sh appuser
 
 COPY --from=builder --chown=appuser:appgroup /app/.venv /app/.venv
 COPY --from=builder --chown=appuser:appgroup /app/src /app/src
 
-ENV PATH="/app/.venv/bin:$PATH" \
+ENV HOME=/home/appuser \
+    PATH="/app/.venv/bin:$PATH" \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    DUCKDB_EXTENSION_DIRECTORY=/app/.duckdb
+    DUCKDB_EXTENSION_DIRECTORY=/app/.duckdb \
+    DUCKDB_MEMORY_LIMIT=256MB \
+    DUCKDB_THREADS=2 \
+    DUCKDB_R2_TABLE_CACHE=true \
+    GOLD_MART_CACHE_ENABLED=true \
+    GOLD_MART_CACHE_TTL_SECONDS=600 \
+    PORT=7860
 
-RUN mkdir -p /app/.duckdb && \
+RUN mkdir -p /app/.duckdb /home/appuser/.cache && \
     python -c "import duckdb; con = duckdb.connect(':memory:'); con.execute(\"SET extension_directory='/app/.duckdb'\"); con.execute('INSTALL httpfs')" && \
-    chown -R appuser:appgroup /app/.duckdb
+    chown -R appuser:appgroup /app /home/appuser
 
 USER appuser
-EXPOSE 8000
+EXPOSE 7860 8000
 
-CMD ["uvicorn", "acdp.api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["sh", "-c", "exec uvicorn acdp.api.main:app --host 0.0.0.0 --port ${PORT:-7860} --workers 1"]

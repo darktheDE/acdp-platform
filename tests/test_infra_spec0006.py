@@ -63,10 +63,19 @@ def test_dockerignore_and_dockerfile_api_hardening() -> None:
 
     dockerfile_api = (ROOT / "Dockerfile.api").read_text(encoding="utf-8")
     assert "FROM python:3.13-slim-bookworm" in dockerfile_api
+    assert "--uid 1000" in dockerfile_api
     assert "USER appuser" in dockerfile_api
     assert "acdp.api.main:app" in dockerfile_api
     assert "DUCKDB_EXTENSION_DIRECTORY" in dockerfile_api
+    assert "GOLD_MART_CACHE_TTL_SECONDS=600" in dockerfile_api
+    assert "PORT=7860" in dockerfile_api
     assert "INSTALL httpfs" in dockerfile_api
+
+    next_config = (ROOT / "apps/web/next.config.ts").read_text(encoding="utf-8")
+    assert "async rewrites()" in next_config
+    assert "/api/v1/:path*" in next_config
+    assert 'process.env.VERCEL === "1"' in next_config
+    assert 'isVercel ? undefined : "standalone"' in next_config
 
 
 def test_app_config_qdrant_resolution_and_env_example(monkeypatch) -> None:

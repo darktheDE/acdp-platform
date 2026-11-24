@@ -80,6 +80,9 @@ services:
       POSTGRES_HOST: postgres
       POSTGRES_PORT: "5432"
       DUCKDB_R2_TABLE_CACHE: ${DUCKDB_R2_TABLE_CACHE:-true}
+      GOLD_MART_CACHE_ENABLED: ${GOLD_MART_CACHE_ENABLED:-true}
+      GOLD_MART_CACHE_TTL_SECONDS: ${GOLD_MART_CACHE_TTL_SECONDS:-600}
+      PORT: "8000"
       BRONZE_STORAGE_BACKEND: cloudflare_r2
       BUCKET_NAME: ${BUCKET_NAME:-acdp-lakehouse}
       AWS_ENDPOINT_URL: ${AWS_ENDPOINT_URL:-}
@@ -99,6 +102,7 @@ services:
       GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
       JWT_SECRET_KEY: ${JWT_SECRET_KEY:-acdp-local-dev-secret-change-in-prod-32bytes}
       CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000}
+      CORS_ORIGIN_REGEX: ${CORS_ORIGIN_REGEX:-^https://.*\.vercel\.app$}
     ports:
       - "8000:8000"
     healthcheck:

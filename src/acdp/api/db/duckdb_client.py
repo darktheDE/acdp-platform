@@ -10,6 +10,7 @@ from typing import Any
 
 import duckdb
 
+from acdp.api.services.gold_queries import get_gold_mart_cache_stats, invalidate_gold_mart_cache
 from acdp.config import settings
 
 _PARQUET_ENTITIES = (
@@ -75,6 +76,7 @@ def refresh_duckdb_r2_connection() -> dict[str, Any]:
     with _conn_lock:
         _hydrate_gold_entities_from_r2(con)
         row = con.execute("SELECT COUNT(*) FROM dim_competition").fetchone()
+    invalidate_gold_mart_cache()
     elapsed_ms = round((time.perf_counter() - t0) * 1000, 2)
     return {
         "mode": "r2_httpfs_memory_table" if settings.duckdb_r2_table_cache else "r2_httpfs_direct_view",
@@ -82,6 +84,7 @@ def refresh_duckdb_r2_connection() -> dict[str, Any]:
         "entities_loaded": len(_PARQUET_ENTITIES),
         "competitions_count": int(row[0]) if row else 0,
         "refresh_ms": elapsed_ms,
+        "gold_mart_cache": get_gold_mart_cache_stats(),
     }
 
 
@@ -92,6 +95,7 @@ def reset_duckdb_connection() -> None:
         if _shared_con is not None:
             _shared_con.close()
             _shared_con = None
+    invalidate_gold_mart_cache()
 
 
 @contextmanager

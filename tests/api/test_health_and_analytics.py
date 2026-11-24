@@ -75,3 +75,39 @@ async def test_competitions_explorer_filters_detail_and_sql_injection_safety(api
     # Non-existent key returns 404
     missing_resp = await api_client.get("/api/v1/competitions/" + ("0" * 64))
     assert missing_resp.status_code == 404
+
+
+@pytest.mark.anyio
+async def test_gold_mart_ttl_cache_reduces_repeated_queries_over_95_pct(api_client: AsyncClient) -> None:
+    from acdp.api.services.gold_queries import get_gold_mart_cache_stats, invalidate_gold_mart_cache
+
+    invalidate_gold_mart_cache()
+    for _ in range(25):
+        resp = await api_client.get("/api/v1/analytics/overview")
+        assert resp.status_code == 200
+
+    stats = get_gold_mart_cache_stats()
+    assert stats["enabled"] is True
+    assert 300 <= stats["ttl_seconds"] <= 900
+    assert len(stats["covered_marts"]) == 6
+    assert stats["misses"] == 1
+    assert stats["hits"] == 24
+    assert stats["hit_rate_pct"] >= 95.0
+
+    # Explorer & seasonality routes also benefit from TTL cache on mart_competition_explorer & mart_seasonality_academic
+    for _ in range(5):
+        seas = await api_client.get("/api/v1/analytics/seasonality")
+        assert seas.status_code == 200
+        comps = await api_client.get("/api/v1/competitions", params={"page": 1, "page_size": 20})
+        assert comps.status_code == 200
+
+    updated_stats = get_gold_mart_cache_stats()
+    assert updated_stats["misses"] == 3
+    assert updated_stats["hits"] == 32
+    assert updated_stats["hit_rate_pct"] > 90.0
+
+    invalidate_gold_mart_cache()
+    cleared_stats = get_gold_mart_cache_stats()
+    assert cleared_stats["cached_entries"] == 0
+    assert cleared_stats["hits"] == 0
+    assert cleared_stats["misses"] == 0
