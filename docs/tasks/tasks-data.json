@@ -447,7 +447,7 @@
       "task_type": "Engineering",
       "is_no_code": false,
       "owner": "Hung & Duy",
-      "status": "todo",
+      "status": "done",
       "priority": "high",
       "problem_statement": "Phòng ngừa rủi ro R1, R2, R4 từ TASK-CLD-03: chống ngủ đông/xóa cụm (Supabase 7 ngày, Qdrant Cloud 7/28 ngày, HF Spaces 48h), tự động backup OLTP và cấu hình fallback đa nhà cung cấp AI.",
       "research_questions": [],
@@ -456,9 +456,15 @@
         "Workflow backup pg_dump hàng tuần lưu snapshot OLTP an toàn lên R2 private hoặc Private Artifact.",
         "Cấu hình LiteLLM fallback chain (Gemini -> Groq -> OpenRouter :free) hoạt động khi gặp HTTP 429."
       ],
-      "deliverables": [".github/workflows/keep-alive.yml", "src/acdp/api/services/rag_service.py"],
-      "notes": "Phụ thuộc TASK-CLD-03 và TASK-CLD-05.",
-      "updated_at": "2026-11-23"
+      "deliverables": [
+        ".github/workflows/keep-alive.yml",
+        "src/acdp/v2/cloud_ops.py",
+        "src/acdp/api/services/rag_service.py",
+        "docs/deliverables/TASK-CLD-06-github-actions-keep-alive-backup-and-fallback.md",
+        "docs/deliverables/TASK-CLD-06-github-actions-keep-alive-backup-and-fallback-visual-dossier.html"
+      ],
+      "notes": "Hoàn tất CI/CD Keep-Alive hằng ngày (15 2 * * *) & Data Quality Audit (Supabase OLTP 5 bảng ok, Qdrant Cloud 778 vectors 1024-dim ok, Cloudflare R2 15/15 Gold Parquets 24 cuộc thi 0 lỗi Bridge Weight), Weekly pg_dump qua IPv4 Session Pooler (:5432) lên R2 backups/oltp/ (auto-prune 30 ngày) + Artifact, và chuỗi LLM/Vector Fallback (Gemini -> Groq -> OpenRouter :free + LiteLLM router + RagResponseTTLCache 300s + DuckDB Gold lexical fallback). Kiểm chứng 16/16 pytest PASSED và 0 lỗi ruff.",
+      "updated_at": "2026-11-24"
     },
     {
       "id": "TASK-CLD-07",
@@ -705,8 +711,8 @@
         "Hoàn thành checklist Pre-warm T-15 phút và kiểm chứng fallback local-offline."
       ],
       "deliverables": ["tests/api"],
-      "notes": "Phụ thuộc TASK-CLD-05, TASK-SRV-01..04.",
-      "updated_at": "2026-11-23"
+      "notes": "Phụ thuộc TASK-CLD-05, TASK-SEC-01..03, và TASK-SRV-01..04 (phải vượt qua Pre-Deployment Security Gate trước khi mở Public Demo Day).",
+      "updated_at": "2026-11-24"
     },
     {
       "id": "TASK-ACD-01",
@@ -765,8 +771,8 @@
         "Áp dụng Rate Limiting cho các endpoint AI và Auth; kiểm chứng chặn request spam trả về HTTP 429."
       ],
       "deliverables": ["src/acdp/api/main.py"],
-      "notes": "",
-      "updated_at": "2026-11-23"
+      "notes": "Mở rộng từ TASK-SEC-01 cho quy mô KLTN (500–1.000 sinh viên): bổ sung Cloudflare Turnstile CAPTCHA và Distributed Redis/Upstash Rate Limiting.",
+      "updated_at": "2026-11-24"
     },
     {
       "id": "TASK-KLT-01",
@@ -787,6 +793,86 @@
       "deliverables": ["docs/academic/KhoaLuan_TotNghiep_KTDL.md", "docs/academic/Slide_BaoVe_KLTN.html"],
       "notes": "",
       "updated_at": "2026-11-23"
+    },
+    {
+      "id": "TASK-SEC-01",
+      "title": "Hardening Bảo mật OWASP Top 10 (2025/2026), Khóa /docs Production & Bảo vệ Quota AI",
+      "cycle": "Cycle 07",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Cloud & Infra",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "high",
+      "problem_statement": "Khắc phục các lỗ hổng OWASP Top 10 (2025/2026) và LLM10:2025 Unbounded Consumption trước khi deploy public: khóa /rag/chat & /query chỉ cho tài khoản đã đăng ký, triển khai Multi-Tier Rate Limiting (AI 5/phút + 30/ngày/user + Global 10 RPM; Auth 10/phút/IP; Public 60/phút/IP), giới hạn max_output_tokens=600, ẩn /docs & /openapi.json khi ENVIRONMENT=production, bật Fail-Fast JWT Secret Check, Security Headers và Global Exception Masking.",
+      "research_questions": [
+        "Cách kiểm thử API trên Production (Admin Swagger / Bruno static OpenAPI / pytest) khi đã tắt /docs công khai?"
+      ],
+      "acceptance_criteria": [
+        "POST /api/v1/rag/chat trả 401 Unauthorized khi không có JWT hợp lệ.",
+        "Vượt ngưỡng Rate Limit trả 429 Too Many Requests kèm Retry-After trước khi gọi Gemini/Qdrant.",
+        "Khi ENVIRONMENT=production, /docs, /redoc và /openapi.json trả 404 Not Found; khởi động thất bại nếu JWT_SECRET_KEY là giá trị dev mặc định."
+      ],
+      "deliverables": [
+        "src/acdp/api/middleware/security.py",
+        "src/acdp/api/routers/rag.py",
+        "src/acdp/api/main.py",
+        "tests/api/test_security_owasp.py",
+        "docs/deliverables/TASK-SEC-00-pre-deployment-security-and-owasp-report.md"
+      ],
+      "notes": "Xem chi tiết thiết kế tại docs/deliverables/TASK-SEC-00-pre-deployment-security-and-owasp-report.md.",
+      "updated_at": "2026-11-24"
+    },
+    {
+      "id": "TASK-SEC-02",
+      "title": "Phân quyền RBAC (Admin/Lecturer/Student), Admin API & Trang Quản trị (/admin)",
+      "cycle": "Cycle 08",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Serving & Web",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "high",
+      "problem_statement": "Xây dựng cơ chế phân quyền Admin (require_admin + ADMIN_EMAILS trong .env), router /api/v1/admin/* (quản lý user, khóa tài khoản spam is_active=false, làm mới DuckDB R2 & RAG cache, xem rate-limit telemetry, và mở cổng /api/v1/admin/docs chỉ cho Admin), kèm giao diện Next.js /admin và khóa đăng nhập trên /copilot.",
+      "research_questions": [],
+      "acceptance_criteria": [
+        "User thường gọi /api/v1/admin/* bị chặn 403 Forbidden; Admin truy cập được đầy đủ /admin và /api/v1/admin/docs.",
+        "Admin khóa được tài khoản lạm dụng AI và làm mới cache R2/RAG từ giao diện /admin."
+      ],
+      "deliverables": [
+        "src/acdp/api/dependencies.py",
+        "src/acdp/api/routers/admin.py",
+        "apps/web/app/admin/page.tsx",
+        "apps/web/app/copilot/page.tsx"
+      ],
+      "notes": "Phụ thuộc TASK-SEC-01.",
+      "updated_at": "2026-11-24"
+    },
+    {
+      "id": "TASK-SEC-03",
+      "title": "Checklist Kiểm toán Bảo mật Trước Triển khai (Pre-Deployment Security Gate CLI)",
+      "cycle": "Cycle 08",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Cloud & Infra",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "high",
+      "problem_statement": "Xây dựng script kiểm toán tự động 8 chốt Gate G1–G8 trước khi triển khai lên Vercel Hobby và HF Spaces / Render: kiểm tra không lộ secret trong NEXT_PUBLIC_*, kiểm tra JWT Secret Production, xác nhận /docs ẩn, /rag/chat yêu cầu JWT, và Rate Limiter hoạt động.",
+      "research_questions": [],
+      "acceptance_criteria": [
+        "Lệnh uv run python -m acdp.v2.security_audit kiểm tra đủ 8 chốt G1–G8 và trả exit code 0 khi đạt chuẩn."
+      ],
+      "deliverables": [
+        "src/acdp/v2/security_audit.py",
+        "docs/deliverables/TASK-SEC-00-pre-deployment-security-and-owasp-report.md",
+        "docs/deliverables/TASK-SEC-00-pre-deployment-security-and-owasp-report-visual-dossier.html"
+      ],
+      "notes": "Cổng kiểm tra bắt buộc trước TASK-TST-01 (Demo Day Cloud).",
+      "updated_at": "2026-11-24"
     }
   ]
 }

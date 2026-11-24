@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TASK-SEC-00: Pre-Deployment Security & OWASP 2025/2026 Blueprint</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: "neutral", securityLevel: "loose" });
+  </script>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased">
+  <div class="max-w-6xl mx-auto px-4 py-8 space-y-8">
+    <header class="bg-gradient-to-r from-slate-900 via-rose-950 to-slate-900 text-white rounded-2xl p-6 shadow-lg">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-rose-500/20 text-rose-200 border border-rose-400/30">
+            TASK-SEC-00 · Pre-Deployment Security Blueprint · OWASP 2025/2026
+          </span>
+          <h1 class="text-2xl md:text-3xl font-bold mt-3">
+            Kiến trúc Bảo mật Trước Triển khai: OWASP Top 10, Rate Limit AI & Admin RBAC
+          </h1>
+          <p class="text-slate-300 text-sm mt-1">
+            Bảo vệ API Key miễn phí, khóa /rag cho tài khoản đã đăng ký, ẩn /docs production và thiết lập 8 chốt Gate Checklist (G1–G8).
+          </p>
+        </div>
+        <div class="text-right text-xs text-slate-300 space-y-1">
+          <div><strong class="text-white">Tác giả:</strong> Đỗ Kiến Hưng & Nguyễn Văn Quang Duy</div>
+          <div><strong class="text-white">Đơn vị:</strong> FIT · HCM-UTE</div>
+          <div><strong class="text-white">Ngày lập:</strong> 2026-11-24</div>
+        </div>
+      </div>
+    </header>
+
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
+        <div class="text-xs font-medium text-slate-500 uppercase tracking-wider">Quyền gọi AI RAG</div>
+        <div class="text-2xl font-bold text-rose-600 mt-1">Auth-Only</div>
+        <p class="text-xs text-slate-600 mt-1"><code>get_current_user</code> bắt buộc · Chặn <code>401</code> khách ẩn danh</p>
+      </div>
+      <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
+        <div class="text-xs font-medium text-slate-500 uppercase tracking-wider">Quota AI / Sinh viên</div>
+        <div class="text-2xl font-bold text-blue-700 mt-1">5/m · 30/d</div>
+        <p class="text-xs text-slate-600 mt-1">Global Cap <code>10 RPM</code> · Trần output <code>600 tokens</code></p>
+      </div>
+      <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
+        <div class="text-xs font-medium text-slate-500 uppercase tracking-wider">Swagger / OpenAPI</div>
+        <div class="text-2xl font-bold text-emerald-700 mt-1">404 Public</div>
+        <p class="text-xs text-slate-600 mt-1">Chỉ Admin xem qua <code>/api/v1/admin/docs</code> hoặc Bruno/Postman</p>
+      </div>
+      <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
+        <div class="text-xs font-medium text-slate-500 uppercase tracking-wider">Task Bảo mật Mới</div>
+        <div class="text-2xl font-bold text-indigo-600 mt-1">3 Tasks</div>
+        <p class="text-xs text-slate-600 mt-1"><code>TASK-SEC-01</code>, <code>TASK-SEC-02</code>, <code>TASK-SEC-03</code> (8 Gates)</p>
+      </div>
+    </section>
+
+    <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div class="lg:col-span-7 bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
+        <h2 class="text-lg font-bold text-slate-900 mb-3">1. Kiến trúc Phòng vệ 4 Lớp (Defense-in-Depth)</h2>
+        <div class="mermaid">
+flowchart LR
+    U["Client / Bot"] --> V["Layer 1: Vercel Hobby<br/>No NEXT_PUBLIC Secrets<br/>Login Gate /copilot"]
+    V --> MW["Layer 2: FastAPI Middleware<br/>Hide /docs (404) · Headers<br/>3-Tier Rate Limiter"]
+    MW --> RBAC["Layer 3: Auth & RBAC<br/>Fail-Fast JWT (32+ bytes)<br/>get_current_user / require_admin"]
+    RBAC --> LLM["Layer 4: Bounded AI<br/>TTL Cache 300s · max_tokens=600<br/>Gemini -> Groq -> OpenRouter"]
+        </div>
+      </div>
+
+      <div class="lg:col-span-5 bg-white rounded-xl p-6 border border-slate-200 shadow-sm flex flex-col justify-between">
+        <div>
+          <h2 class="text-lg font-bold text-slate-900 mb-2">2. Ngưỡng Rate Limit Đề xuất (Requests/Phút)</h2>
+          <p class="text-xs text-slate-500 mb-4">Cân đối để bảo vệ trần <code>10–15 RPM</code> của Google Gemini Free</p>
+          <canvas id="rateLimitChart" height="210"></canvas>
+        </div>
+        <div class="mt-4 text-xs text-slate-600 bg-slate-50 p-3 rounded-lg border border-slate-200">
+          <strong>Admin Kill-Switch:</strong> Trang <code>/admin</code> cho phép khóa ngay lập tức tài khoản spam (<code>is_active=false</code>) và xóa/nạp lại DuckDB R2 + RAG cache.
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-white rounded-xl border border-slate-200 shadow-sm divide-y divide-slate-200">
+      <details open class="p-6">
+        <summary class="font-bold text-slate-900 cursor-pointer">
+          3. Bảng Đối chiếu OWASP Top 10 (2025/2026) & 8 Chốt Gate Trước Deploy
+        </summary>
+        <div class="mt-4 overflow-x-auto">
+          <table class="min-w-full text-sm text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-100 text-slate-700">
+                <th class="p-3 border border-slate-200">Gate</th>
+                <th class="p-3 border border-slate-200">Chuẩn OWASP</th>
+                <th class="p-3 border border-slate-200">Tiêu chí Đạt (Acceptance Gate)</th>
+                <th class="p-3 border border-slate-200">Task phụ trách</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="p-3 border border-slate-200 font-semibold">G1–G2</td>
+                <td class="p-3 border border-slate-200">A02 / A04:2025</td>
+                <td class="p-3 border border-slate-200">Không lộ secret ở Frontend; Production bắt buộc <code>JWT_SECRET_KEY &gt;= 32 bytes</code> và cookie <code>Secure=True</code>.</td>
+                <td class="p-3 border border-slate-200"><code>TASK-SEC-01</code>, <code>TASK-SEC-03</code></td>
+              </tr>
+              <tr>
+                <td class="p-3 border border-slate-200 font-semibold">G3–G4</td>
+                <td class="p-3 border border-slate-200">A01 / A06 / LLM10:2025</td>
+                <td class="p-3 border border-slate-200"><code>/rag/chat</code> chặn <code>401</code> nếu chưa login; vượt <code>5/min</code> hoặc <code>30/day</code> trả <code>429</code>.</td>
+                <td class="p-3 border border-slate-200"><code>TASK-SEC-01</code></td>
+              </tr>
+              <tr>
+                <td class="p-3 border border-slate-200 font-semibold">G5–G6</td>
+                <td class="p-3 border border-slate-200">A01 / A02:2025</td>
+                <td class="p-3 border border-slate-200"><code>/docs</code>, <code>/redoc</code>, <code>/openapi.json</code> trả <code>404</code> trên Production; Admin quản trị qua <code>/admin</code>.</td>
+                <td class="p-3 border border-slate-200"><code>TASK-SEC-01</code>, <code>TASK-SEC-02</code></td>
+              </tr>
+              <tr>
+                <td class="p-3 border border-slate-200 font-semibold">G7–G8</td>
+                <td class="p-3 border border-slate-200">A02 / A10:2025</td>
+                <td class="p-3 border border-slate-200">Security Headers đầy đủ, ẩn stack trace HTTP 500, và 100% API Key ở gói Free <code>$0</code> hard-cap.</td>
+                <td class="p-3 border border-slate-200"><code>TASK-SEC-01</code>, <code>TASK-SEC-03</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+    </section>
+  </div>
+
+  <script>
+    const ctx = document.getElementById("rateLimitChart").getContext("2d");
+    new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: ["AI /rag/chat (User)", "AI Global Cap", "Auth /login (IP)", "Public GET (IP)"],
+        datasets: [{
+          label: "Max Requests / Minute",
+          data: [5, 10, 10, 60],
+          backgroundColor: ["#e11d48", "#f59e0b", "#3b82f6", "#10b981"],
+          borderRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true, title: { display: true, text: "Requests / Minute (RPM)" } } }
+      }
+    });
+  </script>
+</body>
+</html>

@@ -186,3 +186,139 @@ def test_cloudflare_bge_m3_rag_pipeline_and_config(monkeypatch: pytest.MonkeyPat
     bad_embedder = rag_service.CloudflareBgeM3Embedder("acc999", "bad-tok", http_client=bad_http)
     with pytest.raises(rag_service.RagUnavailableError):
         bad_embedder.embed_query("test")
+
+
+def test_rag_llm_fallback_chain_and_ttl_cache(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Verify Gemini -> Groq -> OpenRouter :free fallback chain on HTTP 429 and RagResponseTTLCache (TASK-CLD-06)."""
+    from types import SimpleNamespace
+    from unittest.mock import MagicMock
+
+    import httpx
+
+    from acdp.api.services import rag_service
+    from acdp.config import AppConfig
+
+    rag_service.invalidate_rag_cache()
+
+    cfg = AppConfig(
+        _env_file=None,
+        aws_endpoint_url="https://acc999.r2.cloudflarestorage.com",
+        cloudflare_api_token="cf-test-token",
+        gemini_api_key="gem-key",
+        groq_api_key="gsk-test-key",
+        openrouter_api_key="or-test-key",
+        llm_fallback_enabled=True,
+        use_litellm_router=False,
+        rag_cache_enabled=True,
+        rag_cache_ttl_seconds=300,
+    )
+    chain = cfg.get_llm_fallback_chain()
+    assert [t["provider"] for t in chain] == ["gemini", "groq", "openrouter"]
+    assert chain[1]["model"] == "llama-3.3-70b-versatile"
+    assert chain[2]["model"] == "meta-llama/llama-3.3-70b-instruct:free"
+
+    fake_embedder = MagicMock()
+    fake_embedder.embed_query.return_value = [0.2] * 1024
+
+    fake_qdrant = MagicMock()
+    fake_qdrant.query_points.return_value = SimpleNamespace(
+        points=[
+            SimpleNamespace(
+                payload={
+                    "page_content": "Hạn nộp bài vòng sơ loại là 30/11/2026.",
+                    "metadata": {
+                        "domain": "challenge.zalo.ai",
+                        "source_url": "https://challenge.zalo.ai/rules",
+                        "crawl_date": "2026-11-24",
+                    },
+                }
+            )
+        ]
+    )
+
+    failing_genai = MagicMock()
+    failing_genai.models.generate_content.side_effect = RuntimeError("429 RESOURCE_EXHAUSTED")
+
+    monkeypatch.setattr(rag_service, "_get_embeddings", lambda: fake_embedder)
+    monkeypatch.setattr(rag_service, "_get_qdrant", lambda: fake_qdrant)
+    monkeypatch.setattr(rag_service, "_get_genai", lambda: failing_genai)
+    monkeypatch.setattr(rag_service, "settings", cfg)
+
+    # Case 1: Gemini 429 -> Groq succeeds
+    called_providers: list[str] = []
+
+    def fake_openai_groq(**kwargs):
+        called_providers.append(kwargs["provider"])
+        return "Hạn nộp bài là 30/11/2026 (Nguồn: https://challenge.zalo.ai/rules)."
+
+    with patch.object(rag_service, "_generate_with_openai_compatible", side_effect=fake_openai_groq):
+        res_groq = rag_service._sync_query_rag("Hạn nộp bài Zalo AI Challenge?")
+    assert res_groq.grounded is True
+    assert res_groq.provider == "groq"
+    assert res_groq.cached is False
+    assert called_providers == ["groq"]
+
+    # Case 2: Repeated identical query hits RagResponseTTLCache without calling embedding/Qdrant/LLM again
+    res_cached = rag_service._sync_query_rag("  hạn nộp bài zalo ai challenge? ")
+    assert res_cached.cached is True
+    assert res_cached.provider == "groq"
+    assert fake_embedder.embed_query.call_count == 1
+    assert rag_service.get_rag_cache_stats()["hits"] == 1
+
+    # Case 3: Gemini 429 AND Groq 429 -> OpenRouter :free succeeds
+    rag_service.invalidate_rag_cache()
+    called_providers.clear()
+
+    def fake_openai_fail_groq(**kwargs):
+        called_providers.append(kwargs["provider"])
+        if kwargs["provider"] == "groq":
+            req = httpx.Request("POST", kwargs["base_url"])
+            raise httpx.HTTPStatusError("429 Too Many Requests", request=req, response=httpx.Response(429, request=req))
+        return "Trả lời từ OpenRouter free (Nguồn: https://challenge.zalo.ai/rules)."
+
+    with patch.object(rag_service, "_generate_with_openai_compatible", side_effect=fake_openai_fail_groq):
+        res_or = rag_service._sync_query_rag("Thể lệ vòng sơ loại?")
+    assert res_or.provider == "openrouter"
+    assert called_providers == ["groq", "openrouter"]
+
+    # Case 4: All 3 tiers fail -> RagUnavailableError
+    rag_service.invalidate_rag_cache()
+    with patch.object(rag_service, "_generate_with_openai_compatible", side_effect=RuntimeError("503 Unavailable")):
+        with pytest.raises(rag_service.RagUnavailableError):
+            rag_service._sync_query_rag("Câu hỏi thất bại toàn chuỗi?")
+
+
+def test_rag_litellm_router_fallback_mode(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Verify USE_LITELLM_ROUTER=true delegates to litellm.completion with fallbacks=[] (TASK-CLD-06)."""
+    import sys
+    from types import SimpleNamespace
+    from unittest.mock import MagicMock
+
+    from acdp.api.services import rag_service
+    from acdp.config import AppConfig
+
+    cfg = AppConfig(
+        _env_file=None,
+        gemini_api_key="gem-key",
+        groq_api_key="gsk-key",
+        openrouter_api_key="or-key",
+        use_litellm_router=True,
+    )
+    monkeypatch.setattr(rag_service, "settings", cfg)
+
+    mock_litellm = MagicMock()
+    mock_litellm.completion.return_value = SimpleNamespace(
+        model="groq/llama-3.3-70b-versatile",
+        choices=[SimpleNamespace(message=SimpleNamespace(content="Trả lời qua LiteLLM fallback."))],
+    )
+    monkeypatch.setitem(sys.modules, "litellm", mock_litellm)
+
+    answer, provider = rag_service._generate_answer_with_fallback("Test?", "Ngữ cảnh mẫu")
+    assert answer == "Trả lời qua LiteLLM fallback."
+    assert provider == "groq"
+    call_kwargs = mock_litellm.completion.call_args.kwargs
+    assert call_kwargs["model"] == "gemini/gemini-3.5-flash-lite"
+    assert call_kwargs["fallbacks"] == [
+        "groq/llama-3.3-70b-versatile",
+        "openrouter/meta-llama/llama-3.3-70b-instruct:free",
+    ]

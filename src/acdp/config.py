@@ -164,7 +164,7 @@ class AppConfig(BaseSettings):
     qdrant_collection: str = Field(default="acdp_competitions_bge_m3")
     qdrant_bge_collection: str = Field(default="")
 
-    # LLM & Embedding Providers (Cloudflare Workers AI + Google AI Studio)
+    # LLM & Embedding Providers (Cloudflare Workers AI + Google AI Studio + Fallback Chain)
     cloudflare_api_token: str = Field(default="")
     cloudflare_account_id: str = Field(default="")
     cloudflare_embedding_model: str = Field(default="")
@@ -175,6 +175,56 @@ class AppConfig(BaseSettings):
     openai_api_key: str = Field(default="")
     gemini_api_key: str = Field(default="")
     google_api_key: str = Field(default="")
+    groq_api_key: str = Field(
+        default="",
+        description="Groq Cloud API key for Tier-2 LLM fallback (TASK-CLD-06)",
+    )
+    groq_chat_model: str = Field(
+        default="llama-3.3-70b-versatile",
+        description="Groq LPU fallback model ID",
+    )
+    openrouter_api_key: str = Field(
+        default="",
+        description="OpenRouter API key for Tier-3 :free LLM fallback (TASK-CLD-06)",
+    )
+    openrouter_chat_model: str = Field(
+        default="meta-llama/llama-3.3-70b-instruct:free",
+        description="OpenRouter :free fallback model ID",
+    )
+    llm_fallback_enabled: bool = Field(
+        default=True,
+        description="Enable multi-provider LLM fallback chain (Gemini -> Groq -> OpenRouter :free)",
+    )
+    use_litellm_router: bool = Field(
+        default=False,
+        description="Use litellm.completion with fallbacks=[] when litellm is installed; otherwise use built-in httpx OpenAI-compatible fallback client",
+    )
+    rag_cache_enabled: bool = Field(
+        default=True,
+        description="Enable in-memory TTL cache for repeated grounded RAG queries (TASK-CLD-06)",
+    )
+    rag_cache_ttl_seconds: int = Field(
+        default=300,
+        ge=0,
+        le=3600,
+        description="TTL in seconds for RAG response cache (default 300s = 5 min)",
+    )
+    rag_cache_max_entries: int = Field(
+        default=128,
+        ge=16,
+        le=2048,
+        description="Maximum cached RAG query entries",
+    )
+    oltp_backup_r2_prefix: str = Field(
+        default="backups/oltp",
+        description="Private prefix on Cloudflare R2 bucket for weekly pg_dump backups",
+    )
+    oltp_backup_retention_days: int = Field(
+        default=30,
+        ge=1,
+        le=365,
+        description="Retention days for OLTP pg_dump backups on R2",
+    )
 
     # Discovery 3-Tier Search APIs (TASK-ING-03 - Free Tier)
     tavily_api_key: str = Field(default="")
@@ -257,6 +307,91 @@ class AppConfig(BaseSettings):
         if any(legacy in raw.lower() for legacy in ("gemma", "ollama", "gemini-1.5", "gemini-2.5")):
             return "gemini-3.5-flash-lite"
         return raw
+
+    def get_llm_fallback_chain(self) -> list[dict[str, str]]:
+        """Return ordered multi-provider LLM fallback chain (Gemini -> Groq -> OpenRouter :free)."""
+        gemini_model = self.get_chat_model()
+        gemini_key = (self.gemini_api_key or self.google_api_key).strip()
+        chain: list[dict[str, str]] = [
+            {
+                "provider": "gemini",
+                "model": gemini_model,
+                "litellm_model": f"gemini/{gemini_model}",
+                "api_key": gemini_key,
+            }
+        ]
+        if not self.llm_fallback_enabled:
+            return chain
+
+        if self.groq_api_key.strip():
+            groq_model = self.groq_chat_model.strip() or "llama-3.3-70b-versatile"
+            chain.append(
+                {
+                    "provider": "groq",
+                    "model": groq_model,
+                    "litellm_model": f"groq/{groq_model}",
+                    "api_key": self.groq_api_key.strip(),
+                    "base_url": "https://api.groq.com/openai/v1/chat/completions",
+                }
+            )
+
+        if self.openrouter_api_key.strip():
+            or_model = self.openrouter_chat_model.strip() or "meta-llama/llama-3.3-70b-instruct:free"
+            chain.append(
+                {
+                    "provider": "openrouter",
+                    "model": or_model,
+                    "litellm_model": f"openrouter/{or_model}",
+                    "api_key": self.openrouter_api_key.strip(),
+                    "base_url": "https://openrouter.ai/api/v1/chat/completions",
+                }
+            )
+        return chain
+
+    def get_pg_dump_database_url(self) -> str:
+        """Resolve a standard postgresql:// URI safe for pg_dump over IPv4 Session Pooler (:5432)."""
+        mode = (self.postgres_mode or "auto").strip().lower()
+        if mode == "local":
+            raw_url = (
+                f"postgresql://{self.postgres_user}:{self.postgres_password}"
+                f"@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"
+            )
+        elif self.supabase_direct_url.strip():
+            raw_url = self.supabase_direct_url.strip()
+        else:
+            raw_url = self._resolve_raw_postgres_url()
+
+        if raw_url.startswith("postgresql+asyncpg://"):
+            raw_url = "postgresql://" + raw_url[len("postgresql+asyncpg://") :]
+        elif raw_url.startswith("postgres://"):
+            raw_url = "postgresql://" + raw_url[len("postgres://") :]
+
+        parsed = urlparse(raw_url)
+        host = (parsed.hostname or "").strip().lower()
+        netloc = parsed.netloc
+        # Supabase Transaction Pooler (:6543) breaks pg_dump session locks; rewrite to Session Pooler (:5432)
+        if host.endswith(".pooler.supabase.com") and parsed.port == 6543:
+            userinfo = ""
+            if parsed.username:
+                userinfo = parsed.username
+                if parsed.password is not None:
+                    userinfo = f"{userinfo}:{parsed.password}"
+                userinfo = f"{userinfo}@"
+            netloc = f"{userinfo}{parsed.hostname}:5432"
+
+        filtered_params = [
+            (k, v)
+            for k, v in parse_qsl(parsed.query, keep_blank_values=True)
+            if k.lower() not in {"pgbouncer", "prepared_statement_cache_size", "statement_cache_size"}
+        ]
+        is_cloud_host = host not in {"", "localhost", "127.0.0.1", "postgres", "::1"}
+        ssl_mode = (self.postgres_ssl_mode or "auto").strip().lower()
+        has_sslmode = any(k.lower() == "sslmode" for k, _ in filtered_params)
+        if not has_sslmode and (ssl_mode == "require" or (ssl_mode == "auto" and is_cloud_host)):
+            filtered_params.append(("sslmode", "require"))
+
+        rebuilt_query = urlencode(filtered_params)
+        return urlunparse(parsed._replace(netloc=netloc, query=rebuilt_query))
 
     def get_motherduck_dsn(self) -> str:
         """Return MotherDuck connection URI (`md:<db>`) with token if configured."""
