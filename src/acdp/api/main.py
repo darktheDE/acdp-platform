@@ -12,7 +12,7 @@ from acdp.api.middleware.security import (
     SecurityHardeningMiddleware,
     register_security_exception_handlers,
 )
-from acdp.api.routers import analytics, auth, bookmarks, competitions, health, rag
+from acdp.api.routers import admin, analytics, auth, bookmarks, competitions, health, rag
 from acdp.config import settings
 
 
@@ -29,9 +29,9 @@ app = FastAPI(
     title="ACDP Serving Gateway",
     description="Unified FastAPI Gateway over DuckDB Gold Star Schema, PostgreSQL 18 OLTP, and Qdrant RAG.",
     version="1.0.0",
-    openapi_url=None if settings.is_production else "/openapi.json",
-    docs_url=None if settings.is_production else "/docs",
-    redoc_url=None if settings.is_production else "/redoc",
+    openapi_url=None,
+    docs_url=None,
+    redoc_url=None,
     lifespan=lifespan,
 )
 
@@ -56,3 +56,4 @@ app.include_router(competitions.router, prefix=API_PREFIX)
 app.include_router(auth.router, prefix=API_PREFIX)
 app.include_router(bookmarks.router, prefix=API_PREFIX)
 app.include_router(rag.router, prefix=API_PREFIX)
+app.include_router(admin.router, prefix=API_PREFIX)

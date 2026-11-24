@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TASK-SEC-02: RBAC, Admin API & Trang Quản trị (/admin)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: "neutral", securityLevel: "loose" });
+  </script>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased">
+  <div class="max-w-6xl mx-auto px-4 py-8 space-y-8">
+    <header class="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 text-white rounded-2xl p-6 shadow-lg">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-200 border border-emerald-400/30">
+            TASK-SEC-02 · Cycle 08 · Serving & Web · Completed
+          </span>
+          <h1 class="text-2xl md:text-3xl font-bold mt-3">
+            Phân quyền RBAC (Admin/Lecturer/Student), Admin API & Trang Quản trị (/admin)
+          </h1>
+          <p class="text-slate-300 text-sm mt-1">
+            Tắt hoàn toàn /docs công khai (404), mở cổng /api/v1/admin/* & /api/v1/admin/docs cho Admin, khóa đăng nhập /copilot và triển khai trang quản trị /admin.
+          </p>
+        </div>
+        <div class="text-right text-xs text-slate-300 space-y-1">
+          <div><strong class="text-white">Tác giả:</strong> Đỗ Kiến Hưng & Nguyễn Văn Quang Duy</div>
+          <div><strong class="text-white">Đơn vị:</strong> FIT · HCM-UTE</div>
+          <div><strong class="text-white">Ngày hoàn tất:</strong> 2026-11-24</div>
+        </div>
+      </div>
+    </header>
+
+    <section aria-label="Executive KPI Summary" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
+        <div class="text-xs font-medium text-slate-500 uppercase tracking-wider">Public /docs & /openapi.json</div>
+        <div class="text-2xl font-bold text-rose-600 mt-1">404 Disabled</div>
+        <p class="text-xs text-slate-600 mt-1">Tắt hoàn toàn ở mọi môi trường; chỉ Admin xem tại <code>/api/v1/admin/docs</code></p>
+      </div>
+      <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
+        <div class="text-xs font-medium text-slate-500 uppercase tracking-wider">Ma trận RBAC</div>
+        <div class="text-2xl font-bold text-blue-700 mt-1">3 Vai trò</div>
+        <p class="text-xs text-slate-600 mt-1"><code>admin</code> (ADMIN_EMAILS), <code>lecturer</code>, <code>student</code></p>
+      </div>
+      <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
+        <div class="text-xs font-medium text-slate-500 uppercase tracking-wider">Admin Control API</div>
+        <div class="text-2xl font-bold text-emerald-700 mt-1">6 Endpoints</div>
+        <p class="text-xs text-slate-600 mt-1">Telemetry, User Kill-Switch, R2/RAG Refresh & Protected Swagger</p>
+      </div>
+      <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
+        <div class="text-xs font-medium text-slate-500 uppercase tracking-wider">Kiểm chứng Thực nghiệm</div>
+        <div class="text-2xl font-bold text-indigo-600 mt-1">19/19 Passed</div>
+        <p class="text-xs text-slate-600 mt-1"><code>pytest</code> (19 passed), <code>ruff</code> (0 lỗi), <code>tsc --noEmit</code> (0 lỗi)</p>
+      </div>
+    </section>
+
+    <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div class="lg:col-span-7 bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
+        <h2 class="text-lg font-bold text-slate-900 mb-3">1. Luồng Kiểm soát Truy cập RBAC & Kill-Switch</h2>
+        <div class="mermaid">
+flowchart LR
+    U["Client Request"] --> MW["SecurityHardeningMiddleware"]
+    MW -->|"/docs, /redoc, /openapi.json"| HIDE["404 Not Found (Always)"]
+    MW -->|"/api/v1/admin/*"| DEP["get_current_user + require_admin"]
+    DEP -->|"No JWT / is_active=false"| E401["401 Unauthorized"]
+    DEP -->|"role != admin"| E403["403 Forbidden"]
+    DEP -->|"role == admin (ADMIN_EMAILS)"| OK["Admin Router<br/>telemetry · users · cache/refresh · admin/docs"]
+        </div>
+      </div>
+
+      <div class="lg:col-span-5 bg-white rounded-xl p-6 border border-slate-200 shadow-sm flex flex-col justify-between">
+        <div>
+          <h2 class="text-lg font-bold text-slate-900 mb-2">2. Mã Phản hồi HTTP theo Vai trò Truy cập</h2>
+          <p class="text-xs text-slate-500 mb-4">Kiểm chứng trên <code>/api/v1/admin/*</code> và <code>/api/v1/rag/chat</code></p>
+          <canvas id="rbacMatrixChart" height="210"></canvas>
+        </div>
+        <div class="mt-4 text-xs text-slate-600 bg-slate-50 p-3 rounded-lg border border-slate-200">
+          <strong>Kill-Switch Tức thời:</strong> Khi Admin khóa tài khoản (<code>is_active=false</code>), toàn bộ <code>UserSession</code> bị thu hồi và JWT hiện có lập tức nhận <code>401</code>.
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-white rounded-xl border border-slate-200 shadow-sm divide-y divide-slate-200">
+      <details open class="p-6">
+        <summary class="font-bold text-slate-900 cursor-pointer">
+          3. Đặc tả Kỹ thuật 6 Endpoints Admin & Thay đổi Frontend (/admin, /copilot)
+        </summary>
+        <div class="mt-4 overflow-x-auto">
+          <table class="min-w-full text-sm text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-100 text-slate-700">
+                <th class="p-3 border border-slate-200">Thành phần</th>
+                <th class="p-3 border border-slate-200">Tệp nguồn</th>
+                <th class="p-3 border border-slate-200">Chức năng & Quy tắc Bảo vệ</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="p-3 border border-slate-200 font-semibold">Tắt Public /docs</td>
+                <td class="p-3 border border-slate-200 font-mono text-xs">src/acdp/api/main.py<br/>src/acdp/api/middleware/security.py</td>
+                <td class="p-3 border border-slate-200">Đặt <code>docs_url=None, redoc_url=None, openapi_url=None</code> và chặn <code>404</code> trên middleware ở mọi môi trường.</td>
+              </tr>
+              <tr>
+                <td class="p-3 border border-slate-200 font-semibold">RBAC Dependencies</td>
+                <td class="p-3 border border-slate-200 font-mono text-xs">src/acdp/api/dependencies.py<br/>src/acdp/config.py</td>
+                <td class="p-3 border border-slate-200">Tự động đồng bộ <code>ADMIN_EMAILS</code> lên <code>admin</code>; cung cấp <code>require_admin</code> và <code>require_lecturer_or_admin</code>.</td>
+              </tr>
+              <tr>
+                <td class="p-3 border border-slate-200 font-semibold">Admin Router</td>
+                <td class="p-3 border border-slate-200 font-mono text-xs">src/acdp/api/routers/admin.py<br/>src/acdp/api/schemas/admin.py</td>
+                <td class="p-3 border border-slate-200"><code>GET /telemetry</code>, <code>GET /users</code>, <code>PATCH /users/{id}</code>, <code>POST /cache/refresh</code>, <code>GET /openapi.json</code>, <code>GET /docs</code>.</td>
+              </tr>
+              <tr>
+                <td class="p-3 border border-slate-200 font-semibold">Trang Quản trị & Copilot Gate</td>
+                <td class="p-3 border border-slate-200 font-mono text-xs">apps/web/app/admin/page.tsx<br/>apps/web/app/copilot/page.tsx</td>
+                <td class="p-3 border border-slate-200">Khóa UI <code>/copilot</code> với khách chưa đăng nhập; trang <code>/admin</code> chỉ mở cho <code>role === "admin"</code>.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+    </section>
+  </div>
+
+  <script>
+    const ctx = document.getElementById("rbacMatrixChart").getContext("2d");
+    new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: ["Khách ẩn danh", "Student / Lecturer", "Admin (ADMIN_EMAILS)", "Tài khoản bị khóa"],
+        datasets: [
+          {
+            label: "Public /docs (404)",
+            data: [404, 404, 404, 404],
+            backgroundColor: "#64748b",
+            borderRadius: 4
+          },
+          {
+            label: "/api/v1/admin/* Status",
+            data: [401, 403, 200, 401],
+            backgroundColor: ["#f59e0b", "#ef4444", "#10b981", "#e11d48"],
+            borderRadius: 4
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: { beginAtZero: true, max: 450, title: { display: true, text: "HTTP Status Code" } }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

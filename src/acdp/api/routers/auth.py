@@ -67,10 +67,11 @@ async def register(
     if existing.scalars().first() is not None:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Email is already registered.")
 
+    assigned_role = "admin" if normalized_email in settings.get_admin_emails() else "student"
     user = User(
         email=normalized_email,
         full_name=payload.full_name.strip(),
-        role="student",
+        role=assigned_role,
         student_or_staff_id=payload.student_or_staff_id.strip() if payload.student_or_staff_id else None,
         password_hash=hash_password(payload.password),
     )
@@ -96,6 +97,10 @@ async def login(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect email or password.",
         )
+
+    if user.email.lower() in settings.get_admin_emails() and user.role != "admin":
+        user.role = "admin"
+        db.add(user)
 
     raw_refresh = generate_refresh_token()
     session_row = UserSession(
@@ -151,6 +156,10 @@ async def refresh_tokens(
     user = user_res.scalars().first()
     if user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User account unavailable.")
+
+    if user.email.lower() in settings.get_admin_emails() and user.role != "admin":
+        user.role = "admin"
+        db.add(user)
 
     session_row.revoked_at = now
     new_raw = generate_refresh_token()

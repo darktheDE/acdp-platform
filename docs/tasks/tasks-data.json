@@ -819,7 +819,8 @@
         "src/acdp/api/routers/rag.py",
         "src/acdp/api/main.py",
         "tests/api/test_security_owasp.py",
-        "docs/deliverables/TASK-SEC-00-pre-deployment-security-and-owasp-report.md"
+        "docs/deliverables/TASK-SEC-00-pre-deployment-security-and-owasp-report.md",
+        "docs/deliverables/TASK-SEC-00-pre-deployment-security-and-owasp-report-visual-dossier.html"
       ],
       "notes": "Hoàn tất OWASP Top 10 (2025/2026) & LLM10:2025 Hardening (Gates G2, G3, G4, G5, G7): Auth-Only /rag/chat & /query (401), MultiTierRateLimiter (AI 5/min + 30/day/user + 10 RPM global; Auth 10/min/IP; Public 60/min/IP), max_output_tokens=600 (Gemini/Groq/OpenRouter/LiteLLM), ẩn /docs /redoc /openapi.json khi ENVIRONMENT=production, Fail-Fast JWT Secret Check, OWASP Security Headers & Global Exception Masking (500). Kiểm chứng 18/18 pytest API PASSED và 0 lỗi ruff.",
       "updated_at": "2026-11-24"
@@ -833,7 +834,7 @@
       "task_type": "Engineering",
       "is_no_code": false,
       "owner": "Hung & Duy",
-      "status": "todo",
+      "status": "done",
       "priority": "high",
       "problem_statement": "Xây dựng cơ chế phân quyền Admin (require_admin + ADMIN_EMAILS trong .env), router /api/v1/admin/* (quản lý user, khóa tài khoản spam is_active=false, làm mới DuckDB R2 & RAG cache, xem rate-limit telemetry, và mở cổng /api/v1/admin/docs chỉ cho Admin), kèm giao diện Next.js /admin và khóa đăng nhập trên /copilot.",
       "research_questions": [],
@@ -845,9 +846,11 @@
         "src/acdp/api/dependencies.py",
         "src/acdp/api/routers/admin.py",
         "apps/web/app/admin/page.tsx",
-        "apps/web/app/copilot/page.tsx"
+        "apps/web/app/copilot/page.tsx",
+        "docs/deliverables/TASK-SEC-02-rbac-admin-api-and-portal-implementation.md",
+        "docs/deliverables/TASK-SEC-02-rbac-admin-api-and-portal-implementation-visual-dossier.html"
       ],
-      "notes": "Phụ thuộc TASK-SEC-01.",
+      "notes": "Phụ thuộc TASK-SEC-01. Đã hoàn tất: tắt hoàn toàn /docs /redoc /openapi.json công khai (404), đồng bộ ADMIN_EMAILS -> admin, thêm require_admin/require_lecturer_or_admin, router /api/v1/admin/* (users, telemetry, cache/refresh, /api/v1/admin/docs), khóa UI /copilot và triển khai trang /admin.",
       "updated_at": "2026-11-24"
     },
     {

@@ -19,6 +19,12 @@ export type RagCitationDTO = components["schemas"]["RagCitationDTO"];
 export type RagChatResponse = components["schemas"]["RagChatResponse"];
 export type ChatSessionDTO = components["schemas"]["ChatSessionDTO"];
 export type ChatMessageDTO = components["schemas"]["ChatMessageDTO"];
+export type AdminUserDTO = components["schemas"]["AdminUserDTO"];
+export type AdminUserUpdateRequest = components["schemas"]["AdminUserUpdateRequest"];
+export type AdminUsersSummaryDTO = components["schemas"]["AdminUsersSummaryDTO"];
+export type AdminTelemetryDTO = components["schemas"]["AdminTelemetryDTO"];
+export type AdminCacheRefreshRequest = components["schemas"]["AdminCacheRefreshRequest"];
+export type AdminCacheRefreshDTO = components["schemas"]["AdminCacheRefreshDTO"];
 
 export function getApiBaseUrl(): string {
   if (typeof window === "undefined") {

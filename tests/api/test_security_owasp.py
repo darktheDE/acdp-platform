@@ -248,23 +248,164 @@ def test_g4_llm_max_output_tokens_capped_at_600(monkeypatch: pytest.MonkeyPatch)
 
 
 @pytest.mark.anyio
-async def test_g5_hide_docs_redoc_and_openapi_in_production(
+async def test_g5_hide_public_docs_and_protect_admin_docs(
     api_client: AsyncClient,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    """Gate G5 (OWASP A02:2025): /docs, /redoc, /openapi.json return 200 in dev and 404 in production."""
-    # Development default
-    monkeypatch.setattr(settings, "environment", "development")
-    assert (await api_client.get("/docs")).status_code == 200
-    assert (await api_client.get("/openapi.json")).status_code == 200
+    """Gate G5 (OWASP A02:2025): Public /docs, /redoc, /openapi.json always return 404; /api/v1/admin/docs requires Admin."""
+    for env_name in ("development", "production"):
+        monkeypatch.setattr(settings, "environment", env_name)
+        for hidden_path in ("/docs", "/redoc", "/openapi.json"):
+            resp = await api_client.get(hidden_path)
+            assert resp.status_code == 404
+            assert resp.headers["X-Content-Type-Options"] == "nosniff"
+            if env_name == "production":
+                assert resp.headers["Strict-Transport-Security"].startswith("max-age=63072000")
 
-    # Production mode blocks public documentation endpoints
-    monkeypatch.setattr(settings, "environment", "production")
-    for hidden_path in ("/docs", "/redoc", "/openapi.json"):
-        resp = await api_client.get(hidden_path)
-        assert resp.status_code == 404
-        assert resp.headers["X-Content-Type-Options"] == "nosniff"
-        assert resp.headers["Strict-Transport-Security"].startswith("max-age=63072000")
+    # Anonymous and non-admin student are blocked from /api/v1/admin/docs and /api/v1/admin/openapi.json
+    assert (await api_client.get("/api/v1/admin/docs")).status_code == 401
+    assert (await api_client.get("/api/v1/admin/openapi.json")).status_code == 401
+
+    student_headers = await _register_and_login(api_client)
+    assert (await api_client.get("/api/v1/admin/docs", headers=student_headers)).status_code == 403
+    assert (await api_client.get("/api/v1/admin/openapi.json", headers=student_headers)).status_code == 403
+
+    # Admin email listed in ADMIN_EMAILS receives admin access to /api/v1/admin/docs & openapi.json
+    admin_email = f"test_admin_{uuid.uuid4().hex[:8]}@hcmute.edu.vn"
+    monkeypatch.setattr(settings, "admin_emails", admin_email)
+    reg = await api_client.post(
+        "/api/v1/auth/register",
+        json={"email": admin_email, "full_name": "Admin User", "password": "AdminPass123!"},
+    )
+    assert reg.status_code == 201
+    assert reg.json()["role"] == "admin"
+    login = await api_client.post(
+        "/api/v1/auth/login",
+        json={"email": admin_email, "password": "AdminPass123!"},
+    )
+    assert login.status_code == 200
+    admin_headers = {"Authorization": f"Bearer {login.json()['access_token']}"}
+
+    docs_resp = await api_client.get("/api/v1/admin/docs", headers=admin_headers)
+    assert docs_resp.status_code == 200
+    assert "Swagger UI" in docs_resp.text
+    assert "/api/v1/admin/openapi.json" in docs_resp.text
+
+    openapi_resp = await api_client.get("/api/v1/admin/openapi.json", headers=admin_headers)
+    assert openapi_resp.status_code == 200
+    assert "/api/v1/admin/users" in openapi_resp.json()["paths"]
+
+
+@pytest.mark.anyio
+async def test_g6_admin_rbac_kill_switch_and_cache_refresh(
+    api_client: AsyncClient,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Gate G6 (TASK-SEC-02): Enforce RBAC, user deactivation kill-switch, and R2/RAG cache refresh."""
+    reset_rate_limiter()
+    admin_email = f"test_admin_{uuid.uuid4().hex[:8]}@hcmute.edu.vn"
+    spam_email = f"test_spam_{uuid.uuid4().hex[:8]}@hcmute.edu.vn"
+
+    monkeypatch.setattr(settings, "admin_emails", admin_email)
+    await api_client.post(
+        "/api/v1/auth/register",
+        json={"email": admin_email, "full_name": "Root Admin", "password": "AdminPass123!"},
+    )
+    admin_login = await api_client.post(
+        "/api/v1/auth/login",
+        json={"email": admin_email, "password": "AdminPass123!"},
+    )
+    assert admin_login.status_code == 200
+    admin_id = admin_login.json()["user"]["id"]
+    admin_headers = {"Authorization": f"Bearer {admin_login.json()['access_token']}"}
+
+    spam_reg = await api_client.post(
+        "/api/v1/auth/register",
+        json={"email": spam_email, "full_name": "Spam Student", "password": "StudentPass123!"},
+    )
+    assert spam_reg.status_code == 201
+    assert spam_reg.json()["role"] == "student"
+    spam_id = spam_reg.json()["id"]
+    spam_login = await api_client.post(
+        "/api/v1/auth/login",
+        json={"email": spam_email, "password": "StudentPass123!"},
+    )
+    spam_headers = {"Authorization": f"Bearer {spam_login.json()['access_token']}"}
+
+    # Student is blocked 403 on all /api/v1/admin/* endpoints
+    assert (await api_client.get("/api/v1/admin/telemetry", headers=spam_headers)).status_code == 403
+    assert (await api_client.get("/api/v1/admin/users", headers=spam_headers)).status_code == 403
+    assert (
+        await api_client.post("/api/v1/admin/cache/refresh", json={"target": "all"}, headers=spam_headers)
+    ).status_code == 403
+
+    # Admin inspects telemetry and users
+    tel_resp = await api_client.get("/api/v1/admin/telemetry", headers=admin_headers)
+    assert tel_resp.status_code == 200
+    assert tel_resp.json()["users_summary"]["total_users"] >= 2
+
+    users_resp = await api_client.get("/api/v1/admin/users", params={"q": spam_email}, headers=admin_headers)
+    assert users_resp.status_code == 200
+    assert len(users_resp.json()) == 1
+    assert users_resp.json()[0]["email"] == spam_email
+
+    # Admin cannot self-deactivate or self-demote
+    self_block = await api_client.patch(
+        f"/api/v1/admin/users/{admin_id}",
+        json={"is_active": False},
+        headers=admin_headers,
+    )
+    assert self_block.status_code == 400
+
+    # Admin promotes student to lecturer, then blocks spam account
+    promote = await api_client.patch(
+        f"/api/v1/admin/users/{spam_id}",
+        json={"role": "lecturer"},
+        headers=admin_headers,
+    )
+    assert promote.status_code == 200
+    assert promote.json()["role"] == "lecturer"
+
+    block = await api_client.patch(
+        f"/api/v1/admin/users/{spam_id}",
+        json={"is_active": False},
+        headers=admin_headers,
+    )
+    assert block.status_code == 200
+    assert block.json()["is_active"] is False
+
+    # Blocked user's existing JWT is immediately rejected (401) on /auth/me and /rag/chat, and login fails
+    assert (await api_client.get("/api/v1/auth/me", headers=spam_headers)).status_code == 401
+    assert (
+        await api_client.post("/api/v1/rag/chat", json={"message": "Spam query"}, headers=spam_headers)
+    ).status_code == 401
+    assert (
+        await api_client.post(
+            "/api/v1/auth/login",
+            json={"email": spam_email, "password": "StudentPass123!"},
+        )
+    ).status_code == 401
+
+    # Admin refreshes DuckDB R2 & RAG cache and resets rate limiter
+    with patch(
+        "acdp.api.routers.admin.refresh_duckdb_r2_connection",
+        return_value={"mode": "r2_httpfs_memory_table", "entities_loaded": 15, "competitions_count": 10},
+    ):
+        refresh_all = await api_client.post(
+            "/api/v1/admin/cache/refresh",
+            json={"target": "all"},
+            headers=admin_headers,
+        )
+    assert refresh_all.status_code == 200
+    assert refresh_all.json()["duckdb_r2"]["entities_loaded"] == 15
+
+    refresh_rl = await api_client.post(
+        "/api/v1/admin/cache/refresh",
+        json={"target": "rate_limit"},
+        headers=admin_headers,
+    )
+    assert refresh_rl.status_code == 200
+    assert refresh_rl.json()["rate_limit_reset"] is True
 
 
 def test_g2_fail_fast_jwt_secret_validation_in_production() -> None:

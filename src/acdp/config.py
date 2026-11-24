@@ -247,6 +247,10 @@ class AppConfig(BaseSettings):
         description="Regex matching allowed Vercel Hobby preview/production origins",
     )
     internal_api_url: str = Field(default="http://localhost:8000")
+    admin_emails: str = Field(
+        default="",
+        description="Comma-separated emails automatically granted admin role (TASK-SEC-02)",
+    )
 
     # OWASP & LLM10:2025 Security Hardening (TASK-SEC-01)
     rag_max_output_tokens: int = Field(
@@ -269,6 +273,14 @@ class AppConfig(BaseSettings):
     def is_production(self) -> bool:
         """Return True when running in production environment."""
         return (self.environment or "").strip().lower() == "production"
+
+    def get_admin_emails(self) -> set[str]:
+        """Return normalized set of administrator emails configured via ADMIN_EMAILS."""
+        return {
+            e.strip().lower()
+            for e in (self.admin_emails or "").split(",")
+            if e.strip()
+        }
 
     def validate_production_security(self) -> None:
         """Fail-fast check (OWASP A04:2025 / Gate G2): reject weak or default JWT_SECRET_KEY in production."""

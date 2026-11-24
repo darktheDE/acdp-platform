@@ -299,7 +299,7 @@ def apply_security_headers(
     response.headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=()"
     response.headers["X-XSS-Protection"] = "0"
 
-    if path.startswith(("/docs", "/redoc")):
+    if path.startswith(("/docs", "/redoc", "/api/v1/admin/docs")):
         response.headers.setdefault(
             "Content-Security-Policy",
             "default-src 'self' https://cdn.jsdelivr.net; img-src 'self' data: https://fastapi.tiangolo.com; "
@@ -337,7 +337,7 @@ class SecurityHardeningMiddleware(BaseHTTPMiddleware):
         path = request.url.path
         is_prod = settings.is_production
 
-        if is_prod and path in _HIDDEN_PRODUCTION_PATHS:
+        if path in _HIDDEN_PRODUCTION_PATHS:
             resp = JSONResponse(
                 status_code=status.HTTP_404_NOT_FOUND,
                 content={"detail": "Not Found"},
