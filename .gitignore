@@ -82,3 +82,5 @@ Desktop.ini
 .scratchpad/
 !apps/web/lib/
 .env.backend
+.vercel
+.env*
