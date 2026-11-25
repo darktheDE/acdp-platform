@@ -2,9 +2,9 @@
 
 This ledger is auto-generated from [`tasks-data.json`](./tasks-data.json) and synchronized with the interactive portal [`index.html`](./index.html) per **DIR-018**.
 
-- **Total tasks**: `61` (`44` completed)
-- **Scope distribution**: `53` TLCN (Phase 1) | `12` KLTN (Phase 2)
-- **Last updated**: `2026-11-22`
+- **Total tasks**: `85` (`44` completed)
+- **Scope distribution**: `68` TLCN (Phase 1) | `22` KLTN (Phase 2)
+- **Last updated**: `2026-11-25`
 
 ---
 
@@ -73,6 +73,30 @@ This ledger is auto-generated from [`tasks-data.json`](./tasks-data.json) and sy
 | **TASK-SEC-01** | Cycle 07 | TLCN (Phase 1) | Cloud & Infra | Hardening Bảo mật OWASP Top 10 (2025/2026), Khóa /docs Production & Bảo vệ Quota AI | Hung & Duy | [`security.py`](../../src/acdp/api/middleware/security.py), [`rag.py`](../../src/acdp/api/routers/rag.py), [`main.py`](../../src/acdp/api/main.py), [`test_security_owasp.py`](../../tests/api/test_security_owasp.py), [`TASK-SEC-00-pre-deployment-security-and-owasp-report.md`](../../docs/deliverables/TASK-SEC-00-pre-deployment-security-and-owasp-report.md), [`TASK-SEC-00-pre-deployment-security-and-owasp-report-visual-dossier.html`](../../docs/deliverables/TASK-SEC-00-pre-deployment-security-and-owasp-report-visual-dossier.html) | ✅ Done |
 | **TASK-SEC-02** | Cycle 08 | TLCN (Phase 1) | Serving & Web | Phân quyền RBAC (Admin/Lecturer/Student), Admin API & Trang Quản trị (/admin) | Hung & Duy | [`dependencies.py`](../../src/acdp/api/dependencies.py), [`admin.py`](../../src/acdp/api/routers/admin.py), [`page.tsx`](../../apps/web/app/admin/page.tsx), [`page.tsx`](../../apps/web/app/copilot/page.tsx), [`TASK-SEC-02-rbac-admin-api-and-portal-implementation.md`](../../docs/deliverables/TASK-SEC-02-rbac-admin-api-and-portal-implementation.md), [`TASK-SEC-02-rbac-admin-api-and-portal-implementation-visual-dossier.html`](../../docs/deliverables/TASK-SEC-02-rbac-admin-api-and-portal-implementation-visual-dossier.html) | ✅ Done |
 | **TASK-SEC-03** | Cycle 08 | TLCN (Phase 1) | Cloud & Infra | Checklist Kiểm toán Bảo mật Trước Triển khai (Pre-Deployment Security Gate CLI) | Hung & Duy | `src/acdp/v2/security_audit.py`, [`TASK-SEC-00-pre-deployment-security-and-owasp-report.md`](../../docs/deliverables/TASK-SEC-00-pre-deployment-security-and-owasp-report.md), [`TASK-SEC-00-pre-deployment-security-and-owasp-report-visual-dossier.html`](../../docs/deliverables/TASK-SEC-00-pre-deployment-security-and-owasp-report-visual-dossier.html) | ⏳ Todo |
+| **TASK-QA-01** | Cycle 07 | TLCN (Phase 1) | Academic & Ops | Audit Toàn bộ Quyết định Kỹ thuật: Lý thuyết × Thực tiễn × Scope | Hung & Duy | `docs/deliverables/TASK-QA-01-tech-decision-theory-practice-audit.md` | ⏳ Todo |
+| **TASK-QA-02** | Cycle 08 | TLCN (Phase 1) | Discovery | Ma trận Truy vết Yêu cầu Người dùng -> Schema -> API -> Giao diện | Hung & Duy | `docs/deliverables/TASK-QA-02-requirements-traceability-matrix.md` | ⏳ Todo |
+| **TASK-QA-03** | Cycle 08 | TLCN (Phase 1) | Discovery | Xác thực Nhu cầu & Schema theo Persona, Đối chuẩn Nền tảng & Tham vấn GVHD (TLCN) | Hung & Duy | `docs/deliverables/TASK-QA-03-persona-competitor-advisor-validation.md` | ⏳ Todo |
+| **TASK-DQ-01** | Cycle 07 | TLCN (Phase 1) | Bronze | Validate Lớp Đồng (Bronze): Tính đầy đủ, Bất biến, Provenance & Idempotent Re-crawl | Hung & Duy | `docs/deliverables/TASK-DQ-01-bronze-validation-report.md` | ⏳ Todo |
+| **TASK-DQ-02** | Cycle 07 | TLCN (Phase 1) | Silver | Xây dựng Golden Dataset & Đo Độ chính xác Trích xuất Lớp Bạc theo Từng Field | Hung & Duy | `docs/deliverables/TASK-DQ-02-silver-golden-dataset-accuracy.md` | ⏳ Todo |
+| **TASK-DQ-03** | Cycle 07 | TLCN (Phase 1) | Silver | Triển khai Data Contract & Quality Gate Tự động giữa Các Layer | Hung & Duy | `docs/deliverables/TASK-DQ-03-data-contracts-and-quality-gates.md` | ⏳ Todo |
+| **TASK-DQ-04** | Cycle 07 | TLCN (Phase 1) | Silver | Entity Resolution & Khử trùng Cuộc thi (Đa nguồn, Đa mùa giải) | Hung & Duy | `docs/deliverables/TASK-DQ-04-entity-resolution-and-dedup.md` | ⏳ Todo |
+| **TASK-DQ-05** | Cycle 07 | TLCN (Phase 1) | Gold | Kiểm chứng Lớp Vàng (Gold): Grain, Khóa thay thế, Toàn vẹn Tham chiếu & Đối soát Silver | Hung & Duy | `docs/deliverables/TASK-DQ-05-gold-integrity-and-reconciliation.md` | ⏳ Todo |
+| **TASK-DQ-06** | Cycle 07 | TLCN (Phase 1) | Cloud & Infra | Lineage, Run Manifest & Kiểm thử Idempotency End-to-End | Hung & Duy | `docs/deliverables/TASK-DQ-06-lineage-manifest-and-idempotency.md` | ⏳ Todo |
+| **TASK-QA-07** | Cycle 08 | TLCN (Phase 1) | Serving & Web | Xây dựng Golden QA Set Chuẩn hóa (Persona & GVHD) & Ngưỡng Ragas / Chống Hallucination | Hung & Duy | `docs/deliverables/TASK-QA-07-rag-golden-qa-and-citation-gate.md` | ⏳ Todo |
+| **TASK-QA-08** | Cycle 08 | TLCN (Phase 1) | Cloud & Infra | Thiết lập CI/CD Pipeline & Automated Data Validation Gate (.github/workflows/ci-validation.yml) | Hung & Duy | `.github/workflows/ci-validation.yml`, `docs/deliverables/TASK-QA-08-ci-pipeline-and-dq-tests.md` | ⏳ Todo |
+| **TASK-QA-09** | Cycle 08 | TLCN (Phase 1) | Academic & Ops | Quy trình Triage & Sửa lỗi (Bug Ledger, RCA, Regression Test) | Hung & Duy | `docs/deliverables/TASK-QA-09-bug-triage-rca-and-regression.md` | ⏳ Todo |
+| **TASK-DQ-11** | Cycle 09 | KLTN (Phase 2) | Cloud & Infra | Orchestration & Lập lịch Quy mô KLTN (Đối chiếu Prefect / GitHub Actions / Dagster), Retry & Backfill | Hung & Duy | `docs/deliverables/TASK-DQ-11-kltn-orchestration-retry-backfill.md` | ⏳ Todo |
+| **TASK-DQ-12** | Cycle 09 | KLTN (Phase 2) | Silver | Incremental Load & Schema Evolution (Versioning Schema, Migration Parquet) | Hung & Duy | `docs/deliverables/TASK-DQ-12-incremental-load-and-schema-evolution.md` | ⏳ Todo |
+| **TASK-DQ-13** | Cycle 09 | KLTN (Phase 2) | Cloud & Infra | Data Observability: Giám sát Freshness, Volume, Drift & Cảnh báo | Hung & Duy | `docs/deliverables/TASK-DQ-13-data-observability-and-alerting.md` | ⏳ Todo |
+| **TASK-DQ-14** | Cycle 09 | KLTN (Phase 2) | Silver | Đo lại Golden Dataset ở Quy mô 100–500 Cuộc thi & Theo dõi LLM Drift | Hung & Duy | `docs/deliverables/TASK-DQ-14-kltn-scaled-golden-eval-and-llm-drift.md` | ⏳ Todo |
+| **TASK-QA-15** | Cycle 10 | KLTN (Phase 2) | Academic & Ops | Audit lại Toàn bộ Kiến trúc cho Quy mô KLTN & Cập nhật ADR qua Peer Defense | Hung & Duy | `docs/deliverables/TASK-QA-15-kltn-architecture-reaudit-and-adr.md` | ⏳ Todo |
+| **TASK-FE-01** | Cycle 08 | TLCN (Phase 1) | Serving & Web | Hoàn thiện FE Tiểu luận: Giao diện Tối giản, Dễ dùng & Mượt mà cho Demo Bảo vệ | Hung & Duy | [`app`](../../apps/web/app), `docs/deliverables/TASK-FE-01-tlcn-clean-demo-ui.md` | ⏳ Todo |
+| **TASK-BE-01** | Cycle 08 | TLCN -> KLTN | Serving & Web | Hoàn thiện & Tối ưu Toàn diện Backend (Tối ưu API, Truy vấn OLTP/OLAP & Tối ưu Luồng AI) | Hung & Duy | [`api`](../../src/acdp/api), `docs/deliverables/TASK-BE-01-backend-api-and-ai-optimization.md` | ⏳ Todo |
+| **TASK-DOC-01** | Cycle 08 | TLCN (Phase 1) | Academic & Ops | Xây dựng Trọn bộ Sơ đồ Kỹ thuật (BA, CNPM, System, BE, FE, Data/AI Pipeline) & Tối ưu Báo cáo TLCN | Hung & Duy | [`BaoCao_TieuLuan_ChuyenNganh_KTDL.md`](../../docs/academic/BaoCao_TieuLuan_ChuyenNganh_KTDL.md), `docs/deliverables/TASK-DOC-01-tlcn-complete-diagrams-and-report-polish.md` | ⏳ Todo |
+| **TASK-AI-01** | Cycle 09 | KLTN (Phase 2) | Serving & Web | Kiến trúc Multi-Provider Free AI Gateway, Quota-Aware Routing & Semantic Cache (KLTN) | Hung & Duy | [`v2`](../../src/acdp/v2), [`rag_service.py`](../../src/acdp/api/services/rag_service.py), `docs/deliverables/TASK-AI-01-multi-provider-free-ai-gateway.md` | ⏳ Todo |
+| **TASK-FE-02** | Cycle 09 | KLTN (Phase 2) | Serving & Web | Nghiên cứu UI/UX Rules, Agent Design Skills, System Color & Xây dựng FE Hoàn chỉnh Chuẩn Production (KLTN) | Hung & Duy | [`web`](../../apps/web), [`0005-frontend-design-system-and-ux-spec.md`](../../docs/specs/0005-frontend-design-system-and-ux-spec.md), `docs/deliverables/TASK-FE-02-kltn-production-design-system-and-fe.md` | ⏳ Todo |
+| **TASK-USR-01** | Cycle 10 | KLTN (Phase 2) | Discovery | Triển khai Thực tế cho Cộng đồng / CLB Sinh viên & Khảo sát Định lượng Người dùng (Form SUS & Đánh giá Sản phẩm) | Hung & Duy | `docs/deliverables/TASK-USR-01-club-community-rollout-and-survey.md` | ⏳ Todo |
+| **TASK-DOC-02** | Cycle 10 | KLTN (Phase 2) | Academic & Ops | Mở rộng Bộ Sơ đồ Kiến trúc Quy mô Production & Tối ưu Toàn diện Báo cáo Luận văn KLTN | Hung & Duy | `docs/academic/KhoaLuan_TotNghiep_KTDL.md`, `docs/deliverables/TASK-DOC-02-kltn-architecture-diagrams-and-thesis-polish.md` | ⏳ Todo |
 
 ---
 

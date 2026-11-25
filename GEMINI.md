@@ -89,6 +89,10 @@ All agents operating in this workspace must strictly abide by the rules and adap
     - Strictly target **IT/AI/Data/Security/Programming competitions for university students** within **current year ± 1** (`2025–2027`).
     - Resolve media-partner/aggregator posts to the **official competition website** and drop competitions lacking an official website at Silver; `.pdf`/`.docx` rules remain optional.
     - Implement Cycle 06 pipeline upgrades under `src/acdp/v2/`.
+24. **TLCN vs KLTN Tiering, Club Survey, Multi-Provider Free AI & Complete Report Diagrams (DIR-023)**:
+    - Validate TLCN via Personas, competitor fields, and GVHD consultation; run real student-club rollout & SUS survey in KLTN (`TASK-USR-01`).
+    - Keep TLCN FE demo-ready and minimal (`TASK-FE-01`); implement full Design System/System Color/WCAG 2.2 AA FE in KLTN (`TASK-FE-02`). Optimize FastAPI/DuckDB/RAG (`TASK-BE-01`) and Multi-Provider Free AI Gateway (`TASK-AI-01`).
+    - Maintain dedicated CI/CD Data Validation Gate separate from `keep-alive.yml`, and require full BA, CNPM/System, BE, FE, and Data/AI Pipeline diagrams in reports (`TASK-DOC-01`, `TASK-DOC-02`).
 
 
 
