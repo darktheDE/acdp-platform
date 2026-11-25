@@ -13,7 +13,7 @@ export function OrganizerRanking({ data }: { data: OrganizerMetricDTO[] }) {
           Hệ sinh thái Ban tổ chức &amp; Nhà tài trợ
         </h2>
         <p className="mt-0.5 text-xs text-[var(--color-text-muted)]">
-          Top 10 đơn vị tổ chức và đối tác đồng hành tích cực từ bridge_competition_organizer
+          Top 10 Ban tổ chức và doanh nghiệp tài trợ đồng hành nhiều cuộc thi nhất
         </p>
       </div>
       <div className="max-h-80 overflow-auto rounded-lg border border-[var(--color-border)]">

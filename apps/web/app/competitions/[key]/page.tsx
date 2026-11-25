@@ -12,6 +12,14 @@ export const metadata: Metadata = {
   title: "Chi tiết Cuộc thi",
 };
 
+function extractHost(urlStr: string): string {
+  try {
+    return new URL(urlStr).hostname;
+  } catch {
+    return "";
+  }
+}
+
 export default async function CompetitionDetailPage({
   params,
 }: {
@@ -30,6 +38,11 @@ export default async function CompetitionDetailPage({
 
   const statusInfo = formatStatusLabel(comp.registration_status);
   const prizeLabel = formatCompetitionPrizeLabel(comp.total_prize_vnd, comp.has_scholarship);
+  const canonicalHost = extractHost(comp.canonical_url);
+  const copilotQuery = new URLSearchParams();
+  if (canonicalHost) copilotQuery.set("domain", canonicalHost);
+  copilotQuery.set("q", `Thể lệ, điều kiện dự thi và giải thưởng của ${comp.name} như thế nào?`);
+  const copilotHref = `/copilot?${copilotQuery.toString()}`;
 
   return (
     <div className="space-y-6">
@@ -48,6 +61,11 @@ export default async function CompetitionDetailPage({
           <span className="rounded-md bg-[var(--color-surface-subtle)] px-2.5 py-1 text-xs font-semibold text-[var(--color-text-primary)]">
             {statusInfo.label}
           </span>
+          {comp.is_free && (
+            <span className="rounded-md bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-[var(--color-status-success)] dark:bg-emerald-950/40">
+              Miễn phí tham gia
+            </span>
+          )}
           <span className="rounded-md bg-[var(--color-surface-subtle)] px-2.5 py-1 font-mono text-xs text-[var(--color-text-muted)]">
             {comp.mode_canonical}
           </span>
@@ -76,11 +94,11 @@ export default async function CompetitionDetailPage({
           </div>
           <div className="flex items-center gap-2 text-[var(--color-text-muted)]">
             <Calendar className="h-4 w-4 shrink-0" aria-hidden="true" />
-            <span className="font-mono">Hạn ĐK: {comp.registration_deadline_raw || "Chưa rõ"}</span>
+            <span className="font-mono">Hạn ĐK: {comp.registration_deadline_raw || "Chưa công bố"}</span>
           </div>
           <div className="flex items-center gap-2 text-[var(--color-text-muted)]">
             <Users className="h-4 w-4 shrink-0" aria-hidden="true" />
-            <span>{comp.team_profile || "Chưa rõ đội"}</span>
+            <span>{comp.team_profile || "Chưa rõ quy mô đội"}</span>
           </div>
           <div className="flex items-center gap-2 text-[var(--color-text-muted)]">
             <MapPin className="h-4 w-4 shrink-0" aria-hidden="true" />
@@ -99,24 +117,35 @@ export default async function CompetitionDetailPage({
             <ExternalLink className="h-4 w-4" aria-hidden="true" />
           </a>
           <Link
-            href="/copilot"
+            href={copilotHref}
             className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-[var(--color-border)] px-4 py-2 text-sm font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-surface-subtle)]"
           >
             <Bot className="h-4 w-4" aria-hidden="true" />
-            <span>Hỏi RAG Copilot về thể lệ</span>
+            <span>Hỏi trợ lý về thể lệ cuộc thi này</span>
           </Link>
         </div>
       </section>
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
+          {comp.challenge_overview && (
+            <section className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+              <h2 className="text-base font-semibold text-[var(--color-text-primary)]">
+                Nội dung &amp; Đề bài Thử thách
+              </h2>
+              <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-[var(--color-text-muted)]">
+                {comp.challenge_overview}
+              </p>
+            </section>
+          )}
+
           <section className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
             <h2 className="text-base font-semibold text-[var(--color-text-primary)]">
               Cơ cấu Giải thưởng ({comp.prizes.length})
             </h2>
             {comp.prizes.length === 0 ? (
               <p className="mt-2 text-sm text-[var(--color-text-muted)]">
-                Chưa có bảng cơ cấu chi tiết từ nguồn thu thập; xem thêm trên trang chính thức.
+                Thông tin cơ cấu giải chi tiết đang được cập nhật trên trang chính thức BTC.
               </p>
             ) : (
               <div className="mt-3 overflow-x-auto">
@@ -151,7 +180,7 @@ export default async function CompetitionDetailPage({
             </h2>
             {comp.timeline_stages.length === 0 ? (
               <p className="mt-2 text-sm text-[var(--color-text-muted)]">
-                Chưa có danh sách vòng thi chi tiết.
+                Lịch trình chi tiết các vòng thi xem thêm trên trang chính thức BTC.
               </p>
             ) : (
               <ol className="mt-4 space-y-4 border-l-2 border-[var(--color-border)] pl-4">
@@ -175,14 +204,22 @@ export default async function CompetitionDetailPage({
 
         <aside className="space-y-4">
           <BookmarkButton competitionKey={comp.competition_key} />
-          <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4 text-xs space-y-2">
-            <h2 className="text-sm font-semibold text-[var(--color-text-primary)]">Đơn vị tổ chức &amp; Tài trợ</h2>
+          <div className="space-y-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4 text-xs">
+            <h2 className="text-sm font-semibold text-[var(--color-text-primary)]">Thông tin Dự thi &amp; BTC</h2>
+            {comp.target_audience && (
+              <p className="text-[var(--color-text-muted)]">
+                <strong>Đối tượng:</strong> {comp.target_audience}
+              </p>
+            )}
             <p className="text-[var(--color-text-muted)]">
-              <strong>BTC:</strong> {comp.organizers.join(", ") || "Chưa rõ"}
+              <strong>Lệ phí:</strong> {comp.is_free ? "Miễn phí" : "Theo thể lệ BTC"}
+            </p>
+            <p className="text-[var(--color-text-muted)]">
+              <strong>BTC:</strong> {comp.organizers.join(", ") || "Chưa công bố"}
             </p>
             {comp.partners_and_sponsors.length > 0 && (
               <p className="text-[var(--color-text-muted)]">
-                <strong>Đối tác:</strong> {comp.partners_and_sponsors.join(", ")}
+                <strong>Đối tác &amp; Tài trợ:</strong> {comp.partners_and_sponsors.join(", ")}
               </p>
             )}
             {comp.submission_platform && (

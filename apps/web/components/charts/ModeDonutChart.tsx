@@ -32,7 +32,7 @@ export function ModeDonutChart({ data }: { data: ModeTeamMetricDTO[] }) {
   return (
     <ChartCard
       title="Hình thức Tổ chức & Quy mô Đội"
-      subtitle="Phân bố Online / Offline / Hybrid kết hợp hồ sơ số lượng thành viên"
+      subtitle="Tỷ lệ thi Trực tuyến, Trực tiếp, Kết hợp và quy mô đội thi"
       ariaLabel="Biểu đồ tròn phân bố hình thức tổ chức cuộc thi"
       tableContent={
         <table className="w-full text-left text-xs">

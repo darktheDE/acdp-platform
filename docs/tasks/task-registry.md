@@ -2,8 +2,8 @@
 
 This ledger is auto-generated from [`tasks-data.json`](./tasks-data.json) and synchronized with the interactive portal [`index.html`](./index.html) per **DIR-018**.
 
-- **Total tasks**: `85` (`44` completed)
-- **Scope distribution**: `68` TLCN (Phase 1) | `22` KLTN (Phase 2)
+- **Total tasks**: `86` (`45` completed)
+- **Scope distribution**: `69` TLCN (Phase 1) | `22` KLTN (Phase 2)
 - **Last updated**: `2026-11-25`
 
 ---
@@ -97,6 +97,7 @@ This ledger is auto-generated from [`tasks-data.json`](./tasks-data.json) and sy
 | **TASK-FE-02** | Cycle 09 | KLTN (Phase 2) | Serving & Web | Nghiên cứu UI/UX Rules, Agent Design Skills, System Color & Xây dựng FE Hoàn chỉnh Chuẩn Production (KLTN) | Hung & Duy | [`web`](../../apps/web), [`0005-frontend-design-system-and-ux-spec.md`](../../docs/specs/0005-frontend-design-system-and-ux-spec.md), `docs/deliverables/TASK-FE-02-kltn-production-design-system-and-fe.md` | ⏳ Todo |
 | **TASK-USR-01** | Cycle 10 | KLTN (Phase 2) | Discovery | Triển khai Thực tế cho Cộng đồng / CLB Sinh viên & Khảo sát Định lượng Người dùng (Form SUS & Đánh giá Sản phẩm) | Hung & Duy | `docs/deliverables/TASK-USR-01-club-community-rollout-and-survey.md` | ⏳ Todo |
 | **TASK-DOC-02** | Cycle 10 | KLTN (Phase 2) | Academic & Ops | Mở rộng Bộ Sơ đồ Kiến trúc Quy mô Production & Tối ưu Toàn diện Báo cáo Luận văn KLTN | Hung & Duy | `docs/academic/KhoaLuan_TotNghiep_KTDL.md`, `docs/deliverables/TASK-DOC-02-kltn-architecture-diagrams-and-thesis-polish.md` | ⏳ Todo |
+| **TASK-HF-01** | Cycle 08 | TLCN (Phase 1) | Serving & Web | Hotfix: Dọn sạch thuật ngữ kỹ thuật nội bộ trên FE, Nâng cấp UX theo Use-Case & Đồng bộ Root Docs | Hung | [`web`](../../apps/web), [`README.md`](../../README.md), [`openapi.json`](../../openapi.json), [`test_frontend_ux_and_root_sync.py`](../../tests/test_frontend_ux_and_root_sync.py), [`TASK-HF-01-fe-ux-cleanup-and-root-sync.md`](../../docs/deliverables/TASK-HF-01-fe-ux-cleanup-and-root-sync.md), [`TASK-HF-01-fe-ux-cleanup-and-root-sync-visual-dossier.html`](../../docs/deliverables/TASK-HF-01-fe-ux-cleanup-and-root-sync-visual-dossier.html) | ✅ Done |
 
 ---
 

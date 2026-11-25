@@ -1492,6 +1492,37 @@
       ],
       "notes": "Kế thừa TASK-DOC-01 cho KLTN; đầu vào bắt buộc cho TASK-KLT-01.",
       "updated_at": "2026-11-25"
+    },
+    {
+      "id": "TASK-HF-01",
+      "title": "Hotfix: Dọn sạch thuật ngữ kỹ thuật nội bộ trên FE, Nâng cấp UX theo Use-Case & Đồng bộ Root Docs",
+      "cycle": "Cycle 08",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Serving & Web",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung",
+      "status": "done",
+      "priority": "high",
+      "problem_statement": "Vấn đề: Giao diện người dùng cuối trên apps/web/ để lộ tên bảng DB, tên công nghệ nội bộ (Medallion Lakehouse, DuckDB Star Schema, PostgreSQL 18, saved_competitions, mart_competition_explorer, Qdrant Filter, OWASP LLM10:2025, DIR-004, Gate G5/G6, số 17 hardcode) và thiếu các luồng UX thực tế cho sinh viên (tìm kiếm tức thì ở trang chủ, lọc status/sort, challenge_overview, deep-link hỏi thể lệ theo cuộc thi). Đồng thời README.md, openapi.json, .env.example/.env.dev và docker-compose.yml ở root bị lệch so với codebase v2 và RBAC Admin. Giải pháp: xóa sạch thông tin nội bộ khỏi UI người dùng, nâng cấp UX theo best practice cổng cuộc thi (Devpost/Unstop/Kaggle), đồng bộ toàn bộ root files và bổ sung test tự động + deliverable + HTML dossier.",
+      "research_questions": [
+        "Những nội dung nội bộ nào đang rò rỉ trên FE người dùng cuối và luồng use-case nào giúp sinh viên tìm cuộc thi và tra cứu thể lệ nhanh nhất?"
+      ],
+      "acceptance_criteria": [
+        "Xóa sạch tên công nghệ/DB/chỉ thị nội bộ trên toàn bộ 20 tệp public UI trong apps/web/ và sửa nút Swagger trên /admin.",
+        "Nâng cấp UX: thanh tìm kiếm + chip lọc nhanh + cuộc thi nổi bật trên trang chủ, bộ lọc status/sort + active chips ở /competitions, hiển thị target_audience/challenge_overview + deep-link /copilot?domain= trên chi tiết cuộc thi, scope động trên /copilot.",
+        "Đồng bộ README.md, openapi.json, .env.example, .env.dev, docker-compose.yml và bổ sung test tự động tests/test_frontend_ux_and_root_sync.py."
+      ],
+      "deliverables": [
+        "apps/web",
+        "README.md",
+        "openapi.json",
+        "tests/test_frontend_ux_and_root_sync.py",
+        "docs/deliverables/TASK-HF-01-fe-ux-cleanup-and-root-sync.md",
+        "docs/deliverables/TASK-HF-01-fe-ux-cleanup-and-root-sync-visual-dossier.html"
+      ],
+      "notes": "Hotfix Cycle 08 thực hiện trước TASK-FE-01 và TASK-TST-01; tất cả kiểm thử pytest, tsc, next build và audit_doc_drift đều pass.",
+      "updated_at": "2026-11-25"
     }
   ]
 }

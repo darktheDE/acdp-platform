@@ -23,11 +23,11 @@ export function DomainBarChart({ data }: { data: DomainMetricDTO[] }) {
   return (
     <ChartCard
       title="Phân bổ Cuộc thi & Quỹ Giải thưởng theo Ngành"
-      subtitle="Áp dụng allocation_weight chống cộng trùng; nhấp vào cột để lọc cuộc thi"
-      ariaLabel="Biểu đồ phân bổ cuộc thi và quỹ giải thưởng theo 5 nhóm ngành"
+      subtitle="Phân bổ theo nhóm ngành công nghệ; nhấp vào cột để xem danh sách cuộc thi"
+      ariaLabel="Biểu đồ phân bổ cuộc thi và quỹ giải thưởng theo nhóm ngành"
       tableContent={
         <table className="w-full text-left text-xs">
-          <caption className="visually-hidden">Số liệu phân bổ cuộc thi theo 5 nhóm ngành</caption>
+          <caption className="visually-hidden">Số liệu phân bổ cuộc thi theo nhóm ngành</caption>
           <thead className="bg-[var(--color-surface-subtle)] text-[var(--color-text-primary)]">
             <tr>
               <th scope="col" className="px-3 py-2">Nhóm ngành</th>

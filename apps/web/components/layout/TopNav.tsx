@@ -9,9 +9,9 @@ import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { useAuth } from "@/lib/auth-context";
 
 const BASE_NAV_ITEMS = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/dashboard", label: "Thống kê", icon: LayoutDashboard },
   { href: "/competitions", label: "Khám phá", icon: Compass },
-  { href: "/copilot", label: "RAG Copilot", icon: Bot },
+  { href: "/copilot", label: "Trợ lý Thể lệ", icon: Bot },
   { href: "/bookmarks", label: "Đã lưu", icon: Bookmark },
 ];
 
