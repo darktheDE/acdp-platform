@@ -46,6 +46,7 @@ This document maintains the immediate context, active tasks, and session state f
 - [ ] **TASK-0502** *(Duy)*: Run formal Ragas evaluation over `src/acdp/3_ingest_to_qdrant.py` (faithfulness, answer relevancy, context precision) and document results in `docs/experiments/0001-rag-baseline-evaluation.md`.
 
 ### Completed (Web Sprint 02 - Serving API, PostgreSQL 18 & Next.js 16 Portal)
+- [x] **TASK-HF-01 (Hotfix)**: Removed internal tech-stack/DB/directive copy from `apps/web/`, upgraded student discovery UX (instant search hero, status/sort filters, active chips, challenge brief, contextual `/copilot` deep-link), synced `README.md` / `openapi.json` / `.env.*` / `docker-compose.yml`, and added `tests/test_frontend_ux_and_root_sync.py` $\rightarrow$ [`TASK-HF-01-fe-ux-cleanup-and-root-sync.md`](../deliverables/TASK-HF-01-fe-ux-cleanup-and-root-sync.md).
 - [x] **TASK-0601 (`NT-029`)**: Implemented & hardened Docker infrastructure pinning (`SPEC-0006`, `postgres:18.7-alpine3.23`, `qdrant:v1.13.4`, `985 MB` slim `acdp-platform-api` image, `235.38 MiB` core RAM, Metabase BI `:3001` verified), FastAPI + PostgreSQL 18 OLTP + DuckDB RO + OpenAPI 3.1 gateway (`src/acdp/api/`, `tests/api/`), Gold expired `"open"` normalization (`2/18` open), and Next.js 16 + Tailwind v4 + Recharts portal (`apps/web/`, `23/23` UI component checks, `32/32` pytest passed, `ruff` 0 errors).
 
 ### Completed

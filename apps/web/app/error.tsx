@@ -19,7 +19,7 @@ export default function GlobalError({
         Không thể kết nối máy chủ dữ liệu
       </h1>
       <p className="mt-2 text-sm text-[var(--color-text-muted)]">
-        {error.message || "FastAPI Gateway đang tạm gián đoạn hoặc chưa sẵn sàng."}
+        {error.message || "Hệ thống dữ liệu đang tạm bận hoặc bảo trì. Vui lòng thử lại sau ít phút."}
       </p>
       <button
         type="button"

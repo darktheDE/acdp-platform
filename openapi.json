@@ -603,7 +603,7 @@
           "RAG Copilot"
         ],
         "summary": "Rag Chat",
-        "description": "Query competition rules via Qdrant + LLM with grounded URL citations.",
+        "description": "Query competition rules via Qdrant + LLM with grounded URL citations (Auth-Only + AI Rate Limited).",
         "operationId": "rag_chat_api_v1_rag_chat_post",
         "requestBody": {
           "content": {
@@ -769,10 +769,476 @@
           }
         }
       }
+    },
+    "/api/v1/admin/telemetry": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Get Admin Telemetry",
+        "description": "Return user counts, rate-limit telemetry, and DuckDB Gold / RAG TTL cache statistics.",
+        "operationId": "get_admin_telemetry_api_v1_admin_telemetry_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminTelemetryDTO"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/users": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "List Admin Users",
+        "description": "List registered accounts with optional keyword, role, and active status filters.",
+        "operationId": "list_admin_users_api_v1_admin_users_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 120
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            }
+          },
+          {
+            "name": "role",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Role"
+            }
+          },
+          {
+            "name": "is_active",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Is Active"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminUserDTO"
+                  },
+                  "title": "Response List Admin Users Api V1 Admin Users Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/users/{user_id}": {
+      "patch": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Update Admin User",
+        "description": "Update a user's RBAC role or active status; revokes all sessions when deactivated.",
+        "operationId": "update_admin_user_api_v1_admin_users__user_id__patch",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "User Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminUserUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminUserDTO"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/cache/refresh": {
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Refresh Admin Caches",
+        "description": "Refresh DuckDB R2 Gold Parquet entities, invalidate RAG cache, or reset rate limiter.",
+        "operationId": "refresh_admin_caches_api_v1_admin_cache_refresh_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/AdminCacheRefreshRequest"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Payload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCacheRefreshDTO"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
     }
   },
   "components": {
     "schemas": {
+      "AdminCacheRefreshDTO": {
+        "properties": {
+          "target": {
+            "type": "string",
+            "enum": [
+              "all",
+              "duckdb_r2",
+              "rag",
+              "rate_limit"
+            ],
+            "title": "Target"
+          },
+          "duckdb_r2": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duckdb R2"
+          },
+          "gold_mart_cache": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Gold Mart Cache"
+          },
+          "rag_cache": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Rag Cache"
+          },
+          "rate_limit_reset": {
+            "type": "boolean",
+            "title": "Rate Limit Reset",
+            "default": false
+          },
+          "refreshed_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Refreshed At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "target",
+          "gold_mart_cache",
+          "rag_cache",
+          "refreshed_at"
+        ],
+        "title": "AdminCacheRefreshDTO"
+      },
+      "AdminCacheRefreshRequest": {
+        "properties": {
+          "target": {
+            "type": "string",
+            "enum": [
+              "all",
+              "duckdb_r2",
+              "rag",
+              "rate_limit"
+            ],
+            "title": "Target",
+            "default": "all"
+          }
+        },
+        "type": "object",
+        "title": "AdminCacheRefreshRequest"
+      },
+      "AdminTelemetryDTO": {
+        "properties": {
+          "users_summary": {
+            "$ref": "#/components/schemas/AdminUsersSummaryDTO"
+          },
+          "rate_limit": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Rate Limit"
+          },
+          "gold_mart_cache": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Gold Mart Cache"
+          },
+          "rag_cache": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Rag Cache"
+          }
+        },
+        "type": "object",
+        "required": [
+          "users_summary",
+          "rate_limit",
+          "gold_mart_cache",
+          "rag_cache"
+        ],
+        "title": "AdminTelemetryDTO"
+      },
+      "AdminUserDTO": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "email": {
+            "type": "string",
+            "title": "Email"
+          },
+          "full_name": {
+            "type": "string",
+            "title": "Full Name"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "student",
+              "lecturer",
+              "admin"
+            ],
+            "title": "Role"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active"
+          },
+          "student_or_staff_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Student Or Staff Id"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "email",
+          "full_name",
+          "role",
+          "is_active",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "AdminUserDTO"
+      },
+      "AdminUserUpdateRequest": {
+        "properties": {
+          "role": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "student",
+                  "lecturer",
+                  "admin"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Role"
+          },
+          "is_active": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Active"
+          }
+        },
+        "type": "object",
+        "title": "AdminUserUpdateRequest"
+      },
+      "AdminUsersSummaryDTO": {
+        "properties": {
+          "total_users": {
+            "type": "integer",
+            "title": "Total Users"
+          },
+          "active_users": {
+            "type": "integer",
+            "title": "Active Users"
+          },
+          "blocked_users": {
+            "type": "integer",
+            "title": "Blocked Users"
+          },
+          "admin_count": {
+            "type": "integer",
+            "title": "Admin Count"
+          },
+          "lecturer_count": {
+            "type": "integer",
+            "title": "Lecturer Count"
+          },
+          "student_count": {
+            "type": "integer",
+            "title": "Student Count"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total_users",
+          "active_users",
+          "blocked_users",
+          "admin_count",
+          "lecturer_count",
+          "student_count"
+        ],
+        "title": "AdminUsersSummaryDTO"
+      },
       "AnalyticsDashboardDTO": {
         "properties": {
           "kpi": {

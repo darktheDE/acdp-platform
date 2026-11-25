@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     template: "%s | ACDP HCM-UTE",
   },
   description:
-    "Khám phá cuộc thi học thuật, phân tích dữ liệu Gold Star Schema và tra cứu thể lệ qua RAG Copilot dành cho sinh viên FIT-HCM-UTE.",
+    "Khám phá cuộc thi học thuật & công nghệ, theo dõi xu hướng giải thưởng theo học kỳ và tra cứu thể lệ kèm nguồn xác thực dành cho sinh viên FIT — HCM-UTE.",
   icons: {
     icon: "/favicon.svg",
   },

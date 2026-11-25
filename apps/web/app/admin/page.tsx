@@ -165,9 +165,31 @@ export default function AdminPage() {
     }
   };
 
-  const handleOpenSwaggerDocs = () => {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-    window.open(`${baseUrl}/docs`, "_blank", "noopener,noreferrer");
+  const handleOpenSwaggerDocs = async () => {
+    if (!accessToken) return;
+    setBusyAction("swagger");
+    setErrorMsg(null);
+    try {
+      const baseUrl =
+        process.env.NEXT_PUBLIC_USE_REWRITE_PROXY === "true"
+          ? ""
+          : (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000").replace(/\/+$/, "");
+      const res = await fetch(`${baseUrl}/api/v1/admin/docs`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+        credentials: "include",
+      });
+      if (!res.ok) {
+        throw new ApiError(res.status, `Không thể mở Swagger UI (${res.status})`);
+      }
+      const html = await res.text();
+      const blob = new Blob([html], { type: "text/html" });
+      const blobUrl = URL.createObjectURL(blob);
+      window.open(blobUrl, "_blank", "noopener,noreferrer");
+    } catch (err) {
+      setErrorMsg(err instanceof ApiError ? err.detail : "Không thể mở Admin Swagger UI.");
+    } finally {
+      setBusyAction(null);
+    }
   };
 
   if (authLoading || loading) {
@@ -182,7 +204,7 @@ export default function AdminPage() {
           Trung tâm Quản trị ACDP
         </h1>
         <p className="mt-2 text-sm text-[var(--color-text-muted)]">
-          Vui lòng đăng nhập bằng tài khoản Quản trị viên (ADMIN_EMAILS) để truy cập bảng điều khiển.
+          Vui lòng đăng nhập bằng tài khoản Quản trị viên để truy cập bảng điều khiển.
         </p>
         <Link
           href="/login"
@@ -238,7 +260,7 @@ export default function AdminPage() {
         <div>
           <div className="inline-flex items-center gap-2 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1 text-xs font-semibold text-[var(--color-brand-primary)]">
             <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
-            <span>RBAC Admin Control Center · Gate G5/G6</span>
+            <span>RBAC Admin Control Center</span>
           </div>
           <h1 className="mt-2 text-2xl font-bold tracking-tight text-[var(--color-text-primary)] sm:text-3xl">
             Quản trị Hệ thống & Kill-Switch

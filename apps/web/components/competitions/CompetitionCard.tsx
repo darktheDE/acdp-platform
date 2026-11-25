@@ -24,16 +24,23 @@ export function CompetitionCard({ item }: { item: CompetitionSummaryDTO }) {
     >
       <div>
         <div className="flex items-center justify-between gap-2">
-          <span className={`inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-medium ${statusClasses}`}>
-            {statusInfo.tone === "open" ? (
-              <CheckCircle2 className="h-3.5 w-3.5" aria-hidden="true" />
-            ) : statusInfo.tone === "upcoming" ? (
-              <Clock className="h-3.5 w-3.5" aria-hidden="true" />
-            ) : (
-              <XCircle className="h-3.5 w-3.5" aria-hidden="true" />
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className={`inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-medium ${statusClasses}`}>
+              {statusInfo.tone === "open" ? (
+                <CheckCircle2 className="h-3.5 w-3.5" aria-hidden="true" />
+              ) : statusInfo.tone === "upcoming" ? (
+                <Clock className="h-3.5 w-3.5" aria-hidden="true" />
+              ) : (
+                <XCircle className="h-3.5 w-3.5" aria-hidden="true" />
+              )}
+              <span>{statusInfo.label}</span>
+            </span>
+            {item.is_free && (
+              <span className="rounded-md bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-[var(--color-status-success)] dark:bg-emerald-950/40">
+                Miễn phí
+              </span>
             )}
-            <span>{statusInfo.label}</span>
-          </span>
+          </div>
           <span className="rounded-md bg-[var(--color-surface-subtle)] px-2 py-0.5 font-mono text-xs text-[var(--color-text-muted)]">
             {item.mode_canonical}
           </span>

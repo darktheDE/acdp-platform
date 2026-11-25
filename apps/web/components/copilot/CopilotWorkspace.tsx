@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AlertTriangle, Bot, ExternalLink, Lock, MessageSquarePlus, Send, Trash2 } from "lucide-react";
 import {
   apiFetch,
@@ -13,6 +13,11 @@ import {
 } from "@/lib/api-client";
 import { useAuth } from "@/lib/auth-context";
 
+export interface CompetitionScopeOption {
+  value: string;
+  label: string;
+}
+
 interface UiMessage {
   id: string;
   role: "user" | "assistant";
@@ -22,26 +27,35 @@ interface UiMessage {
   latencyMs?: number | null;
 }
 
-const DOMAIN_SCOPES = [
-  { value: "", label: "Tất cả 17 nguồn cuộc thi" },
-  { value: "challenge.zalo.ai", label: "Zalo AI Challenge" },
-  { value: "codetour.org", label: "VNG Code Tour" },
-  { value: "itconsultantchallenge.org", label: "IT Consultant Challenge" },
-  { value: "rmit-hackathon.com", label: "RMIT Hackathon" },
-  { value: "dataforlife.vn", label: "Data for Life" },
-  { value: "thucchien.ai", label: "A.I Thực Chiến" },
-  { value: "vietnamdatathon.com", label: "Vietnam Datathon" },
+const SAMPLE_PROMPTS = [
+  "Cuộc thi nào đang mở cho sinh viên năm 1–2 và miễn phí tham gia?",
+  "Zalo AI Challenge có cơ cấu giải thưởng và hạn nộp bài ra sao?",
+  "IT Consultant Challenge yêu cầu quy mô đội thi mấy người?",
+  "Những cuộc thi AI / Data nào cho phép ghép nhóm liên trường?",
 ];
 
-export function CopilotWorkspace() {
+export function CopilotWorkspace({
+  competitionScopes = [],
+  initialDomain = "",
+  initialQuestion = "",
+}: {
+  competitionScopes?: CompetitionScopeOption[];
+  initialDomain?: string;
+  initialQuestion?: string;
+}) {
   const { accessToken, user, loading: authLoading } = useAuth();
   const [sessions, setSessions] = useState<ChatSessionDTO[]>([]);
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
   const [messages, setMessages] = useState<UiMessage[]>([]);
-  const [domainFilter, setDomainFilter] = useState("");
-  const [input, setInput] = useState("");
+  const [domainFilter, setDomainFilter] = useState(initialDomain);
+  const [input, setInput] = useState(initialQuestion);
   const [sending, setSending] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, sending]);
 
   useEffect(() => {
     if (!accessToken) {
@@ -147,13 +161,13 @@ export function CopilotWorkspace() {
       ]);
     } catch (err) {
       if (err instanceof ApiError && err.status === 429) {
-        setErrorMsg(`Đã chạm giới hạn truy vấn AI (429): ${err.detail}`);
+        setErrorMsg(`Bạn đang hỏi quá nhanh, vui lòng chờ giây lát rồi thử lại (${err.detail}).`);
       } else if (err instanceof ApiError && err.status === 401) {
-        setErrorMsg("Phiên đăng nhập đã hết hạn hoặc tài khoản bị tạm khóa. Vui lòng đăng nhập lại.");
+        setErrorMsg("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
       } else if (err instanceof ApiError && err.status === 503) {
-        setErrorMsg(err.detail);
+        setErrorMsg("Trợ lý AI đang tạm bận, vui lòng thử lại sau ít phút.");
       } else {
-        setErrorMsg("Lỗi kết nối RAG Copilot. Vui lòng thử lại.");
+        setErrorMsg("Lỗi kết nối trợ lý thể lệ. Vui lòng thử lại.");
       }
     } finally {
       setSending(false);
@@ -171,10 +185,10 @@ export function CopilotWorkspace() {
           <Lock className="h-6 w-6" aria-hidden="true" />
         </div>
         <h2 className="mt-3 text-xl font-bold text-[var(--color-text-primary)]">
-          Đăng nhập để sử dụng RAG Copilot
+          Đăng nhập để hỏi đáp Trợ lý Thể lệ
         </h2>
         <p className="mt-2 text-sm text-[var(--color-text-muted)]">
-          Để bảo vệ hạn mức AI (5 lượt/phút, 30 lượt/ngày theo chuẩn OWASP LLM10:2025) và lưu lịch sử hội thoại vào PostgreSQL 18, tính năng này yêu cầu xác thực tài khoản.
+          Đăng nhập tài khoản sinh viên để đặt câu hỏi trực tiếp về thể lệ cuộc thi, lưu lịch sử tra cứu cá nhân và sử dụng hạn mức AI miễn phí hằng ngày.
         </p>
         <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
           <Link
@@ -208,7 +222,7 @@ export function CopilotWorkspace() {
 
         <div className="mt-4">
           <label htmlFor="rag-domain-scope" className="block text-xs font-semibold text-[var(--color-text-primary)]">
-            Phạm vi cuộc thi (Qdrant Filter)
+            Chọn cuộc thi cần hỏi
           </label>
           <select
             id="rag-domain-scope"
@@ -216,8 +230,9 @@ export function CopilotWorkspace() {
             onChange={(e) => setDomainFilter(e.target.value)}
             className="mt-1.5 min-h-10 w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-canvas)] px-2.5 text-xs text-[var(--color-text-primary)]"
           >
-            {DOMAIN_SCOPES.map((s) => (
-              <option key={s.value || "all"} value={s.value}>
+            <option value="">Tất cả cuộc thi trong hệ thống</option>
+            {competitionScopes.map((s) => (
+              <option key={s.value} value={s.value}>
                 {s.label}
               </option>
             ))}
@@ -226,13 +241,9 @@ export function CopilotWorkspace() {
 
         <div className="mt-5">
           <h2 className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">
-            Lịch sử đã lưu ({sessions.length})
+            Lịch sử hỏi đáp ({sessions.length})
           </h2>
-          {!user ? (
-            <p className="mt-2 text-xs text-[var(--color-text-muted)]">
-              Đăng nhập để lưu lịch sử trò chuyện vào PostgreSQL 18.
-            </p>
-          ) : sessions.length === 0 ? (
+          {sessions.length === 0 ? (
             <p className="mt-2 text-xs text-[var(--color-text-muted)]">Chưa có phiên nào.</p>
           ) : (
             <ul className="mt-2 space-y-1.5">
@@ -270,21 +281,18 @@ export function CopilotWorkspace() {
             <div className="rounded-xl border border-dashed border-[var(--color-border)] bg-[var(--color-canvas)] p-6 text-center">
               <Bot className="mx-auto h-9 w-9 text-[var(--color-brand-primary)]" aria-hidden="true" />
               <h2 className="mt-2 text-base font-semibold text-[var(--color-text-primary)]">
-                Trợ lý Hỏi đáp Thể lệ ACDP (Grounded RAG)
+                Trợ lý Tra cứu Thể lệ Cuộc thi
               </h2>
-              <p className="mt-1 text-xs text-[var(--color-text-muted)]">
-                Chỉ trả lời dựa trên nguồn Markdown đã thu thập từ 17 cuộc thi, kèm URL kiểm chứng (DIR-004).
+              <p className="mx-auto mt-1 max-w-xl text-xs leading-relaxed text-[var(--color-text-muted)]">
+                Câu trả lời được đối chiếu trực tiếp từ thể lệ chính thức của Ban tổ chức và luôn đính kèm đường dẫn gốc để bạn kiểm tra lại.
               </p>
               <div className="mt-4 flex flex-wrap justify-center gap-2">
-                {[
-                  "Zalo AI Challenge có giải thưởng gì và hạn nộp ra sao?",
-                  "IT Consultant Challenge yêu cầu nhóm mấy người?",
-                ].map((sample) => (
+                {SAMPLE_PROMPTS.map((sample) => (
                   <button
                     key={sample}
                     type="button"
                     onClick={() => setInput(sample)}
-                    className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1.5 text-xs text-[var(--color-text-primary)] hover:bg-[var(--color-surface-subtle)]"
+                    className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1.5 text-left text-xs text-[var(--color-text-primary)] hover:bg-[var(--color-surface-subtle)]"
                   >
                     {sample}
                   </button>
@@ -308,7 +316,7 @@ export function CopilotWorkspace() {
                   className="mb-3 flex items-center gap-2 rounded-lg border border-[var(--color-status-warning)]/40 bg-amber-50 px-3 py-2 text-xs font-medium text-[var(--color-status-warning)] dark:bg-amber-950/30"
                 >
                   <AlertTriangle className="h-4 w-4 shrink-0" aria-hidden="true" />
-                  <span>Chưa tìm thấy điều khoản xác thực trong dữ liệu thu thập (DIR-004).</span>
+                  <span>Chưa tìm thấy thông tin xác thực trong dữ liệu thể lệ hiện có. Bạn vui lòng xem thêm trên trang chính thức BTC.</span>
                 </div>
               )}
 
@@ -317,7 +325,7 @@ export function CopilotWorkspace() {
               {m.role === "assistant" && m.citations.length > 0 && (
                 <div className="mt-3 border-t border-[var(--color-border)] pt-2.5">
                   <p className="mb-1.5 font-mono text-[11px] font-semibold uppercase text-[var(--color-text-muted)]">
-                    Nguồn trích dẫn ({m.citations.length}) {m.latencyMs ? `· ${m.latencyMs} ms` : ""}
+                    Nguồn tham chiếu ({m.citations.length}) {m.latencyMs ? `· ${m.latencyMs} ms` : ""}
                   </p>
                   <div className="flex flex-wrap gap-2">
                     {m.citations.map((c) => (
@@ -337,6 +345,17 @@ export function CopilotWorkspace() {
               )}
             </div>
           ))}
+
+          {sending && (
+            <div
+              role="status"
+              aria-live="polite"
+              className="max-w-md rounded-xl border border-[var(--color-border)] bg-[var(--color-canvas)] p-4 text-xs text-[var(--color-text-muted)]"
+            >
+              Đang đối chiếu thể lệ và trích xuất nguồn xác thực...
+            </div>
+          )}
+          <div ref={messagesEndRef} />
         </div>
 
         {errorMsg && (

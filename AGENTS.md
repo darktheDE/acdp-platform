@@ -122,6 +122,10 @@ All agents operating in this repository must strictly adhere to the continuous d
    - Scope is strictly **IT/AI/Data/Security/Programming competitions for university students** within **current year ± 1** (`2025–2027`).
    - Resolve aggregator/media-partner posts (`ybox.vn`, university news) to the **official competition website** and drop competitions without an official website at Silver. `.pdf`/`.docx` rule files are optional enhancements (common only in large/government contests).
    - Implement Cycle 06 pipeline upgrades under `src/acdp/v2/` to keep legacy `src/acdp/` intact.
+16. 🧭 **TLCN vs KLTN Tiering, Club Survey, Multi-Provider Free AI & Complete Report Diagrams (DIR-023)**:
+   - Validate TLCN schema via Personas, competitor benchmarking, and advisor review; defer live community/student club surveys (SUS) to KLTN (`TASK-USR-01`) once production-ready.
+   - Keep TLCN FE clean and demo-focused (`TASK-FE-01`), reserving full UI/UX Design System tokens and Mobile-First polish for KLTN (`TASK-FE-02`); optimize FastAPI/DuckDB/RAG (`TASK-BE-01`) and build a quota-aware Multi-Provider Free AI Gateway (`TASK-AI-01`) for KLTN.
+   - Enforce CI/CD Data Validation separately from `keep-alive.yml`, and include full BA, CNPM/System (C4/UML), BE (OLTP ERD), FE, and Data/AI Pipeline diagrams in academic reports (`TASK-DOC-01`, `TASK-DOC-02`).
 
 
 
