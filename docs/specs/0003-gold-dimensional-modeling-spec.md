@@ -246,12 +246,12 @@ Với mỗi cuộc thi `c`:
 1. Ánh xạ mọi nhãn trong `c.category` sang `domain_sk` thuộc 5 nhóm chuẩn (hoặc `-1` nếu rỗng). Khử trùng tập `domain_sk` của riêng cuộc thi `c` thành tập $D_c$ (loại trừ trường hợp một cuộc thi có cả `"AI"` lẫn `"Machine Learning"` bị tính 2 lần cho cùng nhóm `AI & Data Science`).
 2. Gán `allocation_weight = 1.0 / len(D_c)` cho từng cặp `(c.competition_sk, d)` với $d \in D_c$. Tổng $\sum_{d \in D_c} \text{allocation\_weight} = 1.0$, bảo đảm tổng tiền giải thưởng theo từng nhóm ngành cộng lại luôn khớp tuyệt đối với tổng toàn hệ thống.
 
-### 3.5. Ghi Dữ liệu Nguyên tử (Atomic DuckDB Swap & Parquet Export)
+### 3.5. Ghi Dữ liệu Nguyên tử Lên Cloudflare R2 & DuckDB `httpfs` (`DIR-021`, `RFC-0001`)
 
-Để tránh lỗi khóa file khi container FastAPI đang mở kết nối `read_only=True` tới `data/lakehouse/acdp.duckdb`:
-1. Pipeline Gold ghi toàn bộ 9 bảng Star Schema và 6 view vào file tạm `data/lakehouse/acdp.duckdb.tmp`.
-2. Sau khi chạy đủ câu lệnh SQL kiểm chứng chất lượng bên trong file `.tmp`, xuất toàn bộ bảng/mart dưới dạng Parquet chuẩn (`data/lakehouse/gold/<name>.parquet`) phục vụ chế độ đọc Parquet không khóa.
-3. Thực hiện thay thế tệp nguyên tử (`os.replace("acdp.duckdb.tmp", "acdp.duckdb")`), giúp dịch vụ API không bao giờ đọc phải trạng thái bảng xây dựng dở dang.
+Tuân thủ kiến trúc R2-Exclusive (`DIR-021`) và `ADR-0002`, pipeline Gold (`src/acdp/v2/gold_star_schema.py`) không ghi tệp `acdp.duckdb` cục bộ mà vận hành theo quy trình sau:
+1. Xây dựng toàn bộ 9 bảng Star Schema (`dim_*`, `fact_*`, `bridge_*`) và 6 Data Marts (`mart_*`) trong phiên DuckDB `:memory:`, chạy các câu lệnh kiểm chứng toàn vẹn khóa ngoại và bất biến `allocation_weight`.
+2. Đóng gói tuần tự **15 tệp Parquet** trong bộ nhớ (`io.BytesIO` / PyArrow) và tải lên tiền tố `s3://{BUCKET_NAME}/gold/` qua `boto3` (`put_object`), đồng thời dọn các tệp `gold_*.parquet` thừa để tránh phình kho.
+3. Tầng Serving FastAPI (`gold_queries.py`) đọc trực tiếp 15 tệp Parquet trên R2 qua DuckDB `httpfs` kết hợp `GoldMartsTTLCache` (`600s` TTL), còn MotherDuck Lite dùng 4 virtual views `gold_*` qua `CREATE SECRET r2_secret IN MOTHERDUCK`.
 
 ---
 
@@ -274,5 +274,5 @@ Sprint 02 chỉ được phép đánh dấu hoàn thành phần Gold Layer khi �
 1. **Khớp số lượng bản ghi nguồn:** Đọc `data/extractions/extractions_2026-11-15_1794720683.json` cho đúng `19` dòng trong `dim_competition` và `fact_competitions` (0 bản ghi trùng lặp).
 2. **Bảo toàn tổng giải thưởng qua Bridge Table:** Truy vấn kiểm thử `pytest` xác nhận `SUM(allocated_prize_vnd)` trong `mart_domain_analytics` bằng chính xác `total_prize_pool_vnd` trong `mart_kpi_overview` (chênh lệch <= 1 VND do làm tròn float).
 3. **Tính toàn vẹn khóa ngoại:** Mọi dòng trong `fact_competitions`, `fact_prize_tiers`, `fact_timeline_stages`, `bridge_competition_domain`, `bridge_competition_organizer` đều tham chiếu hợp lệ đến `dim_*` (bao gồm `date_sk = -1` và `domain_sk = -1`).
-4. **Xuất đủ Gold Parquet:** Toàn bộ 6 `mart_*.parquet` và các bảng `dim_*`/`fact_*`/`bridge_*` được xuất ra `data/lakehouse/gold/` (gitignored) và đọc thành công ở chế độ DuckDB `read_only=True` dưới `50 ms` cho mỗi truy vấn dashboard.
+4. **Xuất đủ Gold Parquet trên R2:** Toàn bộ 9 bảng Core và 6 `mart_*.parquet` (đúng `15` tệp) được xuất lên `s3://{BUCKET_NAME}/gold/` và đọc thành công qua DuckDB `httpfs` dưới `50 ms` cho mỗi truy vấn dashboard (khi warm cache `< 20 ms`).
 5. **Tương thích ngược BI:** Bốn view `gold_category_summary`, `gold_mode_distribution`, `gold_seasonality`, `gold_top_prizes` trả về dữ liệu hợp lệ khi Metabase kết nối trực tiếp.

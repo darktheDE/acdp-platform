@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TASK-QA-01: 3-Axis Technical Decision Audit — ACDP Visual Dossier</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            navy: { 900: '#1E3A8A' },
+            coral: { 600: '#C2410C' }
+          }
+        }
+      }
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    .mermaid svg { max-width: 100%; height: auto; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen antialiased transition-colors duration-200">
+
+  <!-- Header -->
+  <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center space-x-3">
+        <span class="px-2.5 py-1 text-xs font-semibold uppercase tracking-wider rounded-md bg-blue-500/20 text-blue-300 border border-blue-500/30">
+          Task ID: TASK-QA-01 | Cycle 07
+        </span>
+        <h1 class="text-lg font-bold tracking-tight">Audit 3 Trục Quyết định Kỹ thuật (Lý thuyết × Thực tiễn × Scope)</h1>
+      </div>
+      <div class="flex items-center space-x-4 text-xs text-slate-400">
+        <span>Đỗ Kiến Hưng &amp; Nguyễn Văn Quang Duy</span>
+        <span>|</span>
+        <span>FIT — HCM-UTE</span>
+        <button id="themeToggle" onclick="toggleTheme()" class="px-2.5 py-1 rounded-md border border-slate-700 hover:bg-slate-800 text-slate-200 font-medium">
+          Light / Dark
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+    <!-- TIER 1: Executive Summary & KPI Scorecard -->
+    <section aria-label="KPI Summary">
+      <div class="mb-4 bg-slate-900/60 border border-slate-800 rounded-xl p-4">
+        <p class="text-sm text-slate-300 leading-relaxed">
+          Kiểm toán sau triển khai trên toàn bộ <strong class="text-white">8 nhóm quyết định cốt lõi</strong> của ACDP (`ADR-0001/0002`, `SPEC-0001..0006`, mã nguồn `v2/`, `api/`, `apps/web/`, Docker, GitHub Actions). Mọi quyết định đều đạt chuẩn TLCN (`5–10` cuộc thi, `$0/tháng`), phát hiện <strong class="text-amber-400">6 nhóm lệch Spec/Version (`RFC-0001`)</strong> và định nghĩa <strong class="text-sky-400">4 ngưỡng mở rộng KLTN (`RFC-0002`)</strong>.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm">
+          <div class="text-xs font-medium text-slate-400 uppercase tracking-wider">Độ Phủ Stack Audit</div>
+          <div class="mt-2 flex items-baseline gap-2">
+            <span class="text-3xl font-extrabold text-emerald-400">8 / 8</span>
+            <span class="text-xs text-slate-400">100% Core Stack</span>
+          </div>
+          <p class="mt-1 text-xs text-slate-500">R2, Parquet, Crawl4AI, DuckDB, PG, Qdrant, Web, Ops</p>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm">
+          <div class="text-xs font-medium text-slate-400 uppercase tracking-wider">Dẫn Chứng Kép (2 Trục)</div>
+          <div class="mt-2 flex items-baseline gap-2">
+            <span class="text-3xl font-extrabold text-blue-400">100%</span>
+            <span class="text-xs text-slate-400">0 Broken Links</span>
+          </div>
+          <p class="mt-1 text-xs text-slate-500">Mỗi mục có &ge; 1 nguồn Lý thuyết + &ge; 1 nguồn DN/OSS</p>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm">
+          <div class="text-xs font-medium text-slate-400 uppercase tracking-wider">Core Docker RAM &amp; DuckDB</div>
+          <div class="mt-2 flex items-baseline gap-2">
+            <span class="text-3xl font-extrabold text-amber-400">1,408 MB</span>
+            <span class="text-xs text-slate-400">23.31 ms Join</span>
+          </div>
+          <p class="mt-1 text-xs text-slate-500">Dưới trần 2,048 MB | 0 thẻ :latest | 73 test thu thập</p>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm">
+          <div class="text-xs font-medium text-slate-400 uppercase tracking-wider">RFC Sinh Mới (`Draft`)</div>
+          <div class="mt-2 flex items-baseline gap-2">
+            <span class="text-3xl font-extrabold text-orange-400">2 RFCs</span>
+            <span class="text-xs text-slate-400">RFC-0001 / 0002</span>
+          </div>
+          <p class="mt-1 text-xs text-slate-500">6 mục Revise (Spec/Parity) + 4 ngưỡng KLTN</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- TIER 2: Interactive Diagrams & Benchmark Charts -->
+    <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Mermaid Architecture Audit Map -->
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-300">Bản đồ Audit Kiến trúc D1–D8</h2>
+          <span class="text-xs text-slate-400">Keep / Revise (RFC-0001) / Need RFC (RFC-0002)</span>
+        </div>
+        <div class="mermaid bg-slate-950/70 rounded-lg p-3 overflow-x-auto">
+flowchart LR
+    D3["D3: Discovery + Crawl4AI + Instructor&lt;br/&gt;Keep TLCN | Revise SPEC-0002 | KLTN AI Gateway"] --> D1["D1: Cloudflare R2 Exclusive&lt;br/&gt;Keep Arch | Revise SPEC-0001/0002"]
+    D1 --> D2["D2: Raw HTML Bronze + PyArrow Parquet&lt;br/&gt;Keep TLCN | KLTN Iceberg/DuckLake"]
+    D2 --> D4["D4: Kimball Star Schema + DuckDB 1.5.6&lt;br/&gt;23.31 ms Join | Revise SPEC-0003/0004"]
+    D2 --> D6["D6: Qdrant Cloud + BGE-M3 RAG&lt;br/&gt;Revise v1.13.4 Skew &amp; SemanticChunker"]
+    D5["D5: PG 18.7 Local / Supabase PG 17&lt;br/&gt;Keep Split | Revise PG Parity"] --> D7["D7: FastAPI + Next.js 16.4 + Vercel&lt;br/&gt;1,408 MB RAM | Need RFC Multi-Worker"]
+    D4 --> D7
+    D6 --> D7
+    D8["D8: MotherDuck Lite + Keep-Alive Cron&lt;br/&gt;Revise ADR-0002 Daily Cron | KLTN Orch"] -.-> D1
+        </div>
+      </div>
+
+      <!-- Chart.js Charts -->
+      <div class="space-y-6">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+          <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-300 mb-3">Điểm Chín muồi 3 Trục (Thang 1–5)</h2>
+          <div class="h-64">
+            <canvas id="radarChart"></canvas>
+          </div>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+          <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-300 mb-3">Phân bổ Ngân sách RAM Docker `core` (MB)</h2>
+          <div class="h-48">
+            <canvas id="ramChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TIER 3: Interactive Decision Matrix & Deep Audit Accordions -->
+    <section class="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <h2 class="text-base font-bold">Ma trận Kiểm toán 8 Quyết định (`D1`–`D8`)</h2>
+        <div class="flex flex-wrap gap-2 text-xs">
+          <button onclick="filterRows('all')" class="px-3 py-1.5 rounded-md bg-blue-600 text-white font-medium">Tất cả (8)</button>
+          <button onclick="filterRows('revise')" class="px-3 py-1.5 rounded-md bg-slate-800 hover:bg-slate-700 text-amber-300 font-medium">Có Revise (`RFC-0001`)</button>
+          <button onclick="filterRows('rfc')" class="px-3 py-1.5 rounded-md bg-slate-800 hover:bg-slate-700 text-sky-300 font-medium">Có Need RFC (`RFC-0002`)</button>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs border-collapse">
+          <thead>
+            <tr class="border-b border-slate-800 text-slate-400 uppercase">
+              <th class="py-2.5 px-3">ID</th>
+              <th class="py-2.5 px-3">Thành phần</th>
+              <th class="py-2.5 px-3">Lý thuyết / Chuẩn</th>
+              <th class="py-2.5 px-3">Thực tiễn DN / OSS</th>
+              <th class="py-2.5 px-3">Lệch / Lưu ý Scope</th>
+              <th class="py-2.5 px-3">Phán quyết</th>
+            </tr>
+          </thead>
+          <tbody id="auditTableBody" class="divide-y divide-slate-800/70">
+            <tr data-tags="revise">
+              <td class="py-2.5 px-3 font-mono font-bold text-blue-400">D1</td>
+              <td class="py-2.5 px-3 font-medium">Cloudflare R2 Exclusive</td>
+              <td class="py-2.5 px-3">CIDR 2021 Lakehouse, R2 S3 Spec</td>
+              <td class="py-2.5 px-3">Cloudflare R2 Data Catalog Blog</td>
+              <td class="py-2.5 px-3 text-slate-300">`SPEC-0001/0002` còn ghi lưu song song `data/raw/` local</td>
+              <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">Keep</span> <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300">Revise</span></td>
+            </tr>
+            <tr data-tags="revise rfc">
+              <td class="py-2.5 px-3 font-mono font-bold text-blue-400">D2</td>
+              <td class="py-2.5 px-3 font-medium">Raw HTML Bronze + Parquet</td>
+              <td class="py-2.5 px-3">Apache Parquet, LST-Bench (SIGMOD 24)</td>
+              <td class="py-2.5 px-3">MotherDuck Big Data is Dead, DuckLake</td>
+              <td class="py-2.5 px-3 text-slate-300">`SPEC-0002` ghi Markdown; KLTN cần Iceberg/DuckLake</td>
+              <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">Keep</span> <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300">Revise</span> <span class="px-2 py-0.5 rounded bg-sky-500/20 text-sky-300">Need RFC</span></td>
+            </tr>
+            <tr data-tags="revise rfc">
+              <td class="py-2.5 px-3 font-mono font-bold text-blue-400">D3</td>
+              <td class="py-2.5 px-3 font-medium">Crawl4AI + Instructor + Pydantic</td>
+              <td class="py-2.5 px-3">Xu et al. 2024, TODS 2003, JSON-LD 1.1</td>
+              <td class="py-2.5 px-3">Instructor Docs, Crawl4AI Benchmarks</td>
+              <td class="py-2.5 px-3 text-slate-300">`SPEC-0002` trỏ script v1; KLTN cần AI Gateway</td>
+              <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">Keep</span> <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300">Revise</span> <span class="px-2 py-0.5 rounded bg-sky-500/20 text-sky-300">Need RFC</span></td>
+            </tr>
+            <tr data-tags="revise rfc">
+              <td class="py-2.5 px-3 font-mono font-bold text-blue-400">D4</td>
+              <td class="py-2.5 px-3 font-medium">Kimball Star + DuckDB 1.5.6</td>
+              <td class="py-2.5 px-3">SIGMOD 2019 DuckDB, Kimball Bridge</td>
+              <td class="py-2.5 px-3">Hugging Face Parquet + DuckDB httpfs</td>
+              <td class="py-2.5 px-3 text-slate-300">`SPEC-0003/0004` ghi swap `acdp.duckdb`; KLTN cần SCD-2</td>
+              <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">Keep</span> <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300">Revise</span> <span class="px-2 py-0.5 rounded bg-sky-500/20 text-sky-300">Need RFC</span></td>
+            </tr>
+            <tr data-tags="revise">
+              <td class="py-2.5 px-3 font-mono font-bold text-blue-400">D5</td>
+              <td class="py-2.5 px-3 font-medium">PG 18.7 / Supabase Free OLTP</td>
+              <td class="py-2.5 px-3">PostgreSQL MVCC &amp; Official Docs</td>
+              <td class="py-2.5 px-3">Supabase Supavisor 1.0 Engineering</td>
+              <td class="py-2.5 px-3 text-slate-300">Parity PG 17 Cloud vs PG 18.7 Docker; `alpine3.21` drift</td>
+              <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">Keep</span> <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300">Revise</span></td>
+            </tr>
+            <tr data-tags="revise rfc">
+              <td class="py-2.5 px-3 font-mono font-bold text-blue-400">D6</td>
+              <td class="py-2.5 px-3 font-medium">Qdrant Cloud + BGE-M3 RAG</td>
+              <td class="py-2.5 px-3">NeurIPS 20 RAG, TPAMI 20 HNSW, BGE-M3</td>
+              <td class="py-2.5 px-3">Qdrant Filterable HNSW Engineering</td>
+              <td class="py-2.5 px-3 text-slate-300">`v1.13.4` vs `client>=1.20`; `langchain-experimental` sunset</td>
+              <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">Keep</span> <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300">Revise</span> <span class="px-2 py-0.5 rounded bg-sky-500/20 text-sky-300">Need RFC</span></td>
+            </tr>
+            <tr data-tags="revise rfc">
+              <td class="py-2.5 px-3 font-mono font-bold text-blue-400">D7</td>
+              <td class="py-2.5 px-3 font-medium">FastAPI + Next.js 16.4 + Vercel</td>
+              <td class="py-2.5 px-3">OpenAPI 3.1, OWASP LLM 2025, WCAG 2.2</td>
+              <td class="py-2.5 px-3">Netflix Dispatch, Vercel &amp; HF Docs</td>
+              <td class="py-2.5 px-3 text-slate-300">`SPEC-0006` blueprint lệch; Cache RAM chỉ hợp `workers=1`</td>
+              <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">Keep</span> <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300">Revise</span> <span class="px-2 py-0.5 rounded bg-sky-500/20 text-sky-300">Need RFC</span></td>
+            </tr>
+            <tr data-tags="revise rfc">
+              <td class="py-2.5 px-3 font-mono font-bold text-blue-400">D8</td>
+              <td class="py-2.5 px-3 font-medium">MotherDuck + GitHub Actions</td>
+              <td class="py-2.5 px-3">PG `pg_dump` Docs, MotherDuck R2</td>
+              <td class="py-2.5 px-3">Simon Willison Git Scraping, GH Billing</td>
+              <td class="py-2.5 px-3 text-slate-300">`ADR-0002` §6 ghi 3 ngày vs cron thực tế hằng ngày</td>
+              <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">Keep</span> <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300">Revise</span> <span class="px-2 py-0.5 rounded bg-sky-500/20 text-sky-300">Need RFC</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Collapsible CLI Demo & RFC Summary -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+        <details class="bg-slate-950/60 border border-slate-800 rounded-lg p-4" open>
+          <summary class="cursor-pointer text-sm font-semibold text-amber-300">RFC-0001 (Draft): 6 Hạng mục Đồng bộ Spec &amp; Parity</summary>
+          <ul class="mt-2 space-y-1.5 text-xs text-slate-300 list-disc pl-4">
+            <li>R1: Cập nhật SPEC-0001/0002 sang `v2/bronze_crawl.py` (HTML) &amp; R2-only.</li>
+            <li>R2: Cập nhật SPEC-0003/0004 &amp; SPEC.md sang `httpfs` + `@cf/baai/bge-m3`.</li>
+            <li>R3: Đồng bộ SPEC-0006 §2.4 YAML với `docker-compose.yml` thực tế.</li>
+            <li>R4: Sửa mô tả cron `ADR-0002` §6 sang hằng ngày `15 2 * * *`.</li>
+            <li>R5: Khóa SQL tương thích PG 17+ &amp; nâng Qdrant Docker khớp client `1.20+`.</li>
+            <li>R6: Thay thế `langchain-experimental` `SemanticChunker` đã ngừng bảo trì.</li>
+          </ul>
+        </details>
+
+        <details class="bg-slate-950/60 border border-slate-800 rounded-lg p-4" open>
+          <summary class="cursor-pointer text-sm font-semibold text-sky-300">Lệnh Chạy Kiểm chứng Nhanh khi Demo Giảng viên</summary>
+          <pre class="mt-2 p-2.5 rounded bg-slate-900 text-[11px] font-mono text-emerald-300 overflow-x-auto">uv run pytest tests/test_qa01_tech_decision_audit.py tests/test_gold_star_schema.py -v
+uv run python .agents/skills/standard-delivery-gate/scripts/check_delivery_package.py --task-id TASK-QA-01
+uv run python .agents/skills/doc-decision-sync/scripts/audit_doc_drift.py --strict</pre>
+        </details>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.classList.toggle('dark');
+      document.body.className = isDark
+        ? 'bg-slate-950 text-slate-100 min-h-screen antialiased transition-colors duration-200'
+        : 'bg-slate-50 text-slate-900 min-h-screen antialiased transition-colors duration-200';
+    }
+
+    function filterRows(mode) {
+      const rows = document.querySelectorAll('#auditTableBody tr');
+      rows.forEach(row => {
+        const tags = row.getAttribute('data-tags') || '';
+        row.style.display = (mode === 'all' || tags.includes(mode)) ? '' : 'none';
+      });
+    }
+
+    new Chart(document.getElementById('radarChart'), {
+      type: 'radar',
+      data: {
+        labels: ['D1: R2', 'D2: Parquet', 'D3: Crawl/LLM', 'D4: DuckDB', 'D5: PG/Supa', 'D6: Qdrant/RAG', 'D7: Web/API', 'D8: Cloud Ops'],
+        datasets: [
+          { label: 'Lý thuyết & Chuẩn', data: [5, 5, 4.5, 5, 5, 5, 5, 4.5], borderColor: '#60A5FA', backgroundColor: 'rgba(96,165,250,0.18)' },
+          { label: 'Thực tiễn DN/OSS', data: [5, 5, 4.5, 5, 5, 4.5, 5, 4.5], borderColor: '#34D399', backgroundColor: 'rgba(52,211,153,0.14)' },
+          { label: 'Scope & Parity TLCN', data: [4.5, 4, 4, 4.5, 4, 3.5, 4.5, 4.5], borderColor: '#FB923C', backgroundColor: 'rgba(251,146,60,0.16)' }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: { r: { min: 0, max: 5, ticks: { stepSize: 1, color: '#94A3B8' }, grid: { color: '#334155' }, pointLabels: { color: '#CBD5E1', font: { size: 10 } } } },
+        plugins: { legend: { labels: { color: '#CBD5E1', font: { size: 11 } } } }
+      }
+    });
+
+    new Chart(document.getElementById('ramChart'), {
+      type: 'bar',
+      data: {
+        labels: ['postgres (core)', 'api (core)', 'web (core)', 'qdrant (backup)', 'metabase (bi)'],
+        datasets: [{
+          label: 'Memory Limit (MB)',
+          data: [256, 640, 512, 512, 1024],
+          backgroundColor: ['#3B82F6', '#10B981', '#6366F1', '#F59E0B', '#64748B']
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { grid: { color: '#1E293B' }, ticks: { color: '#94A3B8' } },
+          y: { grid: { display: false }, ticks: { color: '#CBD5E1', font: { size: 11 } } }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

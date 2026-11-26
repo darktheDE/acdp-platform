@@ -1,10 +1,10 @@
 # DELIVERABLE: [Short Title of Task Result]
 
 - **Task ID**: `TASK-XXXX`
-- **Related Sprint**: Sprint XX (Week XX)
+- **Related Sprint**: Cycle XX / Sprint XX
 - **Primary Owner**: [Do Kien Hung / Nguyen Van Quang Duy]
 - **Date Completed**: [YYYY-MM-DD]
-- **Deliverable Type**: [Research Spike | Benchmark Result | Data Schema | Literature Synthesis | Advisor Meeting Minutes]
+- **Deliverable Type**: [Research Spike | Architecture Audit | Benchmark Result | Data Schema | System Feature]
 - **Status**: [Complete | Pending Verification | Integrated into Codebase]
 
 ---
@@ -17,25 +17,53 @@ What specific question or objective did this task address? What was the primary 
 
 ## 2. Research Findings / Technical Results
 
-Detailed findings, comparative data, code snippets, or extracted data payloads.
+Detailed findings, comparative data, code snippets, or architectural analysis.
 
-```python
-# Example: Extracted schema payload or evaluation script snippet
+---
+
+## 3. Benchmarks & Quantitative Evidence
+
+| Metric / Dimension | Baseline / Constraint | Measured Result | Verification Source |
+| :--- | :--- | :--- | :--- |
+| Example Latency / Coverage | Target threshold | Measured value | Command or script path |
+
+---
+
+## 4. Key Decisions & Impact on ACDP
+
+- **Impact on Specs**: [e.g. Requires updating SPEC-0002 or opening RFC-XXXX]
+- **Impact on ADRs**: [e.g. Confirms decision in ADR-0002]
+- **Impact on Thesis**: [e.g. Provides empirical evidence for Chapter 3/4]
+
+---
+
+## 5. Manual Test, CLI Deployment & Advisor Demo Runbook
+
+Provide copy-pasteable PowerShell/CLI commands alongside verbatim captured outputs so authors can understand every step and run a live demonstration for the scientific advisor.
+
+```powershell
+# Step 1: Run automated verification
+uv run pytest tests/test_example.py -q
+```
+
+Captured Output:
+
+```text
+# Paste verbatim terminal output observed after running the command above
 ```
 
 ---
 
-## 3. Key Decisions & Impact on ACDP
+## 6. Associated Artifacts & Code Links
 
-How do these results influence the project's architecture, specs, or thesis writeup?
-- **Impact on Specs**: [e.g. Requires updating SPEC-0002 with field X]
-- **Impact on ADRs**: [e.g. Confirms decision in ADR-0001]
-- **Impact on Thesis**: [e.g. Provides empirical data for Chapter 4]
+- **Visual Dossier (HTML)**: `[TASK-XXXX-slug-visual-dossier.html](./TASK-XXXX-slug-visual-dossier.html)`
+- **Automated Tests**: `[test_example.py](../../tests/test_example.py)`
+- **Task Registry Entry**: [`docs/tasks/task-registry.md`](../tasks/task-registry.md)
 
 ---
 
-## 4. Associated Artifacts & Code Links
+## 7. Search Provenance & Verifiable References (`DIR-020`)
 
-- **Repository Files**: `[path/to/file](../../path/to/file)`
-- **Task Registry Entry**: [`docs/tasks/task-registry.md`](../tasks/task-registry.md)
-- **Raw Data / Logs**: (Location of cached logs or test datasets)
+| # | Search Query (`search_web`) | Purpose | Verified Canonical URL / DOI | Link Check Status |
+| :---: | :--- | :--- | :--- | :---: |
+| 1 | `example query` | Purpose | https://example.org/ | `HEALTHY` |

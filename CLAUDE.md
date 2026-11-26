@@ -27,6 +27,7 @@ All operations in this repository are governed by the master specifications:
 - Open Models & Ollama: `.agents/skills/ollama-bridge/SKILL.md`
 - Decision Sync & Doc Governance: `.agents/skills/doc-decision-sync/SKILL.md`
 - In-Repo Task Management: `.agents/skills/repo-task-manager/SKILL.md`
+- Standard Delivery & Demo Gate: `.agents/skills/standard-delivery-gate/SKILL.md`
 
 ---
 

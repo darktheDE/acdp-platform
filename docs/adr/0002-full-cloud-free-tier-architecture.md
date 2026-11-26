@@ -48,7 +48,7 @@ Hai tác giả thống nhất chọn **PA-1 (Giữ FastAPI + DuckDB `httpfs` + I
 | Serving Backend API | FastAPI + DuckDB `httpfs` + TTL Cache (Docker) | HF Spaces (`16 GB RAM`) hoặc Koyeb/Render (`512 MB RAM`) | Chạy theo chuẩn Low-Footprint `256 MB` DuckDB cap; giữ Docker local dự phòng |
 | OLTP App Database | Supabase Free (PostgreSQL Managed) | `500 MB` DB, `5 GB` egress, `50.000 MAU` | Lưu Users, Auth, Bookmarks, `/profile`, `/teams`; backup sang Neon Free (`1 GB`) |
 | Medallion Lakehouse | Cloudflare R2 (`DIR-021`) | `10 GB` lưu trữ, `1M` Class A, `10M` Class B, `$0` egress | Nguồn chân lý bất biến (SSOT): Bronze HTML, Silver Parquet, Gold 15 Parquets |
-| Vector Database | Qdrant Cloud Free (`TASK-CLD-01`) | `1 GB RAM`, `4 GB Disk` (~750k vector 1024-dim) | Phục vụ Dual-Layer RAG; backup local `--profile local-backup` (RTO `< 60s`) |
+| Vector Database | Qdrant Cloud Free (`TASK-CLD-01`) | `1 GB RAM`, `4 GB Disk` (~750k vector 1024-dim) | Phục vụ Dual-Layer RAG (`v1.20.2` Docker backup `--profile local-backup`, RTO `< 60s`) |
 | Embeddings & LLM | Workers AI (`@cf/baai/bge-m3`) + Gemini 3.5 Flash-Lite | `10.000 Neurons/ngày`; Gemini `10–15 RPM`, `500–1.500 RPD` | Fallback `LiteLLM` sang Groq / OpenRouter `:free`; embedding backup `fastembed` |
 | Cloud BI Workbench | MotherDuck Lite Free (`TASK-CLD-02`) | `10 GB` storage, `10 CU-hours` Pulse/tháng, `3` users | Thay Metabase trên Cloud; đọc trực tiếp R2 Parquet không tốn quota `10 GB` |
 | Pipeline & Keep-Alive | GitHub Actions (`ubuntu-latest`) | Unlimited phút (Public) / `2.000 phút/tháng` (Private) | Chạy Crawl/ETL định kỳ (KLTN), Keep-Alive 3 ngày và Weekly `pg_dump` |
@@ -76,7 +76,7 @@ Nhóm tác giả áp dụng nguyên tắc chỉ sử dụng các dịch vụ kh�
 
 ## 6. Cơ chế chống ngủ đông, sao lưu và kịch bản Demo Day
 
-1. **Keep-Alive tự động mỗi 3 ngày (`TASK-CLD-06`)**: Workflow `.github/workflows/keep-alive.yml` chạy định kỳ nhằm ngăn chính sách ngủ đông và xóa dữ liệu của gói miễn phí (Qdrant Cloud suspend sau 7 ngày và xóa vĩnh viễn sau 28 ngày; Supabase pause sau 7 ngày; HF Spaces ngủ sau 48 giờ).
+1. **Keep-Alive tự động hằng ngày (`TASK-CLD-06`, cập nhật theo `RFC-0001`)**: Workflow `.github/workflows/keep-alive.yml` chạy định kỳ mỗi ngày lúc `02:15 UTC` (`15 2 * * *`) nhằm ngăn chính sách ngủ đông và xóa dữ liệu của gói miễn phí (Qdrant Cloud suspend sau 7 ngày và xóa vĩnh viễn sau 28 ngày; Supabase pause sau 7 ngày; HF Spaces ngủ sau 48 giờ), kết hợp sao lưu `pg_dump` mỗi Chủ nhật lúc `02:30 UTC` (`30 2 * * 0`).
 2. **Sao lưu và khôi phục thảm họa (RTO `< 60 giây`)**: Toàn bộ dữ liệu gốc và trung gian nằm bất biến trên Cloudflare R2 (`bronze/`, `silver/`, `gold/`). Nếu Qdrant Cloud gặp sự cố, lệnh `uv run python -m acdp.v2.rag_ingest` tái dựng toàn bộ vector từ `silver/markdown/` trong dưới 60 giây; dữ liệu OLTP Supabase được sao lưu hàng tuần qua `pg_dump --format=custom` và có thể chuyển sang Neon Free khi cần.
 3. **Kịch bản bảo vệ Hội đồng (`T-15 phút`)**: Thực hiện quy trình Pre-warm trước giờ báo cáo 15 phút để đánh thức API Container, Supabase và Qdrant Cloud; đồng thời luôn chuẩn bị sẵn profile `--profile local-backup` trên laptop cá nhân làm phương án dự phòng offline nếu mạng phòng bảo vệ gặp sự cố.
 

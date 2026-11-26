@@ -9,7 +9,7 @@
 
 ## 1. Objective & Scope
 
-Tài liệu này đặc tả lớp dịch vụ ứng dụng (`src/acdp/api/`) đóng vai trò cổng hợp nhất (Unified Serving Gateway) cho nền tảng ACDP bằng **FastAPI (`fastapi[standard]`)** trên Python `3.13+`. Kiến trúc tuân thủ nguyên lý tách biệt hoàn toàn tải giao dịch (OLTP) và tải phân tích (OLAP): **PostgreSQL 18.7** lưu trữ tài khoản người dùng, phiên đăng nhập, danh sách cuộc thi đã lưu và lịch sử hội thoại RAG; **DuckDB 1.5.x** gắn ở chế độ `read_only=True` phục vụ truy vấn Star Schema và Data Marts; **Qdrant `v1.13.4`** phục vụ truy xuất ngữ nghĩa RAG.
+Tài liệu này đặc tả lớp dịch vụ ứng dụng (`src/acdp/api/`) đóng vai trò cổng hợp nhất (Unified Serving Gateway) cho nền tảng ACDP bằng **FastAPI (`fastapi[standard]`)** trên Python `3.13+`. Kiến trúc tuân thủ nguyên lý tách biệt hoàn toàn tải giao dịch (OLTP) và tải phân tích (OLAP): **PostgreSQL (`17` trên Supabase Cloud Free / `18.7` trên Docker local)** lưu trữ tài khoản người dùng, phiên đăng nhập, danh sách cuộc thi đã lưu và lịch sử hội thoại RAG (chỉ dùng tập SQL tương thích `PG 17+` theo `RFC-0001`); **DuckDB `1.5.6` `httpfs`** truy vấn trực tiếp 15 tệp Gold Parquet trên Cloudflare R2 kèm `GoldMartsTTLCache`; **Qdrant Cloud (`v1.20.x`)** phục vụ truy xuất ngữ nghĩa RAG (`@cf/baai/bge-m3`).
 
 Hợp đồng giao tiếp giữa Backend và Frontend tuân thủ quy trình **Spec-Driven Development**: toàn bộ Pydantic v2 DTO xuất chuẩn `OpenAPI 3.1` để sinh tự động định nghĩa TypeScript (`apps/web/types/api.d.ts`) thông qua `openapi-typescript`.
 
@@ -22,14 +22,14 @@ Hợp đồng giao tiếp giữa Backend và Frontend tuân thủ quy trình **S
 ```mermaid
 flowchart LR
     WEB["Next.js 16 App Router (Server + Client)"] -->|"REST JSON / SSE (OpenAPI 3.1)"| API["FastAPI Gateway (src/acdp/api/)"]
-    API -->|"asyncpg + SQLModel (pool=5)"| PG[("PostgreSQL 18.7 OLTP App DB")]
-    API -->|"duckdb read_only=True (256MB cap)"| DUCK[("DuckDB 1.5.x Gold Marts")]
-    API -->|"qdrant-client + Gemini/Ollama"| RAG[("Qdrant v1.13.4 Vector Store")]
+    API -->|"asyncpg + SQLModel (Supavisor :6543 / local)"| PG[("PostgreSQL 17+ / 18.7 OLTP")]
+    API -->|"duckdb httpfs + TTL Cache (256MB cap)"| DUCK[("Cloudflare R2 Gold Parquets (DuckDB 1.5.6)")]
+    API -->|"qdrant-client + BGE-M3 + Gemini/Groq/OR"| RAG[("Qdrant v1.20.x Vector Store")]
 ```
 
-### 2.2. PostgreSQL 18.7 OLTP Schema DDL
+### 2.2. PostgreSQL OLTP Schema DDL (`PG 17+` Parity)
 
-Hệ quản trị **PostgreSQL 18.7 (`postgres:18.7-alpine3.21`)** quản lý 5 bảng quan hệ sau trong schema mặc định `public`:
+Hệ quản trị **PostgreSQL (`18.7-alpine3.23` Docker local / `PG 17` Supabase Cloud Free)** quản lý 5 bảng quan hệ sau trong schema mặc định `public` (bắt buộc tương thích cú pháp `PG 17+` để đồng bộ Cloud–Local theo `RFC-0001`):
 
 ```sql
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
@@ -260,10 +260,10 @@ class RagChatResponse(BaseModel):
 
 ## 3. Core Processing Logic & Algorithms
 
-### 3.1. Quản lý Kết nối DuckDB Read-Only & PostgreSQL Pool
+### 3.1. Quản lý Kết nối DuckDB `httpfs` R2 & PostgreSQL Pool
 
-1. **DuckDB Per-Request Context Manager (`get_duckdb_conn`)**: Mở kết nối bằng `duckdb.connect(str(settings.duckdb_database_path), read_only=True)` ngay khi xử lý request phân tích, thi hành cấu hình bảo vệ RAM `SET memory_limit='256MB'; SET threads=2;`, và đóng kết nối trong khối `finally`. Cách tiếp cận này tránh giữ file lock dài hạn khi người dùng chạy pipeline cập nhật `acdp.duckdb` ở tiến trình khác.
-2. **PostgreSQL Async Pool (`get_db_session`)**: Sử dụng `create_async_engine` kết hợp driver `asyncpg` với cấu hình `pool_size=5`, `max_overflow=5`, `pool_recycle=1800`, `pool_pre_ping=True`. Tổng kết nối tối đa từ FastAPI luôn nằm gọn trong `max_connections=40` của container Postgres.
+1. **DuckDB `httpfs` & `GoldMartsTTLCache` (`duckdb_client.py` / `gold_queries.py`)**: Khởi tạo kết nối DuckDB `:memory:` nạp extension `httpfs` cùng `CREATE OR REPLACE SECRET r2_secret` (`s3://acdp-lakehouse/gold/*.parquet`), thi hành giới hạn RAM `SET memory_limit='256MB'; SET threads=2;`, vật thể hóa bảng tạm và lưu đệm 6 bảng `mart_*` qua `GoldMartsTTLCache` (`TTL=600s`) để giữ độ trễ warm `< 20 ms` và loại bỏ hoàn toàn phụ thuộc file `acdp.duckdb` cục bộ (`DIR-021`, `RFC-0001`).
+2. **PostgreSQL Async Pool (`get_db_session`)**: Sử dụng `create_async_engine` kết hợp driver `asyncpg` với cấu hình `pool_size=5`, `max_overflow=5`, `pool_recycle=1800`, `pool_pre_ping=True` ở chế độ Session/Local và tự chuyển sang `NullPool` + `statement_cache_size=0` khi kết nối qua Supabase Supavisor Transaction Pooler (`:6543`).
 
 ### 3.2. Xác thực & Phân quyền (Authentication & RBAC)
 
@@ -271,11 +271,11 @@ class RagChatResponse(BaseModel):
 2. **Dual-Token Flow**: Endpoint `/auth/login` trả về Access JWT (thuật toán HS256, thời hạn 15 phút, chứa `sub = user.id`, `role`) và Refresh Token (chuỗi ngẫu nhiên 256-bit gửi qua `HttpOnly; SameSite=Lax; Path=/api/v1/auth` cookie). Giá trị SHA-256 của Refresh Token được ghi vào `user_sessions`.
 3. **Token Rotation**: Khi gọi `/auth/refresh`, hệ thống vô hiệu hóa bản ghi `user_sessions` cũ (`revoked_at = NOW()`) và tạo bản ghi mới. Nếu phát hiện dùng lại token đã bị thu hồi, toàn bộ phiên còn hiệu lực của `user_id` đó lập tức bị hủy để chống đánh cắp phiên.
 
-### 3.3. Tích hợp RAG Copilot & Chống Ảo giác (`DIR-004`)
+### 3.3. Tích hợp Dual-Layer RAG Copilot & Chống Ảo giác (`DIR-004`, `RFC-0001`)
 
-1. Tầng API bao bọc hàm `generate_answer(message, session_id)` trong `src/acdp/3_ingest_to_qdrant.py` bằng `asyncio.to_thread(...)` để không làm nghẽn vòng lặp sự kiện asyncio trong lúc chờ model embedding (`qwen3-embedding:4b`) hoặc LLM (`gemini-3.5-flash-lite` / Ollama).
-2. Mọi `Document` trả về từ Qdrant (`collection = acdp_competitions`, chỉ mục `metadata.domain`) được chuyển hóa thành `RagCitationDTO` chứa tiêu đề, URL nguồn gốc và đoạn trích ngắn.
-3. Nếu danh sách tài liệu truy xuất rỗng hoặc điểm tương đồng dưới ngưỡng tin cậy, API trả về `grounded = False` cùng thông điệp từ chối suy diễn thể lệ cuộc thi (`DIR-004`).
+1. Tầng nạp dữ liệu [`src/acdp/v2/rag_ingest.py`](../../src/acdp/v2/rag_ingest.py) tách đoạn bằng `PercentileSemanticChunker` (không phụ thuộc `langchain-experimental`), tạo vector `1,024` chiều bằng Cloudflare Workers AI `@cf/baai/bge-m3` và nạp vào Qdrant collection `acdp_competitions_bge_m3` kèm metadata Gold từ `mart_competition_explorer`.
+2. Tầng API (`src/acdp/api/services/rag_service.py`) dùng `QdrantClient` (`v1.20+`) + chuỗi LLM fallback (`gemini-3.5-flash-lite` $\rightarrow$ `Groq` $\rightarrow$ `OpenRouter :free`), giới hạn `rag_max_output_tokens=600` (`OWASP LLM10:2025`) và lưu cache TTL `300s`.
+3. Mọi đoạn trả về từ Qdrant được chuyển hóa thành `RagCitationDTO` chứa tiêu đề, URL nguồn gốc và đoạn trích ngắn; nếu rỗng hoặc dưới ngưỡng tin cậy, API trả về `grounded = False` cùng thông điệp từ chối suy diễn thể lệ (`DIR-004`).
 4. Khi có `user_id` hợp lệ, tin nhắn người dùng và phản hồi kèm `citations_json` được ghi nguyên vẹn vào `chat_sessions` và `chat_messages` trong PostgreSQL.
 
 ### 3.4. Quy trình Sinh Hợp đồng Kiểu Tĩnh (Spec-Driven Codegen)
@@ -291,7 +291,7 @@ class RagChatResponse(BaseModel):
 
 | Tình huống biên | Cơ chế phát hiện | Phản hồi HTTP & Xử lý |
 | :--- | :--- | :--- |
-| **EC-A1: Khóa file DuckDB hoặc đang swap `.tmp`** | Bắt ngoại lệ `duckdb.IOException` khi gọi `connect(..., read_only=True)` | Thử lại tối đa 3 lần với jitter `50 ms`; nếu vẫn bận, chuyển sang đọc trực tiếp tệp Parquet tại `data/lakehouse/gold/*.parquet` qua kết nối DuckDB `:memory:` |
+| **EC-A1: R2 `httpfs` tạm thời chậm hoặc hết hạn cache** | Tải mạng S3/R2 khi cold start hoặc `GoldMartsTTLCache` hết TTL | `DuckDB` thiết lập `duckdb_r2_table_cache=True` vật thể hóa vào `:memory:` lúc khởi động và `GoldMartsTTLCache` giữ phản hồi warm `< 20 ms`; nếu truy vấn R2 lỗi, trả `503` có thông báo rõ ràng |
 | **EC-A2: Bookmark trỏ tới cuộc thi đã bị gỡ ở Gold mới** | `LEFT JOIN mart_competition_explorer` trả về `NULL` ở kết quả ghép | Vẫn trả `200 OK` tại `GET /bookmarks` kèm `is_archived=True` và giữ nguyên `competition_name_snapshot` đã lưu trong PostgreSQL |
 | **EC-A3: Nhấn lưu trùng một cuộc thi 2 lần liên tiếp** | Ràng buộc `uq_user_saved_competition` trong PostgreSQL | Endpoint `POST /bookmarks` kiểm tra hoặc dùng `ON CONFLICT (user_id, competition_key) DO UPDATE` để đảm bảo tính idempotent |
 | **EC-A4: Qdrant ngừng hoạt động hoặc LLM vượt thời gian chờ** | `UnexpectedResponse` / `ConnectError` / `TimeoutError` (`> 25s`) | Các endpoint Analytics và Competition Explorer vẫn hoạt động bình thường `200 OK`; `/health` chuyển trạng thái thành `degraded`; `/rag/chat` trả `503 Service Unavailable` kèm thông điệp hướng dẫn thử lại |

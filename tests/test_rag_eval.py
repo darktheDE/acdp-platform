@@ -65,3 +65,39 @@ def test_summarize_system_scores_aggregates_metrics_and_percentiles() -> None:
     assert summary["A"]["faithfulness"] == 0.9
     assert summary["A"]["latency_p50_ms"] == 1500.0
     assert summary["A"]["latency_p95_ms"] == 1950.0
+
+
+def test_percentile_semantic_chunker_splits_on_topic_shift_without_deprecation() -> None:
+    """Verify PercentileSemanticChunker splits semantically distant topics cleanly (RFC-0001 R6)."""
+    from langchain_core.documents import Document
+    from langchain_core.embeddings import Embeddings
+
+    from acdp.v2.rag_ingest import build_chunker, chunk_single_document
+
+    class _TopicEmbeddings(Embeddings):
+        def embed_documents(self, texts: list[str]) -> list[list[float]]:
+            vecs = []
+            for text in texts:
+                if "giải thưởng" in text.lower() or "tiền" in text.lower():
+                    vecs.append([1.0, 0.0, 0.0])
+                else:
+                    vecs.append([0.0, 1.0, 0.0])
+            return vecs
+
+        def embed_query(self, text: str) -> list[float]:
+            return self.embed_documents([text])[0]
+
+    chunker = build_chunker(_TopicEmbeddings())
+    chunker.min_chunk_size = 40
+    doc = Document(
+        page_content=(
+            "Giải thưởng cuộc thi AI Challenge 2026 lên tới 300 triệu đồng tiền mặt. "
+            "Giải nhất nhận tiền thưởng trực tiếp và cúp lưu niệm từ ban tổ chức. "
+            "Thể lệ đăng ký yêu cầu đội thi gồm hai đến bốn sinh viên chính quy tại trường đại học."
+        ),
+        metadata={"domain": "aichallenge.vn", "source_url": "https://aichallenge.vn"},
+    )
+    parts = chunk_single_document(chunker, doc)
+    assert len(parts) >= 2
+    assert all("[Nguồn: aichallenge.vn | URL: https://aichallenge.vn]" in p.page_content for p in parts)
+    assert [p.metadata["chunk_index"] for p in parts] == list(range(len(parts)))

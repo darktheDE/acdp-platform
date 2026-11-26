@@ -16,6 +16,7 @@ from __future__ import annotations
 import argparse
 import io
 import json
+import math
 import os
 import random
 import re
@@ -32,7 +33,6 @@ import pyarrow.parquet as pq
 from dotenv import find_dotenv, load_dotenv
 from langchain_core.documents import Document
 from langchain_core.embeddings import Embeddings
-from langchain_experimental.text_splitter import SemanticChunker
 from langchain_qdrant import QdrantVectorStore
 from qdrant_client import QdrantClient
 from qdrant_client.http.models import (
@@ -390,17 +390,94 @@ def load_competition_documents_from_silver(
     return chosen_date, docs
 
 
-def build_chunker(embeddings: Embeddings) -> SemanticChunker:
-    return SemanticChunker(
+class PercentileSemanticChunker:
+    """Lightweight percentile semantic text splitter without deprecated langchain-experimental dependency."""
+
+    def __init__(
+        self,
+        embeddings: Embeddings,
+        breakpoint_percentile: float = 90.0,
+        sentence_split_regex: str = r"(?<=[.?!])\s+|\n+",
+        min_chunk_size: int = 200,
+    ) -> None:
+        self.embeddings = embeddings
+        self.breakpoint_percentile = breakpoint_percentile
+        self.sentence_split_regex = re.compile(sentence_split_regex)
+        self.min_chunk_size = min_chunk_size
+
+    @staticmethod
+    def _cosine_distance(a: list[float], b: list[float]) -> float:
+        dot = sum(x * y for x, y in zip(a, b, strict=False))
+        norm_a = math.sqrt(sum(x * x for x in a))
+        norm_b = math.sqrt(sum(y * y for y in b))
+        if norm_a == 0.0 or norm_b == 0.0:
+            return 1.0
+        similarity = max(-1.0, min(1.0, dot / (norm_a * norm_b)))
+        return 1.0 - similarity
+
+    @staticmethod
+    def _percentile(sorted_values: list[float], pct: float) -> float:
+        if not sorted_values:
+            return 0.0
+        if len(sorted_values) == 1:
+            return sorted_values[0]
+        rank = (pct / 100.0) * (len(sorted_values) - 1)
+        low = int(math.floor(rank))
+        high = int(math.ceil(rank))
+        if low == high:
+            return sorted_values[low]
+        frac = rank - low
+        return sorted_values[low] + frac * (sorted_values[high] - sorted_values[low])
+
+    def split_documents(self, documents: list[Document]) -> list[Document]:
+        chunks: list[Document] = []
+        for doc in documents:
+            sentences = [
+                seg.strip()
+                for seg in self.sentence_split_regex.split(doc.page_content or "")
+                if seg and seg.strip()
+            ]
+            if not sentences:
+                continue
+            if len(sentences) == 1:
+                chunks.append(Document(page_content=sentences[0], metadata=dict(doc.metadata)))
+                continue
+
+            vectors = self.embeddings.embed_documents(sentences)
+            distances = [
+                self._cosine_distance(vectors[i], vectors[i + 1])
+                for i in range(len(sentences) - 1)
+            ]
+            threshold = self._percentile(sorted(distances), self.breakpoint_percentile)
+
+            current: list[str] = [sentences[0]]
+            for idx, sentence in enumerate(sentences[1:]):
+                current_text = " ".join(current)
+                if distances[idx] > threshold and len(current_text) >= self.min_chunk_size:
+                    chunks.append(Document(page_content=current_text, metadata=dict(doc.metadata)))
+                    current = [sentence]
+                else:
+                    current.append(sentence)
+
+            if current:
+                tail_text = " ".join(current)
+                if len(tail_text) < self.min_chunk_size and chunks and chunks[-1].metadata == doc.metadata:
+                    chunks[-1].page_content = f"{chunks[-1].page_content} {tail_text}"
+                else:
+                    chunks.append(Document(page_content=tail_text, metadata=dict(doc.metadata)))
+        return chunks
+
+
+def build_chunker(embeddings: Embeddings) -> PercentileSemanticChunker:
+    return PercentileSemanticChunker(
         embeddings=embeddings,
-        breakpoint_threshold_type="percentile",
-        breakpoint_threshold_amount=90,
+        breakpoint_percentile=90.0,
         sentence_split_regex=r"(?<=[.?!])\s+|\n+",
         min_chunk_size=200,
     )
 
 
-def chunk_single_document(chunker: SemanticChunker, doc: Document) -> list[Document]:
+def chunk_single_document(chunker: PercentileSemanticChunker, doc: Document) -> list[Document]:
     parts = chunker.split_documents([doc])
     label = doc.metadata.get("competition_name") or doc.metadata["domain"]
     url = doc.metadata.get("canonical_url") or doc.metadata["source_url"]

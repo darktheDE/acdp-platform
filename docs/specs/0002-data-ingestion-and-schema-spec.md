@@ -1,6 +1,6 @@
 # SPEC-0002: Lean Data Ingestion, Bronze-to-Silver Extraction, and Schema Contracts
 
-- **Status**: Approved & Active (Phase 1 TLCN - DIR-015)
+- **Status**: Approved & Active (Updated to v2 R2-Exclusive Pipeline per `DIR-021`, `DIR-022`, `RFC-0001`)
 - **Author(s)**: Nguyen Van Quang Duy (`@QuangDuyReal`), Do Kien Hung (`@darktheDE`)
 - **Scientific Advisor**: M.Sc. Tran Quang Khai
 - **Institution**: Faculty of Information Technology, Ho Chi Minh City University of Technology and Engineering (HCM-UTE)
@@ -13,8 +13,8 @@
 This specification defines the end-to-end data ingestion and structured extraction pipeline for Phase 1 (Tiểu luận chuyên ngành - TLCN):
 1. **TLCN Scope (Current Phase)**:
    - Targets a curated dataset of **5–10 representative academic competitions** (currently 7 competitions: *Code Tour, AI Challenge TP.HCM, Vietnam AI Challenge, DataDNA Onyx, IT Consultant Challenge, RMIT Hackathon, HackAITHON*).
-   - Crawling is executed **on-demand** via CLI script to verify scraping feasibility and LLM schema extraction accuracy.
-   - Uses a minimalist storage and compute stack: raw UTF-8 Markdown on **Local Files / Cloudflare R2** $\rightarrow$ structured extraction via **`instructor` + `litellm` + `Pydantic v2`** $\rightarrow$ direct analytical querying via **`DuckDB`**.
+   - Crawling is executed **on-demand** via CLI (`src/acdp/v2/discovery.py` + `src/acdp/v2/bronze_crawl.py`) to verify scraping feasibility and Hybrid Deterministic-LLM extraction accuracy.
+   - Uses a minimalist storage and compute stack (`DIR-021`): Raw Rendered HTML on **Cloudflare R2 (`bronze/*.html`)** $\rightarrow$ Clean Markdown + Hybrid Deterministic Sandwich (`src/acdp/v2/silver_transform.py`) + **`instructor` + `Pydantic v2`** (`src/acdp/v2/schemas.py`) exported to explicit PyArrow Parquet on R2 (`silver/*.parquet`) $\rightarrow$ direct SQL querying via **`DuckDB 1.5.6 httpfs`**.
 2. **KLTN Scope (Deferred to Phase 2 Graduation Thesis)**:
    - Automated periodic batch scheduling (Seasonality Scheduler, HTTP `ETag` polling) and realtime webhook ingestion.
    - Large-scale multi-channel crawling across hundreds of sources and fuzzy cross-channel deduplication.
@@ -25,35 +25,33 @@ This specification defines the end-to-end data ingestion and structured extracti
 
 ```mermaid
 flowchart LR
-    A["5–10 Curated Competition URLs"] -->|"1_crawl_to_bronze.py<br>(Crawl4AI AdaptiveCrawler)"| B["Bronze Layer (Cloudflare R2 / Local)<br>Raw UTF-8 Markdown (.md)"]
-    B -->|"2_instruction.py<br>(Instructor + LiteLLM)"| C["Silver Layer (Pydantic v2)<br>SilverCompetitionRecord (.parquet / .json)"]
-    C -->|"Zero-Copy SQL"| D["Gold Analytics & Serving<br>(DuckDB In-Process)"]
+    A["5–10 Curated / 3-Tier Discovered URLs<br>(v2/discovery.py)"] -->|"v2/bronze_crawl.py<br>(Crawl4AI Playwright)"| B["Bronze Layer (Cloudflare R2 Only)<br>Raw Rendered HTML (.html)"]
+    B -->|"v2/silver_transform.py<br>(Deterministic Sandwich + Instructor)"| C["Silver Layer (v2/schemas.py G1–G7)<br>Clean Markdown + Explicit PyArrow Parquet (R2)"]
+    C -->|"v2/gold_star_schema.py + DuckDB httpfs"| D["Gold 15 Parquets (R2) & Serving<br>(DuckDB 1.5.6 + Qdrant BGE-M3)"]
 ```
 
 ---
 
-## 3. Component 1: On-Demand Ingestion to Bronze (`src/acdp/1_crawl_to_bronze.py`)
+## 3. Component 1: On-Demand Ingestion to Bronze (`src/acdp/v2/bronze_crawl.py`)
 
 ### 3.1. Crawler Mechanism
 - Uses `Crawl4AI` (`AsyncWebCrawler` and `AdaptiveCrawler`) with semantic query guidance:
   - Query prompt: `"upcoming competition including description, policy/regulation, prize, timeline/registry deadline, and challenge"`.
-  - Extracts clean UTF-8 Markdown (`raw_markdown`) stripped of boilerplate HTML tags, scripts, and navigation clutter.
+  - Preserves 100% **Raw Rendered HTML (`result.html`)** including `<head>`, `JSON-LD` (`Schema.org/Event`), `og:*` metadata, and Next.js state payloads, packaging multi-page crawls with `<!-- ACDP_PAGE_BOUNDARY url="..." -->` markers (`TASK-BRZ-01`, `TASK-BRZ-02`).
 
-### 3.2. Bronze Storage Format (Cloudflare R2 & Local)
-- Instead of compressing payloads into opaque `zstandard` binary blobs (unnecessary for 5–10 competitions totaling $< 1.5\text{ MB}$), raw Markdown is stored directly as human-readable UTF-8 text:
+### 3.2. Bronze Storage Format (Cloudflare R2 Exclusive - `DIR-021`)
+- Raw rendered HTML is persisted exclusively on Cloudflare R2 with zero local disk persistence (`bronze_storage_backend="cloudflare_r2"`):
   - **Cloudflare R2 Object Key Pattern**:
     ```text
-    s3://{BUCKET_NAME}/bronze/{domain_name}/year={YYYY}/month={MM}/day={DD}/{timestamp}
+    s3://{BUCKET_NAME}/bronze/{domain_name}/year={YYYY}/month={MM}/day={DD}/{timestamp}.html
     ```
-    with `ContentType="text/markdown; charset=utf-8"` and metadata `{"source": domain_name, "layer": "bronze"}`.
-  - **Local Reproducible Fixtures**:
-    Stored in `data/raw/markdown/{domain_name}.md` and `data/raw/html/{domain_name}.html` for offline testing.
-  - **Tabular Silver Contract (`Competition`)**:
-    Standardized Pydantic v2 data contracts are defined in [`src/acdp/schemas.py`](../../src/acdp/schemas.py), storing extracted content alongside `content_hash: str` (SHA-256) and `dedup_fingerprint: str`.
+    with `ContentType="text/html; charset=utf-8"` and metadata `{"source": domain_name, "layer": "bronze"}`.
+  - **Tabular Silver Contract (`Competition` v2)**:
+    Standardized Pydantic v2 data contracts (`G1–G7`) are defined in [`src/acdp/v2/schemas.py`](../../src/acdp/v2/schemas.py), storing canonical normalized URLs, ISO 8601 `date` fields, `required_skills`, `PrizeTier` currency/quantity details, and SHA-256 `competition_key`.
 
 ---
 
-## 4. Component 2: Silver Layer Data Contract (`src/acdp/schemas.py`)
+## 4. Component 2: Silver Layer Data Contract (`src/acdp/v2/schemas.py`)
 
 The `Competition` and `CompetitionExtractionResult` Pydantic v2 models transform unstructured competition Markdown into quantitative and qualitative attribute groups:
 
@@ -70,11 +68,11 @@ The `Competition` and `CompetitionExtractionResult` Pydantic v2 models transform
 
 ---
 
-## 5. Component 3: Bronze-to-Silver LLM Extraction (`src/acdp/2_instruction.py`)
+## 5. Component 3: Bronze-to-Silver Hybrid Extraction (`src/acdp/v2/silver_transform.py`)
 
-1. **Input**: Reads raw UTF-8 Markdown files from Cloudflare R2 (`bronze/...`) or local `data/raw/markdown/*.md`.
-2. **Schema Enforcement**: Uses `instructor` patched over `litellm` (supporting Gemini API / OpenAI / local Ollama models) with `response_model=SilverCompetitionRecord`.
-3. **Output Persistence**: Serializes validated `SilverCompetitionRecord` instances to Parquet / JSON (`silver/competitions.parquet`) on Local disk and Cloudflare R2, enabling immediate SQL querying via `DuckDB`.
+1. **Input**: Reads Raw Rendered HTML (`bronze/.../*.html`) from Cloudflare R2 and converts it in RAM via Crawl4AI `DefaultMarkdownGenerator()` (`0 ms` browser overhead), uploading Clean Markdown for accepted competitions to `silver/markdown/` (`TASK-SLV-03`).
+2. **Hybrid Deterministic Sandwich & Scope Gate (`DIR-022`)**: Runs deterministic extractors (`JSON-LD`, `og:*`, canonical official URL resolution, `.pdf`/`.docx` optional links, regex hints) and filters strictly for IT/AI/Data/Security/Programming student competitions (`2025–2027`) with official websites before calling bounded `instructor` LLM (`response_model=CompetitionExtractionResult`).
+3. **Output Persistence**: Writes Silver JSON (`silver/extractions/`), batch manifests (`silver/batches/`), and explicit PyArrow Parquet (`silver/competitions.parquet`, `silver/prizes.parquet`, `silver/timeline_stages.parquet` via `v2/gold_star_schema.py`) directly on Cloudflare R2 for DuckDB `httpfs` querying.
 
 ---
 
