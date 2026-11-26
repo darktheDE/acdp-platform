@@ -502,7 +502,7 @@
       "task_type": "Engineering",
       "is_no_code": false,
       "owner": "Hung",
-      "status": "todo",
+      "status": "done",
       "priority": "high",
       "problem_statement": "Khi tạo tài khoản, sinh viên cần trang /profile để điền MSSV, Email, ngành học, kỹ năng (Skills) và đính kèm CV làm cơ sở cho việc lập đội thi.",
       "research_questions": [
@@ -511,9 +511,17 @@
       "acceptance_criteria": [
         "Người dùng tạo/cập nhật được /profile và lưu thành công vào PostgreSQL OLTP."
       ],
-      "deliverables": ["apps/web/app/profile/page.tsx", "src/acdp/api"],
-      "notes": "",
-      "updated_at": "2026-11-22"
+      "deliverables": [
+        "apps/web/app/profile/page.tsx",
+        "src/acdp/api/routers/profile.py",
+        "src/acdp/api/schemas/profile.py",
+        "src/acdp/api/services/cv_storage.py",
+        "tests/api/test_profile.py",
+        "docs/deliverables/TASK-SRV-01-student-mini-cv-profile.md",
+        "docs/deliverables/TASK-SRV-01-student-mini-cv-profile-visual-dossier.html"
+      ],
+      "notes": "Completed Option A (https:// cv_url) + Option B (Cloudflare R2 PDF CV <= 2MB, %PDF- magic bytes). Verified on Supabase Cloud PG + Next.js 16 build.",
+      "updated_at": "2026-11-26"
     },
     {
       "id": "TASK-SRV-02",

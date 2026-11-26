@@ -7,11 +7,13 @@ from typing import Any
 from uuid import UUID, uuid4
 
 from sqlalchemy import (
+    Boolean,
     CheckConstraint,
     Column,
     DateTime,
     ForeignKey,
     Index,
+    Integer,
     String,
     Text,
     UniqueConstraint,
@@ -159,6 +161,57 @@ class ChatMessage(SQLModel, table=True):
     )
     latency_ms: int | None = Field(default=None, nullable=True)
     created_at: datetime = Field(
+        default_factory=utc_now,
+        sa_column=Column(DateTime(timezone=True), nullable=False, server_default=text("NOW()")),
+    )
+
+
+class UserProfile(SQLModel, table=True):
+    """Student Mini-CV profile (1-to-1 with users) for team matching, advisor summary & RAG personalization."""
+
+    __tablename__ = "user_profiles"
+    __table_args__ = (
+        UniqueConstraint("user_id", name="uq_user_profiles_user_id"),
+        Index("idx_user_profiles_user_id", "user_id"),
+    )
+
+    id: UUID = Field(
+        default_factory=uuid4,
+        sa_column=Column(PG_UUID(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()")),
+    )
+    user_id: UUID = Field(
+        sa_column=Column(PG_UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False),
+    )
+    faculty: str | None = Field(default=None, sa_column=Column(String(160), nullable=True))
+    major: str | None = Field(default=None, sa_column=Column(String(160), nullable=True))
+    academic_year: str | None = Field(default=None, sa_column=Column(String(32), nullable=True))
+    phone: str | None = Field(default=None, sa_column=Column(String(24), nullable=True))
+    bio: str | None = Field(default=None, sa_column=Column(Text, nullable=True))
+    skills_json: list[str] = Field(
+        default_factory=list,
+        sa_column=Column(JSONB, nullable=False, server_default=text("'[]'::jsonb")),
+    )
+    preferred_roles_json: list[str] = Field(
+        default_factory=list,
+        sa_column=Column(JSONB, nullable=False, server_default=text("'[]'::jsonb")),
+    )
+    achievements_summary: str | None = Field(default=None, sa_column=Column(Text, nullable=True))
+    cv_url: str | None = Field(default=None, sa_column=Column(String(500), nullable=True))
+    cv_storage_key: str | None = Field(default=None, sa_column=Column(String(255), nullable=True))
+    cv_filename: str | None = Field(default=None, sa_column=Column(String(255), nullable=True))
+    cv_size_bytes: int | None = Field(default=None, sa_column=Column(Integer, nullable=True))
+    cv_uploaded_at: datetime | None = Field(default=None, sa_column=Column(DateTime(timezone=True), nullable=True))
+    github_url: str | None = Field(default=None, sa_column=Column(String(300), nullable=True))
+    linkedin_url: str | None = Field(default=None, sa_column=Column(String(300), nullable=True))
+    is_open_to_team: bool = Field(
+        default=True,
+        sa_column=Column(Boolean, nullable=False, server_default=text("TRUE")),
+    )
+    created_at: datetime = Field(
+        default_factory=utc_now,
+        sa_column=Column(DateTime(timezone=True), nullable=False, server_default=text("NOW()")),
+    )
+    updated_at: datetime = Field(
         default_factory=utc_now,
         sa_column=Column(DateTime(timezone=True), nullable=False, server_default=text("NOW()")),
     )

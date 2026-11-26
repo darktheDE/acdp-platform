@@ -8,6 +8,7 @@ interface AuthContextValue {
   accessToken: string | null;
   loading: boolean;
   setSession: (token: TokenResponse) => void;
+  updateUserLocal: (patch: Partial<UserProfileDTO>) => void;
   logout: () => Promise<void>;
   refreshSession: () => Promise<string | null>;
 }
@@ -48,6 +49,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(token.user);
   }, []);
 
+  const updateUserLocal = useCallback((patch: Partial<UserProfileDTO>) => {
+    setUser((prev) => (prev ? { ...prev, ...patch } : prev));
+  }, []);
+
   const logout = useCallback(async () => {
     try {
       if (accessToken) {
@@ -63,7 +68,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [accessToken]);
 
   return (
-    <AuthContext.Provider value={{ user, accessToken, loading, setSession, logout, refreshSession }}>
+    <AuthContext.Provider value={{ user, accessToken, loading, setSession, updateUserLocal, logout, refreshSession }}>
       {children}
     </AuthContext.Provider>
   );

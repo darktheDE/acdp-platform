@@ -29,7 +29,7 @@ flowchart LR
 
 ### 2.2. PostgreSQL OLTP Schema DDL (`PG 17+` Parity)
 
-Hệ quản trị **PostgreSQL (`18.7-alpine3.23` Docker local / `PG 17` Supabase Cloud Free)** quản lý 5 bảng quan hệ sau trong schema mặc định `public` (bắt buộc tương thích cú pháp `PG 17+` để đồng bộ Cloud–Local theo `RFC-0001`):
+Hệ quản trị **PostgreSQL (`18.7-alpine3.23` Docker local / `PG 17` Supabase Cloud Free)** quản lý 6 bảng quan hệ sau trong schema mặc định `public` (bắt buộc tương thích cú pháp `PG 17+` để đồng bộ Cloud–Local theo `RFC-0001`):
 
 ```sql
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
@@ -93,6 +93,31 @@ CREATE TABLE IF NOT EXISTS chat_messages (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 CREATE INDEX IF NOT EXISTS idx_chat_messages_session_created ON chat_messages(session_id, created_at ASC);
+
+-- 6. Hồ sơ Mini-CV Sinh viên (1-1 với users, phục vụ ghép đội & RAG cá nhân hóa - TASK-SRV-01)
+CREATE TABLE IF NOT EXISTS user_profiles (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+    faculty VARCHAR(160),
+    major VARCHAR(160),
+    academic_year VARCHAR(32),
+    phone VARCHAR(24),
+    bio TEXT,
+    skills_json JSONB NOT NULL DEFAULT '[]'::jsonb,
+    preferred_roles_json JSONB NOT NULL DEFAULT '[]'::jsonb,
+    achievements_summary TEXT,
+    cv_url VARCHAR(500),
+    cv_storage_key VARCHAR(255),
+    cv_filename VARCHAR(255),
+    cv_size_bytes INTEGER,
+    cv_uploaded_at TIMESTAMPTZ,
+    github_url VARCHAR(300),
+    linkedin_url VARCHAR(300),
+    is_open_to_team BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_user_profiles_user_id ON user_profiles(user_id);
 ```
 
 **Quy tắc khóa liên kết chéo (`saved_competitions.competition_key`)**: Khóa ngoại không tạo trực tiếp sang DuckDB vì hai động cơ chạy tách rời. Trường `competition_key` lưu chuỗi SHA-256 dài 64 ký tự hex khớp với `dim_competition.competition_key`. Cột `competition_name_snapshot` bảo lưu tên cuộc thi tại thời điểm bấm lưu để giao diện vẫn hiển thị hợp lệ ngay cả khi nguồn ngoài đóng cửa hoặc thay đổi cấu trúc.
@@ -113,6 +138,12 @@ Tiền tố chung cho toàn bộ tài nguyên nghiệp vụ là `/api/v1`:
 | **Auth** | `POST /api/v1/auth/refresh` | `user_sessions` | Cookie/Token | Cấp lại Access JWT và xoay vòng Refresh Token |
 | **Auth** | `POST /api/v1/auth/logout` | `user_sessions` | Bearer JWT | Thu hồi phiên đăng nhập hiện tại |
 | **Auth** | `GET /api/v1/auth/me` | `users` | Bearer JWT | Lấy hồ sơ người dùng đang đăng nhập |
+| **Profile** | `GET /api/v1/profile/me` | `users`, `user_profiles` | Bearer JWT | Lấy hồ sơ Mini-CV cá nhân kèm chỉ số hoàn thiện |
+| **Profile** | `PUT /api/v1/profile/me` | `users`, `user_profiles` | Bearer JWT | Tạo/cập nhật Mini-CV và đồng bộ họ tên/MSSV sang `users` |
+| **Profile** | `POST /api/v1/profile/me/cv` | `user_profiles` + Cloudflare R2 | Bearer JWT | Tải lên CV PDF (≤ 2 MB, kiểm tra `%PDF-`) lưu tại `profiles/cv/{user_id}.pdf` |
+| **Profile** | `DELETE /api/v1/profile/me/cv` | `user_profiles` + Cloudflare R2 | Bearer JWT | Xóa tệp PDF CV đã tải lên |
+| **Profile** | `GET /api/v1/profile/{user_id}` | `users`, `user_profiles` | Bearer JWT | Xem Mini-CV công khai cho đồng đội/giảng viên (ẩn SĐT với sinh viên khác) |
+| **Profile** | `GET /api/v1/profile/{user_id}/cv` | `user_profiles` + Cloudflare R2 | Bearer JWT | Tải/xem trực tiếp tệp PDF CV đã lưu trên R2 (`X-Content-Type-Options: nosniff`) |
 | **Bookmarks** | `GET /api/v1/bookmarks` | `saved_competitions` + `mart_competition_explorer` | Bearer JWT | Danh sách cuộc thi đã lưu kèm trạng thái đồng bộ Gold |
 | **Bookmarks** | `POST /api/v1/bookmarks` | `saved_competitions` + `dim_competition` | Bearer JWT | Lưu cuộc thi (kiểm tra tồn tại ở DuckDB trước khi ghi PG) |
 | **Bookmarks** | `DELETE /api/v1/bookmarks/{competition_key}` | `saved_competitions` | Bearer JWT | Hủy lưu cuộc thi thuộc quyền sở hữu người dùng |

@@ -13,6 +13,9 @@ export type PaginatedCompetitionsDTO = components["schemas"]["PaginatedCompetiti
 export type PrizeTierDTO = components["schemas"]["PrizeTierDTO"];
 export type TimelineStageDTO = components["schemas"]["TimelineStageDTO"];
 export type UserProfileDTO = components["schemas"]["UserProfileDTO"];
+export type StudentProfileDTO = components["schemas"]["StudentProfileDTO"];
+export type ProfileUpdateRequest = components["schemas"]["ProfileUpdateRequest"];
+export type PublicStudentProfileDTO = components["schemas"]["PublicStudentProfileDTO"];
 export type TokenResponse = components["schemas"]["TokenResponse"];
 export type BookmarkDTO = components["schemas"]["BookmarkDTO"];
 export type RagCitationDTO = components["schemas"]["RagCitationDTO"];
@@ -53,7 +56,7 @@ export async function apiFetch<T>(
 ): Promise<T> {
   const { token, headers, ...rest } = options;
   const reqHeaders = new Headers(headers);
-  if (!reqHeaders.has("Content-Type") && rest.body) {
+  if (!reqHeaders.has("Content-Type") && rest.body && !(rest.body instanceof FormData)) {
     reqHeaders.set("Content-Type", "application/json");
   }
   if (token) {
@@ -94,4 +97,23 @@ export async function apiFetch<T>(
     return undefined as T;
   }
   return (await res.json()) as T;
+}
+
+export async function apiFetchBlob(
+  path: string,
+  options: { token?: string | null } = {},
+): Promise<Blob> {
+  const reqHeaders = new Headers();
+  if (options.token) {
+    reqHeaders.set("Authorization", `Bearer ${options.token}`);
+  }
+  const res = await fetch(`${getApiBaseUrl()}${path}`, {
+    headers: reqHeaders,
+    credentials: "include",
+    cache: "no-store",
+  });
+  if (!res.ok) {
+    throw new ApiError(res.status, `HTTP ${res.status}`);
+  }
+  return res.blob();
 }
