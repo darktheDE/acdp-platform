@@ -34,7 +34,7 @@ services:
           cpus: "0.50"
 
   qdrant:
-    image: qdrant/qdrant:v1.13.4
+    image: qdrant/qdrant:v1.20.2
     container_name: acdp-qdrant
     profiles: ["local-backup"]
     restart: unless-stopped

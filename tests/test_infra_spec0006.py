@@ -41,7 +41,7 @@ def test_docker_compose_version_pinning_and_profiles() -> None:
     assert core_mem_mb <= 2048, f"Core profile memory budget exceeded: {core_mem_mb} MB > 2048 MB"
     assert services["postgres"]["image"] == "postgres:18.7-alpine3.23"
     assert "postgres_data:/var/lib/postgresql" in services["postgres"]["volumes"]
-    assert services["qdrant"]["image"] == "qdrant/qdrant:v1.13.4"
+    assert services["qdrant"]["image"] == "qdrant/qdrant:v1.20.2"
     assert services["qdrant"]["profiles"] == ["local-backup"]
     assert "qdrant" not in services["api"].get("depends_on", {})
     assert "3001:3000" in services["metabase"]["ports"]
@@ -138,9 +138,15 @@ def test_supabase_oltp_pooler_and_duckdb_r2_config(monkeypatch) -> None:
     for key in (
         "POSTGRES_MODE",
         "SUPABASE_DATABASE_URL",
+        "SUPABASE_DIRECT_URL",
         "DATABASE_URL",
         "POSTGRES_POOL_MODE",
         "POSTGRES_SSL_MODE",
+        "POSTGRES_USER",
+        "POSTGRES_PASSWORD",
+        "POSTGRES_DB",
+        "POSTGRES_HOST",
+        "POSTGRES_PORT",
     ):
         monkeypatch.delenv(key, raising=False)
 

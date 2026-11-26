@@ -204,6 +204,94 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/profile/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get My Profile
+         * @description Return the authenticated student's Mini-CV profile (defaulting from users if not yet saved).
+         */
+        get: operations["get_my_profile_api_v1_profile_me_get"];
+        /**
+         * Upsert My Profile
+         * @description Create or update the authenticated student's Mini-CV and sync identity fields atomically.
+         */
+        put: operations["upsert_my_profile_api_v1_profile_me_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/profile/me/cv": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Upload My Cv Pdf
+         * @description Upload a PDF CV (<= 2 MB, %PDF- magic bytes) to Cloudflare R2 (Option B).
+         */
+        post: operations["upload_my_cv_pdf_api_v1_profile_me_cv_post"];
+        /**
+         * Delete My Cv Pdf
+         * @description Remove the uploaded PDF CV from Cloudflare R2 and clear stored metadata.
+         */
+        delete: operations["delete_my_cv_pdf_api_v1_profile_me_cv_delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/profile/{user_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Public Profile
+         * @description Return privacy-aware Mini-CV for teammates and advisors.
+         */
+        get: operations["get_public_profile_api_v1_profile__user_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/profile/{user_id}/cv": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Download Student Cv Pdf
+         * @description Stream an uploaded student PDF CV from Cloudflare R2 with safe response headers.
+         */
+        get: operations["download_student_cv_pdf_api_v1_profile__user_id__cv_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/bookmarks": {
         parameters: {
             query?: never;
@@ -259,7 +347,7 @@ export interface paths {
         put?: never;
         /**
          * Rag Chat
-         * @description Query competition rules via Qdrant + LLM with grounded URL citations.
+         * @description Query competition rules via Qdrant + LLM with grounded URL citations (Auth-Only + AI Rate Limited).
          */
         post: operations["rag_chat_api_v1_rag_chat_post"];
         delete?: never;
@@ -335,6 +423,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /**
+         * Get Admin Telemetry
+         * @description Return user counts, rate-limit telemetry, and DuckDB Gold / RAG TTL cache statistics.
+         */
         get: operations["get_admin_telemetry_api_v1_admin_telemetry_get"];
         put?: never;
         post?: never;
@@ -351,6 +443,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /**
+         * List Admin Users
+         * @description List registered accounts with optional keyword, role, and active status filters.
+         */
         get: operations["list_admin_users_api_v1_admin_users_get"];
         put?: never;
         post?: never;
@@ -373,6 +469,10 @@ export interface paths {
         delete?: never;
         options?: never;
         head?: never;
+        /**
+         * Update Admin User
+         * @description Update a user's RBAC role or active status; revokes all sessions when deactivated.
+         */
         patch: operations["update_admin_user_api_v1_admin_users__user_id__patch"];
         trace?: never;
     };
@@ -385,6 +485,10 @@ export interface paths {
         };
         get?: never;
         put?: never;
+        /**
+         * Refresh Admin Caches
+         * @description Refresh DuckDB R2 Gold Parquet entities, invalidate RAG cache, or reset rate limiter.
+         */
         post: operations["refresh_admin_caches_api_v1_admin_cache_refresh_post"];
         delete?: never;
         options?: never;
@@ -398,19 +502,38 @@ export interface components {
     schemas: {
         /** AdminCacheRefreshDTO */
         AdminCacheRefreshDTO: {
-            /** @enum {string} */
+            /**
+             * Target
+             * @enum {string}
+             */
             target: "all" | "duckdb_r2" | "rag" | "rate_limit";
-            duckdb_r2?: Record<string, unknown> | null;
-            gold_mart_cache: Record<string, unknown>;
-            rag_cache: Record<string, unknown>;
-            /** @default false */
+            /** Duckdb R2 */
+            duckdb_r2?: {
+                [key: string]: unknown;
+            } | null;
+            /** Gold Mart Cache */
+            gold_mart_cache: {
+                [key: string]: unknown;
+            };
+            /** Rag Cache */
+            rag_cache: {
+                [key: string]: unknown;
+            };
+            /**
+             * Rate Limit Reset
+             * @default false
+             */
             rate_limit_reset: boolean;
-            /** Format: date-time */
+            /**
+             * Refreshed At
+             * Format: date-time
+             */
             refreshed_at: string;
         };
         /** AdminCacheRefreshRequest */
         AdminCacheRefreshRequest: {
             /**
+             * Target
              * @default all
              * @enum {string}
              */
@@ -419,37 +542,70 @@ export interface components {
         /** AdminTelemetryDTO */
         AdminTelemetryDTO: {
             users_summary: components["schemas"]["AdminUsersSummaryDTO"];
-            rate_limit: Record<string, unknown>;
-            gold_mart_cache: Record<string, unknown>;
-            rag_cache: Record<string, unknown>;
+            /** Rate Limit */
+            rate_limit: {
+                [key: string]: unknown;
+            };
+            /** Gold Mart Cache */
+            gold_mart_cache: {
+                [key: string]: unknown;
+            };
+            /** Rag Cache */
+            rag_cache: {
+                [key: string]: unknown;
+            };
         };
         /** AdminUserDTO */
         AdminUserDTO: {
-            /** Format: uuid */
+            /**
+             * Id
+             * Format: uuid
+             */
             id: string;
+            /** Email */
             email: string;
+            /** Full Name */
             full_name: string;
-            /** @enum {string} */
+            /**
+             * Role
+             * @enum {string}
+             */
             role: "student" | "lecturer" | "admin";
+            /** Is Active */
             is_active: boolean;
+            /** Student Or Staff Id */
             student_or_staff_id?: string | null;
-            /** Format: date-time */
+            /**
+             * Created At
+             * Format: date-time
+             */
             created_at: string;
-            /** Format: date-time */
+            /**
+             * Updated At
+             * Format: date-time
+             */
             updated_at: string;
         };
         /** AdminUserUpdateRequest */
         AdminUserUpdateRequest: {
+            /** Role */
             role?: ("student" | "lecturer" | "admin") | null;
+            /** Is Active */
             is_active?: boolean | null;
         };
         /** AdminUsersSummaryDTO */
         AdminUsersSummaryDTO: {
+            /** Total Users */
             total_users: number;
+            /** Active Users */
             active_users: number;
+            /** Blocked Users */
             blocked_users: number;
+            /** Admin Count */
             admin_count: number;
+            /** Lecturer Count */
             lecturer_count: number;
+            /** Student Count */
             student_count: number;
         };
         /** AnalyticsDashboardDTO */
@@ -463,6 +619,11 @@ export interface components {
             mode_team_matrix: components["schemas"]["ModeTeamMetricDTO"][];
             /** Top Organizers */
             top_organizers: components["schemas"]["OrganizerMetricDTO"][];
+        };
+        /** Body_upload_my_cv_pdf_api_v1_profile_me_cv_post */
+        Body_upload_my_cv_pdf_api_v1_profile_me_cv_post: {
+            /** File */
+            file: string;
         };
         /** BookmarkCreateRequest */
         BookmarkCreateRequest: {
@@ -780,6 +941,106 @@ export interface components {
             /** Is Scholarship */
             is_scholarship: boolean;
         };
+        /**
+         * ProfileUpdateRequest
+         * @description Payload for creating or updating the authenticated student's Mini-CV.
+         */
+        ProfileUpdateRequest: {
+            /** Full Name */
+            full_name?: string | null;
+            /** Student Or Staff Id */
+            student_or_staff_id?: string | null;
+            /** Faculty */
+            faculty?: string | null;
+            /** Major */
+            major?: string | null;
+            /** Academic Year */
+            academic_year?: string | null;
+            /** Phone */
+            phone?: string | null;
+            /** Bio */
+            bio?: string | null;
+            /** Skills */
+            skills?: string[];
+            /** Preferred Roles */
+            preferred_roles?: string[];
+            /** Achievements Summary */
+            achievements_summary?: string | null;
+            /** Cv Url */
+            cv_url?: string | null;
+            /** Github Url */
+            github_url?: string | null;
+            /** Linkedin Url */
+            linkedin_url?: string | null;
+            /**
+             * Is Open To Team
+             * @default true
+             */
+            is_open_to_team: boolean;
+        };
+        /**
+         * PublicStudentProfileDTO
+         * @description Privacy-aware Mini-CV view for teammates and advisors.
+         */
+        PublicStudentProfileDTO: {
+            /**
+             * User Id
+             * Format: uuid
+             */
+            user_id: string;
+            /** Email */
+            email: string;
+            /** Full Name */
+            full_name: string;
+            /**
+             * Role
+             * @enum {string}
+             */
+            role: "student" | "lecturer" | "admin";
+            /** Student Or Staff Id */
+            student_or_staff_id?: string | null;
+            /** Faculty */
+            faculty?: string | null;
+            /** Major */
+            major?: string | null;
+            /** Academic Year */
+            academic_year?: string | null;
+            /** Phone */
+            phone?: string | null;
+            /** Bio */
+            bio?: string | null;
+            /** Skills */
+            skills?: string[];
+            /** Preferred Roles */
+            preferred_roles?: string[];
+            /** Achievements Summary */
+            achievements_summary?: string | null;
+            /** Cv Url */
+            cv_url?: string | null;
+            /**
+             * Has Uploaded Cv
+             * @default false
+             */
+            has_uploaded_cv: boolean;
+            /** Cv Filename */
+            cv_filename?: string | null;
+            /** Cv Download Path */
+            cv_download_path?: string | null;
+            /** Github Url */
+            github_url?: string | null;
+            /** Linkedin Url */
+            linkedin_url?: string | null;
+            /**
+             * Is Open To Team
+             * @default true
+             */
+            is_open_to_team: boolean;
+            /**
+             * Completeness Pct
+             * @default 0
+             */
+            completeness_pct: number;
+        };
         /** RagChatRequest */
         RagChatRequest: {
             /** Session Id */
@@ -847,6 +1108,80 @@ export interface components {
             competition_count: number;
             /** Total Prize Vnd */
             total_prize_vnd: number;
+        };
+        /**
+         * StudentProfileDTO
+         * @description Full Mini-CV profile returned to the authenticated owner.
+         */
+        StudentProfileDTO: {
+            /**
+             * User Id
+             * Format: uuid
+             */
+            user_id: string;
+            /** Email */
+            email: string;
+            /** Full Name */
+            full_name: string;
+            /**
+             * Role
+             * @enum {string}
+             */
+            role: "student" | "lecturer" | "admin";
+            /** Student Or Staff Id */
+            student_or_staff_id?: string | null;
+            /** Faculty */
+            faculty?: string | null;
+            /** Major */
+            major?: string | null;
+            /** Academic Year */
+            academic_year?: string | null;
+            /** Phone */
+            phone?: string | null;
+            /** Bio */
+            bio?: string | null;
+            /** Skills */
+            skills?: string[];
+            /** Preferred Roles */
+            preferred_roles?: string[];
+            /** Achievements Summary */
+            achievements_summary?: string | null;
+            /** Cv Url */
+            cv_url?: string | null;
+            /**
+             * Has Uploaded Cv
+             * @default false
+             */
+            has_uploaded_cv: boolean;
+            /** Cv Filename */
+            cv_filename?: string | null;
+            /** Cv Size Bytes */
+            cv_size_bytes?: number | null;
+            /** Cv Uploaded At */
+            cv_uploaded_at?: string | null;
+            /** Cv Download Path */
+            cv_download_path?: string | null;
+            /** Github Url */
+            github_url?: string | null;
+            /** Linkedin Url */
+            linkedin_url?: string | null;
+            /**
+             * Is Open To Team
+             * @default true
+             */
+            is_open_to_team: boolean;
+            /**
+             * Completeness Pct
+             * @default 0
+             */
+            completeness_pct: number;
+            /** Missing Fields */
+            missing_fields?: string[];
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
         };
         /** TimelineStageDTO */
         TimelineStageDTO: {
@@ -1195,6 +1530,174 @@ export interface operations {
             };
         };
     };
+    get_my_profile_api_v1_profile_me_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StudentProfileDTO"];
+                };
+            };
+        };
+    };
+    upsert_my_profile_api_v1_profile_me_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProfileUpdateRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StudentProfileDTO"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    upload_my_cv_pdf_api_v1_profile_me_cv_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_upload_my_cv_pdf_api_v1_profile_me_cv_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StudentProfileDTO"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_my_cv_pdf_api_v1_profile_me_cv_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StudentProfileDTO"];
+                };
+            };
+        };
+    };
+    get_public_profile_api_v1_profile__user_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicStudentProfileDTO"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    download_student_cv_pdf_api_v1_profile__user_id__cv_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_bookmarks_api_v1_bookmarks_get: {
         parameters: {
             query?: never;
@@ -1399,6 +1902,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
+            /** @description Successful Response */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -1422,12 +1926,22 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
+            /** @description Successful Response */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": components["schemas"]["AdminUserDTO"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
@@ -1447,12 +1961,22 @@ export interface operations {
             };
         };
         responses: {
+            /** @description Successful Response */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": components["schemas"]["AdminUserDTO"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
@@ -1466,16 +1990,26 @@ export interface operations {
         };
         requestBody?: {
             content: {
-                "application/json": components["schemas"]["AdminCacheRefreshRequest"];
+                "application/json": components["schemas"]["AdminCacheRefreshRequest"] | null;
             };
         };
         responses: {
+            /** @description Successful Response */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": components["schemas"]["AdminCacheRefreshDTO"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

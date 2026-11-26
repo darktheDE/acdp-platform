@@ -12,7 +12,7 @@ from acdp.api.middleware.security import (
     SecurityHardeningMiddleware,
     register_security_exception_handlers,
 )
-from acdp.api.routers import admin, analytics, auth, bookmarks, competitions, health, rag
+from acdp.api.routers import admin, analytics, auth, bookmarks, competitions, health, profile, rag
 from acdp.config import settings
 
 
@@ -56,6 +56,7 @@ app.include_router(health.router, prefix=API_PREFIX)
 app.include_router(analytics.router, prefix=API_PREFIX)
 app.include_router(competitions.router, prefix=API_PREFIX)
 app.include_router(auth.router, prefix=API_PREFIX)
+app.include_router(profile.router, prefix=API_PREFIX)
 app.include_router(bookmarks.router, prefix=API_PREFIX)
 app.include_router(rag.router, prefix=API_PREFIX)
 app.include_router(admin.router, prefix=API_PREFIX)

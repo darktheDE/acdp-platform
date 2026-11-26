@@ -39,7 +39,7 @@ export default function LoginPage() {
         body: JSON.stringify({ email: email.trim(), password }),
       });
       setSession(token);
-      router.push("/competitions");
+      router.push(mode === "register" ? "/profile?welcome=1" : "/competitions");
     } catch (err) {
       if (err instanceof ApiError) {
         setErrorMsg(err.detail);

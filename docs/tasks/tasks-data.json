@@ -502,7 +502,7 @@
       "task_type": "Engineering",
       "is_no_code": false,
       "owner": "Hung",
-      "status": "todo",
+      "status": "done",
       "priority": "high",
       "problem_statement": "Khi tạo tài khoản, sinh viên cần trang /profile để điền MSSV, Email, ngành học, kỹ năng (Skills) và đính kèm CV làm cơ sở cho việc lập đội thi.",
       "research_questions": [
@@ -511,9 +511,17 @@
       "acceptance_criteria": [
         "Người dùng tạo/cập nhật được /profile và lưu thành công vào PostgreSQL OLTP."
       ],
-      "deliverables": ["apps/web/app/profile/page.tsx", "src/acdp/api"],
-      "notes": "",
-      "updated_at": "2026-11-22"
+      "deliverables": [
+        "apps/web/app/profile/page.tsx",
+        "src/acdp/api/routers/profile.py",
+        "src/acdp/api/schemas/profile.py",
+        "src/acdp/api/services/cv_storage.py",
+        "tests/api/test_profile.py",
+        "docs/deliverables/TASK-SRV-01-student-mini-cv-profile.md",
+        "docs/deliverables/TASK-SRV-01-student-mini-cv-profile-visual-dossier.html"
+      ],
+      "notes": "Completed Option A (https:// cv_url) + Option B (Cloudflare R2 PDF CV <= 2MB, %PDF- magic bytes). Verified on Supabase Cloud PG + Next.js 16 build.",
+      "updated_at": "2026-11-26"
     },
     {
       "id": "TASK-SRV-02",
@@ -886,7 +894,7 @@
       "task_type": "Research & Theory",
       "is_no_code": false,
       "owner": "Hung & Duy",
-      "status": "todo",
+      "status": "done",
       "priority": "high",
       "problem_statement": "Vấn đề: Các quyết định trong ADR-0001/0002 và spec chưa có bảng rà soát chéo toàn diện sau triển khai. Kiểm chứng 3 trục — Lý thuyết: mỗi lựa chọn (R2 storage, Parquet, Crawl4AI+Instructor, Gold Star Schema, PG18 OLTP, Qdrant, FastAPI/Next.js) phải có >= 1 nguồn học thuật/chuẩn chính thức; Thực tiễn: phải có >= 1 engineering blog hoặc case study doanh nghiệp/OSS triển khai tương đương; Người dùng & Scope: phù hợp ràng buộc 5–10 cuộc thi (TLCN) và ngân sách Free Tier. Phương pháp: lập ma trận đối chiếu mọi quyết định, kiểm chứng link/nguồn thực tế, phân loại Keep / Revise / Need RFC. Tiêu chí chấp nhận: 100% quyết định cốt lõi có đủ 2 loại dẫn chứng và kết luận rõ ràng; mọi mục Revise mở RFC/ADR tương ứng. Phụ thuộc: chạy song song với nhóm QA/DQ, đầu vào cho TASK-TST-01 và TASK-ACD-01.",
       "research_questions": [
@@ -899,10 +907,14 @@
         "Mỗi dòng có nhãn Keep / Revise / RFC và ghi rõ phần cần chỉnh sửa nếu có."
       ],
       "deliverables": [
-        "docs/deliverables/TASK-QA-01-tech-decision-theory-practice-audit.md"
+        "docs/deliverables/TASK-QA-01-tech-decision-theory-practice-audit.md",
+        "docs/deliverables/TASK-QA-01-tech-decision-theory-practice-audit-visual-dossier.html",
+        "docs/rfc/RFC-0001-spec-v2-and-cloud-parity-realignment.md",
+        "docs/rfc/RFC-0002-kltn-scale-evolution-triggers.md",
+        "tests/test_qa01_tech_decision_audit.py"
       ],
-      "notes": "Chạy song song với nhóm QA/DQ; có thể sinh RFC mới nếu phát hiện lệch kiến trúc.",
-      "updated_at": "2026-11-25"
+      "notes": "Hoàn thành 8/8 quyết định D1-D8 (100% đủ 2 trục Lý thuyết + Thực tiễn DN/OSS): 8/8 Keep cho TLCN, 6 nhóm Revise vào RFC-0001 (Draft) và 4 ngưỡng KLTN vào RFC-0002 (Draft); sẵn sàng làm đầu vào cho TASK-TST-01 & TASK-ACD-01.",
+      "updated_at": "2026-11-26"
     },
     {
       "id": "TASK-QA-02",
@@ -1522,6 +1534,32 @@
         "docs/deliverables/TASK-HF-01-fe-ux-cleanup-and-root-sync-visual-dossier.html"
       ],
       "notes": "Hotfix Cycle 08 thực hiện trước TASK-FE-01 và TASK-TST-01; tất cả kiểm thử pytest, tsc, next build và audit_doc_drift đều pass.",
+      "updated_at": "2026-11-25"
+    },
+    {
+      "id": "TASK-OPS-04",
+      "title": "Nghiên cứu & Tự cài đặt Bộ Tool/MCP Hỗ trợ Dev (Excalidraw CLI/MCP, Repo Tree/Graph Visualizer, Repomix, Playwright/DB MCP)",
+      "cycle": "Cycle 08",
+      "scope": "TLCN -> KLTN",
+      "layer": "Academic & Ops",
+      "task_type": "No-Code / External Integration",
+      "is_no_code": true,
+      "owner": "Hung",
+      "status": "todo",
+      "priority": "low",
+      "problem_statement": "Bổ sung các công cụ và MCP server cá nhân giúp tăng tốc vẽ sơ đồ kiến trúc (Excalidraw CLI/MCP), trực quan hóa cây thư mục/dependency graph (GitDiagram, Repo Visualizer, Repomix), và kiểm thử E2E/truy vấn nhanh (Playwright MCP, DuckDB/PostgreSQL MCP) trong quá trình phát triển TLCN -> KLTN.",
+      "research_questions": [
+        "Tổ hợp MCP server và CLI nào nhẹ, dễ tích hợp vào Antigravity/IDE để hỗ trợ vẽ sơ đồ báo cáo và debug nhanh?"
+      ],
+      "acceptance_criteria": [
+        "Thử nghiệm Excalidraw CLI/MCP (`@excalidraw/cli` hoặc `yctimlin/mcp_excalidraw`) để xuất sơ đồ kiến trúc.",
+        "Thử nghiệm công cụ vẽ cây thư mục / đồ thị repo (`GitDiagram`, `repo-visualizer` hoặc `Repomix`) phục vụ tổng quan codebase.",
+        "Đánh giá và cấu hình thêm các MCP hữu ích cho stack ACDP (Playwright MCP cho E2E UI, DuckDB/PostgreSQL MCP, GitHub MCP)."
+      ],
+      "deliverables": [
+        "docs/tasks/task-registry.md"
+      ],
+      "notes": "Task tự vọc & nâng cao năng suất dev cá nhân (không ảnh hưởng luồng code chính).",
       "updated_at": "2026-11-25"
     }
   ]
