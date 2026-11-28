@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TASK-DQ-01 Visual Dossier — Bronze Layer Validation, Provenance &amp; Idempotent Re-crawl</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 antialiased">
+  <div class="max-w-6xl mx-auto px-6 py-10 space-y-10">
+    <!-- Header -->
+    <header class="border-b border-slate-800 pb-6">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <span class="inline-block px-3 py-1 text-xs font-semibold rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+            Task ID: TASK-DQ-01 · Cycle 07 · TLCN Phase 1
+          </span>
+          <h1 class="mt-3 text-3xl font-bold tracking-tight text-white">
+            Kiểm định Lớp Đồng (Bronze): Tính đầy đủ, Bất biến, Provenance &amp; Idempotent Re-crawl
+          </h1>
+          <p class="mt-2 text-slate-400 text-sm">
+            Đỗ Kiến Hưng &amp; Nguyễn Văn Quang Duy · Khoa CNTT, Trường ĐH Công nghệ Kỹ thuật TP.HCM (HCM-UTE) · 2026-11-28
+          </p>
+        </div>
+        <div class="text-right text-xs text-slate-400 space-y-1">
+          <div>Bucket: <code class="text-sky-300">s3://acdp-lakehouse/bronze/</code></div>
+          <div>Audit Report: <code class="text-sky-300">bronze/_validation/audit_1795856160.json</code></div>
+          <div>Trạng thái: <span class="text-emerald-400 font-semibold">PASS (Phương án A)</span></div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Tier 1: Executive Summary KPIs -->
+    <section>
+      <h2 class="text-lg font-semibold text-slate-200 mb-4">1. Tóm tắt điều hành (Measured Live R2 KPIs)</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="rounded-xl bg-slate-900 border border-slate-800 p-5">
+          <div class="text-xs uppercase tracking-wider text-slate-400">Provenance &amp; SHA-256 (v2)</div>
+          <div class="mt-2 text-3xl font-bold text-emerald-400">34 / 34</div>
+          <div class="mt-1 text-xs text-slate-400">100.0% đủ 10 trường metadata &amp; khớp byte (tăng từ 0%)</div>
+        </div>
+        <div class="rounded-xl bg-slate-900 border border-slate-800 p-5">
+          <div class="text-xs uppercase tracking-wider text-slate-400">Idempotent Re-crawl &amp; Guard</div>
+          <div class="mt-2 text-3xl font-bold text-sky-400">0 Dup · 412</div>
+          <div class="mt-1 text-xs text-slate-400">Pass 2 bỏ qua (delta=0); IfNoneMatch='*' chặn ghi đè 412</div>
+        </div>
+        <div class="rounded-xl bg-slate-900 border border-slate-800 p-5">
+          <div class="text-xs uppercase tracking-wider text-slate-400">Truy vết Downstream</div>
+          <div class="mt-2 text-3xl font-bold text-indigo-400">24 / 24</div>
+          <div class="mt-1 text-xs text-slate-400">100% Silver &amp; Gold Parquet trỏ đúng bronze_key trên R2</div>
+        </div>
+        <div class="rounded-xl bg-slate-900 border border-slate-800 p-5">
+          <div class="text-xs uppercase tracking-wider text-slate-400">Kiểm thử tự động (Pytest)</div>
+          <div class="mt-2 text-3xl font-bold text-amber-400">21 / 21</div>
+          <div class="mt-1 text-xs text-slate-400">100% passed (2.68s) · Ruff check 0 errors</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tier 2: Architecture Diagram & Charts -->
+    <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="rounded-xl bg-slate-900 border border-slate-800 p-6">
+        <h2 class="text-base font-semibold text-slate-200 mb-4">2. Luồng Bất biến &amp; Idempotent Re-crawl (`bronze_crawl.py`)</h2>
+        <div class="mermaid">
+flowchart TD
+    C["Raw Rendered HTML<br/>(Playwright)"] --> E{"Rỗng hoặc<br/>whitespace?"}
+    E -- "Có" --> S1["SKIP: skipped_empty<br/>(0-byte guard)"]
+    E -- "Không" --> H["UTF-8 Strict + SHA-256<br/>(hex &amp; base64)"]
+    H --> L["Tìm snapshot mới nhất<br/>theo domain + source_url"]
+    L --> M{"content_hash<br/>trùng khớp?"}
+    M -- "Có" --> S2["SKIP: skipped_unchanged<br/>(0 object trùng lặp)"]
+    M -- "Không" --> P["PutObject R2<br/>IfNoneMatch='*' + ChecksumSHA256<br/>+ 10 Metadata Provenance"]
+    P --> R{"412 Conflict?"}
+    R -- "Trùng giây" --> T["Tăng ts + 1<br/>Không ghi đè"]
+    T --> P
+    R -- "200 OK" --> OK["Append snapshot bất biến<br/>bronze/{domain}/.../{ts}.html"]
+        </div>
+      </div>
+
+      <div class="rounded-xl bg-slate-900 border border-slate-800 p-6 space-y-6">
+        <div>
+          <h2 class="text-base font-semibold text-slate-200 mb-3">3. Tuân thủ Bronze v2: Trước vs. Sau Backfill (%)</h2>
+          <div class="h-48">
+            <canvas id="complianceChart"></canvas>
+          </div>
+        </div>
+        <div>
+          <h2 class="text-base font-semibold text-slate-200 mb-3">4. Phân loại 101 Object Hiện hữu trên R2 `bronze/`</h2>
+          <div class="h-48">
+            <canvas id="bucketChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tier 3: Collapsible Technical Details -->
+    <section class="space-y-4">
+      <details open class="rounded-xl bg-slate-900 border border-slate-800 p-5">
+        <summary class="cursor-pointer font-semibold text-slate-200">
+          5. Kết quả Kiểm chứng 3 Trục, Backfill Phương án A &amp; Probe 412 thực tế
+        </summary>
+        <div class="mt-4 overflow-x-auto">
+          <table class="w-full text-left text-sm text-slate-300 border-collapse">
+            <thead>
+              <tr class="border-b border-slate-700 text-slate-200">
+                <th class="py-2 pr-4">Hạng mục kiểm định</th>
+                <th class="py-2 pr-4">Baseline (Trước)</th>
+                <th class="py-2 pr-4">Sau triển khai</th>
+                <th class="py-2">Trạng thái</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800">
+              <tr>
+                <td class="py-2 pr-4">Key Taxonomy (`year=/month=/day=`)</td>
+                <td class="py-2 pr-4">34 / 34 (100.0%)</td>
+                <td class="py-2 pr-4">34 / 34 (100.0%)</td>
+                <td class="py-2 text-emerald-400 font-semibold">PASS</td>
+              </tr>
+              <tr>
+                <td class="py-2 pr-4">UTF-8 Strict &amp; `ACDP_PAGE_BOUNDARY`</td>
+                <td class="py-2 pr-4">34 / 34 (100.0%)</td>
+                <td class="py-2 pr-4">34 / 34 (100.0%)</td>
+                <td class="py-2 text-emerald-400 font-semibold">PASS</td>
+              </tr>
+              <tr>
+                <td class="py-2 pr-4">10 Trường Metadata Provenance</td>
+                <td class="py-2 pr-4">0 / 34 (0.0%)</td>
+                <td class="py-2 pr-4">34 / 34 (100.0%)</td>
+                <td class="py-2 text-emerald-400 font-semibold">PASS</td>
+              </tr>
+              <tr>
+                <td class="py-2 pr-4">Toàn vẹn mật mã SHA-256</td>
+                <td class="py-2 pr-4">0 / 34 (0.0%)</td>
+                <td class="py-2 pr-4">34 / 34 (100.0%)</td>
+                <td class="py-2 text-emerald-400 font-semibold">PASS</td>
+              </tr>
+              <tr>
+                <td class="py-2 pr-4">Idempotent Re-crawl (codetour.org)</td>
+                <td class="py-2 pr-4">Chưa có guard</td>
+                <td class="py-2 pr-4">Pass 2 skip (delta=0) · Probe HTTP 412</td>
+                <td class="py-2 text-emerald-400 font-semibold">PASS</td>
+              </tr>
+              <tr>
+                <td class="py-2 pr-4">Truy vết Silver / Gold Parquet</td>
+                <td class="py-2 pr-4">24 / 24</td>
+                <td class="py-2 pr-4">24 / 24 (0 dangling keys)</td>
+                <td class="py-2 text-emerald-400 font-semibold">PASS</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+
+      <details class="rounded-xl bg-slate-900 border border-slate-800 p-5">
+        <summary class="cursor-pointer font-semibold text-slate-200">
+          6. Lệnh CLI Kiểm định &amp; Demo Hội đồng (Copy-Paste PowerShell)
+        </summary>
+        <div class="mt-4 space-y-3 text-xs text-slate-300">
+          <pre class="p-4 rounded-lg bg-slate-950 border border-slate-800 overflow-x-auto text-emerald-300">uv run pytest tests/test_bronze_storage.py tests/test_bronze_validation_dq01.py -v
+uv run python -m acdp.v2.bronze_validate --audit --save-report --check-qdrant
+uv run python -m acdp.v2.bronze_validate --verify-recrawl --url https://codetour.org/</pre>
+        </div>
+      </details>
+    </section>
+  </div>
+
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+
+    new Chart(document.getElementById('complianceChart'), {
+      type: 'bar',
+      data: {
+        labels: ['Taxonomy', 'UTF-8 Strict', 'Boundary', 'Provenance Meta', 'SHA-256 Match', 'Silver Lineage'],
+        datasets: [
+          {
+            label: 'Trước Backfill (%)',
+            data: [100, 100, 100, 0, 0, 100],
+            backgroundColor: '#64748b',
+            borderRadius: 4
+          },
+          {
+            label: 'Sau Phương án A (%)',
+            data: [100, 100, 100, 100, 100, 100],
+            backgroundColor: '#10b981',
+            borderRadius: 4
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { labels: { color: '#cbd5e1' } } },
+        scales: {
+          x: { ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { display: false } },
+          y: { max: 110, ticks: { color: '#94a3b8' }, grid: { color: '#1e293b' } }
+        }
+      }
+    });
+
+    new Chart(document.getElementById('bucketChart'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Active v2 HTML (34)', 'Legacy v1 MD (59)', 'System _* (8)'],
+        datasets: [{
+          data: [34, 59, 8],
+          backgroundColor: ['#10b981', '#6366f1', '#f59e0b'],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { position: 'right', labels: { color: '#cbd5e1' } } }
+      }
+    });
+  </script>
+</body>
+</html>

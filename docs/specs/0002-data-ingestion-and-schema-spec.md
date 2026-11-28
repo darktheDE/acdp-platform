@@ -45,7 +45,7 @@ flowchart LR
     ```text
     s3://{BUCKET_NAME}/bronze/{domain_name}/year={YYYY}/month={MM}/day={DD}/{timestamp}.html
     ```
-    with `ContentType="text/html; charset=utf-8"` and metadata `{"source": domain_name, "layer": "bronze"}`.
+    with `ContentType="text/html; charset=utf-8"`, `IfNoneMatch="*"` conditional write enforcement (`412 PreconditionFailed` overwrite guard), `ChecksumAlgorithm="SHA256"`, idempotent re-crawl skip when `content_hash` matches the latest snapshot, and 10 provenance metadata fields (`source`, `source_url`, `layer`, `format`, `page_count`, `content_hash`, `content_bytes`, `crawled_at`, `http_status`, `crawl_mode`) validated via `src/acdp/v2/bronze_validate.py` (`TASK-DQ-01`).
   - **Tabular Silver Contract (`Competition` v2)**:
     Standardized Pydantic v2 data contracts (`G1–G7`) are defined in [`src/acdp/v2/schemas.py`](../../src/acdp/v2/schemas.py), storing canonical normalized URLs, ISO 8601 `date` fields, `required_skills`, `PrizeTier` currency/quantity details, and SHA-256 `competition_key`.
 

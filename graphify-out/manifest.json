@@ -366,10 +366,10 @@
     "semantic_hash": "7cfecd5824eb7a7cc270fdf81012d48a"
   },
   "docs/tasks/tasks-data.json": {
-    "mtime": 1795709950.1028166,
-    "seen": 1795852069.9281693,
-    "ast_hash": "e907c9b6a097b13addde435068caf8d9",
-    "semantic_hash": "e907c9b6a097b13addde435068caf8d9"
+    "mtime": 1795856247.601911,
+    "seen": 1795856311.6801448,
+    "ast_hash": "dde4757d107547db1dffad83e493436c",
+    "semantic_hash": ""
   },
   "openapi.json": {
     "mtime": 1795709615.08352,
@@ -642,10 +642,10 @@
     "semantic_hash": "7a35d704aa5917a8fa65eaa6d87a765d"
   },
   "src/acdp/v2/bronze_crawl.py": {
-    "mtime": 1795504066.4644601,
-    "seen": 1795852069.9282346,
-    "ast_hash": "6f563016dbaf0284c8f2ab8cb490cc6e",
-    "semantic_hash": "6f563016dbaf0284c8f2ab8cb490cc6e"
+    "mtime": 1795855984.932261,
+    "seen": 1795856311.680227,
+    "ast_hash": "dce6f3de63b70d8f5ad54db7ac723fa7",
+    "semantic_hash": ""
   },
   "src/acdp/v2/cloud_ops.py": {
     "mtime": 1795508312.1555543,
@@ -738,10 +738,10 @@
     "semantic_hash": "d0a17aff7428c1ed474ce14cc63dee63"
   },
   "tests/test_bronze_storage.py": {
-    "mtime": 1795504066.4740548,
-    "seen": 1795852069.9282556,
-    "ast_hash": "8423b7944c4ccc69388370453bb9a6cd",
-    "semantic_hash": "8423b7944c4ccc69388370453bb9a6cd"
+    "mtime": 1795856019.6410954,
+    "seen": 1795856311.6802585,
+    "ast_hash": "35e9fac2e744e1eb5e1bd30f7c5f6bf5",
+    "semantic_hash": ""
   },
   "tests/test_discovery_v2.py": {
     "mtime": 1795504066.4740548,
@@ -1608,10 +1608,10 @@
     "semantic_hash": "f4b0ac20cb8d02434e27bead22c82cfd"
   },
   "docs/specs/0002-data-ingestion-and-schema-spec.md": {
-    "mtime": 1795708362.4399137,
-    "seen": 1795852069.9284813,
-    "ast_hash": "246142f2fed13b1f6180db0b2fcfc097",
-    "semantic_hash": "246142f2fed13b1f6180db0b2fcfc097"
+    "mtime": 1795856246.1691687,
+    "seen": 1795856311.6805224,
+    "ast_hash": "0ea8511d6ef10c115df57fc9c4e62b11",
+    "semantic_hash": ""
   },
   "docs/specs/0003-gold-dimensional-modeling-spec.md": {
     "mtime": 1795708365.6966126,
@@ -1668,10 +1668,10 @@
     "semantic_hash": "9d040c80a6385b8004c99192e8877816"
   },
   "docs/tasks/task-registry.md": {
-    "mtime": 1795709985.0481155,
-    "seen": 1795852069.9284947,
-    "ast_hash": "af73cfb502c890dcc2e7a9f2c6ddfa56",
-    "semantic_hash": "af73cfb502c890dcc2e7a9f2c6ddfa56"
+    "mtime": 1795856299.054782,
+    "seen": 1795856311.6805403,
+    "ast_hash": "2bc957808bc924c4db515f5667a934c0",
+    "semantic_hash": ""
   },
   ".agents/skills/academic-researcher/SKILL.md": {
     "mtime": 1795504066.3042412,
@@ -1696,5 +1696,35 @@
     "seen": 1795852069.9285002,
     "ast_hash": "e19a252402158cb1ab47249759813a97",
     "semantic_hash": "e19a252402158cb1ab47249759813a97"
+  },
+  "src/acdp/v2/bronze_validate.py": {
+    "mtime": 1795856044.9005227,
+    "seen": 1795856311.6802292,
+    "ast_hash": "dfb264186ca9f4aaf95e007473496004",
+    "semantic_hash": ""
+  },
+  "tests/test_bronze_validation_dq01.py": {
+    "mtime": 1795856021.1991584,
+    "seen": 1795856311.6802602,
+    "ast_hash": "5da97253256476be9153bea2eba6f310",
+    "semantic_hash": ""
+  },
+  "docs/deliverables/TASK-DQ-01-bronze-validation-report-visual-dossier.html": {
+    "mtime": 1795856245.328832,
+    "seen": 1795856311.6804292,
+    "ast_hash": "f29fe89ec07f17691f7f322e9ef1e1a8",
+    "semantic_hash": ""
+  },
+  "docs/deliverables/TASK-DQ-01-bronze-validation-report.md": {
+    "mtime": 1795856287.085064,
+    "seen": 1795856311.680431,
+    "ast_hash": "e32064b28d9fecdbe3d4cbda03e2bc61",
+    "semantic_hash": ""
+  },
+  "apps/web/package-lock.json": {
+    "mtime": 1795504066.377928,
+    "seen": 1795856311.6805491,
+    "ast_hash": "accbfc8fd5ffea00a614c4437b1acf11",
+    "semantic_hash": ""
   }
 }

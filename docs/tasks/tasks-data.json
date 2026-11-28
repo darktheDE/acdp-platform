@@ -976,7 +976,7 @@
       "task_type": "Engineering",
       "is_no_code": false,
       "owner": "Hung & Duy",
-      "status": "todo",
+      "status": "done",
       "priority": "high",
       "problem_statement": "Vấn đề: Đã có code lưu raw HTML lên R2 nhưng chưa có bộ kiểm định chứng minh Bronze tuân thủ đầy đủ nguyên lý append-only/bất biến và tái xử lý an toàn. Kiểm chứng 3 trục — Lý thuyết: chuẩn Bronze Layer trong Medallion Architecture (raw source-of-truth, immutable, metadata lineage); Thực tiễn: thực hành lakehouse tại doanh nghiệp dùng content hash, source URL, ingestion timestamp để chống ghi đè mất lịch sử; Người dùng: đảm bảo mọi thông tin/quy định ở Gold/RAG luôn truy ngược được về bản gốc Bronze. Phương pháp: xây dựng checklist và bộ test kiểm tra content SHA-256 hash, URL gốc, timestamp, encoding UTF-8 và chạy re-crawl 2 lần liên tiếp. Tiêu chí chấp nhận: 100% object Bronze đủ metadata provenance; re-crawl cùng nội dung không tạo bản ghi trùng lặp ngoài kiểm soát. Phụ thuộc: sau TASK-BRZ-02.",
       "research_questions": [
@@ -987,10 +987,14 @@
         "Test tự động xác nhận chạy re-crawl cùng URL/nội dung là idempotent."
       ],
       "deliverables": [
-        "docs/deliverables/TASK-DQ-01-bronze-validation-report.md"
+        "src/acdp/v2/bronze_crawl.py",
+        "src/acdp/v2/bronze_validate.py",
+        "tests/test_bronze_validation_dq01.py",
+        "docs/deliverables/TASK-DQ-01-bronze-validation-report.md",
+        "docs/deliverables/TASK-DQ-01-bronze-validation-report-visual-dossier.html"
       ],
       "notes": "Phụ thuộc TASK-BRZ-02; đầu vào cho TASK-DQ-06.",
-      "updated_at": "2026-11-25"
+      "updated_at": "2026-11-28"
     },
     {
       "id": "TASK-DQ-02",

@@ -2,7 +2,7 @@
 
 This ledger is auto-generated from [`tasks-data.json`](./tasks-data.json) and synchronized with the interactive portal [`index.html`](./index.html) per **DIR-018**.
 
-- **Total tasks**: `87` (`47` completed)
+- **Total tasks**: `87` (`48` completed)
 - **Scope distribution**: `70` TLCN (Phase 1) | `23` KLTN (Phase 2)
 - **Last updated**: `2026-11-25`
 
@@ -76,7 +76,7 @@ This ledger is auto-generated from [`tasks-data.json`](./tasks-data.json) and sy
 | **TASK-QA-01** | Cycle 07 | TLCN (Phase 1) | Academic & Ops | Audit Toàn bộ Quyết định Kỹ thuật: Lý thuyết × Thực tiễn × Scope | Hung & Duy | [`TASK-QA-01-tech-decision-theory-practice-audit.md`](../../docs/deliverables/TASK-QA-01-tech-decision-theory-practice-audit.md), [`TASK-QA-01-tech-decision-theory-practice-audit-visual-dossier.html`](../../docs/deliverables/TASK-QA-01-tech-decision-theory-practice-audit-visual-dossier.html), [`RFC-0001-spec-v2-and-cloud-parity-realignment.md`](../../docs/rfc/RFC-0001-spec-v2-and-cloud-parity-realignment.md), [`RFC-0002-kltn-scale-evolution-triggers.md`](../../docs/rfc/RFC-0002-kltn-scale-evolution-triggers.md), [`test_qa01_tech_decision_audit.py`](../../tests/test_qa01_tech_decision_audit.py) | ✅ Done |
 | **TASK-QA-02** | Cycle 08 | TLCN (Phase 1) | Discovery | Ma trận Truy vết Yêu cầu Người dùng -> Schema -> API -> Giao diện | Hung & Duy | `docs/deliverables/TASK-QA-02-requirements-traceability-matrix.md` | ⏳ Todo |
 | **TASK-QA-03** | Cycle 08 | TLCN (Phase 1) | Discovery | Xác thực Nhu cầu & Schema theo Persona, Đối chuẩn Nền tảng & Tham vấn GVHD (TLCN) | Hung & Duy | `docs/deliverables/TASK-QA-03-persona-competitor-advisor-validation.md` | ⏳ Todo |
-| **TASK-DQ-01** | Cycle 07 | TLCN (Phase 1) | Bronze | Validate Lớp Đồng (Bronze): Tính đầy đủ, Bất biến, Provenance & Idempotent Re-crawl | Hung & Duy | `docs/deliverables/TASK-DQ-01-bronze-validation-report.md` | ⏳ Todo |
+| **TASK-DQ-01** | Cycle 07 | TLCN (Phase 1) | Bronze | Validate Lớp Đồng (Bronze): Tính đầy đủ, Bất biến, Provenance & Idempotent Re-crawl | Hung & Duy | [`bronze_crawl.py`](../../src/acdp/v2/bronze_crawl.py), [`bronze_validate.py`](../../src/acdp/v2/bronze_validate.py), [`test_bronze_validation_dq01.py`](../../tests/test_bronze_validation_dq01.py), [`TASK-DQ-01-bronze-validation-report.md`](../../docs/deliverables/TASK-DQ-01-bronze-validation-report.md), [`TASK-DQ-01-bronze-validation-report-visual-dossier.html`](../../docs/deliverables/TASK-DQ-01-bronze-validation-report-visual-dossier.html) | ✅ Done |
 | **TASK-DQ-02** | Cycle 07 | TLCN (Phase 1) | Silver | Xây dựng Golden Dataset & Đo Độ chính xác Trích xuất Lớp Bạc theo Từng Field | Hung & Duy | `docs/deliverables/TASK-DQ-02-silver-golden-dataset-accuracy.md` | ⏳ Todo |
 | **TASK-DQ-03** | Cycle 07 | TLCN (Phase 1) | Silver | Triển khai Data Contract & Quality Gate Tự động giữa Các Layer | Hung & Duy | `docs/deliverables/TASK-DQ-03-data-contracts-and-quality-gates.md` | ⏳ Todo |
 | **TASK-DQ-04** | Cycle 07 | TLCN (Phase 1) | Silver | Entity Resolution & Khử trùng Cuộc thi (Đa nguồn, Đa mùa giải) | Hung & Duy | `docs/deliverables/TASK-DQ-04-entity-resolution-and-dedup.md` | ⏳ Todo |

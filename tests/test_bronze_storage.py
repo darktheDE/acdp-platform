@@ -178,10 +178,13 @@ def test_v2_package_bronze_html_with_boundaries() -> None:
 
 
 def test_v2_upload_to_bronze_raw_html_r2_and_empty_skip(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Verify ACDP v2 uploads Raw Rendered HTML (.html) to R2 and skips empty payloads."""
+    """Verify ACDP v2 uploads Raw Rendered HTML (.html) to R2 with full provenance and skips empty payloads."""
+    import base64
 
     from acdp.v2 import bronze_crawl as v2_bronze
+
     fake_s3 = MagicMock()
+    fake_s3.list_objects_v2.return_value = {"Contents": [], "IsTruncated": False}
     monkeypatch.setattr(v2_bronze.settings, "bucket_name", "acdp-test-bucket")
     monkeypatch.setattr(type(v2_bronze.settings), "create_r2_client", lambda self: fake_s3)
 
@@ -193,7 +196,11 @@ def test_v2_upload_to_bronze_raw_html_r2_and_empty_skip(monkeypatch: pytest.Monk
         "<html><head><title>Cuộc thi AI</title></head><body><p>Giải thưởng 50 triệu</p></body></html>"
     )
     uploaded_key = v2_bronze.upload_to_bronze(
-        sample_html, "https://example.org/contest", page_count=1
+        sample_html,
+        "https://example.org/contest",
+        page_count=1,
+        http_status=200,
+        crawl_mode="adaptive",
     )
     assert uploaded_key is not None
     assert uploaded_key.startswith("bronze/example.org/year=")
@@ -201,13 +208,23 @@ def test_v2_upload_to_bronze_raw_html_r2_and_empty_skip(monkeypatch: pytest.Monk
 
     fake_s3.put_object.assert_called_once()
     kwargs = fake_s3.put_object.call_args.kwargs
+    raw_bytes = sample_html.encode("utf-8")
+    expected_digest = hashlib.sha256(raw_bytes).digest()
     assert kwargs["Bucket"] == "acdp-test-bucket"
     assert kwargs["Key"] == uploaded_key
-    assert kwargs["Body"] == sample_html.encode("utf-8")
+    assert kwargs["Body"] == raw_bytes
     assert kwargs["ContentType"] == "text/html; charset=utf-8"
-    assert kwargs["Metadata"] == {
-        "source": "example.org",
-        "layer": "bronze",
-        "format": "raw_html",
-        "page_count": "1",
-    }
+    assert kwargs["IfNoneMatch"] == "*"
+    assert kwargs["ChecksumAlgorithm"] == "SHA256"
+    assert kwargs["ChecksumSHA256"] == base64.b64encode(expected_digest).decode("ascii")
+    meta = kwargs["Metadata"]
+    assert meta["source"] == "example.org"
+    assert meta["source_url"] == "https://example.org/contest"
+    assert meta["layer"] == "bronze"
+    assert meta["format"] == "raw_html"
+    assert meta["page_count"] == "1"
+    assert meta["content_hash"] == expected_digest.hex()
+    assert meta["content_bytes"] == str(len(raw_bytes))
+    assert meta["http_status"] == "200"
+    assert meta["crawl_mode"] == "adaptive"
+    assert meta["crawled_at"].endswith("Z")
