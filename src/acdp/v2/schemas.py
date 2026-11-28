@@ -38,16 +38,48 @@ def clean_placeholder(v: Any) -> Any:
     return v
 
 
-def slugify(text: str) -> str:
-    """Convert arbitrary Unicode/Vietnamese text to lowercase URL-safe ASCII slug."""
+def fold_vietnamese(text: str) -> str:
+    """Fold Vietnamese text to lowercase ASCII with punctuation collapsed to single spaces."""
+    if not text:
+        return ""
     normalized = unicodedata.normalize("NFKD", text.replace("đ", "d").replace("Đ", "D"))
     ascii_only = normalized.encode("ascii", "ignore").decode("ascii").lower()
-    slug = re.sub(r"[^a-z0-9]+", "-", ascii_only).strip("-")
+    cleaned = re.sub(r"[^a-z0-9]+", " ", ascii_only)
+    return re.sub(r"\s+", " ", cleaned).strip()
+
+
+def slugify(text: str) -> str:
+    """Convert arbitrary Unicode/Vietnamese text to lowercase URL-safe ASCII slug."""
+    folded = fold_vietnamese(text)
+    slug = re.sub(r"\s+", "-", folded).strip("-")
     return slug or "unknown"
 
 
+_URL_TRACKING_PARAMS = frozenset(
+    {
+        "fbclid",
+        "gclid",
+        "ref",
+        "igshid",
+        "mc_cid",
+        "mc_eid",
+    }
+)
+_ROOT_BOILERPLATE_PATHS = frozenset(
+    {
+        "/trang-chu",
+        "/home",
+        "/index.html",
+        "/index.htm",
+        "/index.php",
+        "/vi",
+        "/en",
+    }
+)
+
+
 def normalize_canonical_url(url: str | None, fallback_name: str = "") -> str:
-    """Normalize URL by enforcing https, lowercase host, no tracking query or trailing slash."""
+    """Normalize URL per RFC 3986 §6: https, lowercase host, no www., no tracking query/root boilerplate."""
     if not url or not url.strip():
         return f"urn:acdp:name:{slugify(fallback_name)}"
 
@@ -61,20 +93,318 @@ def normalize_canonical_url(url: str | None, fallback_name: str = "") -> str:
 
     scheme = "https"
     netloc = parsed.netloc.lower()
-    path = parsed.path.rstrip("/") or ""
+    if netloc.endswith(":80") or netloc.endswith(":443"):
+        netloc = netloc.rsplit(":", 1)[0]
+    if netloc.startswith("www."):
+        netloc = netloc[4:]
 
-    filtered_query = [
+    path = parsed.path.rstrip("/") or ""
+    if path.lower() in _ROOT_BOILERPLATE_PATHS:
+        path = ""
+
+    filtered_query = sorted(
         (k, v)
-        for k, v in parse_qsl(parsed.query, keep_blank_values=True)
-        if not k.lower().startswith("utm_") and k.lower() != "fbclid"
-    ]
+        for k, v in parse_qsl(parsed.query, keep_blank_values=False)
+        if not k.lower().startswith("utm_") and k.lower() not in _URL_TRACKING_PARAMS
+    )
     query_str = urlencode(filtered_query)
     return urlunparse((scheme, netloc, path, "", query_str, ""))
 
 
-def compute_competition_key(canonical_url: str) -> str:
-    """Compute immutable 64-char SHA-256 natural key from canonical URL."""
-    return hashlib.sha256(canonical_url.encode("utf-8")).hexdigest()
+def compute_competition_key(canonical_url: str, season_year: int | None = None) -> str:
+    """Compute immutable 64-char SHA-256 key from canonical URL, scoped by season_year on evergreen domains."""
+    key_input = canonical_url
+    if season_year is not None and not canonical_url.startswith("urn:"):
+        year_str = str(season_year)
+        if not re.search(rf"(?<!\d){re.escape(year_str)}(?!\d)", canonical_url):
+            key_input = f"{canonical_url}#season={year_str}"
+    return hashlib.sha256(key_input.encode("utf-8")).hexdigest()
+
+
+ORGANIZER_ALIAS_MAP: dict[str, str] = {
+    "vinuniversity": "vinuni",
+    "truong dai hoc vinuni": "vinuni",
+    "dai hoc vinuni": "vinuni",
+    "vinuni": "vinuni",
+    "vintelligence": "vinuni",
+    "vng": "vng",
+    "vng corporation": "vng",
+    "cong ty co phan vng": "vng",
+    "zalo": "zalo",
+    "zalo ai": "zalo",
+    "rmit": "rmit",
+    "rmit university": "rmit",
+    "rmit university vietnam": "rmit",
+    "rmit vietnam": "rmit",
+    "rmit vietnam fintech club": "rmit",
+    "rmit student club program": "rmit",
+    "dai hoc quoc gia ha noi": "vnu_hanoi",
+    "dhqghn": "vnu_hanoi",
+    "truong dai hoc cong nghe dhqghn": "vnu_hanoi",
+    "dai hoc quoc gia thanh pho ho chi minh": "vnu_hcm",
+    "dhqg hcm": "vnu_hcm",
+    "truong dai hoc cong nghe thong tin dhqg hcm": "uit",
+    "truong dai hoc cong nghe thong tin": "uit",
+    "uit": "uit",
+    "hust": "hust",
+    "hbac": "hust",
+    "hbac hust business analytics club": "hust",
+    "truong kinh te dhbk ha noi": "hust",
+    "dai hoc bach khoa ha noi": "hust",
+    "hcmute": "hcmute",
+    "hcm ute": "hcmute",
+    "fit hcmute": "hcmute",
+    "fit hcm ute": "hcmute",
+    "truong dai hoc su pham ky thuat tp hcm": "hcmute",
+    "truong dai hoc cong nghe ky thuat tp hcm": "hcmute",
+    "ton duc thang university": "tdtu",
+    "ton duc thang university faculty of information technology": "tdtu",
+    "truong dai hoc ton duc thang": "tdtu",
+    "fpt": "fpt",
+    "fpt university": "fpt",
+    "dai hoc fpt": "fpt",
+    "naver": "naver",
+    "naver viet nam": "naver",
+    "naver vietnam": "naver",
+    "bo cong an": "mps_vn",
+    "so khoa hoc va cong nghe tp hcm": "dost_hcm",
+    "hoi tin hoc thanh pho": "hca",
+    "qualcomm": "qualcomm",
+    "qualcomm technologies": "qualcomm",
+    "onyx data": "onyx_data",
+    "netcompany": "netcompany",
+    "netcompany vietnam": "netcompany",
+    "code mely": "code_mely",
+    "trung tam doi moi sang tao quoc gia": "nic",
+    "nic": "nic",
+    "tap doan meta": "meta",
+    "meta": "meta",
+    "ai for vietnam": "aiv",
+    "to chuc ai for vietnam": "aiv",
+    "hiep hoi du lieu quoc gia": "nda",
+    "trung tam du lieu quoc gia": "ndc",
+    "dai truyen hinh viet nam": "vtv",
+    "haui": "haui",
+    "dai hoc cong nghiep ha noi": "haui",
+    "ntt": "nttu",
+    "truong dai hoc nguyen tat thanh": "nttu",
+    "khoa cong nghe thong tin truong dai hoc nguyen tat thanh": "nttu",
+    "lotushacks": "lotushacks",
+    "hackharvard": "hackharvard",
+    "cuc so huu tri tue": "ipvietnam",
+    "bo khoa hoc va cong nghe": "most_vn",
+    "bao vnexpress": "vnexpress",
+}
+
+_FRAMING_PREFIX_RE = re.compile(
+    r"^(?:cuoc thi|hoi thi|dau truong|giai dau|san choi|chuong trinh|thong bao|khoi dong|chung ket)\s+"
+)
+_GENERIC_DOMAIN_PREFIX_RE = re.compile(
+    r"^(?:khoa hoc du lieu|tri tue nhan tao|an toan thong tin|lap trinh|cong nghe thong tin)\s+"
+)
+_MONTH_MAP: dict[str, int] = {
+    "january": 1,
+    "jan": 1,
+    "thang 1": 1,
+    "thang 01": 1,
+    "february": 2,
+    "feb": 2,
+    "thang 2": 2,
+    "thang 02": 2,
+    "march": 3,
+    "mar": 3,
+    "thang 3": 3,
+    "thang 03": 3,
+    "april": 4,
+    "apr": 4,
+    "thang 4": 4,
+    "thang 04": 4,
+    "may": 5,
+    "thang 5": 5,
+    "thang 05": 5,
+    "june": 6,
+    "jun": 6,
+    "thang 6": 6,
+    "thang 06": 6,
+    "july": 7,
+    "jul": 7,
+    "thang 7": 7,
+    "thang 07": 7,
+    "august": 8,
+    "aug": 8,
+    "thang 8": 8,
+    "thang 08": 8,
+    "september": 9,
+    "sep": 9,
+    "sept": 9,
+    "thang 9": 9,
+    "thang 09": 9,
+    "october": 10,
+    "oct": 10,
+    "thang 10": 10,
+    "november": 11,
+    "nov": 11,
+    "thang 11": 11,
+    "december": 12,
+    "dec": 12,
+    "thang 12": 12,
+}
+
+
+def canonicalize_organizers(organizers: list[str]) -> list[str]:
+    """Map noisy Vietnamese/English organizer strings to canonical entity tokens."""
+    canonical: list[str] = []
+    seen: set[str] = set()
+    for raw in organizers:
+        folded = fold_vietnamese(raw)
+        if not folded:
+            continue
+        mapped = ORGANIZER_ALIAS_MAP.get(folded)
+        if not mapped:
+            # Substring fallback for parenthetical / multi-part organizer strings
+            for alias_key, target in ORGANIZER_ALIAS_MAP.items():
+                if len(alias_key) >= 5 and alias_key in folded:
+                    mapped = target
+                    break
+        token = mapped or slugify(folded)
+        if token not in seen:
+            seen.add(token)
+            canonical.append(token)
+    return canonical
+
+
+def extract_season_year(
+    name: str,
+    url: str | None = None,
+    *,
+    event_start_date: date | None = None,
+    registration_deadline_date: date | None = None,
+    registration_start_date: date | None = None,
+    event_end_date: date | None = None,
+    timeline_dates: list[date | None] | None = None,
+    tagline: str | None = None,
+    summary: str | None = None,
+) -> int | None:
+    """Extract competition edition/season year using deterministic priority cascade."""
+    year_re = re.compile(r"(?<!\d)(202\d|2030)(?!\d)")
+
+    name_years = [int(y) for y in year_re.findall(name or "")]
+    if name_years:
+        return name_years[-1]
+
+    if url:
+        parsed_u = urlparse(url)
+        url_body = f"{parsed_u.netloc}{parsed_u.path}"
+        url_years = [int(y) for y in year_re.findall(url_body)]
+        if url_years:
+            return url_years[-1]
+
+    for dt in (
+        event_start_date,
+        registration_deadline_date,
+        registration_start_date,
+        event_end_date,
+        *(timeline_dates or []),
+    ):
+        if dt is not None and 2020 <= dt.year <= 2030:
+            return dt.year
+
+    for text_field in (tagline or "", summary or ""):
+        found = sorted({int(y) for y in year_re.findall(text_field)})
+        if len(found) == 1:
+            return found[0]
+        if found:
+            return found[0]
+    return None
+
+
+def extract_season_month(name: str, url: str | None = None) -> int | None:
+    """Extract explicit month identifier for monthly recurring challenges (e.g. DataDNA)."""
+    combined = f"{fold_vietnamese(name)} {fold_vietnamese(url or '')}".strip()
+    for token, month_num in _MONTH_MAP.items():
+        if re.search(rf"\b{re.escape(token)}\b", combined):
+            return month_num
+    return None
+
+
+def extract_edition_number(name: str) -> int | None:
+    """Extract explicit ordinal edition/season number ('mùa 3', 'season 4', 'lần thứ 2')."""
+    folded = fold_vietnamese(name)
+    match = re.search(r"\b(?:mua|season|edition|lan thu)\s*(\d{1,2})\b", folded)
+    if match:
+        return int(match.group(1))
+    return None
+
+
+def normalize_competition_name(name: str) -> tuple[str, str]:
+    """Return (full_normalized_name, core_name_slug) invariant to framing words, locations, and year/edition."""
+    raw = (name or "").strip()
+    if not raw:
+        return ("", "unknown")
+
+    def _clean_segment(seg: str) -> str:
+        f = fold_vietnamese(seg)
+        f = re.sub(r"\bviet nam\b", "vietnam", f)
+        f = re.sub(r"\b(thanh pho ho chi minh|tp hcm|ho chi minh city|tphcm)\b", "tphcm", f)
+        return re.sub(r"\s+", " ", f).strip()
+
+    full_norm = _clean_segment(raw)
+    # Split thematic subtitles (e.g. "Datathon 2026: The Gridbreaker" -> "Datathon 2026")
+    head = re.split(r"[:–|]|\s+-\s+", raw, maxsplit=1)[0].strip() or raw
+    core = _clean_segment(head)
+
+    # Strip year, month, and ordinal edition markers from core
+    core = re.sub(r"\b(?:mua|season|edition|lan thu)\s*\d{1,2}\b", " ", core)
+    core = re.sub(r"\b(?:nam\s*)?20[2-3]\d\b", " ", core)
+    for m_tok in _MONTH_MAP:
+        core = re.sub(rf"\b{re.escape(m_tok)}\b", " ", core)
+    core = re.sub(r"\btoan quoc\b", " ", core)
+    core = re.sub(r"\s+", " ", core).strip()
+
+    # Strip framing boilerplate iteratively
+    while True:
+        updated = _FRAMING_PREFIX_RE.sub("", core).strip()
+        if updated == core:
+            break
+        core = updated
+
+    # Strip generic domain descriptor only when a distinct brand token remains
+    stripped_domain = _GENERIC_DOMAIN_PREFIX_RE.sub("", core).strip()
+    if stripped_domain and len(stripped_domain) >= 4:
+        core = stripped_domain
+
+    # If a parenthetical short brand exists alongside long Vietnamese framing, e.g., "... (AI Challenge) tphcm",
+    # fold outer/inner cleanly into slug
+    core = re.sub(r"\s+", " ", core).strip()
+    core_slug = re.sub(r"\s+", "-", core).strip("-") or slugify(full_norm)
+    return full_norm, core_slug
+
+
+def build_natural_key(
+    name: str,
+    organizers: list[str],
+    url: str | None,
+    season_year: int | None,
+    *,
+    season_month: int | None = None,
+    official_domain: str | None = None,
+) -> tuple[str, str]:
+    """Build deterministic composite natural key and its 64-char SHA-256 digest."""
+    _, core_slug = normalize_competition_name(name)
+    canon_orgs = canonicalize_organizers(organizers)
+    primary_org = canon_orgs[0] if canon_orgs else "unknown-org"
+    domain_part = (official_domain or "").strip().lower()
+    if not domain_part and url:
+        canon_u = normalize_canonical_url(url, name)
+        if not canon_u.startswith("urn:"):
+            domain_part = urlparse(canon_u).netloc
+    domain_part = domain_part or "no-domain"
+    year_part = str(season_year) if season_year is not None else "unknown-year"
+    parts = [core_slug, primary_org, year_part, domain_part]
+    if season_month is not None:
+        parts.append(f"{season_month:02d}")
+    natural_key = "|".join(parts)
+    return natural_key, hashlib.sha256(natural_key.encode("utf-8")).hexdigest()
 
 
 def parse_date_value(raw: Any) -> date | None:
@@ -435,7 +765,16 @@ class Competition(BaseModel):
         description="G4: Hạn chốt đội thi chuẩn hóa ISO DATE",
     )
 
-    # Lineage & Audit Metadata (G6)
+    # Lineage, Entity Resolution & Audit Metadata (G6 + TASK-DQ-04)
+    season_year: int | None = Field(default=None, description="DQ-04: Năm mùa giải chuẩn hóa (2025-2027)")
+    natural_key: str | None = Field(
+        default=None,
+        description="DQ-04: Khóa tự nhiên nghiệp vụ (core_name|primary_org|season_year|official_domain)",
+    )
+    merged_source_urls: list[str] = Field(
+        default_factory=list,
+        description="DQ-04: Danh sách URL nguồn đã gộp về thực thể chuẩn",
+    )
     source_url: str | None = Field(default=None, description="G6: URL nguồn đã cào ở Bronze")
     bronze_key: str | None = Field(default=None, description="G6: Object key trên R2 Bronze")
     extracted_at: datetime | None = Field(default=None, description="G6: Thời điểm trích xuất UTC")
@@ -456,6 +795,7 @@ class Competition(BaseModel):
         "partners_and_sponsors",
         "allowed_majors",
         "required_skills",
+        "merged_source_urls",
         mode="before",
     )
     @classmethod
@@ -553,7 +893,7 @@ class Competition(BaseModel):
 
     @model_validator(mode="after")
     def enrich_deterministic_fields(self) -> Competition:
-        """Deterministically populate ISO dates, team individual flag, and competition_key."""
+        """Deterministically populate ISO dates, season_year, natural_key, and season-scoped competition_key."""
         if self.registration_start_date is None and self.registration_start:
             self.registration_start_date = parse_date_value(self.registration_start)
         if self.registration_deadline_date is None and self.registration_deadline:
@@ -568,9 +908,49 @@ class Competition(BaseModel):
         if self.is_individual_allowed is None and self.team_size_min is not None:
             self.is_individual_allowed = self.team_size_min <= 1
 
+        if self.season_year is None:
+            timeline_dates = [
+                d
+                for st in self.timeline_stages
+                for d in (st.start_date_iso, st.end_date_iso)
+            ]
+            self.season_year = extract_season_year(
+                self.name,
+                self.url,
+                event_start_date=self.event_start_date,
+                registration_deadline_date=self.registration_deadline_date,
+                registration_start_date=self.registration_start_date,
+                event_end_date=self.event_end_date,
+                timeline_dates=timeline_dates,
+                tagline=self.tagline,
+                summary=self.summary,
+            )
+
+        if not self.natural_key:
+            s_month = extract_season_month(self.name, self.url)
+            self.natural_key, _ = build_natural_key(
+                self.name,
+                self.organizers,
+                self.url,
+                self.season_year,
+                season_month=s_month,
+            )
+
+        if not self.merged_source_urls:
+            initial_urls: list[str] = []
+            seen_canon: set[str] = set()
+            for candidate_u in (self.source_url, self.url):
+                if candidate_u and candidate_u.strip():
+                    u_str = candidate_u.strip()
+                    u_canon = normalize_canonical_url(u_str)
+                    if u_canon not in seen_canon:
+                        seen_canon.add(u_canon)
+                        initial_urls.append(u_str)
+            self.merged_source_urls = initial_urls
+
         if not self.competition_key:
             canonical = normalize_canonical_url(self.url, self.name)
-            self.competition_key = compute_competition_key(canonical)
+            self.competition_key = compute_competition_key(canonical, season_year=self.season_year)
 
         for idx, prize in enumerate(self.prizes, start=1):
             if prize.tier_rank is None:

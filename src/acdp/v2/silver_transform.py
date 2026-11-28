@@ -41,7 +41,8 @@ from acdp.v2.data_contracts import (
     validate_bronze_to_silver_handoff,
     validate_silver_records_pydantic,
 )
-from acdp.v2.schemas import Competition, CompetitionExtractionResult
+from acdp.v2.entity_resolution import resolve_competition_entities
+from acdp.v2.schemas import Competition, CompetitionExtractionResult, extract_season_year
 
 if sys.stdout and hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
@@ -868,8 +869,9 @@ def evaluate_pre_llm_scope(
     clean_md: str,
     known_official_domains: set[str] | None = None,
     reference_year: int = DEFAULT_REFERENCE_YEAR,
+    known_official_season_keys: set[tuple[str, int | None]] | None = None,
 ) -> ScopeDecision:
-    """Stage 2 Deterministic Gate enforcing DIR-022 scope and media-partner deduplication."""
+    """Stage 2 Deterministic Gate enforcing DIR-022 scope and season-aware media-partner deduplication."""
     if not clean_md or len(clean_md.strip()) < 200:
         return ScopeDecision(accepted=False, reason="empty_or_too_short")
 
@@ -891,13 +893,33 @@ def evaluate_pre_llm_scope(
     if any(marker in lower for marker in NOT_FOUND_MARKERS) and len(clean_md) < 1500:
         return ScopeDecision(accepted=False, reason="http_error_or_404_page")
 
-    # 1. Official website requirement & Media-partner resolution (DIR-022)
+    # 1. Official website requirement & Season-aware Media-partner resolution (DIR-022 + TASK-DQ-04)
     if not signals.has_official_website or not signals.canonical_official_url:
         return ScopeDecision(accepted=False, reason="no_official_website")
 
-    if signals.is_media_or_aggregator and known_official_domains:
+    if signals.is_media_or_aggregator:
         resolved_domain = _canonical_domain(signals.canonical_official_url)
-        if resolved_domain in known_official_domains:
+        if known_official_season_keys is not None:
+            cand_year = extract_season_year(
+                signals.og_title or signals.title or signals.h1_title or "",
+                signals.canonical_official_url,
+                tagline=signals.og_description,
+            )
+            if cand_year is None and len(set(signals.detected_years)) == 1:
+                cand_year = signals.detected_years[0]
+            same_season_match = (
+                (resolved_domain, cand_year) in known_official_season_keys
+                or (resolved_domain, None) in known_official_season_keys
+                or (cand_year is None and any(dom == resolved_domain for dom, _ in known_official_season_keys))
+            )
+            if same_season_match:
+                return ScopeDecision(
+                    accepted=False,
+                    reason="media_partner_merged_to_official",
+                    canonical_official_url=signals.canonical_official_url,
+                    merged_into_official_key=resolved_domain,
+                )
+        elif known_official_domains and resolved_domain in known_official_domains:
             return ScopeDecision(
                 accepted=False,
                 reason="media_partner_merged_to_official",
@@ -1205,6 +1227,7 @@ def run_silver_transform(
     # Pre-pass 1: Deterministic extraction & Clean Markdown in RAM for all snapshots
     prepared: list[dict[str, Any]] = []
     known_official_domains: set[str] = set()
+    known_official_season_keys: set[tuple[str, int | None]] = set()
     for snap in snapshots:
         if snap["is_html"]:
             clean_md = html_to_clean_markdown(snap["pages"], md_generator=md_generator)
@@ -1218,18 +1241,28 @@ def run_silver_transform(
             is_html=snap["is_html"],
         )
         if not signals.is_media_or_aggregator and signals.canonical_official_url:
-            known_official_domains.add(_canonical_domain(signals.canonical_official_url))
+            official_dom = _canonical_domain(signals.canonical_official_url)
+            known_official_domains.add(official_dom)
+            snap_year = extract_season_year(
+                signals.og_title or signals.title or signals.h1_title or "",
+                signals.canonical_official_url,
+                tagline=signals.og_description,
+            )
+            if snap_year is None and len(set(signals.detected_years)) == 1:
+                snap_year = signals.detected_years[0]
+            known_official_season_keys.add((official_dom, snap_year))
 
         prepared.append({"snap": snap, "clean_md": clean_md, "signals": signals})
 
     client = _create_instructor_client() if (run_llm and not dry_run) else None
     accepted_records: list[dict[str, Any]] = []
-    seen_canonical_urls: set[str] = set()
+    extracted_stage_items: list[dict[str, Any]] = []
     audit_entries: list[dict[str, Any]] = []
     drop_counts: dict[str, int] = defaultdict(int)
     uploaded_md_keys: list[str] = []
     uploaded_json_keys: list[str] = []
     contract_gate_failures = 0
+    er_summary_dict: dict[str, Any] | None = None
 
     for item in prepared:
         snap = item["snap"]
@@ -1253,6 +1286,7 @@ def run_silver_transform(
             clean_md=clean_md,
             known_official_domains=known_official_domains,
             reference_year=reference_year,
+            known_official_season_keys=known_official_season_keys,
         )
         if not decision.accepted:
             drop_counts[decision.reason] += 1
@@ -1287,39 +1321,96 @@ def run_silver_transform(
                 print(f">> [DROP:post_llm_scope] {snap['source_url']}")
                 continue
 
-            unique_comps: list[Competition] = []
             for comp in guarded.competitions:
-                canon = normalize_url(comp.url) or decision.canonical_official_url
-                if canon in seen_canonical_urls:
-                    continue
-                seen_canonical_urls.add(canon)
-                unique_comps.append(comp)
+                enriched_comp = comp.model_copy(
+                    update={
+                        "url": comp.url or decision.canonical_official_url,
+                        "source_url": comp.source_url or snap["source_url"],
+                        "bronze_key": comp.bronze_key or snap["key"],
+                    }
+                )
+                extracted_stage_items.append(
+                    {
+                        "comp": enriched_comp,
+                        "snap": snap,
+                        "clean_md": clean_md,
+                        "signals": signals,
+                        "decision": decision,
+                        "reasoning": guarded.reasoning,
+                    }
+                )
+        else:
+            audit_entries.append(
+                {
+                    "domain": snap["domain"],
+                    "source_url": snap["source_url"],
+                    "canonical_official_url": decision.canonical_official_url,
+                    "bronze_key": snap["key"],
+                    "status": "ready_for_llm",
+                    "raw_chars": len(snap["raw_text"]),
+                    "clean_md_chars": len(clean_md),
+                    "json_ld_present": bool(signals.json_ld),
+                    "rules_urls_count": len(signals.official_rules_urls),
+                }
+            )
+            print(
+                f">> [READY] {snap['domain']} ({len(snap['raw_text']):,} -> {len(clean_md):,} chars) "
+                f"| official={decision.canonical_official_url}"
+            )
 
-            if not unique_comps:
-                drop_counts["canonical_url_duplicate"] += 1
-                continue
+    if run_llm and client is not None and extracted_stage_items:
+        raw_batch_comps = [entry["comp"] for entry in extracted_stage_items]
+        resolved_comps, er_report = resolve_competition_entities(
+            raw_batch_comps,
+            source_label=f"silver_transform:{chosen_date}",
+            drop_without_official_site=False,
+        )
+        er_summary_dict = er_report.model_dump(mode="json")
+        if er_report.merged_duplicates_count > 0:
+            drop_counts["entity_resolution_merged"] += er_report.merged_duplicates_count
 
-            row_rules = validate_silver_records_pydantic(unique_comps, reference_year=reference_year)
-            failed_row_rules = [r for r in row_rules if r.status == "FAIL"]
-            if failed_row_rules:
-                contract_gate_failures += 1
-                if strict_gate:
-                    row_report = _build_gate_report(
-                        gate_name="Silver Extraction Row Contract Gate",
-                        source_label=snap["key"],
-                        reference_year=reference_year,
-                        record_counts={"competitions": len(unique_comps)},
-                        rules=row_rules,
-                        elapsed_ms=sum(r.duration_ms for r in row_rules),
-                    )
-                    raise DataContractViolationError(row_report)
+        ctx_by_bronze_key: dict[str, dict[str, Any]] = {}
+        for entry in extracted_stage_items:
+            ctx_by_bronze_key.setdefault(entry["snap"]["key"], entry)
 
-            final_result = guarded.model_copy(update={"competitions": unique_comps})
+        row_rules = validate_silver_records_pydantic(resolved_comps, reference_year=reference_year)
+        failed_row_rules = [r for r in row_rules if r.status == "FAIL"]
+        if failed_row_rules:
+            contract_gate_failures += 1
+            if strict_gate:
+                row_report = _build_gate_report(
+                    gate_name="Silver Extraction Row Contract Gate",
+                    source_label=f"silver_transform:{chosen_date}",
+                    reference_year=reference_year,
+                    record_counts={"competitions": len(resolved_comps)},
+                    rules=row_rules,
+                    elapsed_ms=sum(r.duration_ms for r in row_rules),
+                )
+                raise DataContractViolationError(row_report)
+
+        comps_by_snap: dict[str, list[Competition]] = defaultdict(list)
+        for comp in resolved_comps:
+            bkey = comp.bronze_key or ""
+            if bkey not in ctx_by_bronze_key:
+                bkey = extracted_stage_items[0]["snap"]["key"]
+            comps_by_snap[bkey].append(comp)
+
+        for bkey, snap_comps in comps_by_snap.items():
+            ctx = ctx_by_bronze_key[bkey]
+            snap = ctx["snap"]
+            clean_md = ctx["clean_md"]
+            signals = ctx["signals"]
+            decision = ctx["decision"]
+            final_result = CompetitionExtractionResult(
+                is_competition=True,
+                reasoning=ctx["reasoning"],
+                competitions=snap_comps,
+            )
             record = {
                 "_metadata": {
                     "source_domain": snap["domain"],
                     "source_url": snap["source_url"],
-                    "canonical_official_url": unique_comps[0].url,
+                    "canonical_official_url": snap_comps[0].url,
                     "source_key": snap["key"],
                     "crawl_date": snap["date"],
                     "crawl_timestamp": snap["timestamp"],
@@ -1341,7 +1432,7 @@ def run_silver_transform(
                 crawl_date=snap["date"],
                 timestamp=snap["timestamp"],
                 source_url=snap["source_url"],
-                canonical_url=unique_comps[0].url or decision.canonical_official_url,
+                canonical_url=snap_comps[0].url or decision.canonical_official_url,
                 bronze_key=snap["key"],
             )
             json_key = _upload_silver_extraction(
@@ -1358,33 +1449,15 @@ def run_silver_transform(
                 {
                     "domain": snap["domain"],
                     "source_url": snap["source_url"],
-                    "canonical_official_url": unique_comps[0].url,
+                    "canonical_official_url": snap_comps[0].url,
                     "bronze_key": snap["key"],
                     "silver_md_key": md_key,
                     "silver_json_key": json_key,
                     "status": "extracted",
-                    "competitions_count": len(unique_comps),
+                    "competitions_count": len(snap_comps),
                 }
             )
-            print(f">> [OK] {snap['domain']} -> {len(unique_comps)} comp(s) | md={md_key}")
-        else:
-            audit_entries.append(
-                {
-                    "domain": snap["domain"],
-                    "source_url": snap["source_url"],
-                    "canonical_official_url": decision.canonical_official_url,
-                    "bronze_key": snap["key"],
-                    "status": "ready_for_llm",
-                    "raw_chars": len(snap["raw_text"]),
-                    "clean_md_chars": len(clean_md),
-                    "json_ld_present": bool(signals.json_ld),
-                    "rules_urls_count": len(signals.official_rules_urls),
-                }
-            )
-            print(
-                f">> [READY] {snap['domain']} ({len(snap['raw_text']):,} -> {len(clean_md):,} chars) "
-                f"| official={decision.canonical_official_url}"
-            )
+            print(f">> [OK] {snap['domain']} -> {len(snap_comps)} comp(s) | md={md_key}")
 
     ts_now = int(datetime.now(UTC).timestamp())
     if accepted_records and not dry_run:
@@ -1416,6 +1489,7 @@ def run_silver_transform(
         "uploaded_markdown_count": len(uploaded_md_keys),
         "uploaded_json_count": len(uploaded_json_keys),
         "contract_gate_failures": contract_gate_failures,
+        "entity_resolution": er_summary_dict,
         "entries": audit_entries,
     }
     if not dry_run and (accepted_records or run_llm):

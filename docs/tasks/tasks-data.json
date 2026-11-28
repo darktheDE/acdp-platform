@@ -1068,7 +1068,7 @@
       "task_type": "Engineering",
       "is_no_code": false,
       "owner": "Hung & Duy",
-      "status": "todo",
+      "status": "done",
       "priority": "high",
       "problem_statement": "Vấn đề: Discovery 3 tầng (TASK-ING-03) có thể trả về cùng một cuộc thi từ nhiều trang báo/đối tác hoặc các mùa giải khác nhau (2025 vs 2026), gây trùng lặp bản ghi ở Silver/Gold. Kiểm chứng 3 trục — Lý thuyết: bài toán Entity Resolution / Deduplication và khóa tự nhiên (natural key) trong kho dữ liệu; Thực tiễn: chuẩn hóa tên + đơn vị tổ chức + năm kết hợp canonical URL ở các hệ thống tổng hợp sự kiện; Người dùng: mỗi cuộc thi trong một mùa giải chỉ xuất hiện 1 bản ghi duy nhất, không làm rối danh sách và số liệu thống kê. Phương pháp: định nghĩa quy tắc khóa tự nhiên (tên chuẩn hóa + đơn vị tổ chức + năm + official domain), xử lý gộp nguồn phụ về trang chính thức (DIR-022) và viết unit test các ca trùng/khác mùa. Tiêu chí chấp nhận: 100% ca trùng đa nguồn được gộp về 1 thực thể chuẩn; cuộc thi khác mùa giải (2025 vs 2026) được tách đúng. Phụ thuộc: sau TASK-ING-03 và TASK-SLV-04.",
       "research_questions": [
@@ -1079,10 +1079,17 @@
         "Bộ unit test bao phủ các ca trùng từ nhiều nguồn tin và các ca cùng tên nhưng khác năm tổ chức."
       ],
       "deliverables": [
-        "docs/deliverables/TASK-DQ-04-entity-resolution-and-dedup.md"
+        "src/acdp/v2/entity_resolution.py",
+        "src/acdp/v2/schemas.py",
+        "src/acdp/v2/silver_transform.py",
+        "src/acdp/v2/gold_star_schema.py",
+        "tests/fixtures/dq04/multi_source_and_season_batch.json",
+        "tests/test_entity_resolution_dq04.py",
+        "docs/deliverables/TASK-DQ-04-entity-resolution-and-dedup.md",
+        "docs/deliverables/TASK-DQ-04-entity-resolution-and-dedup-visual-dossier.html"
       ],
-      "notes": "Phụ thuộc TASK-ING-03 và TASK-SLV-04.",
-      "updated_at": "2026-11-25"
+      "notes": "Hoàn tất bộ máy Entity Resolution 5 bước + khóa tự nhiên composite (core_name|primary_org|season_year|official_domain) và season-scoped competition_key (#season=YYYY), tích hợp Silver/Gold/Transform (0 gói pip mới). Kiểm chứng Phương án A chỉ đọc trên R2 (26 domain JSON -> 23 thực thể, bắt sống 3 cụm trùng Code Tour 2026, Thực Chiến AI 2026, VinUni Datathon 2026); fixture 16->12 đạt 100% merge/split và 0% false merge; 52/52 pytest PASSED & 0 lỗi ruff.",
+      "updated_at": "2026-11-28"
     },
     {
       "id": "TASK-DQ-05",

@@ -43,6 +43,7 @@ from acdp.v2.data_contracts import (
     validate_silver_records_pydantic,
     validate_silver_to_gold_gate,
 )
+from acdp.v2.entity_resolution import resolve_competition_entities
 from acdp.v2.schemas import (
     Competition,
     compute_competition_key,
@@ -100,6 +101,9 @@ SILVER_COMPETITIONS_ARROW_SCHEMA = pa.schema(
         pa.field("extracted_at", pa.timestamp("us", tz="UTC"), nullable=True),
         pa.field("extractor_model", pa.string(), nullable=True),
         pa.field("schema_version", pa.string(), nullable=False),
+        pa.field("season_year", pa.int32(), nullable=True),
+        pa.field("natural_key", pa.string(), nullable=True),
+        pa.field("merged_source_urls", pa.list_(pa.string()), nullable=False),
     ]
 )
 
@@ -264,8 +268,8 @@ def _parse_extracted_at(raw_ts: Any) -> datetime | None:
 
 
 def _deduplicate_competition_payloads(payloads: list[tuple[str, dict[str, Any]]]) -> list[Competition]:
-    """Validate and deduplicate extracted competition records (v1 & v2) by canonical URL key."""
-    dedup_by_key: dict[str, Competition] = {}
+    """Validate and resolve extracted competition records (v1 & v2) via 5-stage Entity Resolution."""
+    raw_competitions: list[Competition] = []
     for label, data in payloads:
         try:
             if not isinstance(data, dict):
@@ -302,15 +306,12 @@ def _deduplicate_competition_payloads(payloads: list[tuple[str, dict[str, Any]]]
                     if isinstance(rules, list) and rules:
                         raw_comp["official_rules_url"] = rules[0]
 
-                comp = Competition.model_validate(raw_comp)
-                key = comp.competition_key or compute_competition_key(normalize_canonical_url(comp.url, comp.name))
-                existing = dedup_by_key.get(key)
-                if existing is None or _competition_richness_score(comp) > _competition_richness_score(existing):
-                    dedup_by_key[key] = comp
+                raw_competitions.append(Competition.model_validate(raw_comp))
         except (OSError, ValueError) as exc:
             print(f"[WARN] Failed to parse {label}: {exc}")
 
-    return list(dedup_by_key.values())
+    resolved, _ = resolve_competition_entities(raw_competitions, source_label="silver_payload_load")
+    return resolved
 
 
 def _extract_batch_sort_key(path: Path) -> tuple[int, str]:
@@ -433,7 +434,7 @@ def export_silver_parquet(
 
     for c in competitions:
         canonical_url = normalize_canonical_url(c.url, c.name)
-        comp_key = c.competition_key or compute_competition_key(canonical_url)
+        comp_key = c.competition_key or compute_competition_key(canonical_url, season_year=c.season_year)
         calculated_prize_vnd = _compute_competition_total_prize_vnd(c)
         extracted_dt = _parse_extracted_at(c.extracted_at)
 
@@ -484,6 +485,9 @@ def export_silver_parquet(
                 "extracted_at": extracted_dt,
                 "extractor_model": c.extractor_model,
                 "schema_version": c.schema_version,
+                "season_year": c.season_year,
+                "natural_key": c.natural_key,
+                "merged_source_urls": c.merged_source_urls,
             }
         )
 
@@ -1310,7 +1314,7 @@ def build_gold_star_schema(
 
         for comp_sk, c in enumerate(competitions, start=1):
             canonical_url = normalize_canonical_url(c.url, c.name)
-            comp_key = c.competition_key or compute_competition_key(canonical_url)
+            comp_key = c.competition_key or compute_competition_key(canonical_url, season_year=c.season_year)
 
             reg_start_sk = _register_date(c.registration_start)
             reg_deadline_sk = _register_date(c.registration_deadline)
