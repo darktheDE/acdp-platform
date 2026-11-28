@@ -366,9 +366,9 @@
     "semantic_hash": "7cfecd5824eb7a7cc270fdf81012d48a"
   },
   "docs/tasks/tasks-data.json": {
-    "mtime": 1795856247.601911,
-    "seen": 1795856311.6801448,
-    "ast_hash": "dde4757d107547db1dffad83e493436c",
+    "mtime": 1795858348.867008,
+    "seen": 1795858395.2137928,
+    "ast_hash": "7abba1deb6c2003bbf62f5fae1d1dc60",
     "semantic_hash": ""
   },
   "openapi.json": {
@@ -684,16 +684,16 @@
     "semantic_hash": "aeecb95bdf0fe5d1f50314640cc19873"
   },
   "src/acdp/v2/schemas.py": {
-    "mtime": 1795504066.4660122,
-    "seen": 1795852069.9282436,
-    "ast_hash": "be78fa087bd6311bbf5d261f3bf4e88a",
-    "semantic_hash": "be78fa087bd6311bbf5d261f3bf4e88a"
+    "mtime": 1795858070.873522,
+    "seen": 1795858395.2139893,
+    "ast_hash": "a4a9db4a4dddf05ee9eeabd6017bf5d8",
+    "semantic_hash": ""
   },
   "src/acdp/v2/silver_transform.py": {
-    "mtime": 1795504066.4660122,
-    "seen": 1795852069.928245,
-    "ast_hash": "3dc9fa587b494cc015ee265f58b5745b",
-    "semantic_hash": "3dc9fa587b494cc015ee265f58b5745b"
+    "mtime": 1795858075.1804378,
+    "seen": 1795858395.213997,
+    "ast_hash": "62698fedffaecb1b8b8db4183391467a",
+    "semantic_hash": ""
   },
   "tests/api/__init__.py": {
     "mtime": 1795504066.4660122,
@@ -1668,9 +1668,9 @@
     "semantic_hash": "9d040c80a6385b8004c99192e8877816"
   },
   "docs/tasks/task-registry.md": {
-    "mtime": 1795856299.054782,
-    "seen": 1795856311.6805403,
-    "ast_hash": "2bc957808bc924c4db515f5667a934c0",
+    "mtime": 1795858363.55752,
+    "seen": 1795858395.2146218,
+    "ast_hash": "ab5772adfc6696c3fd12698b426d5f6a",
     "semantic_hash": ""
   },
   ".agents/skills/academic-researcher/SKILL.md": {
@@ -1719,6 +1719,30 @@
     "mtime": 1795856287.085064,
     "seen": 1795856311.680431,
     "ast_hash": "e32064b28d9fecdbe3d4cbda03e2bc61",
+    "semantic_hash": ""
+  },
+  "src/acdp/v2/silver_eval.py": {
+    "mtime": 1795858163.812001,
+    "seen": 1795858395.2139926,
+    "ast_hash": "992d187ddc8b594b1bc384853aa56fa8",
+    "semantic_hash": ""
+  },
+  "tests/test_silver_eval_dq02.py": {
+    "mtime": 1795858145.796973,
+    "seen": 1795858395.2140534,
+    "ast_hash": "25c1c15a5de7d3c1e9eea291a2b2a760",
+    "semantic_hash": ""
+  },
+  "docs/deliverables/TASK-DQ-02-silver-golden-dataset-accuracy-visual-dossier.html": {
+    "mtime": 1795858284.3024108,
+    "seen": 1795858395.214388,
+    "ast_hash": "f2048b4a81683ab242569e97f0a91eab",
+    "semantic_hash": ""
+  },
+  "docs/deliverables/TASK-DQ-02-silver-golden-dataset-accuracy.md": {
+    "mtime": 1795858283.1357124,
+    "seen": 1795858395.2143912,
+    "ast_hash": "c2f4d0cd69f846a4c271c7433c96019c",
     "semantic_hash": ""
   },
   "apps/web/package-lock.json": {

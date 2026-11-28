@@ -1,0 +1,178 @@
+{
+  "fixture_name": "valid_silver_batch",
+  "reference_year": 2026,
+  "competitions": [
+    {
+      "name": "Zalo AI Challenge 2026",
+      "url": "https://challenge.zalo.ai",
+      "summary": "Cuộc thi Trí tuệ Nhân tạo toàn quốc dành cho sinh viên và kỹ sư trẻ giải quyết bài toán Agentic AI và Computer Vision.",
+      "organizers": ["Zalo AI"],
+      "category": ["Artificial Intelligence", "Computer Vision"],
+      "target_audience": "Sinh viên đại học và lập trình viên AI tại Việt Nam",
+      "team_size_min": 1,
+      "team_size_max": 5,
+      "eligibility_level": "all_students",
+      "mode": "online",
+      "registration_status": "open",
+      "registration_start_date": "2026-10-01",
+      "registration_deadline_date": "2026-11-16",
+      "event_start_date": "2026-10-26",
+      "event_end_date": "2026-12-12",
+      "total_prize_vnd": 304800000,
+      "official_rules_url": "https://challenge.zalo.ai/regulations",
+      "organizer_contact": "aichallenge@zalo.me",
+      "source_url": "https://challenge.zalo.ai/",
+      "bronze_key": "bronze/challenge.zalo.ai/year=2026/month=11/day=23/1795417478.html",
+      "prizes": [
+        {
+          "tier_rank": 1,
+          "tier": "First Place",
+          "reward": "USD 12,000",
+          "quantity": 1,
+          "currency": "USD",
+          "prize_type": "cash",
+          "estimated_value_vnd": 304800000,
+          "is_scholarship": false
+        }
+      ],
+      "timeline_stages": [
+        {
+          "stage_order": 1,
+          "stage_name": "Qualification Round",
+          "start_date_iso": "2026-10-26",
+          "end_date_iso": "2026-11-16"
+        },
+        {
+          "stage_order": 2,
+          "stage_name": "Final Pitch",
+          "start_date_iso": "2026-12-01",
+          "end_date_iso": "2026-12-12"
+        }
+      ]
+    },
+    {
+      "name": "Code Tour 2026",
+      "url": "https://codetour.org",
+      "summary": "Đấu trường lập trình thuật toán dành cho sinh viên CNTT trên toàn quốc với chuỗi thử thách cấu trúc dữ liệu.",
+      "organizers": ["VNG Corporation"],
+      "category": ["Competitive Programming", "Algorithms"],
+      "target_audience": "Sinh viên CNTT",
+      "team_size_min": 1,
+      "team_size_max": 1,
+      "eligibility_level": "unknown",
+      "mode": "hybrid",
+      "registration_status": "closed",
+      "registration_deadline_date": null,
+      "event_start_date": "2026-09-26",
+      "event_end_date": "2026-10-31",
+      "total_prize_vnd": 100000000,
+      "official_rules_url": null,
+      "source_url": "https://codetour.org/",
+      "bronze_key": "bronze/codetour.org/year=2026/month=11/day=23/1795416946.html",
+      "prizes": [
+        {
+          "tier_rank": 1,
+          "tier": "Quán quân",
+          "reward": "50.000.000 VND",
+          "quantity": 1,
+          "currency": "VND",
+          "prize_type": "cash",
+          "estimated_value_vnd": 50000000,
+          "is_scholarship": false
+        }
+      ],
+      "timeline_stages": [
+        {
+          "stage_order": 1,
+          "stage_name": "Code Challenge 1",
+          "start_date_iso": "2026-09-26",
+          "end_date_iso": "2026-09-26"
+        }
+      ]
+    },
+    {
+      "name": "NAVER Vietnam AI Hackathon 2025",
+      "url": "https://event.navercorp.vn/event/naver-vietnam-ai-hackathon-2025",
+      "summary": "Cuộc thi phát triển sản phẩm AI và Data Science cho sinh viên đại học năm học 2025.",
+      "organizers": ["NAVER Vietnam"],
+      "category": ["Artificial Intelligence", "Data Science"],
+      "target_audience": "Sinh viên đại học",
+      "team_size_min": 1,
+      "team_size_max": 4,
+      "eligibility_level": "undergraduate",
+      "mode": "hybrid",
+      "registration_status": "closed",
+      "registration_deadline_date": "2025-09-15",
+      "event_start_date": "2025-09-08",
+      "event_end_date": "2025-12-05",
+      "total_prize_vnd": 75000000,
+      "prizes": [],
+      "timeline_stages": []
+    },
+    {
+      "name": "Qualcomm Vietnam Innovation Challenge 2027",
+      "url": "https://qvic.vn",
+      "summary": "Chương trình ươm tạo và thi đấu giải pháp AI, IoT và Robotics cho đội ngũ kỹ sư, sinh viên nghiên cứu.",
+      "organizers": ["Qualcomm"],
+      "category": ["Artificial Intelligence", "IoT"],
+      "target_audience": "Sinh viên sau đại học và startup công nghệ",
+      "team_size_min": 1,
+      "team_size_max": 5,
+      "eligibility_level": "open",
+      "mode": "hybrid",
+      "registration_status": "upcoming",
+      "registration_deadline_date": "2026-12-01",
+      "event_start_date": "2026-10-01",
+      "event_end_date": "2027-08-01",
+      "total_prize_vnd": 2540000000,
+      "source_url": "https://qvic.vn/",
+      "bronze_key": "bronze/qvic.vn/year=2026/month=11/day=23/1795417408.html",
+      "prizes": [
+        {
+          "tier_rank": 1,
+          "tier": "First Place",
+          "reward": "$100,000",
+          "quantity": 1,
+          "currency": "USD",
+          "prize_type": "cash",
+          "estimated_value_vnd": 2540000000,
+          "is_scholarship": false
+        }
+      ],
+      "timeline_stages": []
+    },
+    {
+      "name": "AI Arena Viet Nam 2026",
+      "url": "https://ai-arena-vietnam.vnu.edu.vn",
+      "summary": "Sân chơi học thuật về Trí tuệ Nhân tạo và Học máy dành cho sinh viên các trường đại học khối kỹ thuật.",
+      "organizers": ["ĐHQGHN"],
+      "category": ["Artificial Intelligence"],
+      "target_audience": "Sinh viên đại học",
+      "team_size_min": 2,
+      "team_size_max": 3,
+      "eligibility_level": "undergraduate",
+      "mode": "offline",
+      "registration_status": "open",
+      "registration_deadline_date": "2026-10-10",
+      "event_start_date": "2026-09-15",
+      "event_end_date": "2026-11-03",
+      "total_prize_vnd": 0,
+      "official_rules_url": "https://ai-arena-vietnam.vnu.edu.vn/the-le",
+      "source_url": "https://ai-arena-vietnam.vnu.edu.vn/",
+      "bronze_key": "bronze/ai-arena-vietnam.vnu.edu.vn/year=2026/month=11/day=23/1795418099.html",
+      "prizes": [
+        {
+          "tier_rank": 1,
+          "tier": "Giải Nhất",
+          "reward": "Học bổng đào tạo AI chuyên sâu",
+          "quantity": 1,
+          "currency": "OTHER",
+          "prize_type": "scholarship",
+          "estimated_value_vnd": 0,
+          "is_scholarship": true
+        }
+      ],
+      "timeline_stages": []
+    }
+  ]
+}

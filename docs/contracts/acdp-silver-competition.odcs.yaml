@@ -1,0 +1,460 @@
+apiVersion: v3.2.0
+kind: DataContract
+id: urn:acdp:datacontract:silver-competitions
+name: acdp-silver-competitions
+version: 2.0.0
+status: active
+domain: academic-competitions
+dataProduct: acdp-lakehouse
+
+description:
+  purpose: >-
+    Canonical Silver-layer Data Contract and Write-Audit-Publish (WAP) Circuit Breaker
+    for the Academic Competition Discovery Platform (ACDP). Governs structured competition
+    records, prize tiers, and timeline stages before Parquet publication to Cloudflare R2
+    and Two-Tier Gold Star Schema materialization.
+  usage: >-
+    Enforced automatically in RAM before silver/*.parquet and gold/*.parquet writes
+    (src/acdp/v2/data_contracts.py), and executed offline in CI validation pipelines.
+  limitations: >-
+    Phase 1 (TLCN) scope strictly targets 5-10 curated academic competitions in
+    IT/AI/Data/Security/Programming for university students within [2025, 2027]
+    (DIR-022) with mandatory official website resolution.
+
+team:
+  - username: darktheDE
+    name: Do Kien Hung
+    role: Data Engineer & Co-Author
+  - username: QuangDuyReal
+    name: Nguyen Van Quang Duy
+    role: Data Engineer & Co-Author
+  - username: advisor-hcmute
+    name: M.Sc. Tran Quang Khai
+    role: Scientific Advisor (FIT, HCM-UTE)
+
+servers:
+  - server: cloudflare-r2-silver
+    type: s3
+    location: s3://acdp-lakehouse/silver/
+    format: parquet
+    description: Cloudflare R2 ZSTD Parquet lakehouse tier (DIR-021).
+  - server: duckdb-local-ci
+    type: duckdb
+    format: parquet
+    description: Offline DuckDB 1.5.6 in-memory engine for CI validation gates (TASK-QA-08).
+
+schema:
+  - name: competitions
+    physicalName: silver/competitions.parquet
+    physicalType: table
+    description: One canonical academic/technical competition per row (Schema v2).
+    properties:
+      - name: competition_key
+        logicalType: string
+        physicalType: VARCHAR
+        primaryKey: true
+        required: true
+        description: Immutable 64-char SHA-256 hex digest of normalized canonical URL.
+      - name: name
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        description: Official competition name.
+      - name: url
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        description: Canonical official competition website URL (DIR-022).
+      - name: summary
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        description: Concise 2-3 sentence summary of competition objective.
+      - name: eligibility_level
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        enum: [undergraduate, all_students, open, unknown]
+      - name: mode
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        enum: [online, offline, hybrid, unknown]
+      - name: registration_status
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        enum: [open, upcoming, closed, unknown]
+      - name: team_size_min
+        logicalType: integer
+        physicalType: INTEGER
+        required: false
+      - name: team_size_max
+        logicalType: integer
+        physicalType: INTEGER
+        required: false
+      - name: total_prize_vnd
+        logicalType: integer
+        physicalType: BIGINT
+        required: true
+      - name: registration_start_date
+        logicalType: date
+        physicalType: DATE
+        required: false
+      - name: registration_deadline_date
+        logicalType: date
+        physicalType: DATE
+        required: false
+      - name: event_start_date
+        logicalType: date
+        physicalType: DATE
+        required: false
+      - name: event_end_date
+        logicalType: date
+        physicalType: DATE
+        required: false
+      - name: team_registration_deadline_date
+        logicalType: date
+        physicalType: DATE
+        required: false
+      - name: official_rules_url
+        logicalType: string
+        physicalType: VARCHAR
+        required: false
+      - name: source_url
+        logicalType: string
+        physicalType: VARCHAR
+        required: false
+      - name: bronze_key
+        logicalType: string
+        physicalType: VARCHAR
+        required: false
+      - name: schema_version
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+
+  - name: prizes
+    physicalName: silver/prizes.parquet
+    physicalType: table
+    description: Normalized prize tiers linked to competitions by competition_key.
+    properties:
+      - name: competition_key
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+      - name: tier_rank
+        logicalType: integer
+        physicalType: INTEGER
+        required: true
+      - name: tier
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+      - name: reward
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+      - name: quantity
+        logicalType: integer
+        physicalType: INTEGER
+        required: true
+      - name: currency
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        enum: [VND, USD, OTHER]
+      - name: prize_type
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        enum: [cash, scholarship, credits, merch, mixed]
+      - name: estimated_value_vnd
+        logicalType: integer
+        physicalType: BIGINT
+        required: true
+      - name: is_scholarship
+        logicalType: boolean
+        physicalType: BOOLEAN
+        required: true
+
+  - name: timeline_stages
+    physicalName: silver/timeline_stages.parquet
+    physicalType: table
+    description: Normalized competition timeline rounds linked by competition_key.
+    properties:
+      - name: competition_key
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+      - name: stage_order
+        logicalType: integer
+        physicalType: INTEGER
+        required: true
+      - name: stage_name
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+      - name: start_date_iso
+        logicalType: date
+        physicalType: DATE
+        required: false
+      - name: end_date_iso
+        logicalType: date
+        physicalType: DATE
+        required: false
+
+quality:
+  - id: C01
+    name: Non-Empty Core Not-Null Contract
+    layer: silver_row
+    engine: hybrid
+    severity: critical
+    type: sql
+    description: competition_key (64 hex), name, url, and summary must be non-null and non-blank.
+    query: >-
+      SELECT COUNT(*) FROM competitions
+      WHERE competition_key IS NULL OR NOT regexp_matches(competition_key, '^[0-9a-f]{64}$')
+         OR name IS NULL OR TRIM(name) = ''
+         OR url IS NULL OR TRIM(url) = ''
+         OR summary IS NULL OR TRIM(summary) = ''
+    mustBe: 0
+
+  - id: C02
+    name: Official Website URL Required (DIR-022)
+    layer: silver_row
+    engine: hybrid
+    severity: critical
+    type: sql
+    description: >-
+      url must be an HTTP(S) official website and must not use urn:acdp: fallbacks,
+      aggregator hosts (ybox.vn, topdev.vn), or social/form hosts (facebook.com, forms.gle).
+    query: >-
+      SELECT COUNT(*) FROM competitions
+      WHERE NOT regexp_matches(LOWER(COALESCE(url, '')), '^https?://[^/]+\.[^/]+')
+         OR LOWER(COALESCE(url, '')) LIKE 'urn:%'
+    mustBe: 0
+
+  - id: C03
+    name: Anti-Noise Official URL Guard (E1)
+    layer: silver_row
+    engine: hybrid
+    severity: critical
+    type: custom
+    description: >-
+      Reject university portal noise subdomains (tracuu., tuyensinh., jst-, daotao., ctsv., portal.),
+      non-competition paths (/admissions, /msc-programmes, /graduate-studies, /tuyen-dung),
+      and generic ministry root URLs (mic.gov.vn/, moet.gov.vn/, most.gov.vn/).
+
+  - id: C04
+    name: Strict Enum Domains
+    layer: silver_row
+    engine: hybrid
+    severity: critical
+    type: sql
+    description: >-
+      mode, registration_status, eligibility_level, prizes.currency, and prizes.prize_type
+      must strictly belong to allowed schema enums.
+    query: >-
+      SELECT (
+        (SELECT COUNT(*) FROM competitions WHERE mode NOT IN ('online','offline','hybrid','unknown')
+           OR registration_status NOT IN ('open','upcoming','closed','unknown')
+           OR eligibility_level NOT IN ('undergraduate','all_students','open','unknown'))
+        + (SELECT COUNT(*) FROM prizes WHERE currency NOT IN ('VND','USD','OTHER')
+           OR prize_type NOT IN ('cash','scholarship','credits','merch','mixed'))
+      )
+    mustBe: 0
+
+  - id: C05
+    name: Temporal Window 2025-2027 (DIR-022)
+    layer: silver_row
+    engine: hybrid
+    severity: critical
+    type: sql
+    description: All non-null ISO dates across competitions and timeline_stages must fall within [2025, 2027].
+    query: >-
+      SELECT (
+        (SELECT COUNT(*) FROM competitions WHERE
+           (registration_start_date IS NOT NULL AND YEAR(registration_start_date) NOT BETWEEN 2025 AND 2027)
+           OR (registration_deadline_date IS NOT NULL AND YEAR(registration_deadline_date) NOT BETWEEN 2025 AND 2027)
+           OR (event_start_date IS NOT NULL AND YEAR(event_start_date) NOT BETWEEN 2025 AND 2027)
+           OR (event_end_date IS NOT NULL AND YEAR(event_end_date) NOT BETWEEN 2025 AND 2027)
+           OR (team_registration_deadline_date IS NOT NULL AND YEAR(team_registration_deadline_date) NOT BETWEEN 2025 AND 2027))
+        + (SELECT COUNT(*) FROM timeline_stages WHERE
+           (start_date_iso IS NOT NULL AND YEAR(start_date_iso) NOT BETWEEN 2025 AND 2027)
+           OR (end_date_iso IS NOT NULL AND YEAR(end_date_iso) NOT BETWEEN 2025 AND 2027))
+      )
+    mustBe: 0
+
+  - id: C06
+    name: Chronological Date Ordering
+    layer: silver_row
+    engine: hybrid
+    severity: critical
+    type: sql
+    description: end_date >= start_date for competitions, registration windows, and timeline stages.
+    query: >-
+      SELECT (
+        (SELECT COUNT(*) FROM competitions WHERE
+           (event_start_date IS NOT NULL AND event_end_date IS NOT NULL AND event_end_date < event_start_date)
+           OR (registration_start_date IS NOT NULL AND registration_deadline_date IS NOT NULL AND registration_deadline_date < registration_start_date))
+        + (SELECT COUNT(*) FROM timeline_stages WHERE
+           start_date_iso IS NOT NULL AND end_date_iso IS NOT NULL AND end_date_iso < start_date_iso)
+      )
+    mustBe: 0
+
+  - id: C07
+    name: Numeric and Team Size Bounds
+    layer: silver_row
+    engine: hybrid
+    severity: critical
+    type: sql
+    description: >-
+      1 <= team_size_min <= team_size_max <= 20; total_prize_vnd >= 0;
+      prizes.estimated_value_vnd >= 0; quantity >= 1; tier_rank >= 1.
+    query: >-
+      SELECT (
+        (SELECT COUNT(*) FROM competitions WHERE
+           (team_size_min IS NOT NULL AND (team_size_min < 1 OR team_size_min > 20))
+           OR (team_size_max IS NOT NULL AND (team_size_max < 1 OR team_size_max > 20))
+           OR (team_size_min IS NOT NULL AND team_size_max IS NOT NULL AND team_size_min > team_size_max)
+           OR total_prize_vnd < 0)
+        + (SELECT COUNT(*) FROM prizes WHERE estimated_value_vnd < 0 OR quantity < 1 OR tier_rank < 1)
+      )
+    mustBe: 0
+
+  - id: C08
+    name: Student Tech Scope Guard (DIR-022)
+    layer: silver_row
+    engine: pydantic
+    severity: critical
+    type: custom
+    description: >-
+      Reject non-tech exclusions (marketing, culinary, fashion) lacking core tech overrides
+      and school-only competitions lacking university student eligibility.
+
+  - id: C09
+    name: Non-Empty Batch Volume Guard
+    layer: silver_table
+    engine: duckdb_sql
+    severity: critical
+    type: sql
+    description: Prevent empty batch overwrites by requiring at least 1 competition record.
+    query: SELECT COUNT(*) FROM competitions
+    mustBeGreaterThanOrEqualTo: 1
+
+  - id: C10
+    name: Primary Key Uniqueness Across Silver Tables
+    layer: silver_table
+    engine: duckdb_sql
+    severity: critical
+    type: sql
+    description: Zero duplicate competition_key, (competition_key, tier_rank), or (competition_key, stage_order).
+    query: >-
+      SELECT (
+        (SELECT COUNT(*) FROM (SELECT competition_key FROM competitions GROUP BY 1 HAVING COUNT(*) > 1))
+        + (SELECT COUNT(*) FROM (SELECT competition_key, tier_rank FROM prizes GROUP BY 1, 2 HAVING COUNT(*) > 1))
+        + (SELECT COUNT(*) FROM (SELECT competition_key, stage_order FROM timeline_stages GROUP BY 1, 2 HAVING COUNT(*) > 1))
+      )
+    mustBe: 0
+
+  - id: C11
+    name: Silver Referential Integrity (Zero Orphan Children)
+    layer: silver_table
+    engine: duckdb_sql
+    severity: critical
+    type: sql
+    description: Every row in prizes and timeline_stages must resolve to an existing competitions.competition_key.
+    query: >-
+      SELECT (
+        (SELECT COUNT(*) FROM prizes p LEFT JOIN competitions c ON p.competition_key = c.competition_key WHERE c.competition_key IS NULL)
+        + (SELECT COUNT(*) FROM timeline_stages t LEFT JOIN competitions c ON t.competition_key = c.competition_key WHERE c.competition_key IS NULL)
+      )
+    mustBe: 0
+
+  - id: C12
+    name: Bronze-to-Silver Handoff Guard
+    layer: bronze_to_silver
+    engine: pydantic
+    severity: critical
+    type: custom
+    description: Validate Bronze key taxonomy, HTTP(S) source_url, Clean Markdown length >= 200, and non-404/403 content.
+
+  - id: C13
+    name: Gold Pre-Publish Row Parity & Null Guard
+    layer: silver_to_gold
+    engine: duckdb_sql
+    severity: critical
+    type: sql
+    description: >-
+      dim_competition, fact_competitions, and mart_competition_explorer counts must equal expected Silver count
+      with zero null or empty canonical_url or name.
+    mustBe: 0
+
+  - id: C14
+    name: Gold Bridge Weight & Prize Conservation Invariant
+    layer: silver_to_gold
+    engine: duckdb_sql
+    severity: critical
+    type: sql
+    description: >-
+      Bridge domain allocation weights must sum to 1.0 (+/- 0.001) per competition and
+      total_prize_pool_vnd must match SUM(allocated_prize_vnd) within 1.0 VND (SPEC-0003 EC-G1).
+    mustBe: 0
+
+  - id: W01
+    name: Soft SLA - Missing Registration Deadline Date
+    layer: silver_table
+    engine: duckdb_sql
+    severity: warning
+    type: sql
+    description: Track competitions lacking an explicit registration_deadline_date without tripping pipeline.
+    query: SELECT COUNT(*) FROM competitions WHERE registration_deadline_date IS NULL
+
+  - id: W02
+    name: Soft SLA - Unknown Eligibility or Mode
+    layer: silver_table
+    engine: duckdb_sql
+    severity: warning
+    type: sql
+    description: Track E3 technical debt where eligibility_level or mode remains 'unknown'.
+    query: SELECT COUNT(*) FROM competitions WHERE eligibility_level = 'unknown' OR mode = 'unknown'
+
+  - id: W03
+    name: Soft SLA - Missing Advisor or Rules Metadata
+    layer: silver_table
+    engine: duckdb_sql
+    severity: warning
+    type: sql
+    description: Track optional rules URL or organizer contact completeness (optional per DIR-022).
+    query: SELECT COUNT(*) FROM competitions WHERE official_rules_url IS NULL OR organizer_contact IS NULL
+
+  - id: W04
+    name: Soft SLA - Missing Bronze Lineage Metadata
+    layer: silver_table
+    engine: duckdb_sql
+    severity: warning
+    type: sql
+    description: Flag records missing bronze_key or source_url (permitted on synthetic offline fixtures).
+    query: SELECT COUNT(*) FROM competitions WHERE bronze_key IS NULL OR source_url IS NULL
+
+  - id: W05
+    name: Soft SLA - Unquantified Prize Pool
+    layer: silver_table
+    engine: duckdb_sql
+    severity: warning
+    type: sql
+    description: Track competitions with total_prize_vnd = 0 and zero detailed prize tiers.
+    query: >-
+      SELECT COUNT(*) FROM competitions c
+      WHERE c.total_prize_vnd = 0
+        AND NOT EXISTS (SELECT 1 FROM prizes p WHERE p.competition_key = c.competition_key)
+
+slaProperties:
+  - property: critical_violations_allowed
+    value: 0
+    unit: records
+    description: Fail-fast circuit breaker trips whenever critical_failed > 0.
+  - property: valid_temporal_window
+    value: "2025-2027"
+    description: Rolling [reference_year - 1, reference_year + 1] window anchored to 2026 (DIR-012, DIR-022).

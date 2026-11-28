@@ -73,6 +73,7 @@ The `Competition` and `CompetitionExtractionResult` Pydantic v2 models transform
 1. **Input**: Reads Raw Rendered HTML (`bronze/.../*.html`) from Cloudflare R2 and converts it in RAM via Crawl4AI `DefaultMarkdownGenerator()` (`0 ms` browser overhead), uploading Clean Markdown for accepted competitions to `silver/markdown/` (`TASK-SLV-03`).
 2. **Hybrid Deterministic Sandwich & Scope Gate (`DIR-022`)**: Runs deterministic extractors (`JSON-LD`, `og:*`, canonical official URL resolution, `.pdf`/`.docx` optional links, regex hints) and filters strictly for IT/AI/Data/Security/Programming student competitions (`2025–2027`) with official websites before calling bounded `instructor` LLM (`response_model=CompetitionExtractionResult`).
 3. **Output Persistence**: Writes Silver JSON (`silver/extractions/`), batch manifests (`silver/batches/`), and explicit PyArrow Parquet (`silver/competitions.parquet`, `silver/prizes.parquet`, `silver/timeline_stages.parquet` via `v2/gold_star_schema.py`) directly on Cloudflare R2 for DuckDB `httpfs` querying.
+4. **Automated Data Contracts & WAP Quality Gate (`TASK-DQ-03`)**: Governed by the ODCS v3.2.0 contract [`docs/contracts/acdp-silver-competition.odcs.yaml`](../contracts/acdp-silver-competition.odcs.yaml) and enforced via [`src/acdp/v2/data_contracts.py`](../../src/acdp/v2/data_contracts.py) across 19 rules (`C01–C14` `CRITICAL` fail-fast circuit breaker + `W01–W05` `WARNING` soft SLAs) before writing Silver or Gold Parquet files.
 
 ---
 

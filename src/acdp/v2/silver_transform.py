@@ -35,6 +35,12 @@ from crawl4ai.markdown_generation_strategy import DefaultMarkdownGenerator
 from dotenv import find_dotenv, load_dotenv
 
 from acdp.config import settings
+from acdp.v2.data_contracts import (
+    DataContractViolationError,
+    _build_gate_report,
+    validate_bronze_to_silver_handoff,
+    validate_silver_records_pydantic,
+)
 from acdp.v2.schemas import Competition, CompetitionExtractionResult
 
 if sys.stdout and hasattr(sys.stdout, "reconfigure"):
@@ -1174,6 +1180,7 @@ def run_silver_transform(
     dry_run: bool = False,
     max_items: int = 0,
     reference_year: int = DEFAULT_REFERENCE_YEAR,
+    strict_gate: bool = False,
 ) -> dict[str, Any]:
     """Execute Hybrid Deterministic Sandwich Silver transformation over R2 Bronze."""
     if not settings.bucket_name:
@@ -1222,11 +1229,24 @@ def run_silver_transform(
     drop_counts: dict[str, int] = defaultdict(int)
     uploaded_md_keys: list[str] = []
     uploaded_json_keys: list[str] = []
+    contract_gate_failures = 0
 
     for item in prepared:
         snap = item["snap"]
         clean_md: str = item["clean_md"]
         signals: DeterministicSignals = item["signals"]
+
+        handoff_rule = validate_bronze_to_silver_handoff(snap["key"], snap["source_url"], clean_md)
+        if strict_gate and handoff_rule.status == "FAIL":
+            handoff_report = _build_gate_report(
+                gate_name="Bronze-to-Silver Handoff Gate",
+                source_label=snap["key"],
+                reference_year=reference_year,
+                record_counts={"snapshots": 1},
+                rules=[handoff_rule],
+                elapsed_ms=handoff_rule.duration_ms,
+            )
+            raise DataContractViolationError(handoff_report)
 
         decision = evaluate_pre_llm_scope(
             signals=signals,
@@ -1278,6 +1298,21 @@ def run_silver_transform(
             if not unique_comps:
                 drop_counts["canonical_url_duplicate"] += 1
                 continue
+
+            row_rules = validate_silver_records_pydantic(unique_comps, reference_year=reference_year)
+            failed_row_rules = [r for r in row_rules if r.status == "FAIL"]
+            if failed_row_rules:
+                contract_gate_failures += 1
+                if strict_gate:
+                    row_report = _build_gate_report(
+                        gate_name="Silver Extraction Row Contract Gate",
+                        source_label=snap["key"],
+                        reference_year=reference_year,
+                        record_counts={"competitions": len(unique_comps)},
+                        rules=row_rules,
+                        elapsed_ms=sum(r.duration_ms for r in row_rules),
+                    )
+                    raise DataContractViolationError(row_report)
 
             final_result = guarded.model_copy(update={"competitions": unique_comps})
             record = {
@@ -1380,6 +1415,7 @@ def run_silver_transform(
         "drop_breakdown": dict(drop_counts),
         "uploaded_markdown_count": len(uploaded_md_keys),
         "uploaded_json_count": len(uploaded_json_keys),
+        "contract_gate_failures": contract_gate_failures,
         "entries": audit_entries,
     }
     if not dry_run and (accepted_records or run_llm):
@@ -1411,6 +1447,7 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--dry-run", action="store_true", help="Run deterministic stages without calling LLM or writing R2")
     parser.add_argument("--max-items", type=int, default=0, help="Optional cap on snapshots to process")
     parser.add_argument("--reference-year", type=int, default=DEFAULT_REFERENCE_YEAR, help="Anchor year for [year-1, year+1] scope")
+    parser.add_argument("--strict-gate", action="store_true", help="Fail-fast on Bronze-to-Silver or Silver row contract violations")
     return parser.parse_args(argv)
 
 
@@ -1424,6 +1461,7 @@ def main(argv: list[str] | None = None) -> None:
         dry_run=args.dry_run,
         max_items=args.max_items,
         reference_year=args.reference_year,
+        strict_gate=args.strict_gate,
     )
 
 

@@ -1035,7 +1035,7 @@
       "task_type": "Engineering",
       "is_no_code": false,
       "owner": "Hung & Duy",
-      "status": "todo",
+      "status": "done",
       "priority": "high",
       "problem_statement": "Vấn đề: Dữ liệu đi từ Bronze -> Silver -> Gold hiện thiếu chốt chặn chất lượng tự động (fail-fast), có nguy cơ đẩy dữ liệu lỗi hoặc thiếu URL chính thức sang Gold/Web. Kiểm chứng 3 trục — Lý thuyết: Data Contracts (ODCS / Andrew Jones) và nguyên lý circuit breaker trong data pipeline; Thực tiễn: áp dụng Pydantic / Great Expectations / DuckDB assertions để chặn dữ liệu bẩn trước khi publish; Người dùng: không bao giờ hiển thị cuộc thi hết hạn sai năm, thiếu trang chính thức (DIR-022) hoặc sai định dạng trên cổng sinh viên. Phương pháp: định nghĩa hợp đồng dữ liệu bằng Pydantic v2 + SQL check trên DuckDB (not-null, enum, phạm vi ngày 2025–2027, URL chính thức), cấu hình pipeline dừng khi vi phạm và xuất báo cáo gate. Tiêu chí chấp nhận: pipeline tự động fail khi nạp fixture vi phạm contract; xuất báo cáo pass/fail theo từng rule. Phụ thuộc: sau TASK-SLV-04; bắt buộc trước TASK-QA-08.",
       "research_questions": [
@@ -1046,10 +1046,18 @@
         "Kiểm chứng bằng fixture lỗi: pipeline dừng đúng lúc và ghi nhận báo cáo vi phạm."
       ],
       "deliverables": [
-        "docs/deliverables/TASK-DQ-03-data-contracts-and-quality-gates.md"
+        "docs/contracts/acdp-silver-competition.odcs.yaml",
+        "src/acdp/v2/data_contracts.py",
+        "src/acdp/v2/gold_star_schema.py",
+        "src/acdp/v2/silver_transform.py",
+        "tests/fixtures/dq03/valid_silver_batch.json",
+        "tests/fixtures/dq03/invalid_silver_batch.json",
+        "tests/test_data_contracts_dq03.py",
+        "docs/deliverables/TASK-DQ-03-data-contracts-and-quality-gates.md",
+        "docs/deliverables/TASK-DQ-03-data-contracts-and-quality-gates-visual-dossier.html"
       ],
-      "notes": "Phụ thuộc TASK-SLV-04; bắt buộc hoàn thành trước TASK-QA-08 (CI).",
-      "updated_at": "2026-11-25"
+      "notes": "Đã triển khai hợp đồng ODCS v3.2.0 (19 rules: 14 CRITICAL + 5 WARNING) và WAP circuit breaker bằng Pydantic v2 + DuckDB 1.5.6 SQL (0 gói pip mới). Kiểm chứng Phương án A chỉ đọc trên R2 (24 Silver, 90 prizes, 89 stages, 24 Gold): 19/24 sạch, bắt đúng 5 bản ghi lỗi DIR-022 (C03: 4 URL nhiễu, C08: MARKETING ARENA 2026); valid fixture pass 11/11 CRITICAL (0% false-positive); invalid fixture trip exit 1 (0 Parquet written); 37/37 pytest PASSED & 0 ruff errors.",
+      "updated_at": "2026-11-28"
     },
     {
       "id": "TASK-DQ-04",

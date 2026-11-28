@@ -34,6 +34,15 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 
 from acdp.config import settings
+from acdp.v2.data_contracts import (
+    DEFAULT_REFERENCE_YEAR,
+    DataContractViolationError,
+    QualityGateReport,
+    _build_gate_report,
+    run_silver_quality_gate,
+    validate_silver_records_pydantic,
+    validate_silver_to_gold_gate,
+)
 from acdp.v2.schemas import (
     Competition,
     compute_competition_key,
@@ -412,6 +421,10 @@ def load_silver_competitions_with_source(
 def export_silver_parquet(
     competitions: list[Competition],
     output_dir: Path | None = None,
+    *,
+    enforce_contract: bool = True,
+    reference_year: int = DEFAULT_REFERENCE_YEAR,
+    gate_report_path: Path | None = None,
 ) -> list[str | Path]:
     """Export Silver v2 competitions, prizes, and timeline_stages to ZSTD Parquet with explicit pa.schema."""
     comp_rows: list[dict[str, Any]] = []
@@ -509,6 +522,24 @@ def export_silver_parquet(
     comp_table = pa.Table.from_pylist(comp_rows, schema=SILVER_COMPETITIONS_ARROW_SCHEMA)
     prize_table = pa.Table.from_pylist(prize_rows, schema=SILVER_PRIZES_ARROW_SCHEMA)
     stage_table = pa.Table.from_pylist(stage_rows, schema=SILVER_TIMELINE_STAGES_ARROW_SCHEMA)
+
+    if enforce_contract:
+        gate_report = run_silver_quality_gate(
+            competitions,
+            comp_table,
+            prize_table,
+            stage_table,
+            gate_name="Silver Pre-Publish WAP Quality Gate",
+            source_label="export_silver_parquet",
+            reference_year=reference_year,
+            min_records=1,
+            fail_fast=False,
+        )
+        if gate_report_path is not None:
+            gate_report_path.parent.mkdir(parents=True, exist_ok=True)
+            gate_report_path.write_text(gate_report.model_dump_json(indent=2), encoding="utf-8")
+        if gate_report.circuit_breaker_tripped:
+            raise DataContractViolationError(gate_report)
 
     tables = (
         ("competitions.parquet", comp_table),
@@ -1192,8 +1223,29 @@ def build_gold_star_schema(
     source_batch_file: str = "manual_input",
     gold_dir: Path | None = None,
     sync_r2: bool = False,
+    *,
+    enforce_contract: bool = True,
+    reference_year: int = DEFAULT_REFERENCE_YEAR,
+    gate_report_path: Path | None = None,
 ) -> list[str | Path]:
     """Build Two-Tier Gold Star Schema in DuckDB (:memory: for R2-only, or atomic swap if db_path given)."""
+    if enforce_contract:
+        pre_rules = validate_silver_records_pydantic(competitions, reference_year=reference_year)
+        if not competitions or any(r.status == "FAIL" for r in pre_rules):
+            pre_report: QualityGateReport = _build_gate_report(
+                gate_name="Silver-to-Gold Input Quality Gate",
+                source_label=source_batch_file,
+                reference_year=reference_year,
+                record_counts={"competitions": len(competitions)},
+                rules=pre_rules,
+                elapsed_ms=sum(r.duration_ms for r in pre_rules),
+            )
+            if gate_report_path is not None:
+                gate_report_path.parent.mkdir(parents=True, exist_ok=True)
+                gate_report_path.write_text(pre_report.model_dump_json(indent=2), encoding="utf-8")
+            if not competitions or pre_report.circuit_breaker_tripped:
+                raise DataContractViolationError(pre_report)
+
     tmp_db_path: Path | None = None
     con = duckdb.connect(":memory:")
     if db_path is not None:
@@ -1429,6 +1481,22 @@ def build_gold_star_schema(
         check = check_rows[0]
         if abs(float(check[0]) - float(check[1])) > 1.0:
             raise RuntimeError(f"Prize allocation mismatch: kpi_total={check[0]}, domain_sum={check[1]}")
+
+        if enforce_contract:
+            gold_rules = validate_silver_to_gold_gate(con, expected_silver_count=len(competitions))
+            gold_report = _build_gate_report(
+                gate_name="Gold Pre-Publish WAP Quality Gate",
+                source_label=source_batch_file,
+                reference_year=reference_year,
+                record_counts={"competitions": len(competitions)},
+                rules=gold_rules,
+                elapsed_ms=sum(r.duration_ms for r in gold_rules),
+            )
+            if gate_report_path is not None:
+                gate_report_path.parent.mkdir(parents=True, exist_ok=True)
+                gate_report_path.write_text(gold_report.model_dump_json(indent=2), encoding="utf-8")
+            if gold_report.circuit_breaker_tripped:
+                raise DataContractViolationError(gold_report)
 
         exported_files: list[str | Path] = []
         if gold_dir is not None or sync_r2:
@@ -1733,6 +1801,8 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--motherduck-sql", action="store_true", help="Print MotherDuck Lite IN MOTHERDUCK R2 init SQL")
     parser.add_argument("--verify-motherduck", action="store_true", help="Verify 19 Gold Views & Data Quality Scorecard")
     parser.add_argument("--date", type=str, default=None, help="Optional Silver extraction date (YYYY-MM-DD)")
+    parser.add_argument("--skip-quality-gate", action="store_true", help="Bypass Data Contract WAP circuit breaker")
+    parser.add_argument("--gate-report", type=Path, default=None, help="Optional path to write Quality Gate JSON report")
     args = parser.parse_args(argv)
 
     if args.metabase_sql:
@@ -1745,11 +1815,17 @@ def main(argv: list[str] | None = None) -> None:
         verify_motherduck_views_from_r2()
         return
 
+    enforce_contract = not args.skip_quality_gate
     run_all = not (args.export_silver_r2 or args.build_gold_r2 or args.verify)
     if args.export_silver_r2 or args.build_gold_r2 or run_all:
         competitions, source_label = load_silver_competitions_from_r2(target_date=args.date)
         if args.export_silver_r2 or run_all:
-            export_silver_parquet(competitions, output_dir=None)
+            export_silver_parquet(
+                competitions,
+                output_dir=None,
+                enforce_contract=enforce_contract,
+                gate_report_path=args.gate_report,
+            )
         if args.build_gold_r2 or run_all:
             build_gold_star_schema(
                 db_path=None,
@@ -1757,6 +1833,8 @@ def main(argv: list[str] | None = None) -> None:
                 source_batch_file=source_label,
                 gold_dir=None,
                 sync_r2=True,
+                enforce_contract=enforce_contract,
+                gate_report_path=args.gate_report,
             )
 
     if args.verify:

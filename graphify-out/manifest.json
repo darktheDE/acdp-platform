@@ -366,9 +366,9 @@
     "semantic_hash": "7cfecd5824eb7a7cc270fdf81012d48a"
   },
   "docs/tasks/tasks-data.json": {
-    "mtime": 1795858348.867008,
-    "seen": 1795858395.2137928,
-    "ast_hash": "7abba1deb6c2003bbf62f5fae1d1dc60",
+    "mtime": 1795859658.5732625,
+    "seen": 1795859773.874449,
+    "ast_hash": "267c174f687e4bd5d127f1366bb27df7",
     "semantic_hash": ""
   },
   "openapi.json": {
@@ -666,10 +666,10 @@
     "semantic_hash": "37b1e3e1ac3c069a97f3a4551f2d8c61"
   },
   "src/acdp/v2/gold_star_schema.py": {
-    "mtime": 1795504066.4660122,
-    "seen": 1795852069.9282396,
-    "ast_hash": "16b25c8f5748ed561fa468acd852b910",
-    "semantic_hash": "16b25c8f5748ed561fa468acd852b910"
+    "mtime": 1795859450.5635698,
+    "seen": 1795859773.8745954,
+    "ast_hash": "00598ccd8e6b5186e688b795d447ac90",
+    "semantic_hash": ""
   },
   "src/acdp/v2/rag_eval.py": {
     "mtime": 1795517283.605694,
@@ -690,9 +690,9 @@
     "semantic_hash": ""
   },
   "src/acdp/v2/silver_transform.py": {
-    "mtime": 1795858075.1804378,
-    "seen": 1795858395.213997,
-    "ast_hash": "62698fedffaecb1b8b8db4183391467a",
+    "mtime": 1795859456.5685382,
+    "seen": 1795859773.874609,
+    "ast_hash": "19f267c6819cff8d710de2fc11963899",
     "semantic_hash": ""
   },
   "tests/api/__init__.py": {
@@ -1608,9 +1608,9 @@
     "semantic_hash": "f4b0ac20cb8d02434e27bead22c82cfd"
   },
   "docs/specs/0002-data-ingestion-and-schema-spec.md": {
-    "mtime": 1795856246.1691687,
-    "seen": 1795856311.6805224,
-    "ast_hash": "0ea8511d6ef10c115df57fc9c4e62b11",
+    "mtime": 1795859657.513152,
+    "seen": 1795859773.875131,
+    "ast_hash": "799daa522737feca477d18eec54b2abb",
     "semantic_hash": ""
   },
   "docs/specs/0003-gold-dimensional-modeling-spec.md": {
@@ -1668,9 +1668,9 @@
     "semantic_hash": "9d040c80a6385b8004c99192e8877816"
   },
   "docs/tasks/task-registry.md": {
-    "mtime": 1795858363.55752,
-    "seen": 1795858395.2146218,
-    "ast_hash": "ab5772adfc6696c3fd12698b426d5f6a",
+    "mtime": 1795859677.106655,
+    "seen": 1795859773.875166,
+    "ast_hash": "846b1d039eb4a4e5cb8bff187461683c",
     "semantic_hash": ""
   },
   ".agents/skills/academic-researcher/SKILL.md": {
@@ -1740,9 +1740,51 @@
     "semantic_hash": ""
   },
   "docs/deliverables/TASK-DQ-02-silver-golden-dataset-accuracy.md": {
-    "mtime": 1795858283.1357124,
-    "seen": 1795858395.2143912,
-    "ast_hash": "c2f4d0cd69f846a4c271c7433c96019c",
+    "mtime": 1795858431.9898837,
+    "seen": 1795859773.8749533,
+    "ast_hash": "740cd9a35ab24454d943ef8ea431ecc6",
+    "semantic_hash": ""
+  },
+  "docs/contracts/acdp-silver-competition.odcs.yaml": {
+    "mtime": 1795859332.6375678,
+    "seen": 1795859773.8744438,
+    "ast_hash": "1f686985bc47ba7bc21cef7131055c30",
+    "semantic_hash": ""
+  },
+  "src/acdp/v2/data_contracts.py": {
+    "mtime": 1795859414.1573129,
+    "seen": 1795859773.8745868,
+    "ast_hash": "2fbd114171da79b590c25d4c5e37aa78",
+    "semantic_hash": ""
+  },
+  "tests/fixtures/dq03/invalid_silver_batch.json": {
+    "mtime": 1795859496.7792795,
+    "seen": 1795859773.8746316,
+    "ast_hash": "5c167abca92d5e4a7fd56c40884e988a",
+    "semantic_hash": ""
+  },
+  "tests/fixtures/dq03/valid_silver_batch.json": {
+    "mtime": 1795859495.759239,
+    "seen": 1795859773.8746345,
+    "ast_hash": "9bf11658ff4b2dfb338894a2f0625b29",
+    "semantic_hash": ""
+  },
+  "tests/test_data_contracts_dq03.py": {
+    "mtime": 1795859536.1829853,
+    "seen": 1795859773.8746424,
+    "ast_hash": "838d71bfda4754011f7fb676c1cfee51",
+    "semantic_hash": ""
+  },
+  "docs/deliverables/TASK-DQ-03-data-contracts-and-quality-gates-visual-dossier.html": {
+    "mtime": 1795859656.4708273,
+    "seen": 1795859773.8749564,
+    "ast_hash": "c549281ccf212e97d556341a58bdb407",
+    "semantic_hash": ""
+  },
+  "docs/deliverables/TASK-DQ-03-data-contracts-and-quality-gates.md": {
+    "mtime": 1795859752.3729472,
+    "seen": 1795859773.8749588,
+    "ast_hash": "4884acdbecafed46eba58663a64d49cf",
     "semantic_hash": ""
   },
   "apps/web/package-lock.json": {

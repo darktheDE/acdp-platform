@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TASK-DQ-03: Data Contracts (ODCS v3.2) &amp; WAP Quality Gate Dossier</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"></script>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: { primaryColor: '#eff6ff', primaryBorderColor: '#1d4ed8', primaryTextColor: '#0f172a', lineColor: '#475569' } });
+  </script>
+</head>
+<body class="bg-slate-50 text-slate-900 antialiased">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <!-- Header -->
+    <header class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <div class="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-wider text-blue-700">
+            <span class="px-2.5 py-1 rounded-full bg-blue-50 border border-blue-200">Task ID: TASK-DQ-03</span>
+            <span class="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">ODCS v3.2.0 + WAP Gate</span>
+            <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700">Cycle 07 • TLCN Phase 1</span>
+          </div>
+          <h1 class="mt-3 text-2xl sm:text-3xl font-bold text-slate-900">
+            Data Contract &amp; Quality Gate Tự động giữa Các Layer (Bronze → Silver → Gold)
+          </h1>
+          <p class="mt-1 text-sm text-slate-600">
+            Đặc tả <code class="px-1.5 py-0.5 bg-slate-100 rounded text-xs">acdp-silver-competition.odcs.yaml</code> • Chốt chặn Pydantic v2 + DuckDB 1.5.6 SQL • Kiểm chứng Phương án A chỉ đọc trên Cloudflare R2
+          </p>
+        </div>
+        <div class="text-right text-xs text-slate-500">
+          <div><strong>Nhóm thực hiện:</strong> Đỗ Kiến Hưng &amp; Nguyễn Văn Quang Duy</div>
+          <div><strong>GVHD:</strong> ThS. Trần Quang Khải (FIT-HCMUTE)</div>
+          <div><strong>Ngày hoàn thành:</strong> 2026-11-28</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Tier 1: Executive KPI Summary -->
+    <section aria-label="Tier 1 Executive KPI Summary" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+        <div class="text-xs font-medium text-slate-500 uppercase">ODCS v3.2 Contract</div>
+        <div class="mt-2 text-3xl font-bold text-slate-900">19 Rules</div>
+        <div class="mt-1 text-xs text-slate-600">14 CRITICAL (Trip) • 5 WARNING (Soft SLA)</div>
+      </div>
+      <div class="bg-white border border-emerald-200 rounded-xl p-5 shadow-sm">
+        <div class="text-xs font-medium text-emerald-700 uppercase">Valid Fixture Gate</div>
+        <div class="mt-2 text-3xl font-bold text-emerald-700">11 / 11</div>
+        <div class="mt-1 text-xs text-slate-600">0 CRITICAL failures • 0% false-positive</div>
+      </div>
+      <div class="bg-white border border-rose-200 rounded-xl p-5 shadow-sm">
+        <div class="text-xs font-medium text-rose-700 uppercase">Invalid Fixture Catch</div>
+        <div class="mt-2 text-3xl font-bold text-rose-700">100%</div>
+        <div class="mt-1 text-xs text-slate-600">Trip C01–C08, C10, C11 • Exit 1 • 0 Parquet</div>
+      </div>
+      <div class="bg-white border border-amber-200 rounded-xl p-5 shadow-sm">
+        <div class="text-xs font-medium text-amber-700 uppercase">Live R2 Audit (24 rows)</div>
+        <div class="mt-2 text-3xl font-bold text-amber-700">5 Caught</div>
+        <div class="mt-1 text-xs text-slate-600">C03 (4 noise URLs) • C08 (1 non-tech) • C13-14 OK</div>
+      </div>
+      <div class="bg-white border border-blue-200 rounded-xl p-5 shadow-sm">
+        <div class="text-xs font-medium text-blue-700 uppercase">500-Row Gate Latency</div>
+        <div class="mt-2 text-3xl font-bold text-blue-700">86.48 ms</div>
+        <div class="mt-1 text-xs text-slate-600">Pydantic 15.06 ms + DuckDB 71.42 ms</div>
+      </div>
+    </section>
+
+    <!-- Tier 2: Architecture Diagram & Benchmark Charts -->
+    <section aria-label="Tier 2 WAP Architecture & Benchmarks" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div class="lg:col-span-12 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+        <h2 class="text-lg font-bold text-slate-900 mb-3">Kiến trúc Write-Audit-Publish (WAP) &amp; Circuit Breaker xuyên Tầng</h2>
+        <div class="mermaid">
+flowchart LR
+    B["Bronze Layer (R2)<br/>Raw HTML + 10 Meta"] -->|"Gate 0 (C12)<br/>Key + URL + Clean MD >= 200"| ST["Silver Transform v2<br/>(Deterministic + Instructor)"]
+    ST -->|"Write (RAM Staging)"| RAM["Pydantic Models +<br/>3 PyArrow Tables"]
+    ODCS["ODCS v3.2.0 Contract YAML<br/>acdp-silver-competition.odcs.yaml"] -.->|"Rules & SQL"| CB
+
+    subgraph CB ["WAP Quality Gate & Circuit Breaker (src/acdp/v2/data_contracts.py)"]
+        direction TB
+        G1["Tier A: Pydantic v2 Row Gate (C01..C08)"]
+        G2["Tier B: DuckDB SQL Set Gate (C09..C11 + W01..W05)"]
+        G3["Tier C: Silver -> Gold Pre-Publish Gate (C13..C14)"]
+        G1 --> G2 --> G3
+    end
+
+    RAM --> G1
+    CB -->|"CRITICAL > 0 (TRIP)"| TRIP["Raise DataContractViolationError<br/>0 Bytes Written + Gate JSON"]
+    CB -->|"CRITICAL == 0 (CLOSED)"| PUB["Publish Atomic Parquet to R2 / Local<br/>+ Save Gate Report"]
+        </div>
+      </div>
+
+      <div class="lg:col-span-7 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+        <h2 class="text-lg font-bold text-slate-900 mb-1">Phân bố Kết quả Rule trên 3 Tập Kiểm định</h2>
+        <p class="text-xs text-slate-500 mb-4">Số lượng quy tắc PASS, WARN (mềm) và FAIL (ngắt circuit breaker) qua các kịch bản chạy thực nghiệm.</p>
+        <div class="h-80">
+          <canvas id="gateOutcomeChart"></canvas>
+        </div>
+      </div>
+
+      <div class="lg:col-span-5 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+        <h2 class="text-lg font-bold text-slate-900 mb-1">Độ trễ Kiểm định Tier A (Pydantic) vs Tier B (DuckDB SQL)</h2>
+        <p class="text-xs text-slate-500 mb-4">Đo trực tiếp trên 10, 24 và 500 bản ghi bằng <code class="text-xs">--benchmark</code> (đơn vị: ms).</p>
+        <div class="h-80">
+          <canvas id="latencyBenchmarkChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tier 3: Collapsible Deep Specs & Live R2 Violations -->
+    <section aria-label="Tier 3 Rule Matrix and R2 Audit Evidence" class="space-y-4">
+      <details open class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+        <summary class="cursor-pointer text-base font-bold text-slate-900">
+          Bằng chứng Live Cloudflare R2 (Phương án A — Chỉ đọc): 5 Bản ghi Vi phạm DIR-022 bị Cô lập
+        </summary>
+        <div class="mt-4 overflow-x-auto">
+          <table class="min-w-full text-sm text-left border-collapse">
+            <thead>
+              <tr class="border-b border-slate-200 bg-slate-50 text-xs uppercase text-slate-600">
+                <th class="py-2.5 px-3">Cuộc thi trên R2</th>
+                <th class="py-2.5 px-3">Giá trị lỗi quan sát</th>
+                <th class="py-2.5 px-3">Rule Trip</th>
+                <th class="py-2.5 px-3">Nguyên nhân gốc</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 text-xs">
+              <tr>
+                <td class="py-2.5 px-3 font-medium">Cuộc Thi Khoa Học Dữ Liệu DATATHON 2026</td>
+                <td class="py-2.5 px-3 font-mono text-rose-700">ntu.edu.sg/business/admissions/graduate-studies/msc-programmes</td>
+                <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded bg-rose-50 text-rose-700 font-semibold">C03</span></td>
+                <td class="py-2.5 px-3">Banner quảng cáo tuyển sinh trong <code>.rpa__media</code> của <code>ybox.vn</code>.</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-medium">UIT Data Science Challenge 2026</td>
+                <td class="py-2.5 px-3 font-mono text-rose-700">https://tracuu.citd.edu.vn</td>
+                <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded bg-rose-50 text-rose-700 font-semibold">C03</span></td>
+                <td class="py-2.5 px-3">Link header cổng tra cứu trường ĐH lọt từ trang tin UIT.</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-medium">Olympic Tin học / AI / ICPC HaUI 2026</td>
+                <td class="py-2.5 px-3 font-mono text-rose-700">https://jst-haui.vn</td>
+                <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded bg-rose-50 text-rose-700 font-semibold">C03</span></td>
+                <td class="py-2.5 px-3">Subdomain tạp chí khoa học <code>jst-</code> lọt vào trường <code>url</code>.</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-medium">Sáng tạo trẻ tỉnh Quảng Ngãi AI 2026</td>
+                <td class="py-2.5 px-3 font-mono text-rose-700">https://mic.gov.vn</td>
+                <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded bg-rose-50 text-rose-700 font-semibold">C03</span></td>
+                <td class="py-2.5 px-3">URL trang chủ chung của Bộ TT&amp;TT thay vì trang cuộc thi.</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-medium">MARKETING ARENA 2026</td>
+                <td class="py-2.5 px-3 font-mono text-rose-700">category: ["Marketing"]</td>
+                <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded bg-rose-50 text-rose-700 font-semibold">C08</span></td>
+                <td class="py-2.5 px-3">Cuộc thi Marketing ngoài phạm vi CNTT/AI/Dữ liệu/Bảo mật/Lập trình.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+
+      <details class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+        <summary class="cursor-pointer text-base font-bold text-slate-900">
+          Danh mục 19 Quy tắc Data Contract (ODCS v3.2.0) — Phân tầng CRITICAL vs WARNING
+        </summary>
+        <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5">
+            <div class="font-bold text-slate-900">14 Quy tắc CRITICAL (Ngắt Circuit Breaker)</div>
+            <div><strong>C01:</strong> Not-Null &amp; 64-hex SHA-256 <code>competition_key</code>, <code>name</code>, <code>url</code>, <code>summary</code>.</div>
+            <div><strong>C02:</strong> URL chính thức HTTP(S), cấm <code>urn:</code>, aggregator &amp; social/form.</div>
+            <div><strong>C03:</strong> Chống link nhiễu <code>tracuu.</code>, <code>jst-</code>, <code>/admissions</code>, root bộ/ngành.</div>
+            <div><strong>C04:</strong> Enum chuẩn cho <code>mode</code>, <code>registration_status</code>, <code>eligibility_level</code>, <code>currency</code>, <code>prize_type</code>.</div>
+            <div><strong>C05–C06:</strong> Dải năm <code>2025–2027</code> và thứ tự ngày <code>end &gt;= start</code>.</div>
+            <div><strong>C07–C08:</strong> Biên số <code>team_size</code>, giải <code>&gt;= 0</code>, lọc phạm vi CNTT/SV <code>DIR-022</code>.</div>
+            <div><strong>C09–C12:</strong> Batch <code>&gt;= 1</code>, unique PK, 0 orphan children, Bronze handoff.</div>
+            <div><strong>C13–C14:</strong> Gold parity 1-1 và bảo toàn giải thưởng <code>0.00 VND</code> (<code>EC-G1</code>).</div>
+          </div>
+          <div class="p-4 rounded-xl bg-amber-50/50 border border-amber-200 space-y-1.5">
+            <div class="font-bold text-amber-900">5 Quy tắc WARNING (SLA mềm — Không ngắt pipeline)</div>
+            <div><strong>W01:</strong> Thiếu <code>registration_deadline_date</code> (nhiều trang SPA không công bố hạn).</div>
+            <div><strong>W02:</strong> <code>eligibility_level</code> hoặc <code>mode</code> còn ở trạng thái <code>unknown</code> (nợ E3).</div>
+            <div><strong>W03:</strong> Thiếu <code>official_rules_url</code> hoặc <code>organizer_contact</code> (tùy chọn theo <code>DIR-022</code>).</div>
+            <div><strong>W04:</strong> Thiếu <code>bronze_key</code> / <code>source_url</code> (cho phép trên unit fixture tối giản).</div>
+            <div><strong>W05:</strong> <code>total_prize_vnd = 0</code> và không có hạng giải (hợp lệ với giải cúp/học bổng).</div>
+          </div>
+        </div>
+      </details>
+    </section>
+  </div>
+
+  <script>
+    new Chart(document.getElementById('gateOutcomeChart'), {
+      type: 'bar',
+      data: {
+        labels: ['Valid Fixture (5 rows)', 'Invalid Fixture (10 rows)', 'Live Cloudflare R2 (24 rows)'],
+        datasets: [
+          { label: 'PASS', data: [12, 1, 12], backgroundColor: '#10b981' },
+          { label: 'WARN (Soft SLA)', data: [4, 5, 4], backgroundColor: '#f59e0b' },
+          { label: 'FAIL (Circuit Trip)', data: [0, 10, 2], backgroundColor: '#ef4444' }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true, title: { display: true, text: 'Số lượng Rules' } } },
+        plugins: { legend: { position: 'bottom' } }
+      }
+    });
+
+    new Chart(document.getElementById('latencyBenchmarkChart'), {
+      type: 'bar',
+      data: {
+        labels: ['10 Records (TLCN)', '24 Records (Live R2)', '500 Records (KLTN)'],
+        datasets: [
+          { label: 'Tier A: Pydantic v2 (ms)', data: [0.43, 0.67, 15.06], backgroundColor: '#2563eb' },
+          { label: 'Tier B: DuckDB SQL (ms)', data: [100.0, 73.54, 71.42], backgroundColor: '#0ea5e9' }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: { y: { beginAtZero: true, title: { display: true, text: 'Thời gian (ms)' } } },
+        plugins: { legend: { position: 'bottom' } }
+      }
+    });
+  </script>
+</body>
+</html>
