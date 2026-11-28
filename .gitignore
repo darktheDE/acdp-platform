@@ -85,3 +85,9 @@ Desktop.ini
 .vercel
 .env*
 tsconfig.tsbuildinfo
+
+# Graphify local cache, machine-specific state & generated HTML viz
+graphify-out/cache/
+graphify-out/.graphify_*
+graphify-out/.needs_update
+graphify-out/graph.html
