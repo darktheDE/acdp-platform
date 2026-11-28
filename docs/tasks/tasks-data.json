@@ -1005,7 +1005,7 @@
       "task_type": "Engineering",
       "is_no_code": false,
       "owner": "Hung & Duy",
-      "status": "todo",
+      "status": "done",
       "priority": "high",
       "problem_statement": "Vấn đề: Pipeline Silver dùng Hybrid DE + LLM nhưng chưa có ground-truth gán nhãn tay để đo mức độ chính xác thực tế của từng field. Kiểm chứng 3 trục — Lý thuyết: phương pháp đánh giá trích xuất thông tin (Precision, Recall, F1, Exact Match theo trường); Thực tiễn: quy trình LLM extraction evaluation dùng golden set trong production để kiểm soát sai số trước khi đưa vào warehouse; Người dùng: đảm bảo ngày hạn chót, giải thưởng, đối tượng và URL chính thức hiển thị cho sinh viên không bị sai lệch. Phương pháp: gán nhãn thủ công toàn bộ 5–10 cuộc thi scope TLCN, chạy pipeline trích xuất và tính điểm theo từng field, phân loại nguyên nhân lỗi (parser HTML, prompt, trang động). Tiêu chí chấp nhận: có golden dataset chuẩn hóa; báo cáo Precision/Recall/Exact-Match từng field đạt ngưỡng đề ra và có bảng phân loại lỗi. Phụ thuộc: sau TASK-SLV-03, TASK-SLV-04 và TASK-QA-02.",
       "research_questions": [
@@ -1016,10 +1016,15 @@
         "Xuất báo cáo Precision/Recall/Exact-Match theo từng field kèm phân loại lỗi theo nguyên nhân."
       ],
       "deliverables": [
-        "docs/deliverables/TASK-DQ-02-silver-golden-dataset-accuracy.md"
+        "docs/experiments/data/silver-golden-dataset-v1.json",
+        "src/acdp/v2/silver_eval.py",
+        "docs/experiments/data/silver-dq02-eval-results.json",
+        "tests/test_silver_eval_dq02.py",
+        "docs/deliverables/TASK-DQ-02-silver-golden-dataset-accuracy.md",
+        "docs/deliverables/TASK-DQ-02-silver-golden-dataset-accuracy-visual-dossier.html"
       ],
       "notes": "Phụ thuộc TASK-SLV-03, TASK-SLV-04, TASK-QA-02.",
-      "updated_at": "2026-11-25"
+      "updated_at": "2026-11-28"
     },
     {
       "id": "TASK-DQ-03",

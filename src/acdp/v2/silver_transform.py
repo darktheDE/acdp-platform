@@ -539,10 +539,15 @@ def _score_official_link(
         bare_host == agg or bare_host.endswith(f".{agg}") for agg in AGGREGATOR_HOSTS
     ):
         return -100
-    # Ignore generic university/gov sibling portals (tuyensinh.*, alumni.*, khcn.*)
-    if any(bare_host.startswith(prefix) for prefix in ("tuyensinh.", "alumni.", "khcn.", "daotao.", "ctsv.")):
+    # Ignore generic university/gov sibling portals and non-competition subdomains/paths
+    if any(
+        bare_host.startswith(prefix)
+        for prefix in ("tuyensinh.", "alumni.", "khcn.", "daotao.", "ctsv.", "tracuu.", "jst-", "vieclam.", "portal.")
+    ):
         return -100
     path_lower = parsed.path.lower()
+    if any(tok in path_lower for tok in ("/admissions", "/msc-programmes", "/graduate-studies", "/tuyen-dung")):
+        return -100
     if any(path_lower.endswith(ext) for ext in (".png", ".jpg", ".jpeg", ".svg", ".css", ".js", ".pdf", ".docx")):
         return -50
 
@@ -559,16 +564,80 @@ def _score_official_link(
     return score
 
 
+RULES_PAGE_KEYWORDS = (
+    "thể lệ",
+    "the le",
+    "regulations",
+    "rules & regulations",
+    "rules of ",
+    "official rules",
+    "handbook",
+)
+RULES_URL_MARKERS = ("/the-le", "/regulations", "/rules", "the-le", "rules-of-")
+NON_RULES_BLACKLIST = (
+    "quy chế dân chủ",
+    "nội quy cơ quan",
+    "bảo đảm an toàn thông tin",
+    "chính sách bảo mật",
+    "điều khoản sử dụng",
+    "privacy",
+    "terms of service",
+    "nq_hdt",
+    "noi_quy",
+)
+NOISY_CONTAINER_MARKERS = (
+    "rpa__media",
+    "slick-slide",
+    "sidebar",
+    "navbar",
+    "footer",
+    "related-posts",
+    "breadcrumb",
+)
+
+
+def _prune_layout_noise(soup: BeautifulSoup) -> BeautifulSoup:
+    """Return a cloned BeautifulSoup with nav/header/footer/aside/ad-banners removed."""
+    cloned = BeautifulSoup(str(soup), "html.parser")
+    for tag in cloned.find_all(["nav", "header", "footer", "aside"]):
+        tag.decompose()
+    for elem in list(cloned.find_all(class_=True)):
+        if getattr(elem, "attrs", None) is None:
+            continue
+        cls_text = " ".join(str(c) for c in (elem.get("class") or [])).lower()
+        if any(marker in cls_text for marker in NOISY_CONTAINER_MARKERS):
+            elem.decompose()
+    return cloned
+
+
+def _is_competition_rules_link(abs_url: str, anchor_text: str) -> bool:
+    """Identify dedicated rulebook PDFs or official rules/handbook pages while rejecting unrelated policies."""
+    path_lower = urlparse(abs_url).path.lower()
+    text_lower = anchor_text.lower().strip()
+    combined = f"{text_lower} {path_lower}"
+    if any(bad in combined for bad in NON_RULES_BLACKLIST):
+        return False
+    if path_lower.endswith((".pdf", ".docx", ".doc")):
+        return True
+    if any(kw in text_lower for kw in RULES_PAGE_KEYWORDS) or any(m in path_lower for m in RULES_URL_MARKERS):
+        return urlparse(abs_url).netloc.lower() not in SOCIAL_OR_FORM_HOSTS
+    return False
+
+
 def _extract_links_from_soup(
     soup: BeautifulSoup,
     base_url: str,
     source_domain: str,
 ) -> tuple[list[str], list[str]]:
-    """Extract candidate official website URLs and optional .pdf/.docx rulebook URLs."""
+    """Extract candidate official website URLs (main content only) and official rules URLs."""
     scored_official: list[tuple[int, str]] = []
     rulebook_urls: list[str] = []
 
-    for a in soup.find_all("a", href=True):
+    main_soup = _prune_layout_noise(soup)
+    # Fallback to full soup only if document has no non-landmark links (e.g. minimal HTML fixtures)
+    scan_soup = main_soup if main_soup.find("a", href=True) else soup
+
+    for a in scan_soup.find_all("a", href=True):
         raw_href = str(a["href"]).strip()
         if not raw_href or raw_href.startswith(("#", "mailto:", "tel:", "javascript:")):
             continue
@@ -579,13 +648,28 @@ def _extract_links_from_soup(
         anchor_text = a.get_text(" ", strip=True)
 
         if path_lower.endswith((".pdf", ".docx", ".doc")):
-            if abs_url not in rulebook_urls:
+            if _is_competition_rules_link(abs_url, anchor_text) and abs_url not in rulebook_urls:
                 rulebook_urls.append(abs_url)
             continue
 
         score = _score_official_link(abs_url, anchor_text, source_domain)
         if score > 0:
             scored_official.append((score, abs_url))
+
+    # Dedicated rules links (/the-le, /regulations, Handbook) may live in top nav or body
+    for a in soup.find_all("a", href=True):
+        raw_href = str(a["href"]).strip()
+        if not raw_href or raw_href.startswith(("#", "mailto:", "tel:", "javascript:")):
+            continue
+        abs_url = normalize_url(urljoin(base_url, raw_href))
+        if not abs_url:
+            continue
+        path_lower = urlparse(abs_url).path.lower()
+        if path_lower.endswith((".pdf", ".docx", ".doc")):
+            continue
+        anchor_text = a.get_text(" ", strip=True)
+        if _is_competition_rules_link(abs_url, anchor_text) and abs_url not in rulebook_urls:
+            rulebook_urls.append(abs_url)
 
     scored_official.sort(key=lambda item: item[0], reverse=True)
     dedup_official: list[str] = []
@@ -673,6 +757,7 @@ def extract_deterministic_signals(
     if is_html:
         all_official_candidates: list[str] = []
         all_rules: list[str] = []
+        is_primary_aggregator = is_media_or_aggregator_url(primary_url)
         for idx, (page_url, page_html) in enumerate(pages):
             soup = BeautifulSoup(page_html, "html.parser")
             if idx == 0:
@@ -706,6 +791,11 @@ def extract_deterministic_signals(
             for k, v in ld_data.items():
                 signals.json_ld.setdefault(k, v)
 
+            # For aggregators/media news posts, only scan the primary article page (idx == 0)
+            # so adaptive-crawled feed/sidebar pages cannot pollute official link candidates.
+            if is_primary_aggregator and idx > 0:
+                continue
+
             cand_official, cand_rules = _extract_links_from_soup(soup, page_url, source_domain)
             for u in cand_official:
                 if u not in all_official_candidates:
@@ -719,6 +809,8 @@ def extract_deterministic_signals(
 
     base_source = signals.canonical_url or signals.source_url
     signals.is_media_or_aggregator = is_media_or_aggregator_url(base_source)
+    base_host = _canonical_domain(base_source) if base_source else ""
+    is_third_party_aggregator = base_host in AGGREGATOR_HOSTS
 
     if signals.is_media_or_aggregator:
         ld_url = normalize_url(str(signals.json_ld.get("url") or ""))
@@ -728,6 +820,10 @@ def extract_deterministic_signals(
         elif signals.candidate_official_urls:
             signals.canonical_official_url = signals.candidate_official_urls[0]
             signals.has_official_website = True
+        elif not is_third_party_aggregator and (base_host.endswith(".edu.vn") or base_host.endswith(".gov.vn")):
+            # Official university/government announcement without a separate microsite serves as its own official URL
+            signals.canonical_official_url = base_source
+            signals.has_official_website = bool(base_source)
         else:
             signals.canonical_official_url = ""
             signals.has_official_website = False

@@ -1,22 +1,22 @@
 # Graph Report - acdp-platform  (2026-11-28)
 
 ## Corpus Check
-- 255 files · ~340,554 words
+- 258 files · ~350,814 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 13 file(s) not represented in the graph (top: (none) 6, .example 1, .api 1)
 
 ## Summary
-- 2436 nodes · 4801 edges · 160 communities (126 shown, 34 thin omitted)
-- Extraction: 94% EXTRACTED · 6% INFERRED · 0% AMBIGUOUS · INFERRED: 299 edges (avg confidence: 0.91)
+- 2530 nodes · 5011 edges · 157 communities (122 shown, 35 thin omitted)
+- Extraction: 94% EXTRACTED · 6% INFERRED · 0% AMBIGUOUS · INFERRED: 300 edges (avg confidence: 0.91)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `8d12f492`
+- Built from commit: `bca0285c`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
-- run_discovery_pipeline
+- discovery.py
 - Analytics API Router
 - silver_transform.py
 - Ollama Validation Bridge
@@ -29,7 +29,7 @@
 - Next.js Web Dependencies
 - Student Profile Router
 - V1 Pydantic Schemas
-- FastAPI CORS & Seeding
+- config.py
 - bronze_crawl.py
 - RAG Chat Router
 - Bronze Storage Evaluation
@@ -50,34 +50,34 @@
 - Gold Star Schema Tests
 - Competition Cards & Detail
 - Analytics Dashboard Page
-- middleware/security.py
+- middleware/__init__.py
 - R2 CV PDF Storage
 - Qdrant Vector Store
 - bronze_validate.py
 - duckdb
 - re
 - V1 LLM Extraction
-- test_rag_eval.py
+- test_percentile_semantic_chunker_splits_on_topic_shift_without_deprecation
 - TypeScript Compiler Config
 - TLCN Thesis Report
 - Academic Term & Date Keys
 - export_gold_parquet_and_sync_r2
-- Asyncpg & Supabase Engine
+- silver_eval.py
 - Silver Progress Presentation
 - TASK-SLV-01: Hybrid DE vs LLM Extraction Study
 - Prefect Medallion Flow
-- Cloudflare BGE-M3 Embedder
-- In-Repo Task Sync
+- test_rag_and_openapi.py
+- In-Repo Task Registry & Deliverables Ledger
 - R2 & Backup Env Vars
-- RAG & OpenAPI Tests
+- test_security_owasp.py
 - QA Tech Decision Tests
 - V2 RAG Ingestion
 - Academic Research Skill
-- Delivery Gate Validator
-- get_duckdb_conn
+- json
+- Deliverable: Xây dựng Golden Dataset & Đo Độ chính xác Trích xuất Lớp Bạc theo Từng Field
 - test_bronze_validation_dq01.py
-- FastAPI Auth Dependencies
-- OpenAPI Schema Exporter
+- get_current_user
+- test_frontend_ux_and_root_sync.py
 - Silver R2 Payload Loader
 - Docker Compose Services
 - Cloudflare Workers Embeddings
@@ -93,10 +93,10 @@
 - Anti-Slop Scientific Skill
 - Docker Build & Profiles
 - Web Container Env Config
-- api/security.py
+- test_silver_eval_dq02.py
 - V2 Discovery Unit Tests
 - Postgres Container Env
-- run_silver_transform
+- MultiTierRateLimiter
 - Thesis Formatting Validator
 - Prefect Container Config
 - Architecture Diagram Core
@@ -104,23 +104,23 @@
 - Ollama Chatbot Integration
 - Weekly pg_dump Workflow
 - test_g4_llm_max_output_tokens_capped_at_600
-- BM25 Hybrid Retriever
+- evaluate_from_r2
 - Container Resource Limits
 - Metabase Container Env
 - Qdrant Container Config
 - Medallion Layer Deliverables
 - Keep-Alive & DQ Workflow
-- RAG Response TTL Cache
-- DiscoveredCandidate
+- compute_cases_sha256
+- TASK-SLV-03: Hybrid Deterministic Sandwich & Silver RAG Implementation
 - Full Cloud Stack Summary
 - ADR-0002 Free-Tier Cloud
 - Security Gates & HF-01
 - Literature & SOTA Matrix
 - verify_links.py
 - Container Healthchecks
-- discovery.py
+- TASK-BRZ-01 Bronze Purity & Medallion Boundary Audit
 - VectorRAG & GraphRAG
-- extract_deterministic_signals
+- _extract_links_from_soup
 - Ragas 3-System Ablation
 - Feasibility & T01 Review
 - NT-014 Academic Competition Landscape Survey & Adaptive Ingestion
@@ -128,20 +128,17 @@
 - Percentile Semantic Chunker
 - AGENTS.md Universal AI Agent Operating Contract
 - Web Sprint 02 Deliverables
-- parse_hub_html
-- run_tier1_discovery
+- test_auth_and_bookmarks.py
+- api_client
 - Deliverable Template & Runbook
 - Local Dev & Admin Docs
-- In-Repo Task & Deliverables Portal (index.html)
+- get_rate_limit_stats
 - Cloud & Infra Deliverables
 - Workflow Input Parameters
 - Weekly Backup Job Config
-- Any
 - Vercel Proxy & TTL Cache
 - Gemini Workspace Directives
-- Medallion Pipeline (v2) Architecture
 - validate_ollama.py
-- canonicalize_url
 - Academic & Ops Layer
 - rag_ingest.py
 - Cloud Free-Tier Risk & Failover Matrix (R1-R6)
@@ -156,7 +153,6 @@
 - R2 & DuckDB Core
 - Deliverables Ledger Sync
 - test_silver_schema.py
-- T15: Web Dashboard vs Metabase & Prefect UI Optimization
 - ADR-0001 Inception Stack
 - ADR-0002 Cloud Defense
 - TLCN vs KLTN Phases
@@ -175,22 +171,22 @@
 4. `Competition` - 28 edges
 5. `build_gold_star_schema()` - 23 edges
 6. `build_gold_star_schema()` - 22 edges
-7. `next` - 20 edges
-8. `react` - 20 edges
-9. `Competition` - 20 edges
-10. `FakeR2Client` - 20 edges
+7. `parse_date_value()` - 20 edges
+8. `Competition` - 20 edges
+9. `FakeR2Client` - 20 edges
+10. `next` - 20 edges
 
 ## Surprising Connections (you probably didn't know these)
+- `2.2. Quy ước Tính điểm cho Trường Nullable & Dữ liệu Lồng nhau` --references--> `score_bipartite_array()`  [INFERRED]
+  docs/deliverables/TASK-DQ-02-silver-golden-dataset-accuracy.md → src/acdp/v2/silver_eval.py
 - `3.2. Kết quả kiểm chứng Re-crawl 2 lần liên tiếp & Khóa bất biến R2 (`codetour.org`)` --references--> `upload_to_bronze_with_result()`  [INFERRED]
   docs/deliverables/TASK-DQ-01-bronze-validation-report.md → src/acdp/v2/bronze_crawl.py
-- `test_rag_chat_persistence_ungrounded_and_outage()` --uses--> `RagCitationDTO`  [INFERRED]
-  tests/api/test_rag_and_openapi.py → src/acdp/api/schemas/rag.py
-- `test_g4_ai_rate_limiting_per_user_day_and_global_rpm()` --uses--> `RagCitationDTO`  [INFERRED]
-  tests/api/test_security_owasp.py → src/acdp/api/schemas/rag.py
-- `test_profile_pdf_upload_download_delete_and_privacy()` --indirect_call--> `get_cv_storage_service()`  [INFERRED]
-  tests/api/test_profile.py → src/acdp/api/services/cv_storage.py
-- `test_rag_chat_persistence_ungrounded_and_outage()` --uses--> `RagUnavailableError`  [INFERRED]
-  tests/api/test_rag_and_openapi.py → src/acdp/api/services/rag_service.py
+- `test_star_schema_bridge_allocation_and_edge_cases()` --uses--> `PrizeTier`  [INFERRED]
+  tests/test_gold_star_schema.py → src/acdp/v2/schemas.py
+- `test_silver_schema_v2_gap_g1_g8_resolved()` --uses--> `PrizeTier`  [INFERRED]
+  tests/test_silver_schema.py → src/acdp/v2/schemas.py
+- `test_silver_v2_schema_validation_and_g7_rejection()` --uses--> `PrizeTier`  [INFERRED]
+  tests/test_silver_schema.py → src/acdp/v2/schemas.py
 
 ## Import Cycles
 - None detected.
@@ -212,83 +208,83 @@
 - **Cycle 07 Full Cloud Free-Tier Infrastructure Tasks** — docs_tasks_task_registry_task_cld_04, docs_tasks_task_registry_task_cld_05, docs_tasks_task_registry_task_cld_06, docs_tasks_task_registry_task_cld_07 [INFERRED 0.95]
 - **Cycle 06 v2 Medallion Pipeline Tasks** — docs_tasks_task_registry_task_ing_03, docs_tasks_task_registry_task_brz_02, docs_tasks_task_registry_task_slv_03, docs_tasks_task_registry_task_slv_04, docs_tasks_task_registry_task_gld_02 [INFERRED 0.95]
 
-## Communities (160 total, 34 thin omitted)
+## Communities (157 total, 35 thin omitted)
 
-### Community 0 - "run_discovery_pipeline"
-Cohesion: 0.17
-Nodes (6): build_seed_candidates(), DiscoveryManifest, load_http_cache_from_r2(), QueryBudgetReport, run_discovery_pipeline(), upload_manifest_to_r2()
+### Community 0 - "discovery.py"
+Cohesion: 0.06
+Nodes (32): apply_conditional_http_checks(), build_seed_candidates(), canonicalize_url(), compute_relevance_score(), _contains_keyword(), deduplicate_and_rank(), DiscoveredCandidate, DiscoveryManifest (+24 more)
 
 ### Community 1 - "Analytics API Router"
 Cohesion: 0.08
-Nodes (27): get_duckdb(), get_analytics_overview(), get_analytics_seasonality(), get_competition_detail(), list_competitions(), AnalyticsDashboardDTO, DomainMetricDTO, HealthResponse (+19 more)
+Nodes (26): get_duckdb(), get_analytics_overview(), get_analytics_seasonality(), get_competition_detail(), list_competitions(), AnalyticsDashboardDTO, DomainMetricDTO, HealthResponse (+18 more)
 
 ### Community 2 - "silver_transform.py"
-Cohesion: 0.15
-Nodes (10): apply_post_llm_guards(), _canonical_domain(), _contains_tech_term(), evaluate_pre_llm_scope(), _has_school_only_audience(), is_media_or_aggregator_url(), main(), _parse_args() (+2 more)
+Cohesion: 0.08
+Nodes (22): apply_post_llm_guards(), build_bounded_llm_markdown(), build_llm_user_prompt(), _canonical_domain(), _contains_tech_term(), _create_instructor_client(), DeterministicSignals, evaluate_pre_llm_scope() (+14 more)
 
 ### Community 3 - "Ollama Validation Bridge"
 Cohesion: 0.12
 Nodes (10): run_all_tests(), test_dns_resolution(), test_single_url_verification(), test_url_cleaning(), generate_markdown_report(), LinkOccurrence, LinkVerificationResult, LinkVerifier (+2 more)
 
 ### Community 4 - "JWT Auth & Seeding"
-Cohesion: 0.12
-Nodes (16): seed_local_users(), User, get_me(), login(), logout(), refresh_tokens(), register(), _set_refresh_cookie() (+8 more)
+Cohesion: 0.09
+Nodes (18): seed_local_users(), UserSession, get_me(), login(), logout(), refresh_tokens(), register(), _set_refresh_cookie() (+10 more)
 
 ### Community 5 - "test_profile.py"
-Cohesion: 0.13
-Nodes (7): test_auth_register_login_refresh_rotation_and_reuse_detection(), test_bookmarks_idempotency_and_cross_user_isolation(), FakeCvStorageService, _register_and_login(), test_profile_pdf_upload_download_delete_and_privacy(), test_profile_requires_auth_and_defaults_for_new_student(), test_profile_upsert_syncs_user_normalizes_skills_and_validates_urls()
+Cohesion: 0.21
+Nodes (5): FakeCvStorageService, _register_and_login(), test_profile_pdf_upload_download_delete_and_privacy(), test_profile_requires_auth_and_defaults_for_new_student(), test_profile_upsert_syncs_user_normalizes_skills_and_validates_urls()
 
 ### Community 6 - "Gold Star Schema"
 Cohesion: 0.07
 Nodes (25): build_gold_star_schema(), _register_organizer(), build_metabase_r2_init_sql(), build_motherduck_r2_init_sql(), classify_competition_domains(), classify_organizer_tier(), classify_team_profile(), _competition_richness_score() (+17 more)
 
 ### Community 7 - "Admin & DuckDB Refresh"
-Cohesion: 0.06
-Nodes (24): refresh_duckdb_r2_connection(), reset_duckdb_connection(), get_admin_openapi(), get_admin_swagger_docs(), get_admin_telemetry(), list_admin_users(), refresh_admin_caches(), _to_admin_user_dto() (+16 more)
+Cohesion: 0.05
+Nodes (25): refresh_duckdb_r2_connection(), reset_duckdb_connection(), require_admin(), get_admin_openapi(), get_admin_swagger_docs(), get_admin_telemetry(), list_admin_users(), refresh_admin_caches() (+17 more)
 
 ### Community 8 - "Cloud Environment Config"
 Cohesion: 0.05
 Nodes (40): environment, ADMIN_EMAILS, BRONZE_STORAGE_BACKEND, CHAT_MODEL, CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_API_TOKEN, CORS_ORIGIN_REGEX, CORS_ORIGINS (+32 more)
 
 ### Community 9 - "V2 Pydantic Schemas"
-Cohesion: 0.17
-Nodes (3): clean_placeholder(), _clean_string_list(), PrizeTier
+Cohesion: 0.13
+Nodes (7): clean_placeholder(), _clean_string_list(), Competition, CompetitionExtractionResult, PrizeTier, TimelineStage, _fake_extract()
 
 ### Community 10 - "Next.js Web Dependencies"
 Cohesion: 0.07
 Nodes (37): dependencies, lucide-react@^0.511.0, next@^16.4.0, react@^19.1.0, react-dom@^19.1.0, react-is@^19.1.0, recharts@^2.15.3, devDependencies (+29 more)
 
 ### Community 11 - "Student Profile Router"
-Cohesion: 0.13
-Nodes (11): _compute_completeness(), delete_my_cv_pdf(), get_my_profile(), _get_or_create_profile(), get_public_profile(), _to_public_dto(), _to_student_dto(), upload_my_cv_pdf() (+3 more)
+Cohesion: 0.12
+Nodes (15): User, UserProfile, _compute_completeness(), delete_my_cv_pdf(), download_student_cv_pdf(), get_my_profile(), _get_or_create_profile(), get_public_profile() (+7 more)
 
 ### Community 12 - "V1 Pydantic Schemas"
 Cohesion: 0.09
 Nodes (8): _competition_richness_score(), clean_placeholder(), Competition, CompetitionExtractionResult, test_clean_placeholder(), test_competition_extraction_result_coercion(), test_competition_extraction_result_container(), test_empty_document_handling()
 
-### Community 13 - "FastAPI CORS & Seeding"
-Cohesion: 0.09
-Nodes (4): init_oltp_schema(), lifespan(), anyio_backend(), api_client()
+### Community 13 - "config.py"
+Cohesion: 0.06
+Nodes (8): get_duckdb_conn(), _get_or_init_shared_connection(), _hydrate_gold_entities_from_r2(), get_db_session(), init_oltp_schema(), require_lecturer_or_admin(), lifespan(), health_check()
 
 ### Community 14 - "bronze_crawl.py"
-Cohesion: 0.05
-Nodes (22): _attach_crawler_patches(), _resilient_map_query_semantic_space(), _extract_query_list(), main(), upload_to_bronze(), _attach_crawler_patches(), _resilient_map_query_semantic_space(), BronzeUploadResult (+14 more)
+Cohesion: 0.06
+Nodes (20): _attach_crawler_patches(), _resilient_map_query_semantic_space(), _extract_query_list(), main(), upload_to_bronze(), _attach_crawler_patches(), _resilient_map_query_semantic_space(), BronzeUploadResult (+12 more)
 
 ### Community 15 - "RAG Chat Router"
-Cohesion: 0.16
-Nodes (13): ChatMessage, ChatSession, delete_chat_session(), _handle_rag_chat(), list_chat_sessions(), list_session_messages(), rag_chat(), rag_query_alias() (+5 more)
+Cohesion: 0.11
+Nodes (16): ChatMessage, ChatSession, delete_chat_session(), _handle_rag_chat(), list_chat_sessions(), list_session_messages(), rag_chat(), rag_query_alias() (+8 more)
 
 ### Community 16 - "Bronze Storage Evaluation"
 Cohesion: 0.07
 Nodes (26): Planned ADR-0003 (Bronze Storage & Table Format), Apache Hudi (Rejected, JVM/Spark Dependent), Apache Iceberg (pyiceberg), ACDP Bronze Layer, Cloudflare R2 (Zero Egress Fees), Crawl4AI + Playwright Web Crawler, Data Swamp Risk, Delta Lake (delta-rs / deltalake 0.25+ & delta-kernel-rs) (+18 more)
 
 ### Community 17 - "Dual-Layer RAG Retrieval"
-Cohesion: 0.14
-Nodes (12): docs/experiments/data/0001-golden-queries.jsonl, answer_with_contexts(), _build_ragas_evaluators(), load_golden_dataset(), main(), _parse_args(), _percentile(), QueryEvalRecord (+4 more)
+Cohesion: 0.09
+Nodes (18): docs/experiments/data/0001-golden-queries.jsonl, RetrievedChunk, BM25CorpusRetriever, _build_ragas_evaluators(), load_golden_dataset(), main(), _parse_args(), _percentile() (+10 more)
 
 ### Community 18 - "PostgreSQL OLTP Models"
-Cohesion: 0.11
-Nodes (9): SavedCompetition, UserProfile, UserSession, utc_now(), delete_bookmark(), list_bookmarks(), save_bookmark(), BookmarkCreateRequest (+1 more)
+Cohesion: 0.12
+Nodes (8): SavedCompetition, utc_now(), delete_bookmark(), list_bookmarks(), save_bookmark(), BookmarkCreateRequest, BookmarkDTO, check_competition_name()
 
 ### Community 19 - "Web App Layout & Fonts"
 Cohesion: 0.15
@@ -311,15 +307,15 @@ Cohesion: 0.10
 Nodes (15): build_gold_star_schema(), _register_date(), _register_organizer(), build_metabase_r2_init_sql(), classify_competition_domains(), classify_organizer_tier(), classify_team_profile(), is_participation_free() (+7 more)
 
 ### Community 24 - "AppSettings & R2 Config"
-Cohesion: 0.08
-Nodes (5): AppConfig, test_g2_fail_fast_jwt_secret_validation_in_production(), test_local_backend_rejected_under_r2_exclusive_policy(), test_storage_options_cloudflare_r2_backend(), test_storage_options_custom_s3_backend_http()
+Cohesion: 0.07
+Nodes (6): build_async_engine(), AppConfig, test_g2_fail_fast_jwt_secret_validation_in_production(), test_storage_options_cloudflare_r2_backend(), test_storage_options_custom_s3_backend_http(), test_supabase_oltp_pooler_and_duckdb_r2_config()
 
 ### Community 25 - "rag_service.py"
-Cohesion: 0.12
-Nodes (13): build_gold_filter(), check_qdrant_health(), _fallback_duckdb_gold_search(), _get_backup_qdrant(), _get_embeddings(), _get_qdrant(), infer_gold_filters(), _query_qdrant_with_fallback() (+5 more)
+Cohesion: 0.09
+Nodes (17): answer_with_contexts(), build_gold_filter(), check_qdrant_health(), _fallback_duckdb_gold_search(), _get_backup_qdrant(), _get_embeddings(), _get_qdrant(), infer_gold_filters() (+9 more)
 
 ### Community 26 - "Cloud Ops & R2 Client"
-Cohesion: 0.12
+Cohesion: 0.15
 Nodes (8): _async_keep_alive_and_check_supabase(), check_r2_gold_data_quality(), format_markdown_summary(), keep_alive_and_check_qdrant(), keep_alive_and_check_supabase(), main(), ping_serving_api(), run_oltp_pg_dump_backup()
 
 ### Community 27 - "AI Slop Linter"
@@ -327,8 +323,8 @@ Cohesion: 0.16
 Nodes (6): AuditReport, main(), print_text_report(), SlopDetector, SlopViolation, TestSlopDetector
 
 ### Community 28 - "Doc Drift Auditor"
-Cohesion: 0.17
-Nodes (21): AuditFinding, check_canonical_fact_drift(), check_directive_sync(), check_internal_markdown_links(), check_skill_registry_parity(), _classify_tier(), compute_blast_radius(), discover_skills() (+13 more)
+Cohesion: 0.16
+Nodes (22): AuditFinding, check_canonical_fact_drift(), check_directive_sync(), check_internal_markdown_links(), check_skill_registry_parity(), _classify_tier(), compute_blast_radius(), discover_skills() (+14 more)
 
 ### Community 29 - "Two-Tier Gold & RAG"
 Cohesion: 0.14
@@ -336,7 +332,7 @@ Nodes (14): TASK-GLD-01: Kimball Star Schema Audit & Alternatives, Two-Tier Gold
 
 ### Community 30 - "V2 Silver Transform Tests"
 Cohesion: 0.09
-Nodes (9): Competition, CompetitionExtractionResult, InMemoryR2Client, test_deterministic_extraction_jsonld_og_official_links_and_regex(), test_dir022_scope_gate_and_media_partner_dedup(), test_end_to_end_silver_transform_and_rag_ingest_from_silver(), _fake_extract(), test_post_llm_guards_enforce_canonical_url() (+1 more)
+Nodes (6): InMemoryR2Client, test_deterministic_extraction_jsonld_og_official_links_and_regex(), test_dir022_scope_gate_and_media_partner_dedup(), test_end_to_end_silver_transform_and_rag_ingest_from_silver(), test_post_llm_guards_enforce_canonical_url(), test_split_bronze_pages_and_in_ram_clean_markdown()
 
 ### Community 31 - "Gold Star Schema Tests"
 Cohesion: 0.09
@@ -350,37 +346,33 @@ Nodes (18): CompetitionDetailPage(), dynamic, extractHost(), metadata, dynamic, 
 Cohesion: 0.20
 Nodes (15): CompetitionCardProps, DashboardPage(), dynamic, metadata, ChartCard(), ChartCardProps, DomainBarChart(), MODE_COLORS (+7 more)
 
-### Community 34 - "middleware/security.py"
-Cohesion: 0.05
-Nodes (18): apply_security_headers(), enforce_ai_rate_limit(), extract_client_ip(), get_rate_limit_stats(), _masked_internal_error_response(), MultiTierRateLimiter, RateLimitDecision, register_security_exception_handlers() (+10 more)
-
-### Community 35 - "R2 CV PDF Storage"
-Cohesion: 0.11
-Nodes (4): download_student_cv_pdf(), CvStorageService, get_cv_storage_service(), sanitize_pdf_filename()
+### Community 34 - "middleware/__init__.py"
+Cohesion: 0.13
+Nodes (7): apply_security_headers(), enforce_ai_rate_limit(), extract_client_ip(), _masked_internal_error_response(), register_security_exception_handlers(), _unhandled_exception_handler(), SecurityHardeningMiddleware
 
 ### Community 36 - "Qdrant Vector Store"
-Cohesion: 0.14
+Cohesion: 0.13
 Nodes (8): build_chunker(), chunk_single_document(), clean_markdown(), ensure_collection(), get_vector_store(), ingest(), list_latest_bronze_snapshots(), load_competition_documents()
 
 ### Community 37 - "bronze_validate.py"
-Cohesion: 0.11
-Nodes (21): compute_content_sha256(), find_latest_bronze_snapshot(), sanitize_s3_meta_value(), upload_to_bronze_with_result(), audit_bronze_bucket(), _audit_downstream_traceability(), backfill_v2_bronze_metadata(), BronzeObjectAudit (+13 more)
+Cohesion: 0.10
+Nodes (23): compute_content_sha256(), find_latest_bronze_snapshot(), package_bronze_html(), sanitize_s3_meta_value(), upload_to_bronze(), upload_to_bronze_with_result(), audit_bronze_bucket(), _audit_downstream_traceability() (+15 more)
 
 ### Community 38 - "duckdb"
 Cohesion: 0.15
 Nodes (6): _create_data_marts(), _create_star_schema_ddl(), parse_silver_key(), verify_analytics(), verify_analytics_from_r2(), verify_motherduck_views_from_r2()
 
 ### Community 39 - "re"
-Cohesion: 0.10
-Nodes (15): main(), validate_bibtex(), main(), validate_benchmark(), main(), validate_slides(), _extract_relative_link_target(), main() (+7 more)
+Cohesion: 0.07
+Nodes (22): main(), validate_bibtex(), main(), validate_benchmark(), main(), validate_slides(), compute_scorecard(), main() (+14 more)
 
 ### Community 40 - "V1 LLM Extraction"
-Cohesion: 0.19
+Cohesion: 0.21
 Nodes (5): clean_markdown_content(), extract_competition_from_markdown(), parse_bronze_key(), process_bronze_bucket(), upload_to_silver()
 
-### Community 41 - "test_rag_eval.py"
-Cohesion: 0.25
-Nodes (6): test_golden_dataset_has_20_valid_queries(), test_infer_gold_filters_extracts_structured_intents(), test_percentile_semantic_chunker_splits_on_topic_shift_without_deprecation(), embed_documents(), embed_query(), test_summarize_system_scores_aggregates_metrics_and_percentiles()
+### Community 41 - "test_percentile_semantic_chunker_splits_on_topic_shift_without_deprecation"
+Cohesion: 0.67
+Nodes (3): test_percentile_semantic_chunker_splits_on_topic_shift_without_deprecation(), embed_documents(), embed_query()
 
 ### Community 42 - "TypeScript Compiler Config"
 Cohesion: 0.11
@@ -391,40 +383,44 @@ Cohesion: 0.13
 Nodes (19): BronzeRecord Schema, Four Student Competition Bottlenecks, Gold Dimensional Data Marts, Modular Hybrid RAG & Ragas Evaluation, 4-Layer Lean Medallion Lakehouse Architecture, Báo cáo Tiểu luận Chuyên ngành KTDL, 7 Sample Competitions Bronze Benchmark, SilverCompetitionRecord Schema (+11 more)
 
 ### Community 44 - "Academic Term & Date Keys"
-Cohesion: 0.12
-Nodes (6): _register_date(), map_academic_term(), resolve_date_sk(), resolve_effective_registration_status(), parse_date_value(), TimelineStage
+Cohesion: 0.16
+Nodes (5): _register_date(), map_academic_term(), resolve_date_sk(), resolve_effective_registration_status(), parse_date_value()
 
 ### Community 45 - "export_gold_parquet_and_sync_r2"
 Cohesion: 0.15
 Nodes (6): _create_data_marts_and_aliases(), _create_star_schema_ddl(), export_gold_parquet_and_sync_r2(), run_gold_pipeline(), verify_analytics(), verify_analytics_from_r2()
+
+### Community 46 - "silver_eval.py"
+Cohesion: 0.13
+Nodes (20): classify_error_cause(), compare_scalar_field(), _compute_prf(), ErrorInstance, evaluate_deterministic_vs_hybrid(), evaluate_predictions(), FieldMetricSummary, FieldSpec (+12 more)
 
 ### Community 47 - "Silver Progress Presentation"
 Cohesion: 0.11
 Nodes (14): Bronze Delta Lake (delta-rs + Zstd L3), Báo Cáo Tiến Độ Lớp Bạc (Silver Layer) Presentation, generate_fingerprint() Deduplication, Lean Medallion Lakehouse Architecture, SilverCompetitionRecord (11 Core Fields, Pydantic v2), Zstandard L3 Compression Benchmark (80.2% Savings), src/acdp/1_crawl_to_bronze.py (upload_to_bronze), src/acdp/2_instruction.py (push_silver_records_to_r2) (+6 more)
 
 ### Community 48 - "TASK-SLV-01: Hybrid DE vs LLM Extraction Study"
-Cohesion: 0.07
-Nodes (27): Vietnam Dedicated Competition Landing Pages Expansion Report (15 Verified URLs), Dual-Layer RAG (Silver Text + Gold Metadata), TASK-SLV-01: Hybrid DE vs LLM Extraction Study, Deterministic Sandwich ETL Pattern, TASK-SLV-01 Visual Dossier (HTML), TASK-SLV-02: Silver Schema & Parquet Validation Audit, Normalized Silver Parquet Tables (competitions, prizes, timeline_stages) with Explicit PyArrow Schema, TASK-SLV-03: Hybrid Deterministic Sandwich & Silver RAG Implementation (+19 more)
+Cohesion: 0.20
+Nodes (10): Vietnam Dedicated Competition Landing Pages Expansion Report (15 Verified URLs), Dual-Layer RAG (Silver Text + Gold Metadata), TASK-SLV-01: Hybrid DE vs LLM Extraction Study, Deterministic Sandwich ETL Pattern, TASK-SLV-01 Visual Dossier (HTML), TASK-SLV-02: Silver Schema & Parquet Validation Audit, Normalized Silver Parquet Tables (competitions, prizes, timeline_stages) with Explicit PyArrow Schema, TASK-SLV-04: Silver Schema v2 (G1-G8) & PyArrow Explicit ZSTD Parquet (+2 more)
 
 ### Community 49 - "Prefect Medallion Flow"
 Cohesion: 0.18
 Nodes (6): _list_r2_keys(), medallion_lakehouse_flow(), task_build_gold_r2(), task_extract_silver(), task_ingest_bronze(), task_ingest_qdrant()
 
-### Community 50 - "Cloudflare BGE-M3 Embedder"
-Cohesion: 0.16
-Nodes (5): CloudflareBgeM3Embedder, _embed_with_fastembed_fallback(), _is_recoverable_rate_or_server_error(), RagUnavailableError, test_cloudflare_bge_m3_rag_pipeline_and_config()
+### Community 50 - "test_rag_and_openapi.py"
+Cohesion: 0.09
+Nodes (7): CloudflareBgeM3Embedder, _embed_with_fastembed_fallback(), _is_recoverable_rate_or_server_error(), test_cloudflare_bge_m3_rag_pipeline_and_config(), test_openapi_31_contract_is_valid(), test_rag_litellm_router_fallback_mode(), test_rag_llm_fallback_chain_and_ttl_cache()
 
-### Community 51 - "In-Repo Task Sync"
-Cohesion: 0.15
-Nodes (14): embed_json_in_html(), load_tasks_data(), main(), render_task_registry_md(), validate_tasks_data(), TestSyncTasks, Sample Manual Test & Advisor Demo Runbook, Standard Delivery Gate Skill (+6 more)
+### Community 51 - "In-Repo Task Registry & Deliverables Ledger"
+Cohesion: 0.50
+Nodes (4): DIR-018 (In-Repo Task Management), In-Repo Task Registry & Deliverables Ledger, Interactive Task Portal (index.html), tasks-data.json
 
 ### Community 52 - "R2 & Backup Env Vars"
 Cohesion: 0.17
 Nodes (17): AWS_ACCESS_KEY_ID, AWS_ENDPOINT_URL, AWS_REGION, AWS_SECRET_ACCESS_KEY, BUCKET_NAME, OLTP_BACKUP_R2_PREFIX, OLTP_BACKUP_RETENTION_DAYS, POSTGRES_MODE (+9 more)
 
-### Community 53 - "RAG & OpenAPI Tests"
-Cohesion: 0.13
-Nodes (4): test_openapi_31_contract_is_valid(), test_rag_chat_persistence_ungrounded_and_outage(), test_rag_litellm_router_fallback_mode(), test_rag_llm_fallback_chain_and_ttl_cache()
+### Community 53 - "test_security_owasp.py"
+Cohesion: 0.17
+Nodes (8): reset_rate_limiter(), _register_and_login(), test_g3_rag_chat_and_query_require_authentication(), test_g4_ai_rate_limiting_per_user_day_and_global_rpm(), test_g4_auth_and_public_rate_limiting_per_ip(), test_g5_hide_public_docs_and_protect_admin_docs(), test_g6_admin_rbac_kill_switch_and_cache_refresh(), test_g7_security_headers_and_global_exception_masking()
 
 ### Community 54 - "QA Tech Decision Tests"
 Cohesion: 0.17
@@ -438,21 +434,25 @@ Nodes (5): enrich_document_with_gold_metadata(), list_latest_silver_markdown_sna
 Cohesion: 0.18
 Nodes (9): Academic Researcher Skill, 4-Step Scientific Execution Protocol, Information Extraction, Lakehouse Architectures, docs/academic/literature-review.md, Retrieval-Augmented Generation (RAG), docs/academic/references.bib, examples/sample_sota_matrix.md (+1 more)
 
-### Community 58 - "get_duckdb_conn"
-Cohesion: 0.22
-Nodes (4): get_duckdb_conn(), _get_or_init_shared_connection(), _hydrate_gold_entities_from_r2(), health_check()
+### Community 57 - "json"
+Cohesion: 0.12
+Nodes (7): Sample Manual Test & Advisor Demo Runbook, _extract_section(), main(), validate_delivery_package(), TestStandardDeliveryGate, Standard Delivery Gate Skill, export_openapi_schema()
+
+### Community 58 - "Deliverable: Xây dựng Golden Dataset & Đo Độ chính xác Trích xuất Lớp Bạc theo Từng Field"
+Cohesion: 0.12
+Nodes (17): 1. Tóm tắt điều hành & Ma trận Kiểm chứng 3 Trục, 2.1. Phân tầng 10 Cuộc thi Golden (Scope TLCN 5–10 cuộc thi), 2.2. Quy ước Tính điểm cho Trường Nullable & Dữ liệu Lồng nhau, 2. Thiết kế Golden Dataset, Quy ước Tính điểm & Kiến trúc Đánh giá, 3.1. Bảng Điểm Chi tiết theo Từng Field (21 Trường × 10 Cuộc thi), 3.2. Đối chiếu Deterministic Parser vs Hybrid Silver Pipeline (7 Trường giao nhau), 3.3. Kết quả Cải thiện Before vs After (Phương án A — Vá lỗi Tất định, Không ghi đè R2), 3.4. Bảng Phân loại Nguyên nhân Lỗi (Error Taxonomy `E1–E5`) (+9 more)
 
 ### Community 59 - "test_bronze_validation_dq01.py"
 Cohesion: 0.14
 Nodes (14): _FakeBody, FakeR2Client, _parquet_bytes(), test_bronze_audit_detects_invalid_utf8_and_missing_boundary(), test_bronze_audit_detects_missing_metadata_and_hash_tampering(), test_bronze_audit_detects_uncontrolled_duplicate_and_dangling_silver(), test_bronze_audit_passes_for_compliant_v2_and_downstream_silver_gold(), test_bronze_backfill_preserves_exact_bytes_and_populates_provenance() (+6 more)
 
-### Community 60 - "FastAPI Auth Dependencies"
-Cohesion: 0.13
-Nodes (6): get_db_session(), get_current_user(), get_optional_user(), require_admin(), require_lecturer_or_admin(), _sync_admin_role_if_listed()
+### Community 60 - "get_current_user"
+Cohesion: 0.25
+Nodes (4): get_current_user(), get_optional_user(), _sync_admin_role_if_listed(), decode_access_token()
 
-### Community 61 - "OpenAPI Schema Exporter"
-Cohesion: 0.11
-Nodes (7): compute_scorecard(), main(), export_openapi_schema(), test_admin_frontend_security_and_swagger_route(), test_frontend_use_case_ux_enhancements(), test_public_frontend_has_no_internal_tech_or_method_jargon(), test_root_openapi_env_compose_and_readme_are_synced()
+### Community 61 - "test_frontend_ux_and_root_sync.py"
+Cohesion: 0.20
+Nodes (4): test_admin_frontend_security_and_swagger_route(), test_frontend_use_case_ux_enhancements(), test_public_frontend_has_no_internal_tech_or_method_jargon(), test_root_openapi_env_compose_and_readme_are_synced()
 
 ### Community 62 - "Silver R2 Payload Loader"
 Cohesion: 0.19
@@ -467,8 +467,8 @@ Cohesion: 0.17
 Nodes (3): CloudflareWorkersAIEmbeddings, EmbeddingRateLimitError, _is_rate_limit_error()
 
 ### Community 65 - "test_bronze_storage.py"
-Cohesion: 0.12
-Nodes (6): test_bronze_r2_key_generation_logic(), test_empty_content_check_logic(), test_markdown_utf8_storage_and_sha256_integrity(), test_upload_to_bronze_r2_and_empty_skip(), test_v2_package_bronze_html_with_boundaries(), test_v2_upload_to_bronze_raw_html_r2_and_empty_skip()
+Cohesion: 0.11
+Nodes (7): test_bronze_r2_key_generation_logic(), test_empty_content_check_logic(), test_local_backend_rejected_under_r2_exclusive_policy(), test_markdown_utf8_storage_and_sha256_integrity(), test_upload_to_bronze_r2_and_empty_skip(), test_v2_package_bronze_html_with_boundaries(), test_v2_upload_to_bronze_raw_html_r2_and_empty_skip()
 
 ### Community 66 - "Competitions Explorer Page"
 Cohesion: 0.18
@@ -479,15 +479,15 @@ Cohesion: 0.12
 Nodes (16): 1. Tóm tắt điều hành & Ma trận Kiểm chứng 3 Trục, 2.1. Đặc tả 10 trường Metadata Nguồn gốc trên Cloudflare R2, 2.2. Xử lý tương thích với dữ liệu lịch sử (Phương án A), 2. Thiết kế Siêu dữ liệu Nguồn gốc, Bất biến & Idempotent Re-crawl, 3.1. Bảng đo đạc Trước và Sau Backfill (`s3://acdp-lakehouse/bronze/`), 3.2. Kết quả kiểm chứng Re-crawl 2 lần liên tiếp & Khóa bất biến R2 (`codetour.org`), 3. Benchmark & Kết quả Kiểm chứng Thực nghiệm trên Cloudflare R2, 4. Luận cứ Phản biện Hội đồng & So sánh Open Table Format (Iceberg / Delta Lake) (+8 more)
 
 ### Community 68 - "SPEC-0003: Gold Layer Kimball Star Schema & Data Marts"
-Cohesion: 0.20
-Nodes (19): TASK-QA-01: 3-Axis Technical Decision Audit, TASK-QA-01 Visual Dossier (HTML), ACDP R&D Tasks Hub & 4-Stage Research Lifecycle, T01: Business Analysis, Technical Feasibility & Lean Stack Alignment, T02: Competition Survey & 4-Pillar Generalized Adaptive Ingestion Architecture, 4-Pillar Adaptive Ingestion (Search Dorking, Aggregator Hubs, Seasonality + Conditional HTTP Polling, Crowdsourced Submission + Self-Expanding Registry), Dual-Engine Storage Separation (OLTP vs OLAP vs Vector), SPEC-0001: System Foundation & Lean Configuration (+11 more)
+Cohesion: 0.15
+Nodes (22): DIR-022 Student Tech Scope, Official Site Resolution & v2 Pipeline, TASK-HF-01: Frontend UX Cleanup & Root Docs Sync, TASK-HF-01 Visual Dossier (HTML), TASK-QA-01: 3-Axis Technical Decision Audit, TASK-QA-01 Visual Dossier (HTML), Dual-Engine Storage Separation (OLTP vs OLAP vs Vector), 3-Tier Analytics & BI Boundary, SPEC-0001: System Foundation & Lean Configuration (+14 more)
 
 ### Community 69 - "Profile Request Validation"
-Cohesion: 0.24
+Cohesion: 0.26
 Nodes (4): _clean_optional_str(), _normalize_tag_list(), ProfileUpdateRequest, _validate_https_url()
 
 ### Community 71 - "Docker & Infra Tests"
-Cohesion: 0.18
+Cohesion: 0.21
 Nodes (4): _parse_mem_mb(), test_docker_compose_version_pinning_and_profiles(), test_dockerignore_and_dockerfile_api_hardening(), test_keep_alive_workflow_pg_dump_url_and_backup()
 
 ### Community 72 - "Workers AI Embeddings Dup"
@@ -510,9 +510,9 @@ Nodes (13): build, container_name, depends_on, extra_hosts, ports, profiles, res
 Cohesion: 0.15
 Nodes (13): condition, api, INTERNAL_API_URL, NEXT_PUBLIC_API_URL, NODE_OPTIONS, web, container_name, depends_on (+5 more)
 
-### Community 77 - "api/security.py"
-Cohesion: 0.17
-Nodes (3): create_access_token(), decode_access_token(), generate_refresh_token()
+### Community 77 - "test_silver_eval_dq02.py"
+Cohesion: 0.13
+Nodes (6): _make_minimal_dataset(), test_bipartite_array_f1_is_order_insensitive(), test_error_taxonomy_classifier_e1_to_e5(), test_golden_dataset_v1_schema_and_sha256_integrity(), test_nullable_ie_metrics_tp_fp_fn_tn_and_exact_match(), test_option_a_date_parser_and_sidebar_noise_regression()
 
 ### Community 78 - "V2 Discovery Unit Tests"
 Cohesion: 0.18
@@ -521,10 +521,6 @@ Nodes (7): test_deduplication_and_http_304_check(), head_handler(), _run_head(),
 ### Community 79 - "Postgres Container Env"
 Cohesion: 0.17
 Nodes (12): POSTGRES_DB, POSTGRES_PASSWORD, POSTGRES_USER, command, container_name, environment, image, ports (+4 more)
-
-### Community 80 - "run_silver_transform"
-Cohesion: 0.17
-Nodes (6): clean_markdown_text(), _create_instructor_client(), html_to_clean_markdown(), run_silver_transform(), _upload_silver_extraction(), _upload_silver_markdown()
 
 ### Community 81 - "Thesis Formatting Validator"
 Cohesion: 0.33
@@ -547,12 +543,12 @@ Cohesion: 0.20
 Nodes (10): run_pg_dump, on, schedule, workflow_dispatch, default, description, required, type (+2 more)
 
 ### Community 87 - "test_g4_llm_max_output_tokens_capped_at_600"
-Cohesion: 0.18
+Cohesion: 0.13
 Nodes (6): _build_openai_messages(), _generate_answer_with_fallback(), _generate_with_litellm_router(), _generate_with_openai_compatible(), _get_genai(), test_g4_llm_max_output_tokens_capped_at_600()
 
-### Community 88 - "BM25 Hybrid Retriever"
-Cohesion: 0.33
-Nodes (4): RetrievedChunk, BM25CorpusRetriever, _tokenize_bm25(), test_bm25_corpus_retriever_ranks_relevant_chunk_first()
+### Community 88 - "evaluate_from_r2"
+Cohesion: 0.21
+Nodes (7): evaluate_from_r2(), load_golden_dataset(), main(), _parse_args(), print_report_summary(), _save_report_to_r2(), SilverEvaluationReport
 
 ### Community 89 - "Container Resource Limits"
 Cohesion: 0.22
@@ -574,13 +570,13 @@ Nodes (9): Bronze Layer, Gold Layer, Silver Layer, NT-012: Dual-Layer RAG (v2) &
 Cohesion: 0.22
 Nodes (8): jobs, keep-alive-and-dq-audit, name, runs-on, timeout-minutes, name, permissions, contents
 
-### Community 94 - "RAG Response TTL Cache"
-Cohesion: 0.21
-Nodes (4): query_rag(), RagResponseTTLCache, RagResult, _sync_query_rag()
+### Community 94 - "compute_cases_sha256"
+Cohesion: 0.18
+Nodes (5): compute_cases_sha256(), GoldenCase, GoldenGroundTruth, GoldenPrize, GoldenStage
 
-### Community 95 - "DiscoveredCandidate"
-Cohesion: 0.26
-Nodes (6): DiscoveredCandidate, is_noise_url(), run_tier2_discovery(), search_exa(), search_serper(), search_tavily()
+### Community 95 - "TASK-SLV-03: Hybrid Deterministic Sandwich & Silver RAG Implementation"
+Cohesion: 0.20
+Nodes (9): TASK-SLV-03: Hybrid Deterministic Sandwich & Silver RAG Implementation, 4-Step Hybrid Deterministic Sandwich (Extract, Scope Gate DIR-022, Bounded Instructor LLM, Validate & Load), Silver-to-Qdrant RAG Ingest (26 Clean Markdown -> 648 bge-m3 Chunks), TASK-SLV-03 Visual Dossier (HTML), EXP-0001: Dual-Layer RAG (v2) Baseline Evaluation Protocol (Ragas), Dual-Layer RAG (Silver Markdown bge-m3 + Gold OBT Metadata Pre-Filtering + gemini-3.5-flash-lite), ACDP Empirical Experiments & Benchmarking Hub, T13: Bronze Layer Tech Stack Evaluation (Object Storage & Open Table Format) (+1 more)
 
 ### Community 96 - "Full Cloud Stack Summary"
 Cohesion: 0.25
@@ -591,32 +587,32 @@ Cohesion: 0.25
 Nodes (3): 100% Cloud Free-Tier Stack Matrix, Keep-Alive Automation, Backup & Demo Day Protocol, 3-Tier BI Architecture & MotherDuck Lite
 
 ### Community 98 - "Security Gates & HF-01"
-Cohesion: 0.29
-Nodes (7): TASK-HF-01: Frontend UX Cleanup & Root Docs Sync, TASK-HF-01 Visual Dossier (HTML), TASK-SEC-00: Pre-Deployment Security & OWASP Blueprint, TASK-SEC-00 Visual Dossier (HTML), src/acdp/api/routers/admin.py & SecurityHardeningMiddleware, TASK-SEC-02: RBAC, Admin API & /admin Portal, TASK-SEC-02 Visual Dossier (HTML)
+Cohesion: 0.40
+Nodes (5): TASK-SEC-00: Pre-Deployment Security & OWASP Blueprint, TASK-SEC-00 Visual Dossier (HTML), src/acdp/api/routers/admin.py & SecurityHardeningMiddleware, TASK-SEC-02: RBAC, Admin API & /admin Portal, TASK-SEC-02 Visual Dossier (HTML)
 
 ### Community 99 - "Literature & SOTA Matrix"
 Cohesion: 0.29
 Nodes (7): Armbrust et al. (2021) Medallion Lakehouse, Gao et al. (2023) Modular RAG Survey, Lappas et al. (2009) Expert Team Formation, Lewis et al. (2020) DPR RAG, Sample Literature Review & SOTA Matrix, Xu et al. (2024) LLM Web Extraction, SOTA Academic Venues & Search Protocols
 
 ### Community 100 - "verify_links.py"
-Cohesion: 0.17
+Cohesion: 0.18
 Nodes (4): Academic & University Domain Whitelist, HTTP Status & Anti-Bot Technical Guide, is_valid_domain_string(), URL Link Verifier Skill
 
 ### Community 101 - "Container Healthchecks"
 Cohesion: 0.57
 Nodes (7): healthcheck, interval, retries, test, timeout, healthcheck, healthcheck
 
-### Community 102 - "discovery.py"
+### Community 102 - "TASK-BRZ-01 Bronze Purity & Medallion Boundary Audit"
 Cohesion: 0.25
-Nodes (4): apply_conditional_http_checks(), _is_recent_iso_date(), main(), _parse_args()
+Nodes (8): R2 Bucket Audit Baseline (83 Objects, 2.26 MB), Immutable Raw Rendered HTML in Bronze (s3://acdp-lakehouse/bronze/), DefaultMarkdownGenerator in Silver RAM (0 ms Browser Overhead), TASK-BRZ-01 Visual Dossier (HTML), TASK-BRZ-02 Raw Rendered HTML Bronze Implementation (v2/bronze_crawl.py), Live R2 Bronze Batch Benchmark (33/36 URLs, 93 Pages, 16.264 MB), package_bronze_html() & ACDP_PAGE_BOUNDARY, TASK-BRZ-02 Visual Dossier (HTML)
 
 ### Community 103 - "VectorRAG & GraphRAG"
 Cohesion: 0.29
 Nodes (7): Chunking, Embedding, Knowledge Graph, LLM, LLM / GLiNER, Ontology / Triples, VectorDB
 
-### Community 104 - "extract_deterministic_signals"
-Cohesion: 0.22
-Nodes (5): extract_deterministic_signals(), _extract_json_ld_summary(), _extract_links_from_soup(), _extract_regex_hints(), normalize_url()
+### Community 104 - "_extract_links_from_soup"
+Cohesion: 0.33
+Nodes (3): _extract_links_from_soup(), _is_competition_rules_link(), _prune_layout_noise()
 
 ### Community 105 - "Ragas 3-System Ablation"
 Cohesion: 0.29
@@ -627,8 +623,8 @@ Cohesion: 0.29
 Nodes (5): NT-013 Business & Technical Feasibility Review (T01 Review), Hybrid Ingestion & Silver Entity Resolution, Seed Knowledge First & Aspect-Based Sentiment Analysis (ABSA), docs/rd-tasks/T01.md, Unstructured-to-Structured ELT (5 OLAP Dimensions)
 
 ### Community 107 - "NT-014 Academic Competition Landscape Survey & Adaptive Ingestion"
-Cohesion: 0.16
-Nodes (13): Bảng đăng ký Đề tài Tiểu luận Chuyên ngành, Master Specification & Initialization Prompt, 8-Dimension Survey Matrix of 18 Student Competitions, 4 Student Bottlenecks & ACDP Technical Countermeasures, Academic Grounding (Cho & Garcia-Molina, Chakrabarti, West & Dragut), NT-014 Academic Competition Landscape Survey & Adaptive Ingestion, 4-Pillar Adaptive Ingestion Architecture, 4-Stage Geographic Expansion Roadmap (+5 more)
+Cohesion: 0.13
+Nodes (17): Bảng đăng ký Đề tài Tiểu luận Chuyên ngành, Master Specification & Initialization Prompt, 8-Dimension Survey Matrix of 18 Student Competitions, 4 Student Bottlenecks & ACDP Technical Countermeasures, Academic Grounding (Cho & Garcia-Molina, Chakrabarti, West & Dragut), NT-014 Academic Competition Landscape Survey & Adaptive Ingestion, 4-Pillar Adaptive Ingestion Architecture, 4-Stage Geographic Expansion Roadmap (+9 more)
 
 ### Community 108 - "export_silver_parquet"
 Cohesion: 0.22
@@ -641,14 +637,6 @@ Nodes (23): AGENTS.md Universal AI Agent Operating Contract, defense-pitch-build
 ### Community 111 - "Web Sprint 02 Deliverables"
 Cohesion: 0.33
 Nodes (6): Serving & Web Layer, NT-025: FastAPI Serving Gateway & PostgreSQL 18 OLTP, NT-029: Web Sprint 02 Full-Stack Implementation, TASK-HF-01: Frontend UX Cleanup & Root Docs Sync, TASK-SEC-02: RBAC (Admin/Lecturer/Student), Admin API & /admin Portal, TASK-SRV-01: Student Mini-CV Profile Page (/profile)
-
-### Community 112 - "parse_hub_html"
-Cohesion: 0.20
-Nodes (6): compute_relevance_score(), _contains_keyword(), deduplicate_and_rank(), _is_competition_relevant(), parse_hub_html(), _fetch_hub()
-
-### Community 113 - "run_tier1_discovery"
-Cohesion: 0.20
-Nodes (5): parse_gdelt_response(), run_tier1_discovery(), _fetch_gdelt_batch(), _fetch_rss(), HubSourceConfig
 
 ### Community 114 - "Deliverable Template & Runbook"
 Cohesion: 0.40
@@ -670,10 +658,6 @@ Nodes (5): public_api_url, default, description, required, type
 Cohesion: 0.40
 Nodes (5): weekly-oltp-pg-dump-backup, if, name, runs-on, timeout-minutes
 
-### Community 120 - "Any"
-Cohesion: 0.27
-Nodes (4): build_bounded_llm_markdown(), build_llm_user_prompt(), DeterministicSignals, extract_competition_hybrid()
-
 ### Community 121 - "Vercel Proxy & TTL Cache"
 Cohesion: 0.40
 Nodes (5): Dockerfile.api Low-Footprint (UID 1000, PORT=7860, DUCKDB_MEMORY_LIMIT=256MB), GoldMartsTTLCache (TTL=600s, 98.27% Hit Rate, 0.34 ms Overview), TASK-CLD-05 Cloud Serving API, Vercel Proxy & GoldMartsTTLCache, Vercel Hobby Same-Origin Proxy (next.config.ts rewrites() for HttpOnly Cookies), TASK-CLD-05 Visual Dossier (HTML)
@@ -683,19 +667,15 @@ Cohesion: 0.50
 Nodes (4): 4 Adaptive Execution Pathways (Pathway A/B/C/D), DIR-018 In-Repo Task & Deliverables Management, DIR-024 7-Pillar Standard Delivery & Demo-Ready Gate, GEMINI.md Antigravity-Specific Operational Directives
 
 ### Community 125 - "validate_ollama.py"
-Cohesion: 0.33
+Cohesion: 0.31
 Nodes (5): Ollama Hardware & Model Matrix, check_cli(), check_endpoint(), main(), Ollama Bridge Skill
-
-### Community 126 - "canonicalize_url"
-Cohesion: 0.28
-Nodes (5): canonicalize_url(), _find_xml_text(), parse_rss_or_atom(), parse_sitemap_xml(), _fetch_sitemap()
 
 ### Community 127 - "Academic & Ops Layer"
 Cohesion: 0.50
 Nodes (4): Academic & Ops Layer, RFC-0001: Spec v2 and Cloud Parity Realignment, RFC-0002: KLTN Scale Evolution Triggers, TASK-QA-01: Tech Decision Theory x Practice x Scope Audit
 
 ### Community 128 - "rag_ingest.py"
-Cohesion: 0.20
+Cohesion: 0.26
 Nodes (5): build_chunker(), ensure_collection(), ingest(), main(), _parse_args()
 
 ### Community 129 - "Cloud Free-Tier Risk & Failover Matrix (R1-R6)"
@@ -707,8 +687,8 @@ Cohesion: 0.50
 Nodes (5): competitor-benchmark Skill, UVP Differentiation Matrix, Competitor Profiles & Landscape Teardowns, Competitor Benchmarks & Strategic Positioning, ACDP Market & Competitor Research Index
 
 ### Community 131 - "_select_bronze_snapshots"
-Cohesion: 0.25
-Nodes (4): is_html_payload(), parse_bronze_key(), _select_bronze_snapshots(), split_bronze_pages()
+Cohesion: 0.15
+Nodes (7): _extract_det_dict_from_bronze(), clean_markdown_text(), html_to_clean_markdown(), is_html_payload(), parse_bronze_key(), _select_bronze_snapshots(), split_bronze_pages()
 
 ### Community 132 - "Student Mini-CV Profile"
 Cohesion: 0.67
@@ -720,23 +700,23 @@ Nodes (3): test_silver_schema_v2_gap_g1_g8_resolved(), test_silver_v2_explicit_p
 
 ## Knowledge Gaps
 - **208 isolated node(s):** `acdp`, `Knowledge Graph`, `LLM`, `src/acdp/config.py (Groq qwen3.8-27b & OpenRouter gemma-4-31b)`, `src/acdp/api/services/rag_service.py (Gold OBT Pre-Filtering)` (+203 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 1083 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **34 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 1124 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **35 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `TASK-HF-01: Frontend UX Cleanup & Root Docs Sync` connect `Security Gates & HF-01` to `Competitor Benchmark Skill`, `SPEC-0003: Gold Layer Kimball Star Schema & Data Marts`, `OpenAPI Schema Exporter`?**
-  _High betweenness centrality (0.051) - this node is a cross-community bridge._
+- **Why does `TASK-HF-01: Frontend UX Cleanup & Root Docs Sync` connect `SPEC-0003: Gold Layer Kimball Star Schema & Data Marts` to `Security Gates & HF-01`, `test_frontend_ux_and_root_sync.py`, `Competitor Benchmark Skill`?**
+  _High betweenness centrality (0.041) - this node is a cross-community bridge._
 - **Are the 36 inferred relationships involving `User` (e.g. with `get_current_user()` and `get_optional_user()`) actually correct?**
   _`User` has 36 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `acdp`, `Knowledge Graph`, `LLM` to the rest of the system?**
   _208 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `Analytics API Router` be split into smaller, more focused modules?**
-  _Cohesion score 0.07740112994350283 - nodes in this community are weakly interconnected._
-- **Why does `AppConfig` connect `AppSettings & R2 Config` to `LLM & Qdrant Settings`, `Docker & Infra Tests`, `FastAPI CORS & Seeding`, `Asyncpg & Supabase Engine`, `Cloudflare BGE-M3 Embedder`, `RAG & OpenAPI Tests`, `test_g4_llm_max_output_tokens_capped_at_600`, `Cloud Ops & R2 Client`?**
-  _High betweenness centrality (0.041) - this node is a cross-community bridge._
+- **Should `discovery.py` be split into smaller, more focused modules?**
+  _Cohesion score 0.06394230769230769 - nodes in this community are weakly interconnected._
+- **Why does `AppConfig` connect `AppSettings & R2 Config` to `test_bronze_storage.py`, `LLM & Qdrant Settings`, `Docker & Infra Tests`, `config.py`, `test_rag_and_openapi.py`, `test_g4_llm_max_output_tokens_capped_at_600`, `Cloud Ops & R2 Client`?**
+  _High betweenness centrality (0.037) - this node is a cross-community bridge._
 - **Are the 18 inferred relationships involving `AppConfig` (e.g. with `build_async_engine()` and `_async_keep_alive_and_check_supabase()`) actually correct?**
   _`AppConfig` has 18 INFERRED edges - model-reasoned connections that need verification._
-- **Should `silver_transform.py` be split into smaller, more focused modules?**
-  _Cohesion score 0.14736842105263157 - nodes in this community are weakly interconnected._
+- **Should `Analytics API Router` be split into smaller, more focused modules?**
+  _Cohesion score 0.07890122735242548 - nodes in this community are weakly interconnected._

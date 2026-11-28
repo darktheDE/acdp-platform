@@ -103,7 +103,11 @@ def parse_date_value(raw: Any) -> date | None:
         except ValueError:
             return None
 
-    vn_match = re.match(r"^(\d{1,2})[/\-](\d{1,2})[/\-](\d{4})$", s)
+    # Handle exact DD/MM/YYYY as well as date strings decorated with time prefixes/suffixes
+    # e.g. "17/07/2026 – 11:00", "11:00, 17/07/2026", "23:59 ngày 15/06/2026"
+    vn_match = re.match(r"^(\d{1,2})[/\-](\d{1,2})[/\-](\d{4})(?:[\s,–\-]+(?:\d{1,2}:\d{2}|lúc\s*\d{1,2}:\d{2}).*)?$", s)
+    if not vn_match and re.search(r"\b\d{1,2}:\d{2}\b", s):
+        vn_match = re.search(r"\b(\d{1,2})[/\-](\d{1,2})[/\-](\d{4})\b", s)
     if vn_match:
         try:
             return date(int(vn_match.group(3)), int(vn_match.group(2)), int(vn_match.group(1)))
