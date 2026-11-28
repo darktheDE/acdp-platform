@@ -57,7 +57,7 @@ export default function BookmarksPage() {
           Theo dõi Cuộc thi Cá nhân
         </h1>
         <p className="mt-2 text-sm text-[var(--color-text-muted)]">
-          Vui lòng đăng nhập tài khoản sinh viên (PostgreSQL 18) để lưu cuộc thi và ghi chú lập đội.
+          Vui lòng đăng nhập tài khoản để lưu các cuộc thi quan tâm và ghi chú kế hoạch lập đội.
         </p>
         <Link
           href="/login"
@@ -76,7 +76,7 @@ export default function BookmarksPage() {
           Cuộc thi Đã lưu ({items.length})
         </h1>
         <p className="mt-1 text-sm text-[var(--color-text-muted)]">
-          Lưu bền vững trên PostgreSQL 18 (saved_competitions), đối soát trạng thái từ DuckDB Gold
+          Theo dõi danh sách cuộc thi bạn quan tâm, hạn chót đăng ký và ghi chú tìm đồng đội
         </p>
       </div>
 
@@ -107,7 +107,7 @@ export default function BookmarksPage() {
                 {bm.is_archived && (
                   <div className="mb-2 inline-flex items-center gap-1.5 rounded-md bg-amber-50 px-2.5 py-1 text-xs font-medium text-[var(--color-status-warning)] dark:bg-amber-950/30">
                     <AlertTriangle className="h-3.5 w-3.5" aria-hidden="true" />
-                    <span>Cuộc thi đã lưu trữ / không còn ở đợt Gold mới nhất</span>
+                    <span>Cuộc thi đã kết thúc hoặc tạm ngừng cập nhật</span>
                   </div>
                 )}
                 <h2 className="text-base font-semibold text-[var(--color-text-primary)]">

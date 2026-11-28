@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Filter, RotateCcw, Search, X } from "lucide-react";
 
 const DOMAIN_OPTIONS = [
@@ -20,13 +20,38 @@ const MODE_OPTIONS = [
   { value: "Hybrid", label: "Hybrid" },
 ];
 
+const STATUS_OPTIONS = [
+  { value: "", label: "Tất cả trạng thái" },
+  { value: "open", label: "Đang mở đăng ký" },
+  { value: "upcoming", label: "Sắp diễn ra" },
+  { value: "closed", label: "Đã đóng" },
+];
+
+const SORT_OPTIONS = [
+  { value: "prize_desc", label: "Giải thưởng cao nhất" },
+  { value: "deadline_asc", label: "Hạn đăng ký gần nhất" },
+  { value: "name_asc", label: "Tên cuộc thi (A → Z)" },
+  { value: "prize_asc", label: "Giải thưởng thấp đến cao" },
+];
+
 function FilterForm({ onDone }: { onDone?: () => void }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [q, setQ] = useState(searchParams.get("q") || "");
   const [domain, setDomain] = useState(searchParams.get("domain") || "");
   const [mode, setMode] = useState(searchParams.get("mode") || "");
+  const [status, setStatus] = useState(searchParams.get("status") || "");
+  const [sort, setSort] = useState(searchParams.get("sort") || "prize_desc");
   const [isFree, setIsFree] = useState(searchParams.get("is_free") === "true");
+
+  useEffect(() => {
+    setQ(searchParams.get("q") || "");
+    setDomain(searchParams.get("domain") || "");
+    setMode(searchParams.get("mode") || "");
+    setStatus(searchParams.get("status") || "");
+    setSort(searchParams.get("sort") || "prize_desc");
+    setIsFree(searchParams.get("is_free") === "true");
+  }, [searchParams]);
 
   const applyFilters = (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,6 +59,8 @@ function FilterForm({ onDone }: { onDone?: () => void }) {
     if (q.trim()) params.set("q", q.trim());
     if (domain) params.set("domain", domain);
     if (mode) params.set("mode", mode);
+    if (status) params.set("status", status);
+    if (sort && sort !== "prize_desc") params.set("sort", sort);
     if (isFree) params.set("is_free", "true");
     const qs = params.toString();
     router.push(qs ? `/competitions?${qs}` : "/competitions");
@@ -44,6 +71,8 @@ function FilterForm({ onDone }: { onDone?: () => void }) {
     setQ("");
     setDomain("");
     setMode("");
+    setStatus("");
+    setSort("prize_desc");
     setIsFree(false);
     router.push("/competitions");
     onDone?.();
@@ -68,6 +97,25 @@ function FilterForm({ onDone }: { onDone?: () => void }) {
               className="min-h-10 w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-canvas)] pl-9 pr-3 text-sm text-[var(--color-text-primary)]"
             />
           </div>
+        </div>
+
+        <div>
+          <label htmlFor="filter-status" className="block text-xs font-semibold text-[var(--color-text-primary)]">
+            Trạng thái đăng ký
+          </label>
+          <select
+            id="filter-status"
+            name="status"
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+            className="mt-1.5 min-h-10 w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-canvas)] px-3 text-sm text-[var(--color-text-primary)]"
+          >
+            {STATUS_OPTIONS.map((opt) => (
+              <option key={opt.value || "all"} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div>
@@ -102,6 +150,25 @@ function FilterForm({ onDone }: { onDone?: () => void }) {
           >
             {MODE_OPTIONS.map((opt) => (
               <option key={opt.value || "all"} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label htmlFor="filter-sort" className="block text-xs font-semibold text-[var(--color-text-primary)]">
+            Sắp xếp theo
+          </label>
+          <select
+            id="filter-sort"
+            name="sort"
+            value={sort}
+            onChange={(e) => setSort(e.target.value)}
+            className="mt-1.5 min-h-10 w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-canvas)] px-3 text-sm text-[var(--color-text-primary)]"
+          >
+            {SORT_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>
                 {opt.label}
               </option>
             ))}
@@ -168,7 +235,7 @@ export function FilterSidebar() {
           className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-2 text-sm font-medium text-[var(--color-text-primary)]"
         >
           <Filter className="h-4 w-4" aria-hidden="true" />
-          <span>Bộ lọc cuộc thi</span>
+          <span>Bộ lọc &amp; Sắp xếp</span>
         </button>
       </div>
 
@@ -177,7 +244,7 @@ export function FilterSidebar() {
         className="hidden w-72 shrink-0 self-start rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 lg:block"
       >
         <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">
-          Bộ lọc đa chiều
+          Bộ lọc cuộc thi
         </h2>
         <FilterForm />
       </aside>

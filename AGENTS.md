@@ -37,6 +37,7 @@ Detect user intent and activate the corresponding modular skill playbook:
 | **Mode 10: Open Models & Ollama** | [`.agents/skills/ollama-bridge/SKILL.md`](./.agents/skills/ollama-bridge/SKILL.md) | Ollama orchestration, local SLM/embedding, Cloud API bridge |
 | **Mode 11: Decision Sync & Doc Governance** | [`.agents/skills/doc-decision-sync/SKILL.md`](./.agents/skills/doc-decision-sync/SKILL.md) | 4-Tier decision propagation, drift & internal link audit |
 | **Mode 12: In-Repo Task Management** | [`.agents/skills/repo-task-manager/SKILL.md`](./.agents/skills/repo-task-manager/SKILL.md) | `tasks-data.json`, `task-registry.md`, `index.html` sync |
+| **Mode 13: Standard Delivery & Demo Gate** | [`.agents/skills/standard-delivery-gate/SKILL.md`](./.agents/skills/standard-delivery-gate/SKILL.md) | 7-pillar delivery package, runbook & advisor demo gate |
 
 
 *Implicit Intent & Auto-Activation*: Every skill in this repository must automatically activate based on the user's intent and prompt context. Never demand or expect the user to explicitly call skills by name.
@@ -122,6 +123,12 @@ All agents operating in this repository must strictly adhere to the continuous d
    - Scope is strictly **IT/AI/Data/Security/Programming competitions for university students** within **current year ± 1** (`2025–2027`).
    - Resolve aggregator/media-partner posts (`ybox.vn`, university news) to the **official competition website** and drop competitions without an official website at Silver. `.pdf`/`.docx` rule files are optional enhancements (common only in large/government contests).
    - Implement Cycle 06 pipeline upgrades under `src/acdp/v2/` to keep legacy `src/acdp/` intact.
+16. 🧭 **TLCN vs KLTN Tiering, Club Survey, Multi-Provider Free AI & Complete Report Diagrams (DIR-023)**:
+   - Validate TLCN schema via Personas, competitor benchmarking, and advisor review; defer live community/student club surveys (SUS) to KLTN (`TASK-USR-01`) once production-ready.
+   - Keep TLCN FE clean and demo-focused (`TASK-FE-01`), reserving full UI/UX Design System tokens and Mobile-First polish for KLTN (`TASK-FE-02`); optimize FastAPI/DuckDB/RAG (`TASK-BE-01`) and build a quota-aware Multi-Provider Free AI Gateway (`TASK-AI-01`) for KLTN.
+   - Enforce CI/CD Data Validation separately from `keep-alive.yml`, and include full BA, CNPM/System (C4/UML), BE (OLTP ERD), FE, and Data/AI Pipeline diagrams in academic reports (`TASK-DOC-01`, `TASK-DOC-02`).
+17. 📦 **7-Pillar Standard Delivery & Demo-Ready Gate (DIR-024)**:
+   - Every completed task must include: primary `.md` deliverable + registry sync, measured benchmark table, interactive `*-visual-dossier.html`, verified Search Provenance URLs (`verify_links.py`), automated `pytest` suite, step-by-step manual test & CLI demo runbook with verbatim captured outputs, and zero-drift/anti-slop closure validated via `check_delivery_package.py`.
 
 
 

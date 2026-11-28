@@ -35,7 +35,7 @@ export function LogoFull({ className = "h-9 w-auto" }: { className?: string }) {
           ACDP<span className="text-[var(--color-brand-accent)]">.</span>
         </span>
         <span className="font-mono text-[10px] font-medium uppercase tracking-wider text-[var(--color-text-muted)]">
-          HCM-UTE Data Lakehouse
+          Cổng Cuộc thi · HCM-UTE
         </span>
       </div>
     </div>

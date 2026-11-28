@@ -13,12 +13,21 @@ export type PaginatedCompetitionsDTO = components["schemas"]["PaginatedCompetiti
 export type PrizeTierDTO = components["schemas"]["PrizeTierDTO"];
 export type TimelineStageDTO = components["schemas"]["TimelineStageDTO"];
 export type UserProfileDTO = components["schemas"]["UserProfileDTO"];
+export type StudentProfileDTO = components["schemas"]["StudentProfileDTO"];
+export type ProfileUpdateRequest = components["schemas"]["ProfileUpdateRequest"];
+export type PublicStudentProfileDTO = components["schemas"]["PublicStudentProfileDTO"];
 export type TokenResponse = components["schemas"]["TokenResponse"];
 export type BookmarkDTO = components["schemas"]["BookmarkDTO"];
 export type RagCitationDTO = components["schemas"]["RagCitationDTO"];
 export type RagChatResponse = components["schemas"]["RagChatResponse"];
 export type ChatSessionDTO = components["schemas"]["ChatSessionDTO"];
 export type ChatMessageDTO = components["schemas"]["ChatMessageDTO"];
+export type AdminUserDTO = components["schemas"]["AdminUserDTO"];
+export type AdminUserUpdateRequest = components["schemas"]["AdminUserUpdateRequest"];
+export type AdminUsersSummaryDTO = components["schemas"]["AdminUsersSummaryDTO"];
+export type AdminTelemetryDTO = components["schemas"]["AdminTelemetryDTO"];
+export type AdminCacheRefreshRequest = components["schemas"]["AdminCacheRefreshRequest"];
+export type AdminCacheRefreshDTO = components["schemas"]["AdminCacheRefreshDTO"];
 
 export function getApiBaseUrl(): string {
   if (typeof window === "undefined") {
@@ -47,7 +56,7 @@ export async function apiFetch<T>(
 ): Promise<T> {
   const { token, headers, ...rest } = options;
   const reqHeaders = new Headers(headers);
-  if (!reqHeaders.has("Content-Type") && rest.body) {
+  if (!reqHeaders.has("Content-Type") && rest.body && !(rest.body instanceof FormData)) {
     reqHeaders.set("Content-Type", "application/json");
   }
   if (token) {
@@ -64,8 +73,20 @@ export async function apiFetch<T>(
   if (!res.ok) {
     let detail = `HTTP ${res.status}`;
     try {
-      const errJson = (await res.json()) as { detail?: string };
-      if (errJson?.detail) detail = errJson.detail;
+      const errJson = (await res.json()) as { detail?: unknown };
+      if (typeof errJson?.detail === "string") {
+        detail = errJson.detail;
+      } else if (Array.isArray(errJson?.detail)) {
+        detail = errJson.detail
+          .map((item) =>
+            typeof item === "object" && item !== null && "msg" in item
+              ? String((item as { msg: unknown }).msg)
+              : JSON.stringify(item),
+          )
+          .join("; ");
+      } else if (errJson?.detail !== undefined && errJson?.detail !== null) {
+        detail = JSON.stringify(errJson.detail);
+      }
     } catch {
       // Ignore non-JSON error body
     }
@@ -76,4 +97,23 @@ export async function apiFetch<T>(
     return undefined as T;
   }
   return (await res.json()) as T;
+}
+
+export async function apiFetchBlob(
+  path: string,
+  options: { token?: string | null } = {},
+): Promise<Blob> {
+  const reqHeaders = new Headers();
+  if (options.token) {
+    reqHeaders.set("Authorization", `Bearer ${options.token}`);
+  }
+  const res = await fetch(`${getApiBaseUrl()}${path}`, {
+    headers: reqHeaders,
+    credentials: "include",
+    cache: "no-store",
+  });
+  if (!res.ok) {
+    throw new ApiError(res.status, `HTTP ${res.status}`);
+  }
+  return res.blob();
 }

@@ -14,6 +14,7 @@ from sqlmodel import SQLModel
 from acdp.api.db import models as _models  # noqa: F401
 from acdp.api.db.postgres import get_db_session
 from acdp.api.main import app
+from acdp.api.middleware.security import reset_rate_limiter
 from acdp.config import settings
 
 
@@ -42,10 +43,12 @@ async def api_client() -> AsyncGenerator[AsyncClient, None]:
             yield session
 
     app.dependency_overrides[get_db_session] = _override_get_db
+    reset_rate_limiter()
     try:
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
             yield client
     finally:
+        reset_rate_limiter()
         app.dependency_overrides.clear()
         async with test_engine.begin() as conn:
             await conn.execute(text("DELETE FROM users WHERE email LIKE 'test_%@hcmute.edu.vn'"))

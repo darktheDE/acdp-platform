@@ -17,12 +17,12 @@ In accordance with **DIR-015**, Phase 1 (Tiểu luận chuyên ngành - TLCN) si
 
 ## 2. Minimalist Tech Stack Baseline (Phase 1 TLCN)
 
-To match the 5–10 competition dataset scale ($\sim 1\text{ MB}$) without infrastructure bloat:
-- **Ingestion**: `Crawl4AI` + `Playwright` executed on-demand via Python scripts (`src/acdp/1_crawl_to_bronze.py`).
-- **Storage**: Raw UTF-8 Markdown/HTML objects stored on **Local Files (`data/raw/`)** and **Cloudflare R2 (`boto3` / S3 API)**. Unnecessary intermediate binary compression (`zstandard`) and heavy ETL daemons (`SeaweedFS`, `dbt-core`) are excluded from the mandatory TLCN Bronze-to-Gold execution path.
-- **Structured Extraction**: `Instructor` + `LiteLLM` constrained by `Pydantic v2` (`Competition` and `CompetitionExtractionResult` in [`src/acdp/schemas.py`](../../src/acdp/schemas.py)).
-- **Analytical Engine**: `DuckDB` in-process SQL engine querying Gold Star Schema Parquet/JSON (`4 dim_*`, `3 fact_*`, `2 bridge_*`, `6 mart_*` per [`SPEC-0003`](./0003-gold-dimensional-modeling-spec.md)).
-- **Serving & Web Portal (`DIR-016` / `SPEC-0004`–`0006`)**: **FastAPI** serving gateway + **PostgreSQL 18** (OLTP App DB for accounts, bookmarks, and chat history) + **Qdrant** (RAG vector store) + **Next.js 16** (App Router, Tailwind CSS v4, Recharts).
+To match the 5–10 competition dataset scale ($\sim 1\text{ MB}$) without infrastructure bloat (`DIR-015`, `DIR-021`, `DIR-022`, `RFC-0001`):
+- **Ingestion**: 3-Tier Discovery (`src/acdp/v2/discovery.py`) + `Crawl4AI` + `Playwright` executed on-demand via [`src/acdp/v2/bronze_crawl.py`](../../src/acdp/v2/bronze_crawl.py) (preserving legacy `1_crawl_to_bronze.py` untouched).
+- **Storage**: Raw Rendered HTML (`.html`), Clean Markdown, Silver Parquet, and Gold Parquet stored exclusively on **Cloudflare R2 (`boto3` / S3 API)** with zero local disk persistence (`DIR-021`). Unnecessary intermediate binary compression (`zstandard`) and heavy ETL daemons (`SeaweedFS`, `dbt-core`) are excluded from the mandatory TLCN Bronze-to-Gold execution path.
+- **Structured Extraction**: Hybrid Deterministic Sandwich (`JSON-LD`, `og:*`, Scope Gate `DIR-022`) + `Instructor` constrained by `Pydantic v2` (`Competition` and `CompetitionExtractionResult` in [`src/acdp/v2/schemas.py`](../../src/acdp/v2/schemas.py) via [`src/acdp/v2/silver_transform.py`](../../src/acdp/v2/silver_transform.py)).
+- **Analytical Engine**: `DuckDB 1.5.6` querying Gold Star Schema Parquet directly on Cloudflare R2 via `httpfs` (`4 dim_*`, `3 fact_*`, `2 bridge_*`, `6 mart_*` per [`SPEC-0003`](./0003-gold-dimensional-modeling-spec.md) and [`src/acdp/v2/gold_star_schema.py`](../../src/acdp/v2/gold_star_schema.py)).
+- **Serving & Web Portal (`DIR-016` / `ADR-0002` / `SPEC-0004`–`0006`)**: **FastAPI** serving gateway + **PostgreSQL 17+/18** (Supabase Cloud Free / Docker `postgres:18.7-alpine3.23` OLTP App DB) + **Qdrant `v1.20.x`** (`@cf/baai/bge-m3` RAG vector store) + **Next.js 16** (App Router, Tailwind CSS v4, Recharts).
 
 ---
 

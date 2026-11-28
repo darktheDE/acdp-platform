@@ -3,15 +3,15 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRef, useState } from "react";
-import { Bookmark, Bot, Compass, LayoutDashboard, LogIn, LogOut, Menu, X } from "lucide-react";
+import { Bookmark, Bot, Compass, LayoutDashboard, LogIn, LogOut, Menu, ShieldCheck, UserCircle, X } from "lucide-react";
 import { LogoFull } from "@/components/brand/AcdpLogo";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { useAuth } from "@/lib/auth-context";
 
-const NAV_ITEMS = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+const BASE_NAV_ITEMS = [
+  { href: "/dashboard", label: "Thống kê", icon: LayoutDashboard },
   { href: "/competitions", label: "Khám phá", icon: Compass },
-  { href: "/copilot", label: "RAG Copilot", icon: Bot },
+  { href: "/copilot", label: "Trợ lý Thể lệ", icon: Bot },
   { href: "/bookmarks", label: "Đã lưu", icon: Bookmark },
 ];
 
@@ -20,6 +20,15 @@ export function TopNav() {
   const { user, logout } = useAuth();
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const navItems =
+    user?.role === "admin"
+      ? [...BASE_NAV_ITEMS, { href: "/admin", label: "Quản trị", icon: ShieldCheck }]
+      : BASE_NAV_ITEMS;
+
+  const mobileNavItems = user
+    ? [...navItems, { href: "/profile", label: "Hồ sơ Mini-CV", icon: UserCircle }]
+    : navItems;
 
   const openDrawer = () => {
     dialogRef.current?.showModal();
@@ -51,7 +60,7 @@ export function TopNav() {
         </div>
 
         <nav aria-label="Chính" className="hidden items-center gap-1 md:flex">
-          {NAV_ITEMS.map((item) => {
+          {navItems.map((item) => {
             const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
             const Icon = item.icon;
             return (
@@ -76,9 +85,22 @@ export function TopNav() {
           <ThemeToggle />
           {user ? (
             <div className="flex items-center gap-2">
-              <span className="hidden text-xs font-medium text-[var(--color-text-muted)] sm:inline">
-                {user.full_name}
-              </span>
+              <Link
+                href="/profile"
+                aria-label="Hồ sơ cá nhân Mini-CV"
+                aria-current={pathname === "/profile" ? "page" : undefined}
+                className={`hidden min-h-9 items-center gap-1.5 rounded-lg border px-2.5 py-1 text-xs font-medium transition-colors sm:inline-flex focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-brand-primary)] ${
+                  pathname === "/profile"
+                    ? "border-[var(--color-brand-primary)] bg-[var(--color-brand-primary)]/10 text-[var(--color-brand-primary)]"
+                    : "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-primary)] hover:bg-[var(--color-surface-subtle)]"
+                }`}
+              >
+                <UserCircle className="h-4 w-4 text-[var(--color-brand-primary)]" aria-hidden="true" />
+                <span>{user.full_name}</span>
+                <span className="rounded bg-[var(--color-surface-subtle)] px-1.5 py-0.5 font-mono text-[10px] uppercase text-[var(--color-brand-primary)]">
+                  {user.role}
+                </span>
+              </Link>
               <button
                 type="button"
                 onClick={() => void logout()}
@@ -123,7 +145,7 @@ export function TopNav() {
           </button>
         </div>
         <nav aria-label="Di động" className="flex flex-col gap-1 p-3">
-          {NAV_ITEMS.map((item) => {
+          {mobileNavItems.map((item) => {
             const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
             const Icon = item.icon;
             return (

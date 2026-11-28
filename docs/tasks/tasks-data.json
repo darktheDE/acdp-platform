@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "project": "ACDP (Academic Competition Discovery Platform)",
-  "last_updated": "2026-11-22",
+  "last_updated": "2026-11-25",
   "cycles": [
     {"id": "Cycle 01", "name": "Foundation, R&D & Governance (W1-W3)", "scope": "TLCN (Phase 1)", "goal": "Establish academic grounding, competitor benchmarks, ADR-0001, and multi-agent harness."},
     {"id": "Cycle 02", "name": "Bronze & Silver Ingestion MVP (W4-W9)", "scope": "TLCN (Phase 1)", "goal": "Validate Crawl4AI to Cloudflare R2 Bronze and Instructor Pydantic v2 Silver extraction."},
@@ -26,7 +26,7 @@
     {"id": "NT-009", "title": "On-Demand Crawl4AI Feasibility Spike on Curated Competitions & R2 Upload", "cycle": "Cycle 02", "scope": "TLCN (Phase 1)", "layer": "Bronze", "task_type": "Engineering", "is_no_code": false, "owner": "Hung & Duy", "status": "done", "priority": "high", "problem_statement": "Prove Crawl4AI + R2 ingestion feasibility.", "deliverables": ["src/acdp/1_crawl_to_bronze.py", "data/raw/markdown"], "updated_at": "2026-10-15"},
     {"id": "NT-010", "title": "Pydantic Event Schema & Lean Extraction Spec (SPEC-0002)", "cycle": "Cycle 02", "scope": "TLCN (Phase 1)", "layer": "Silver", "task_type": "Architecture", "is_no_code": false, "owner": "Hung & Duy", "status": "done", "priority": "high", "problem_statement": "Define Silver Pydantic v2 contracts.", "deliverables": ["docs/specs/0002-data-ingestion-and-schema-spec.md", "src/acdp/schemas.py"], "updated_at": "2026-10-15"},
     {"id": "NT-011", "title": "Bronze-to-Silver LLM Extraction & DuckDB Gold OLAP Querying", "cycle": "Cycle 03", "scope": "TLCN (Phase 1)", "layer": "Silver", "task_type": "Engineering", "is_no_code": false, "owner": "Hung & Duy", "status": "done", "priority": "high", "problem_statement": "Implement Instructor extraction and DuckDB queries.", "deliverables": ["src/acdp/2_instruction.py", "src/acdp/4_analytics_gold.py"], "updated_at": "2026-11-08"},
-    {"id": "NT-012", "title": "Dual-Layer RAG (v2) & Ragas Baseline Scorecard", "cycle": "Cycle 03", "scope": "TLCN (Phase 1)", "layer": "Serving & Web", "task_type": "Engineering", "is_no_code": false, "owner": "Hung & Duy", "status": "in_progress", "priority": "high", "problem_statement": "Evaluate Dual-Layer RAG (Silver Clean Markdown + Gold OBT metadata pre-filtering on Qdrant Cloud with @cf/baai/bge-m3 and gemini-3.5-flash-lite) via Ragas.", "deliverables": ["src/acdp/v2/rag_ingest.py", "src/acdp/api/services/rag_service.py", "docs/experiments/0001-rag-baseline-evaluation.md"], "updated_at": "2026-11-23"},
+    {"id": "NT-012", "title": "Dual-Layer RAG (v2) & Ragas Baseline Scorecard", "cycle": "Cycle 03", "scope": "TLCN (Phase 1)", "layer": "Serving & Web", "task_type": "Engineering", "is_no_code": false, "owner": "Hung & Duy", "status": "in_progress", "priority": "high", "problem_statement": "Evaluate Dual-Layer RAG (Silver Clean Markdown + Gold OBT metadata pre-filtering on Qdrant Cloud with @cf/baai/bge-m3 and gemini-3.5-flash-lite) via Ragas.", "deliverables": ["src/acdp/v2/rag_ingest.py", "src/acdp/v2/rag_eval.py", "src/acdp/api/services/rag_service.py", "docs/experiments/0001-rag-baseline-evaluation.md", "docs/deliverables/NT-012-dual-layer-rag-and-ragas-harness.md", "docs/deliverables/NT-012-dual-layer-rag-and-ragas-harness-visual-dossier.html"], "updated_at": "2026-11-24"},
     {"id": "NT-013", "title": "Business Requirements, Technical Feasibility & Architectural Review (T01)", "cycle": "Cycle 01", "scope": "TLCN (Phase 1)", "layer": "Discovery", "task_type": "Research & Theory", "is_no_code": false, "owner": "Hung & Duy", "status": "done", "priority": "high", "problem_statement": "Resolve 5 business dilemmas.", "deliverables": ["docs/deliverables/NT-013-business-technical-feasibility-review.md"], "updated_at": "2026-09-11"},
     {"id": "NT-014", "title": "Academic Competition Landscape Survey & Ingestion Scaling Roadmap (T02)", "cycle": "Cycle 01", "scope": "TLCN (Phase 1)", "layer": "Discovery", "task_type": "Research & Theory", "is_no_code": false, "owner": "Hung & Duy", "status": "done", "priority": "high", "problem_statement": "Survey competition landscape and 4-pillar ingestion.", "deliverables": ["docs/deliverables/NT-014-competition-landscape-survey.md"], "updated_at": "2026-09-11"},
     {"id": "NT-017", "title": "Problem Formulation & Thesis Introduction Drafting (T08_v2)", "cycle": "Cycle 01", "scope": "TLCN (Phase 1)", "layer": "Academic & Ops", "task_type": "Academic", "is_no_code": false, "owner": "Hung & Duy", "status": "done", "priority": "medium", "problem_statement": "Draft Chapter 1 thesis introduction.", "deliverables": ["docs/rd-tasks/T08_v2.md"], "updated_at": "2026-09-20"},
@@ -447,7 +447,7 @@
       "task_type": "Engineering",
       "is_no_code": false,
       "owner": "Hung & Duy",
-      "status": "todo",
+      "status": "done",
       "priority": "high",
       "problem_statement": "Phòng ngừa rủi ro R1, R2, R4 từ TASK-CLD-03: chống ngủ đông/xóa cụm (Supabase 7 ngày, Qdrant Cloud 7/28 ngày, HF Spaces 48h), tự động backup OLTP và cấu hình fallback đa nhà cung cấp AI.",
       "research_questions": [],
@@ -456,9 +456,15 @@
         "Workflow backup pg_dump hàng tuần lưu snapshot OLTP an toàn lên R2 private hoặc Private Artifact.",
         "Cấu hình LiteLLM fallback chain (Gemini -> Groq -> OpenRouter :free) hoạt động khi gặp HTTP 429."
       ],
-      "deliverables": [".github/workflows/keep-alive.yml", "src/acdp/api/services/rag_service.py"],
-      "notes": "Phụ thuộc TASK-CLD-03 và TASK-CLD-05.",
-      "updated_at": "2026-11-23"
+      "deliverables": [
+        ".github/workflows/keep-alive.yml",
+        "src/acdp/v2/cloud_ops.py",
+        "src/acdp/api/services/rag_service.py",
+        "docs/deliverables/TASK-CLD-06-github-actions-keep-alive-backup-and-fallback.md",
+        "docs/deliverables/TASK-CLD-06-github-actions-keep-alive-backup-and-fallback-visual-dossier.html"
+      ],
+      "notes": "Hoàn tất CI/CD Keep-Alive hằng ngày (15 2 * * *) & Data Quality Audit (Supabase OLTP 5 bảng ok, Qdrant Cloud 778 vectors 1024-dim ok, Cloudflare R2 15/15 Gold Parquets 24 cuộc thi 0 lỗi Bridge Weight), Weekly pg_dump qua IPv4 Session Pooler (:5432) lên R2 backups/oltp/ (auto-prune 30 ngày) + Artifact, và chuỗi LLM/Vector Fallback (Gemini -> Groq -> OpenRouter :free + LiteLLM router + RagResponseTTLCache 300s + DuckDB Gold lexical fallback). Kiểm chứng 16/16 pytest PASSED và 0 lỗi ruff.",
+      "updated_at": "2026-11-24"
     },
     {
       "id": "TASK-CLD-07",
@@ -496,7 +502,7 @@
       "task_type": "Engineering",
       "is_no_code": false,
       "owner": "Hung",
-      "status": "todo",
+      "status": "done",
       "priority": "high",
       "problem_statement": "Khi tạo tài khoản, sinh viên cần trang /profile để điền MSSV, Email, ngành học, kỹ năng (Skills) và đính kèm CV làm cơ sở cho việc lập đội thi.",
       "research_questions": [
@@ -505,9 +511,17 @@
       "acceptance_criteria": [
         "Người dùng tạo/cập nhật được /profile và lưu thành công vào PostgreSQL OLTP."
       ],
-      "deliverables": ["apps/web/app/profile/page.tsx", "src/acdp/api"],
-      "notes": "",
-      "updated_at": "2026-11-22"
+      "deliverables": [
+        "apps/web/app/profile/page.tsx",
+        "src/acdp/api/routers/profile.py",
+        "src/acdp/api/schemas/profile.py",
+        "src/acdp/api/services/cv_storage.py",
+        "tests/api/test_profile.py",
+        "docs/deliverables/TASK-SRV-01-student-mini-cv-profile.md",
+        "docs/deliverables/TASK-SRV-01-student-mini-cv-profile-visual-dossier.html"
+      ],
+      "notes": "Completed Option A (https:// cv_url) + Option B (Cloudflare R2 PDF CV <= 2MB, %PDF- magic bytes). Verified on Supabase Cloud PG + Next.js 16 build.",
+      "updated_at": "2026-11-26"
     },
     {
       "id": "TASK-SRV-02",
@@ -698,15 +712,15 @@
       "owner": "Hung & Duy",
       "status": "todo",
       "priority": "high",
-      "problem_statement": "Kiểm thử tích hợp toàn luồng người dùng (Auth -> /profile -> Tạo/Tham gia đội -> One-Pager -> RAG Chatbot) trên hạ tầng Full Cloud (Vercel + HF Spaces + Supabase + Qdrant Cloud) và diễn tập kịch bản Pre-warm T-15 phút trước khi bảo vệ.",
+      "problem_statement": "Kiểm thử tích hợp toàn luồng người dùng (Auth -> /profile -> Tạo/Tham gia đội -> One-Pager -> RAG Chatbot) trên hạ tầng Full Cloud (Vercel + HF Spaces + Supabase + Qdrant Cloud) và diễn tập kịch bản Pre-warm T-15 phút trước khi bảo vệ. [Phụ thuộc nhóm Correctness Assurance TLCN: TASK-QA-01..03, TASK-DQ-01..06, TASK-QA-07..09 phải hoàn tất và đạt ngưỡng trước khi chạy E2E Demo Day.]",
       "research_questions": [],
       "acceptance_criteria": [
         "Toàn bộ luồng E2E chạy thông suốt trên URL công khai không lỗi 500/CORS.",
         "Hoàn thành checklist Pre-warm T-15 phút và kiểm chứng fallback local-offline."
       ],
       "deliverables": ["tests/api"],
-      "notes": "Phụ thuộc TASK-CLD-05, TASK-SRV-01..04.",
-      "updated_at": "2026-11-23"
+      "notes": "Phụ thuộc TASK-CLD-05, TASK-SEC-01..03, và TASK-SRV-01..04 (phải vượt qua Pre-Deployment Security Gate trước khi mở Public Demo Day).",
+      "updated_at": "2026-11-24"
     },
     {
       "id": "TASK-ACD-01",
@@ -719,7 +733,7 @@
       "owner": "Hung & Duy",
       "status": "todo",
       "priority": "high",
-      "problem_statement": "Xây dựng bộ slide bảo vệ cuối kỳ TLCN tổng hợp các kết quả đạt được (Medallion R2, Two-Tier Gold, Hybrid DE+LLM, Full Cloud Free-Tier, Ghép đội OLTP & RAG) kèm ngân hàng câu hỏi phản biện từ Hội đồng.",
+      "problem_statement": "Xây dựng bộ slide bảo vệ cuối kỳ TLCN tổng hợp các kết quả đạt được (Medallion R2, Two-Tier Gold, Hybrid DE+LLM, Full Cloud Free-Tier, Ghép đội OLTP & RAG) kèm ngân hàng câu hỏi phản biện từ Hội đồng. [Phụ thuộc nhóm Correctness Assurance TLCN: TASK-QA-01..03, TASK-DQ-01..06, TASK-QA-07..09 cung cấp số liệu kiểm chứng lý thuyết, thực tiễn doanh nghiệp và output người dùng cho slide và phần phản biện.]",
       "research_questions": [],
       "acceptance_criteria": [
         "Xuất bản docs/academic/Slide_BaoVe_TLCN.html và hoàn thiện kịch bản thuyết trình."
@@ -765,8 +779,8 @@
         "Áp dụng Rate Limiting cho các endpoint AI và Auth; kiểm chứng chặn request spam trả về HTTP 429."
       ],
       "deliverables": ["src/acdp/api/main.py"],
-      "notes": "",
-      "updated_at": "2026-11-23"
+      "notes": "Mở rộng từ TASK-SEC-01 cho quy mô KLTN (500–1.000 sinh viên): bổ sung Cloudflare Turnstile CAPTCHA và Distributed Redis/Upstash Rate Limiting.",
+      "updated_at": "2026-11-24"
     },
     {
       "id": "TASK-KLT-01",
@@ -787,6 +801,766 @@
       "deliverables": ["docs/academic/KhoaLuan_TotNghiep_KTDL.md", "docs/academic/Slide_BaoVe_KLTN.html"],
       "notes": "",
       "updated_at": "2026-11-23"
+    },
+    {
+      "id": "TASK-SEC-01",
+      "title": "Hardening Bảo mật OWASP Top 10 (2025/2026), Khóa /docs Production & Bảo vệ Quota AI",
+      "cycle": "Cycle 07",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Cloud & Infra",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "done",
+      "priority": "high",
+      "problem_statement": "Khắc phục các lỗ hổng OWASP Top 10 (2025/2026) và LLM10:2025 Unbounded Consumption trước khi deploy public: khóa /rag/chat & /query chỉ cho tài khoản đã đăng ký, triển khai Multi-Tier Rate Limiting (AI 5/phút + 30/ngày/user + Global 10 RPM; Auth 10/phút/IP; Public 60/phút/IP), giới hạn max_output_tokens=600, ẩn /docs & /openapi.json khi ENVIRONMENT=production, bật Fail-Fast JWT Secret Check, Security Headers và Global Exception Masking.",
+      "research_questions": [
+        "Cách kiểm thử API trên Production (Admin Swagger / Bruno static OpenAPI / pytest) khi đã tắt /docs công khai?"
+      ],
+      "acceptance_criteria": [
+        "POST /api/v1/rag/chat trả 401 Unauthorized khi không có JWT hợp lệ.",
+        "Vượt ngưỡng Rate Limit trả 429 Too Many Requests kèm Retry-After trước khi gọi Gemini/Qdrant.",
+        "Khi ENVIRONMENT=production, /docs, /redoc và /openapi.json trả 404 Not Found; khởi động thất bại nếu JWT_SECRET_KEY là giá trị dev mặc định."
+      ],
+      "deliverables": [
+        "src/acdp/api/middleware/security.py",
+        "src/acdp/api/routers/rag.py",
+        "src/acdp/api/main.py",
+        "tests/api/test_security_owasp.py",
+        "docs/deliverables/TASK-SEC-00-pre-deployment-security-and-owasp-report.md",
+        "docs/deliverables/TASK-SEC-00-pre-deployment-security-and-owasp-report-visual-dossier.html"
+      ],
+      "notes": "Hoàn tất OWASP Top 10 (2025/2026) & LLM10:2025 Hardening (Gates G2, G3, G4, G5, G7): Auth-Only /rag/chat & /query (401), MultiTierRateLimiter (AI 5/min + 30/day/user + 10 RPM global; Auth 10/min/IP; Public 60/min/IP), max_output_tokens=600 (Gemini/Groq/OpenRouter/LiteLLM), ẩn /docs /redoc /openapi.json khi ENVIRONMENT=production, Fail-Fast JWT Secret Check, OWASP Security Headers & Global Exception Masking (500). Kiểm chứng 18/18 pytest API PASSED và 0 lỗi ruff.",
+      "updated_at": "2026-11-24"
+    },
+    {
+      "id": "TASK-SEC-02",
+      "title": "Phân quyền RBAC (Admin/Lecturer/Student), Admin API & Trang Quản trị (/admin)",
+      "cycle": "Cycle 08",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Serving & Web",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "done",
+      "priority": "high",
+      "problem_statement": "Xây dựng cơ chế phân quyền Admin (require_admin + ADMIN_EMAILS trong .env), router /api/v1/admin/* (quản lý user, khóa tài khoản spam is_active=false, làm mới DuckDB R2 & RAG cache, xem rate-limit telemetry, và mở cổng /api/v1/admin/docs chỉ cho Admin), kèm giao diện Next.js /admin và khóa đăng nhập trên /copilot.",
+      "research_questions": [],
+      "acceptance_criteria": [
+        "User thường gọi /api/v1/admin/* bị chặn 403 Forbidden; Admin truy cập được đầy đủ /admin và /api/v1/admin/docs.",
+        "Admin khóa được tài khoản lạm dụng AI và làm mới cache R2/RAG từ giao diện /admin."
+      ],
+      "deliverables": [
+        "src/acdp/api/dependencies.py",
+        "src/acdp/api/routers/admin.py",
+        "apps/web/app/admin/page.tsx",
+        "apps/web/app/copilot/page.tsx",
+        "docs/deliverables/TASK-SEC-02-rbac-admin-api-and-portal-implementation.md",
+        "docs/deliverables/TASK-SEC-02-rbac-admin-api-and-portal-implementation-visual-dossier.html"
+      ],
+      "notes": "Phụ thuộc TASK-SEC-01. Đã hoàn tất: tắt hoàn toàn /docs /redoc /openapi.json công khai (404), đồng bộ ADMIN_EMAILS -> admin, thêm require_admin/require_lecturer_or_admin, router /api/v1/admin/* (users, telemetry, cache/refresh, /api/v1/admin/docs), khóa UI /copilot và triển khai trang /admin.",
+      "updated_at": "2026-11-24"
+    },
+    {
+      "id": "TASK-SEC-03",
+      "title": "Checklist Kiểm toán Bảo mật Trước Triển khai (Pre-Deployment Security Gate CLI)",
+      "cycle": "Cycle 08",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Cloud & Infra",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "high",
+      "problem_statement": "Xây dựng script kiểm toán tự động 8 chốt Gate G1–G8 trước khi triển khai lên Vercel Hobby và HF Spaces / Render: kiểm tra không lộ secret trong NEXT_PUBLIC_*, kiểm tra JWT Secret Production, xác nhận /docs ẩn, /rag/chat yêu cầu JWT, và Rate Limiter hoạt động.",
+      "research_questions": [],
+      "acceptance_criteria": [
+        "Lệnh uv run python -m acdp.v2.security_audit kiểm tra đủ 8 chốt G1–G8 và trả exit code 0 khi đạt chuẩn."
+      ],
+      "deliverables": [
+        "src/acdp/v2/security_audit.py",
+        "docs/deliverables/TASK-SEC-00-pre-deployment-security-and-owasp-report.md",
+        "docs/deliverables/TASK-SEC-00-pre-deployment-security-and-owasp-report-visual-dossier.html"
+      ],
+      "notes": "Cổng kiểm tra bắt buộc trước TASK-TST-01 (Demo Day Cloud).",
+      "updated_at": "2026-11-24"
+    },
+    {
+      "id": "TASK-QA-01",
+      "title": "Audit Toàn bộ Quyết định Kỹ thuật: Lý thuyết × Thực tiễn × Scope",
+      "cycle": "Cycle 07",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Academic & Ops",
+      "task_type": "Research & Theory",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "done",
+      "priority": "high",
+      "problem_statement": "Vấn đề: Các quyết định trong ADR-0001/0002 và spec chưa có bảng rà soát chéo toàn diện sau triển khai. Kiểm chứng 3 trục — Lý thuyết: mỗi lựa chọn (R2 storage, Parquet, Crawl4AI+Instructor, Gold Star Schema, PG18 OLTP, Qdrant, FastAPI/Next.js) phải có >= 1 nguồn học thuật/chuẩn chính thức; Thực tiễn: phải có >= 1 engineering blog hoặc case study doanh nghiệp/OSS triển khai tương đương; Người dùng & Scope: phù hợp ràng buộc 5–10 cuộc thi (TLCN) và ngân sách Free Tier. Phương pháp: lập ma trận đối chiếu mọi quyết định, kiểm chứng link/nguồn thực tế, phân loại Keep / Revise / Need RFC. Tiêu chí chấp nhận: 100% quyết định cốt lõi có đủ 2 loại dẫn chứng và kết luận rõ ràng; mọi mục Revise mở RFC/ADR tương ứng. Phụ thuộc: chạy song song với nhóm QA/DQ, đầu vào cho TASK-TST-01 và TASK-ACD-01.",
+      "research_questions": [
+        "Quyết định nào trong ADR-0001/0002 thiếu dẫn chứng thực tiễn doanh nghiệp hoặc lệch khỏi lý thuyết chuẩn?",
+        "Điểm nào cần giữ nguyên cho TLCN và điểm nào cần RFC cho KLTN?"
+      ],
+      "acceptance_criteria": [
+        "Ma trận audit bao phủ toàn bộ 7 thành phần tech stack (storage, format, extraction, Gold model, OLTP, vector, serving).",
+        "Mỗi quyết định có >= 1 nguồn học thuật/chuẩn và >= 1 case study doanh nghiệp/OSS đã xác minh URL.",
+        "Mỗi dòng có nhãn Keep / Revise / RFC và ghi rõ phần cần chỉnh sửa nếu có."
+      ],
+      "deliverables": [
+        "docs/deliverables/TASK-QA-01-tech-decision-theory-practice-audit.md",
+        "docs/deliverables/TASK-QA-01-tech-decision-theory-practice-audit-visual-dossier.html",
+        "docs/rfc/RFC-0001-spec-v2-and-cloud-parity-realignment.md",
+        "docs/rfc/RFC-0002-kltn-scale-evolution-triggers.md",
+        "tests/test_qa01_tech_decision_audit.py"
+      ],
+      "notes": "Hoàn thành 8/8 quyết định D1-D8 (100% đủ 2 trục Lý thuyết + Thực tiễn DN/OSS): 8/8 Keep cho TLCN, 6 nhóm Revise vào RFC-0001 (Draft) và 4 ngưỡng KLTN vào RFC-0002 (Draft); sẵn sàng làm đầu vào cho TASK-TST-01 & TASK-ACD-01.",
+      "updated_at": "2026-11-26"
+    },
+    {
+      "id": "TASK-QA-02",
+      "title": "Ma trận Truy vết Yêu cầu Người dùng -> Schema -> API -> Giao diện",
+      "cycle": "Cycle 08",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Discovery",
+      "task_type": "Architecture",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "high",
+      "problem_statement": "Vấn đề: NT-013 có danh sách yêu cầu nhưng chưa truy vết 1-1 tới schema Silver/Gold, API và UI, dẫn đến nguy cơ tồn tại field thừa hoặc thiếu câu hỏi nghiệp vụ cốt lõi. Kiểm chứng 3 trục — Lý thuyết: áp dụng Requirements Traceability Matrix (RTM) và Kimball Bus Matrix; Thực tiễn: quy trình schema-first / domain-driven analytics tại các đội ngũ dữ liệu sản phẩm; Người dùng: đảm bảo mọi user story của các Persona sinh viên/giảng viên (chốt ở TASK-QA-03) đều có dữ liệu đầu ra chính xác. Phương pháp: ánh xạ từng user story -> field Silver -> bảng/cột Gold -> endpoint FastAPI -> màn hình Next.js; rà soát field 'mồ côi' để loại bỏ hoặc ghi rõ lý do giữ. Tiêu chí chấp nhận: 100% user story từ bộ Persona & GVHD có đường dẫn end-to-end tới Gold/OLTP; 0 field mồ côi không có giải trình. Phụ thuộc: sau TASK-QA-03; làm đầu vào cho TASK-DQ-02, TASK-DQ-05 và TASK-QA-07.",
+      "research_questions": [
+        "Những field nào trong Silver/Gold hiện không phục vụ trực tiếp user story hoặc câu hỏi nghiệp vụ nào?"
+      ],
+      "acceptance_criteria": [
+        "Hoàn thiện bảng RTM đầy đủ từ User Story -> Silver -> Gold -> API -> UI.",
+        "Xác định và xử lý (loại bỏ hoặc giải trình) toàn bộ field không có consumer."
+      ],
+      "deliverables": [
+        "docs/deliverables/TASK-QA-02-requirements-traceability-matrix.md"
+      ],
+      "notes": "Phụ thuộc TASK-QA-03; cung cấp bộ câu hỏi nghiệp vụ chuẩn cho TASK-DQ-02, TASK-DQ-05 và TASK-QA-07.",
+      "updated_at": "2026-11-25"
+    },
+    {
+      "id": "TASK-QA-03",
+      "title": "Xác thực Nhu cầu & Schema theo Persona, Đối chuẩn Nền tảng & Tham vấn GVHD (TLCN)",
+      "cycle": "Cycle 08",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Discovery",
+      "task_type": "Research & Theory",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "high",
+      "problem_statement": "Vấn đề: Ở giai đoạn TLCN, sản phẩm chưa hoàn thiện ở mức production nên khó tổ chức khảo sát diện rộng với sinh viên thật; cần cơ chế xác thực schema và bộ câu hỏi nghiệp vụ khả thi ngay trong kỳ TLCN (còn khảo sát cộng đồng CLB thật chuyển sang TASK-USR-01 ở KLTN). Kiểm chứng 3 trục — Lý thuyết: kỹ thuật Persona-based Requirements Validation và Domain-Driven Requirements Engineering; Thực tiễn: product discovery đối chuẩn trực tiếp các trường dữ liệu cốt lõi trên Devpost, Unstop, YBox kết hợp chuyên gia miền (GVHD); Người dùng: chuẩn hóa 3 Persona đại diện (Sinh viên tìm thi, Trưởng nhóm ghép đội, Giảng viên duyệt đội) sát nhu cầu thực tế tại HCM-UTE. Phương pháp: xây dựng 3 bộ Persona kèm kịch bản sử dụng, đối chiếu 100% trường lọc/thông tin của 3 nền tảng đối thủ và ghi nhận biên bản góp ý schema từ GVHD để chốt top-N câu hỏi nghiệp vụ. Tiêu chí chấp nhận: có hồ sơ 3 Persona chuẩn hóa, bảng đối chiếu trường dữ liệu Devpost/Unstop/YBox, biên bản tham vấn GVHD và danh sách >= 20 câu hỏi nghiệp vụ ưu tiên. Phụ thuộc: mở khóa trực tiếp TASK-QA-02, TASK-DQ-02, TASK-DQ-05 và TASK-QA-07.",
+      "research_questions": [
+        "Những trường dữ liệu và bộ lọc nào là chuẩn chung trên Devpost/Unstop/YBox và đáp ứng đầy đủ kịch bản của 3 Persona + góp ý GVHD?"
+      ],
+      "acceptance_criteria": [
+        "Hoàn thiện 3 Persona đại diện (Sinh viên tìm thi, Trưởng nhóm lập đội, Giảng viên duyệt đội) kèm user journey.",
+        "Có bảng đối chiếu trường dữ liệu thực tế từ Devpost, Unstop, YBox và ghi nhận tham vấn GVHD.",
+        "Chốt danh sách top-N (>= 20) câu hỏi nghiệp vụ đưa vào TASK-QA-02 và TASK-QA-07; tách phần khảo sát CLB thật sang TASK-USR-01 (KLTN)."
+      ],
+      "deliverables": [
+        "docs/deliverables/TASK-QA-03-persona-competitor-advisor-validation.md"
+      ],
+      "notes": "Điều chỉnh theo DIR-023: không khảo sát diện rộng người dùng thật trong TLCN; chuyển sang khảo sát cộng đồng/CLB ở TASK-USR-01 (KLTN).",
+      "updated_at": "2026-11-25"
+    },
+    {
+      "id": "TASK-DQ-01",
+      "title": "Validate Lớp Đồng (Bronze): Tính đầy đủ, Bất biến, Provenance & Idempotent Re-crawl",
+      "cycle": "Cycle 07",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Bronze",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "high",
+      "problem_statement": "Vấn đề: Đã có code lưu raw HTML lên R2 nhưng chưa có bộ kiểm định chứng minh Bronze tuân thủ đầy đủ nguyên lý append-only/bất biến và tái xử lý an toàn. Kiểm chứng 3 trục — Lý thuyết: chuẩn Bronze Layer trong Medallion Architecture (raw source-of-truth, immutable, metadata lineage); Thực tiễn: thực hành lakehouse tại doanh nghiệp dùng content hash, source URL, ingestion timestamp để chống ghi đè mất lịch sử; Người dùng: đảm bảo mọi thông tin/quy định ở Gold/RAG luôn truy ngược được về bản gốc Bronze. Phương pháp: xây dựng checklist và bộ test kiểm tra content SHA-256 hash, URL gốc, timestamp, encoding UTF-8 và chạy re-crawl 2 lần liên tiếp. Tiêu chí chấp nhận: 100% object Bronze đủ metadata provenance; re-crawl cùng nội dung không tạo bản ghi trùng lặp ngoài kiểm soát. Phụ thuộc: sau TASK-BRZ-02.",
+      "research_questions": [
+        "Cấu trúc metadata tối thiểu nào trên R2 đảm bảo tính bất biến và truy vết nguồn gốc cho mọi phiên bản crawl?"
+      ],
+      "acceptance_criteria": [
+        "Mọi object Bronze đều lưu kèm content_hash, source_url, crawled_at và HTTP status.",
+        "Test tự động xác nhận chạy re-crawl cùng URL/nội dung là idempotent."
+      ],
+      "deliverables": [
+        "docs/deliverables/TASK-DQ-01-bronze-validation-report.md"
+      ],
+      "notes": "Phụ thuộc TASK-BRZ-02; đầu vào cho TASK-DQ-06.",
+      "updated_at": "2026-11-25"
+    },
+    {
+      "id": "TASK-DQ-02",
+      "title": "Xây dựng Golden Dataset & Đo Độ chính xác Trích xuất Lớp Bạc theo Từng Field",
+      "cycle": "Cycle 07",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Silver",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "high",
+      "problem_statement": "Vấn đề: Pipeline Silver dùng Hybrid DE + LLM nhưng chưa có ground-truth gán nhãn tay để đo mức độ chính xác thực tế của từng field. Kiểm chứng 3 trục — Lý thuyết: phương pháp đánh giá trích xuất thông tin (Precision, Recall, F1, Exact Match theo trường); Thực tiễn: quy trình LLM extraction evaluation dùng golden set trong production để kiểm soát sai số trước khi đưa vào warehouse; Người dùng: đảm bảo ngày hạn chót, giải thưởng, đối tượng và URL chính thức hiển thị cho sinh viên không bị sai lệch. Phương pháp: gán nhãn thủ công toàn bộ 5–10 cuộc thi scope TLCN, chạy pipeline trích xuất và tính điểm theo từng field, phân loại nguyên nhân lỗi (parser HTML, prompt, trang động). Tiêu chí chấp nhận: có golden dataset chuẩn hóa; báo cáo Precision/Recall/Exact-Match từng field đạt ngưỡng đề ra và có bảng phân loại lỗi. Phụ thuộc: sau TASK-SLV-03, TASK-SLV-04 và TASK-QA-02.",
+      "research_questions": [
+        "Trường dữ liệu nào ở lớp Bạc có tỷ lệ sai sót cao nhất giữa deterministic parser và LLM?"
+      ],
+      "acceptance_criteria": [
+        "Gán nhãn tay đầy đủ 5–10 cuộc thi thuộc scope TLCN.",
+        "Xuất báo cáo Precision/Recall/Exact-Match theo từng field kèm phân loại lỗi theo nguyên nhân."
+      ],
+      "deliverables": [
+        "docs/deliverables/TASK-DQ-02-silver-golden-dataset-accuracy.md"
+      ],
+      "notes": "Phụ thuộc TASK-SLV-03, TASK-SLV-04, TASK-QA-02.",
+      "updated_at": "2026-11-25"
+    },
+    {
+      "id": "TASK-DQ-03",
+      "title": "Triển khai Data Contract & Quality Gate Tự động giữa Các Layer",
+      "cycle": "Cycle 07",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Silver",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "high",
+      "problem_statement": "Vấn đề: Dữ liệu đi từ Bronze -> Silver -> Gold hiện thiếu chốt chặn chất lượng tự động (fail-fast), có nguy cơ đẩy dữ liệu lỗi hoặc thiếu URL chính thức sang Gold/Web. Kiểm chứng 3 trục — Lý thuyết: Data Contracts (ODCS / Andrew Jones) và nguyên lý circuit breaker trong data pipeline; Thực tiễn: áp dụng Pydantic / Great Expectations / DuckDB assertions để chặn dữ liệu bẩn trước khi publish; Người dùng: không bao giờ hiển thị cuộc thi hết hạn sai năm, thiếu trang chính thức (DIR-022) hoặc sai định dạng trên cổng sinh viên. Phương pháp: định nghĩa hợp đồng dữ liệu bằng Pydantic v2 + SQL check trên DuckDB (not-null, enum, phạm vi ngày 2025–2027, URL chính thức), cấu hình pipeline dừng khi vi phạm và xuất báo cáo gate. Tiêu chí chấp nhận: pipeline tự động fail khi nạp fixture vi phạm contract; xuất báo cáo pass/fail theo từng rule. Phụ thuộc: sau TASK-SLV-04; bắt buộc trước TASK-QA-08.",
+      "research_questions": [
+        "Bộ quy tắc Data Contract tối thiểu nào vừa chặn được lỗi nghiêm trọng vừa không gây false-positive ở quy mô 5–10 cuộc thi?"
+      ],
+      "acceptance_criteria": [
+        "Triển khai quality gate kiểm tra not-null, enum, dải ngày và URL chính thức theo DIR-022.",
+        "Kiểm chứng bằng fixture lỗi: pipeline dừng đúng lúc và ghi nhận báo cáo vi phạm."
+      ],
+      "deliverables": [
+        "docs/deliverables/TASK-DQ-03-data-contracts-and-quality-gates.md"
+      ],
+      "notes": "Phụ thuộc TASK-SLV-04; bắt buộc hoàn thành trước TASK-QA-08 (CI).",
+      "updated_at": "2026-11-25"
+    },
+    {
+      "id": "TASK-DQ-04",
+      "title": "Entity Resolution & Khử trùng Cuộc thi (Đa nguồn, Đa mùa giải)",
+      "cycle": "Cycle 07",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Silver",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "high",
+      "problem_statement": "Vấn đề: Discovery 3 tầng (TASK-ING-03) có thể trả về cùng một cuộc thi từ nhiều trang báo/đối tác hoặc các mùa giải khác nhau (2025 vs 2026), gây trùng lặp bản ghi ở Silver/Gold. Kiểm chứng 3 trục — Lý thuyết: bài toán Entity Resolution / Deduplication và khóa tự nhiên (natural key) trong kho dữ liệu; Thực tiễn: chuẩn hóa tên + đơn vị tổ chức + năm kết hợp canonical URL ở các hệ thống tổng hợp sự kiện; Người dùng: mỗi cuộc thi trong một mùa giải chỉ xuất hiện 1 bản ghi duy nhất, không làm rối danh sách và số liệu thống kê. Phương pháp: định nghĩa quy tắc khóa tự nhiên (tên chuẩn hóa + đơn vị tổ chức + năm + official domain), xử lý gộp nguồn phụ về trang chính thức (DIR-022) và viết unit test các ca trùng/khác mùa. Tiêu chí chấp nhận: 100% ca trùng đa nguồn được gộp về 1 thực thể chuẩn; cuộc thi khác mùa giải (2025 vs 2026) được tách đúng. Phụ thuộc: sau TASK-ING-03 và TASK-SLV-04.",
+      "research_questions": [
+        "Quy tắc chuẩn hóa chuỗi và khóa tự nhiên nào phân biệt chính xác 'trùng nguồn' với 'khác mùa giải'?"
+      ],
+      "acceptance_criteria": [
+        "Định nghĩa khóa tự nhiên và hàm gộp thực thể cho Silver.",
+        "Bộ unit test bao phủ các ca trùng từ nhiều nguồn tin và các ca cùng tên nhưng khác năm tổ chức."
+      ],
+      "deliverables": [
+        "docs/deliverables/TASK-DQ-04-entity-resolution-and-dedup.md"
+      ],
+      "notes": "Phụ thuộc TASK-ING-03 và TASK-SLV-04.",
+      "updated_at": "2026-11-25"
+    },
+    {
+      "id": "TASK-DQ-05",
+      "title": "Kiểm chứng Lớp Vàng (Gold): Grain, Khóa thay thế, Toàn vẹn Tham chiếu & Đối soát Silver",
+      "cycle": "Cycle 07",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Gold",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "high",
+      "problem_statement": "Vấn đề: Gold Star Schema đã được phản biện mô hình (TASK-GLD-01) và hiệu chỉnh (TASK-GLD-02) nhưng chưa có bộ kiểm thử tự động chứng minh tính đúng đắn dữ liệu sau khi build. Kiểm chứng 3 trục — Lý thuyết: 4 bước thiết kế Kimball (chọn grain, xác định dimensions/facts, surrogate keys, referential integrity); Thực tiễn: dbt-style schema tests (unique, not_null, relationships, reconciliation Silver-Gold); Người dùng: dashboard giảng viên/sinh viên và API đọc Gold phải trả lời đúng 100% câu hỏi nghiệp vụ đã chốt ở TASK-QA-02. Phương pháp: viết bộ test SQL/DuckDB tự động kiểm tra tính duy nhất ở grain khai báo, phát hiện FK mồ côi, đối soát tổng số cuộc thi/giải thưởng với Silver và chạy truy vấn mẫu cho mọi câu hỏi nghiệp vụ. Tiêu chí chấp nhận: 0 bản ghi trùng grain, 0 FK mồ côi, số liệu khớp 100% với Silver và giải được 100% câu hỏi từ QA-02. Phụ thuộc: sau TASK-GLD-02 và TASK-QA-02.",
+      "research_questions": [
+        "Mô hình Gold hiện tại có bảo toàn toàn vẹn tham chiếu và khớp số liệu tuyệt đối với lớp Bạc sau khử trùng không?"
+      ],
+      "acceptance_criteria": [
+        "Test tự động xác nhận unique grain, not-null surrogate keys và 0 khóa ngoại mồ côi trên Gold Parquet.",
+        "Đối soát số liệu Gold vs Silver khớp 100% và thực thi thành công 100% truy vấn nghiệp vụ từ TASK-QA-02."
+      ],
+      "deliverables": [
+        "docs/deliverables/TASK-DQ-05-gold-integrity-and-reconciliation.md"
+      ],
+      "notes": "Phụ thuộc TASK-GLD-02 và TASK-QA-02.",
+      "updated_at": "2026-11-25"
+    },
+    {
+      "id": "TASK-DQ-06",
+      "title": "Lineage, Run Manifest & Kiểm thử Idempotency End-to-End",
+      "cycle": "Cycle 07",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Cloud & Infra",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "high",
+      "problem_statement": "Vấn đề: Pipeline chạy on-demand từ Discovery -> Bronze -> Silver -> Gold -> Qdrant chưa ghi nhận run manifest thống nhất và chưa được kiểm thử chạy lại (idempotency). Kiểm chứng 3 trục — Lý thuyết: Data Lineage và Functional Data Engineering (idempotent, reproducible runs); Thực tiễn: lưu run_id, input content hash, schema version, model version, output row counts cho mỗi lần chạy để audit và debug; Người dùng: đảm bảo chạy lại pipeline khi cập nhật dữ liệu không làm nhân đôi bản ghi hay hỏng trạng thái web/RAG. Phương pháp: bổ sung run manifest JSON lưu kèm mỗi batch chạy, viết test chạy pipeline 2 lần liên tiếp trên cùng tập đầu vào cố định và so sánh snapshot Gold/Qdrant. Tiêu chí chấp nhận: mỗi lần chạy sinh manifest truy vết từ input hash tới output; chạy lại 2 lần cho output giống hệt nhau. Phụ thuộc: sau TASK-DQ-01, TASK-DQ-03, TASK-DQ-05.",
+      "research_questions": [
+        "Những trường nào trong run manifest là cần thiết để truy vết một kết quả trên Gold/RAG về đúng prompt, model và bản raw Bronze?"
+      ],
+      "acceptance_criteria": [
+        "Mỗi lượt chạy pipeline xuất run manifest đầy đủ (run_id, input_hashes, code/schema version, row_counts).",
+        "Kiểm thử idempotency end-to-end: chạy 2 lần liên tiếp trên cùng input cho kết quả Gold và Qdrant đồng nhất."
+      ],
+      "deliverables": [
+        "docs/deliverables/TASK-DQ-06-lineage-manifest-and-idempotency.md"
+      ],
+      "notes": "Phụ thuộc TASK-DQ-01, TASK-DQ-03, TASK-DQ-05.",
+      "updated_at": "2026-11-25"
+    },
+    {
+      "id": "TASK-QA-07",
+      "title": "Xây dựng Golden QA Set Chuẩn hóa (Persona & GVHD) & Ngưỡng Ragas / Chống Hallucination",
+      "cycle": "Cycle 08",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Serving & Web",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "high",
+      "problem_statement": "Vấn đề: NT-012 mới dừng ở Ragas baseline tự tạo, chưa có bộ câu hỏi đánh giá bám sát các kịch bản Persona + góp ý GVHD và chưa kiểm chứng tỷ lệ trích dẫn URL 100% theo guardrail #4. Kiểm chứng 3 trục — Lý thuyết: khung đánh giá component-wise của Ragas (Faithfulness, Context Precision) tách lỗi truy hồi và lỗi sinh văn bản; Thực tiễn: dùng curated golden QA set + negative/out-of-scope queries làm release gate trước khi demo RAG; Người dùng: kịch bản sinh viên hỏi về thể lệ, hạn nộp và mức độ phù hợp hồ sơ phải nhận câu trả lời đúng sự thật kèm link nguồn chính thức. Phương pháp: tổng hợp >= 30 câu hỏi từ bộ Persona/GVHD ở TASK-QA-03 và RTM ở TASK-QA-02 (bao gồm câu hỏi ngoài phạm vi để thử khả năng từ chối), chạy Ragas eval và kiểm tra tự động sự hiện diện của URL nguồn. Tiêu chí chấp nhận: bộ QA >= 30 câu được chuẩn hóa; Faithfulness và Context Precision đạt ngưỡng đề ra; 100% câu trả lời hợp lệ có trích dẫn URL nguồn (guardrail #4). Phụ thuộc: sau TASK-QA-03, TASK-QA-02 và hoàn thiện NT-012; mở rộng sang câu hỏi thực tế từ CLB ở KLTN (TASK-USR-01).",
+      "research_questions": [
+        "Tỷ lệ Faithfulness, Context Precision và tỷ lệ từ chối đúng câu hỏi ngoài phạm vi đạt bao nhiêu trên bộ QA bám sát Persona & GVHD?"
+      ],
+      "acceptance_criteria": [
+        "Bộ Golden QA >= 30 câu hỏi xuất phát từ TASK-QA-03 (Persona + GVHD + đối chuẩn nền tảng) và TASK-QA-02.",
+        "Faithfulness và Context Precision đạt ngưỡng mục tiêu; 100% câu trả lời kèm trích dẫn URL chính thức."
+      ],
+      "deliverables": [
+        "docs/deliverables/TASK-QA-07-rag-golden-qa-and-citation-gate.md"
+      ],
+      "notes": "Phụ thuộc TASK-QA-03, TASK-QA-02 và NT-012; tập dữ liệu thật từ cộng đồng CLB sẽ bổ sung ở KLTN (TASK-USR-01).",
+      "updated_at": "2026-11-25"
+    },
+    {
+      "id": "TASK-QA-08",
+      "title": "Thiết lập CI/CD Pipeline & Automated Data Validation Gate (.github/workflows/ci-validation.yml)",
+      "cycle": "Cycle 08",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Cloud & Infra",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "high",
+      "problem_statement": "Vấn đề: Hiện tại thư mục .github/workflows/ mới chỉ có keep-alive.yml (chạy cron đánh thức dịch vụ Cloud và kiểm đếm bảng/vector cơ bản), hoàn toàn chưa có workflow CI/CD chạy khi push/pull_request để kiểm tra Data Contracts, chất lượng dữ liệu Bronze/Silver/Gold, test API và build Frontend. Kiểm chứng 3 trục — Lý thuyết: Continuous Integration / Continuous Data Testing (DataOps CI/CD Gates); Thực tiễn: tách biệt Cron Ops (keep-alive.yml) với CI Validation Pipeline (ci-validation.yml) chạy ruff, pytest, Pydantic/DuckDB Data Validation trên fixture offline và Next.js typecheck/build; Người dùng & Nhóm phát triển: ngăn chặn triệt để mã lỗi hoặc schema sai lọt lên nhánh chính và môi trường Demo. Phương pháp: xây dựng .github/workflows/ci-validation.yml gồm 3 job song song: (1) Python Lint & Unit/API/Security Tests, (2) Automated Data Validation Gate (Bronze provenance + Silver Pydantic Contracts DIR-022 + Gold DuckDB grain/FK/reconciliation trên fixture), (3) Frontend Typecheck & Build Check. Tiêu chí chấp nhận: workflow chạy xanh trên GitHub Actions không cần LLM/R2 secret trả phí, xuất summary kiểm định rõ ràng. Phụ thuộc: sau TASK-DQ-03, TASK-DQ-05 và TASK-SEC-03.",
+      "research_questions": [
+        "Làm thế nào thiết kế CI Data Validation Gate kiểm chứng đầy đủ Bronze/Silver/Gold và Security Gate hoàn toàn offline trên GitHub Actions?"
+      ],
+      "acceptance_criteria": [
+        "Tạo .github/workflows/ci-validation.yml tách biệt rõ với keep-alive.yml, kích hoạt trên push/PR và workflow_dispatch.",
+        "Chạy tự động 3 cổng: Ruff + Pytest API/Security, Data Validation Gate (Bronze/Silver Contract/Gold Integrity), và Next.js tsc/build."
+      ],
+      "deliverables": [
+        ".github/workflows/ci-validation.yml",
+        "docs/deliverables/TASK-QA-08-ci-pipeline-and-dq-tests.md"
+      ],
+      "notes": "Phụ thuộc TASK-DQ-03, TASK-DQ-05 và TASK-SEC-03; khắc phục khoảng trống hiện tại khi .github/workflows/ mới chỉ có keep-alive.yml.",
+      "updated_at": "2026-11-25"
+    },
+    {
+      "id": "TASK-QA-09",
+      "title": "Quy trình Triage & Sửa lỗi (Bug Ledger, RCA, Regression Test)",
+      "cycle": "Cycle 08",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Academic & Ops",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "high",
+      "problem_statement": "Vấn đề: Các lỗi phát sinh trong lúc crawl, trích xuất LLM, truy vấn Gold hay phục vụ Web chưa được ghi nhận có hệ thống, phân tích nguyên nhân gốc (RCA) và khóa bằng regression test. Kiểm chứng 3 trục — Lý thuyết: quản lý sự cố, Root Cause Analysis (5 Whys) và Regression Testing trong kỹ thuật phần mềm & dữ liệu; Thực tiễn: mọi bug được sửa trong đội ngũ chuyên nghiệp đều đi kèm ticket/RCA và một test case tái hiện lỗi trước khi đóng; Người dùng: giảm thiểu lặp lại lỗi cũ trước ngày bảo vệ Demo Day. Phương pháp: chuẩn hóa mẫu Bug Ledger + RCA trong repo, quy định mọi bug sửa xong phải đính kèm regression test vào bộ test CI và tổng hợp các lỗi điển hình đã xử lý. Tiêu chí chấp nhận: có mẫu RCA chuẩn hóa, sổ theo dõi lỗi hoạt động và 100% bug đã đóng có regression test kèm theo. Phụ thuộc: liên kết chặt với TASK-QA-08 và chạy xuyên suốt trước TASK-TST-01.",
+      "research_questions": [
+        "Nhóm lỗi nào lặp lại nhiều nhất giữa các lớp Bronze/Silver/Gold/API và cần ưu tiên regression test?"
+      ],
+      "acceptance_criteria": [
+        "Ban hành mẫu Bug Ledger & RCA và ghi nhận đầy đủ các bug phát hiện trong quá trình kiểm chứng QA/DQ.",
+        "100% bug đã khắc phục đều có regression test chạy được trong bộ pytest."
+      ],
+      "deliverables": [
+        "docs/deliverables/TASK-QA-09-bug-triage-rca-and-regression.md"
+      ],
+      "notes": "Gắn với TASK-QA-08; tổng hợp minh chứng thực tế cho TASK-TST-01 và TASK-ACD-01.",
+      "updated_at": "2026-11-25"
+    },
+    {
+      "id": "TASK-DQ-11",
+      "title": "Orchestration & Lập lịch Quy mô KLTN (Đối chiếu Prefect / GitHub Actions / Dagster), Retry & Backfill",
+      "cycle": "Cycle 09",
+      "scope": "KLTN (Phase 2)",
+      "layer": "Cloud & Infra",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "medium",
+      "problem_statement": "Vấn đề: Ở quy mô KLTN (100–500 cuộc thi, chạy định kỳ), kịch bản chạy tay hoặc cron đơn thuần chưa giải quyết bài toán phụ thuộc DAG, retry theo từng bước, rate-limit và backfill theo khoảng thời gian. Kiểm chứng 3 trục — Lý thuyết: DAG orchestration, exponential backoff retry và idempotent backfill trong Data Engineering; Thực tiễn: đối chiếu kiến trúc nhẹ (GitHub Actions vs Prefect vs Dagster) dựa trên tải thực tế và ngân sách sinh viên; Người dùng: đảm bảo dữ liệu cuộc thi mới được cập nhật đúng lịch mà không bị đứt gãy âm thầm. Phương pháp: benchmark/so sánh các công cụ điều phối theo scale 100–500 cuộc thi, triển khai cơ chế retry và lệnh backfill theo ngày/nguồn. Tiêu chí chấp nhận: có bảng đánh giá lựa chọn orchestrator kèm dẫn chứng và luồng chạy có retry + backfill kiểm thử thành công. Phụ thuộc: mở rộng từ TASK-ING-02 và TASK-DQ-06.",
+      "research_questions": [
+        "Ở quy mô 100–500 cuộc thi, điểm chuyển giao nào khiến GitHub Actions không còn đủ và cần Prefect/Dagster?"
+      ],
+      "acceptance_criteria": [
+        "Đối chiếu định lượng giữa GitHub Actions, Prefect và Dagster theo tài nguyên và độ phức tạp vận hành.",
+        "Pipeline định kỳ hỗ trợ retry tự động khi lỗi mạng/LLM và chạy backfill an toàn theo khoảng thời gian."
+      ],
+      "deliverables": [
+        "docs/deliverables/TASK-DQ-11-kltn-orchestration-retry-backfill.md"
+      ],
+      "notes": "Phụ thuộc TASK-ING-02 và TASK-DQ-06 (KLTN).",
+      "updated_at": "2026-11-25"
+    },
+    {
+      "id": "TASK-DQ-12",
+      "title": "Incremental Load & Schema Evolution (Versioning Schema, Migration Parquet)",
+      "cycle": "Cycle 09",
+      "scope": "KLTN (Phase 2)",
+      "layer": "Silver",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "medium",
+      "problem_statement": "Vấn đề: Pipeline TLCN xử lý lại toàn bộ 5–10 cuộc thi; khi lên 100–500 cuộc thi ở KLTN, việc full-refresh gây lãng phí quota LLM và khi thay đổi schema Silver/Gold có thể làm gãy các tệp Parquet lịch sử. Kiểm chứng 3 trục — Lý thuyết: Change Data Capture / Incremental Processing (watermark, content-hash diff) và Schema Evolution (backward/forward compatibility); Thực tiễn: quản lý schema versioning trên Parquet/DuckDB hoặc Iceberg/Delta ở doanh nghiệp; Người dùng: dữ liệu cũ của các mùa giải trước vẫn đọc được đồng bộ khi bổ sung tiêu chí mới cho sinh viên. Phương pháp: triển khai cơ chế chỉ xử lý bản ghi mới/thay đổi hash, đánh phiên bản schema và viết script migration Parquet tương thích ngược. Tiêu chí chấp nhận: chi phí re-process giảm rõ rệt khi chỉ 10% nguồn thay đổi; đọc đồng thời tệp Parquet v1 và v2 không lỗi. Phụ thuộc: sau TASK-GLD-03 và TASK-DQ-03.",
+      "research_questions": [
+        "Chiến lược lưu trữ và migration nào cho phép DuckDB đọc xuyên suốt nhiều phiên bản schema Parquet trên R2?"
+      ],
+      "acceptance_criteria": [
+        "Chỉ gọi lại LLM trích xuất cho các URL mới hoặc có content_hash thay đổi.",
+        "Kiểm thử đọc kết hợp Parquet phiên bản schema cũ và mới thành công với script migration chuẩn hóa."
+      ],
+      "deliverables": [
+        "docs/deliverables/TASK-DQ-12-incremental-load-and-schema-evolution.md"
+      ],
+      "notes": "Phụ thuộc TASK-GLD-03 và TASK-DQ-03 (KLTN).",
+      "updated_at": "2026-11-25"
+    },
+    {
+      "id": "TASK-DQ-13",
+      "title": "Data Observability: Giám sát Freshness, Volume, Drift & Cảnh báo",
+      "cycle": "Cycle 09",
+      "scope": "KLTN (Phase 2)",
+      "layer": "Cloud & Infra",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "medium",
+      "problem_statement": "Vấn đề: Khi pipeline chạy tự động ở KLTN, các lỗi âm thầm (trang nguồn đổi cấu trúc HTML khiến số lượng cuộc thi tụt giảm, dữ liệu bị cũ quá hạn hoặc phân phối field null tăng vọt) khó bị phát hiện kịp thời. Kiểm chứng 3 trục — Lý thuyết: 5 trụ cột Data Observability (Freshness, Volume, Distribution/Drift, Schema, Lineage); Thực tiễn: thiết lập ngưỡng cảnh báo nhẹ dựa trên thống kê lịch sử run manifest; Người dùng: tránh tình trạng cổng thông tin hiển thị dữ liệu lỗi thời hoặc thiếu cuộc thi mới trong cao điểm tuyển sinh/thi đấu. Phương pháp: thu thập chỉ số từ run manifest (TASK-DQ-06) theo thời gian, cài đặt cảnh báo tự động khi vượt ngưỡng freshness/volume/null-rate bất thường. Tiêu chí chấp nhận: phát hiện và bắn cảnh báo chính xác khi mô phỏng các kịch bản trễ lịch, tụt volume hoặc tăng tỷ lệ null. Phụ thuộc: sau TASK-DQ-06 và TASK-DQ-11.",
+      "research_questions": [
+        "Ngưỡng bất thường về volume và null-rate nào phù hợp với tính mùa vụ của các cuộc thi học thuật?"
+      ],
+      "acceptance_criteria": [
+        "Theo dõi tự động các chỉ số Freshness, Volume và Null/Schema Drift sau mỗi lần chạy.",
+        "Kiểm thử thành công cơ chế cảnh báo khi mô phỏng nguồn crawl bị gãy DOM hoặc ngừng cập nhật."
+      ],
+      "deliverables": [
+        "docs/deliverables/TASK-DQ-13-data-observability-and-alerting.md"
+      ],
+      "notes": "Phụ thuộc TASK-DQ-06 và TASK-DQ-11 (KLTN).",
+      "updated_at": "2026-11-25"
+    },
+    {
+      "id": "TASK-DQ-14",
+      "title": "Đo lại Golden Dataset ở Quy mô 100–500 Cuộc thi & Theo dõi LLM Drift",
+      "cycle": "Cycle 09",
+      "scope": "KLTN (Phase 2)",
+      "layer": "Silver",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "medium",
+      "problem_statement": "Vấn đề: Độ chính xác trích xuất trên 5–10 cuộc thi TLCN chưa đại diện cho 100–500 cuộc thi đa dạng nguồn và ngôn ngữ ở KLTN, đồng thời chất lượng có thể biến động khi thay đổi phiên bản mô hình LLM. Kiểm chứng 3 trục — Lý thuyết: lấy mẫu phân tầng (stratified sampling) và đánh giá suy giảm mô hình (model/LLM drift evaluation); Thực tiễn: duy trì bộ benchmark phân tầng theo nhóm nguồn (trường ĐH, hackathon, doanh nghiệp, PDF/HTML) khi nâng cấp model; Người dùng: đảm bảo chất lượng thông tin không bị sụt giảm khi mở rộng nguồn dữ liệu KLTN. Phương pháp: xây dựng mẫu phân tầng đại diện từ tập 100–500 cuộc thi, đo lại Precision/Recall/F1 và so sánh chéo giữa các phiên bản LLM/prompt. Tiêu chí chấp nhận: bộ golden mở rộng được gán nhãn theo phân tầng; báo cáo so sánh độ chính xác giữa các model/prompt và chỉ số sai số nằm trong ngưỡng chấp nhận. Phụ thuộc: sau TASK-DQ-02 và song hành với TASK-EVL-01.",
+      "research_questions": [
+        "Nguồn dữ liệu mới nào ở quy mô 100–500 cuộc thi làm giảm mạnh độ chính xác trích xuất so với tập TLCN?"
+      ],
+      "acceptance_criteria": [
+        "Mở rộng golden dataset bằng lấy mẫu phân tầng trên tập 100–500 cuộc thi.",
+        "Đo và so sánh độ chính xác trích xuất theo field qua ít nhất 2 phiên bản model/prompt để phát hiện LLM drift."
+      ],
+      "deliverables": [
+        "docs/deliverables/TASK-DQ-14-kltn-scaled-golden-eval-and-llm-drift.md"
+      ],
+      "notes": "Mở rộng từ TASK-DQ-02; cung cấp dữ liệu thực nghiệm cho TASK-EVL-01 và TASK-KLT-01.",
+      "updated_at": "2026-11-25"
+    },
+    {
+      "id": "TASK-QA-15",
+      "title": "Audit lại Toàn bộ Kiến trúc cho Quy mô KLTN & Cập nhật ADR qua Peer Defense",
+      "cycle": "Cycle 10",
+      "scope": "KLTN (Phase 2)",
+      "layer": "Academic & Ops",
+      "task_type": "Architecture",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "medium",
+      "problem_statement": "Vấn đề: Kiến trúc tối giản của TLCN (5–10 cuộc thi, Free Tier) có thể gặp giới hạn về định dạng bảng mở (Iceberg/Delta), hiệu năng vector/OLAP hoặc chi phí vận hành khi chuyển sang quy mô 100–500 cuộc thi của KLTN. Kiểm chứng 3 trục — Lý thuyết: kiến trúc Lakehouse nâng cao và quản trị ADR theo DIR-011 (Tabula Rasa & Peer Defense); Thực tiễn: tái đánh giá điểm nghẽn thực tế dựa trên số liệu benchmark KLTN thay vì phỏng đoán; Người dùng: bảo đảm hệ thống ổn định, phản hồi nhanh và tin cậy khi phục vụ diện rộng toàn khoa/trường. Phương pháp: lặp lại quy trình audit của TASK-QA-01 ở quy mô KLTN với dữ liệu từ TASK-EVL-01 và TASK-DQ-11..14, tổ chức peer defense giữa Hưng & Duy và cập nhật ADR mới. Tiêu chí chấp nhận: hoàn thành báo cáo audit KLTN đủ 3 trục; mọi thay đổi kiến trúc được thông qua peer defense và ban hành ADR chính thức trước TASK-KLT-01. Phụ thuộc: sau TASK-QA-01, TASK-EVL-01, TASK-DQ-11..14; đầu vào cho TASK-KLT-01.",
+      "research_questions": [
+        "Những giả định tối giản nào của TLCN thực sự chạm ngưỡng tại quy mô 100–500 cuộc thi và cần nâng cấp trong ADR KLTN?"
+      ],
+      "acceptance_criteria": [
+        "Hoàn thành báo cáo tái audit toàn bộ tech stack ở quy mô KLTN có số liệu thực nghiệm từ TASK-EVL-01 và DQ-11..14.",
+        "Thông qua peer defense giữa hai tác giả và cập nhật/ban hành ADR mới trước khi viết khóa luận (TASK-KLT-01)."
+      ],
+      "deliverables": [
+        "docs/deliverables/TASK-QA-15-kltn-architecture-reaudit-and-adr.md"
+      ],
+      "notes": "Lặp lại TASK-QA-01 ở quy mô KLTN; đầu vào bắt buộc cho TASK-KLT-01.",
+      "updated_at": "2026-11-25"
+    },
+    {
+      "id": "TASK-FE-01",
+      "title": "Hoàn thiện FE Tiểu luận: Giao diện Tối giản, Dễ dùng & Mượt mà cho Demo Bảo vệ",
+      "cycle": "Cycle 08",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Serving & Web",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "high",
+      "problem_statement": "Vấn đề: Giao diện TLCN cần phục vụ tốt kịch bản bảo vệ trong 15 phút trước Hội đồng, ưu tiên rõ ràng, ít thao tác thừa và ổn định thay vì dàn trải hiệu ứng phức tạp (phần Design System sâu dành cho KLTN ở TASK-FE-02). Kiểm chứng 3 trục — Lý thuyết: nguyên lý Usability Heuristics (Nielsen) về sự tối giản và khả năng nhận diện trạng thái hệ thống; Thực tiễn: chuẩn bị giao diện MVP demo-ready với đầy đủ loading skeleton, empty state, error boundary và thông báo rõ ràng; Người dùng: sinh viên và giảng viên (cũng như Hội đồng chấm thi) thao tác xuyên suốt từ trang chủ -> lọc cuộc thi -> /profile -> ghép đội -> One-Pager -> /copilot mà không bị vấp hay rối mắt. Phương pháp: rà soát toàn bộ luồng trang trong apps/web/app, tinh gọn bố cục, chuẩn hóa hiển thị link nguồn URL trích dẫn trên RAG Copilot và chạy thử kịch bản demo liên hoàn. Tiêu chí chấp nhận: 100% luồng demo chạy mượt không lỗi console/hydration, mọi màn hình có đủ trạng thái loading/empty/error và build Next.js thành công. Phụ thuộc: phối hợp TASK-SRV-01..04 và TASK-BE-01; hoàn thành trước TASK-TST-01.",
+      "research_questions": [
+        "Điểm nghẽn thao tác hoặc lỗi UI/trạng thái nào dễ gây vấp nhất trong 15 phút Demo bảo vệ TLCN?"
+      ],
+      "acceptance_criteria": [
+        "Rà soát và tinh gọn luồng UI cho trang chủ, chi tiết cuộc thi, /profile, ghép đội, One-Pager, /copilot và /admin.",
+        "Đầy đủ trạng thái loading, empty, error thân thiện và hiển thị rõ URL nguồn chính thức trong câu trả lời RAG.",
+        "next build & typecheck đạt 0 lỗi."
+      ],
+      "deliverables": [
+        "apps/web/app",
+        "docs/deliverables/TASK-FE-01-tlcn-clean-demo-ui.md"
+      ],
+      "notes": "Phân tầng theo DIR-023: TLCN làm FE tối giản, dễ dùng, dễ demo; nâng cấp Design System toàn diện tại TASK-FE-02 (KLTN).",
+      "updated_at": "2026-11-25"
+    },
+    {
+      "id": "TASK-BE-01",
+      "title": "Hoàn thiện & Tối ưu Toàn diện Backend (Tối ưu API, Truy vấn OLTP/OLAP & Tối ưu Luồng AI)",
+      "cycle": "Cycle 08",
+      "scope": "TLCN -> KLTN",
+      "layer": "Serving & Web",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "high",
+      "problem_statement": "Vấn đề: FastAPI hiện đang phục vụ song song 3 kho dữ liệu (Supabase PostgreSQL 18 OLTP, DuckDB đọc Parquet trực tiếp trên R2, Qdrant Cloud + LLM) nhưng chưa được tối ưu toàn diện về connection pool, projection/predicate pushdown, caching, nén ngữ cảnh RAG và streaming. Kiểm chứng 3 trục — Lý thuyết: tối ưu hóa truy vấn phân tích (column pruning, predicate pushdown), nén ngữ cảnh RAG (context compression) và kiểm soát độ trễ đuôi (tail latency p95); Thực tiễn: chuẩn hóa async SQLAlchemy pooling cho Supabase Session Pooler, TTL cache cho Gold Parquet queries, loại bỏ N+1 queries, dùng streaming SSE và circuit breaker không chặn event loop; Người dùng: trang web phản hồi nhanh, không bị timeout khi khởi động lại hoặc hỏi đáp liên tiếp. Phương pháp: profile toàn bộ endpoint FastAPI (p50/p95 latency) và đo token/request trước tối ưu, áp dụng các kỹ thuật tối ưu API + AI Serving rồi đo benchmark đối chiếu sau tối ưu. Tiêu chí chấp nhận: p95 latency các endpoint đọc Gold/OLTP giảm rõ rệt so với baseline; token ngữ cảnh RAG giảm mà không tụt Faithfulness; test tải cơ bản 0 lỗi 500/event-loop blocking. Phụ thuộc: sau NT-029 và TASK-CLD-04/06; làm nền cho TASK-TST-01 (TLCN) và TASK-AI-01 (KLTN).",
+      "research_questions": [
+        "Endpoint nào đang có p95 latency cao nhất khi đọc DuckDB trên R2 hoặc truy vấn Supabase Pooler, và giảm được bao nhiêu % token khi nén metadata RAG?"
+      ],
+      "acceptance_criteria": [
+        "Tối ưu API & DB: chuẩn hóa async pool, xóa truy vấn N+1, áp dụng projection/predicate pushdown + TTL cache hợp lý cho DuckDB-on-R2 và phân trang chuẩn.",
+        "Tối ưu AI Serving: lọc/nén ngữ cảnh RAG trước khi gọi LLM, hỗ trợ SSE streaming mượt mà và timeout/circuit-breaker an toàn.",
+        "Xuất bảng benchmark đối chiếu p50/p95 latency (ms) và lượng token tiêu thụ trước vs sau tối ưu."
+      ],
+      "deliverables": [
+        "src/acdp/api",
+        "docs/deliverables/TASK-BE-01-backend-api-and-ai-optimization.md"
+      ],
+      "notes": "Scope TLCN -> KLTN: hoàn thiện phần tối ưu cốt lõi ở Cycle 08 phục vụ Demo TLCN và làm nền cho Multi-Provider Free AI Gateway (TASK-AI-01) ở KLTN.",
+      "updated_at": "2026-11-25"
+    },
+    {
+      "id": "TASK-DOC-01",
+      "title": "Xây dựng Trọn bộ Sơ đồ Kỹ thuật (BA, CNPM, System, BE, FE, Data/AI Pipeline) & Tối ưu Báo cáo TLCN",
+      "cycle": "Cycle 08",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Academic & Ops",
+      "task_type": "Academic",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "high",
+      "problem_statement": "Vấn đề: Báo cáo TLCN (NT-021) cần chứng minh độ chặt chẽ cả về Kỹ nghệ Phần mềm (BA/CNPM/System/BE/FE) lẫn Kỹ thuật Dữ liệu (Medallion Pipeline, Kimball Star Schema, RAG & Data Quality Gates), nhưng hiện thiếu một hệ thống sơ đồ đồng bộ, chuẩn xác và bám sát code thực tế. Kiểm chứng 3 trục — Lý thuyết: chuẩn C4 Model (Simon Brown), UML 2.x (Use Case, Activity, Sequence, Deployment), ERD (Chen/Crow's Foot & Kimball Bus Matrix); Thực tiễn: quy trình Diagrams-as-Code (Mermaid/Draw.io) đồng bộ 1-1 với kiến trúc triển khai thật trong code/spec; Người dùng & Hội đồng: giúp người đọc nắm trọn bức tranh hệ thống từ góc nhìn nghiệp vụ đến luồng dữ liệu chi tiết. Phương pháp: xây dựng trọn bộ sơ đồ cho 5 nhóm (BA: Actor/Use Case/Activity-BPMN; System & CNPM: C4 Level 1-3, Deployment Local vs Cloud, Sequence; BE & DB: OLTP ERD & FastAPI Layered; FE: Sitemap/Screen Flow & Component Tree; Data & AI: End-to-End Medallion Discovery->Bronze->Silver->Gold->Qdrant + DQ Gates), đối chiếu chéo với code và biên tập chuẩn hóa văn phong học thuật FIT-HCMUTE (DIR-009, DIR-010). Tiêu chí chấp nhận: đủ cả 5 nhóm sơ đồ không sai lệch so với mã nguồn, tích hợp hoàn chỉnh vào BaoCao_TieuLuan_ChuyenNganh_KTDL.md. Phụ thuộc: sau TASK-QA-01, TASK-QA-02, TASK-FE-01, TASK-BE-01; đầu vào trực tiếp cho NT-021 và TASK-ACD-01.",
+      "research_questions": [
+        "Bộ sơ đồ tối thiểu nào phủ trọn 5 góc nhìn (BA, System/CNPM, BE, FE, Data/AI Pipeline) mà vẫn đồng nhất 100% với code v2 và SPEC-0001..0006?"
+      ],
+      "acceptance_criteria": [
+        "Hoàn thiện đủ 5 nhóm sơ đồ chuẩn hóa bằng Mermaid/Draw.io: BA (Use Case, Activity/BPMN), System/CNPM (C4 L1–L3, Sequence, Deployment), BE (OLTP ERD, Layered Architecture), FE (Sitemap, Component Flow) và Data/AI Pipeline (Medallion E2E, Kimball Star Schema, Dual-Layer RAG & DQ Gate).",
+        "Kiểm tra khớp 100% tên bảng, endpoint, biến môi trường và luồng xử lý thực tế trong codebase; tích hợp vào NT-021."
+      ],
+      "deliverables": [
+        "docs/academic/BaoCao_TieuLuan_ChuyenNganh_KTDL.md",
+        "docs/deliverables/TASK-DOC-01-tlcn-complete-diagrams-and-report-polish.md"
+      ],
+      "notes": "Tuân thủ DIR-009, DIR-010 và DIR-023; phục vụ trực tiếp cho NT-021 và TASK-ACD-01.",
+      "updated_at": "2026-11-25"
+    },
+    {
+      "id": "TASK-AI-01",
+      "title": "Kiến trúc Multi-Provider Free AI Gateway, Quota-Aware Routing & Semantic Cache (KLTN)",
+      "cycle": "Cycle 09",
+      "scope": "KLTN (Phase 2)",
+      "layer": "Serving & Web",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "medium",
+      "problem_statement": "Vấn đề: Ở quy mô KLTN (100–500 cuộc thi + cộng đồng CLB dùng thật), việc phụ thuộc chính vào hạn mức free của Gemini (RPM/RPD thấp) dễ gây nghẽn HTTP 429 cho cả bước bóc tách Silver lẫn chatbot /copilot; chuỗi fallback sơ bộ từ TASK-CLD-06 chưa có quota-aware routing, cơ chế dự phòng embedding và cache bền vững. Kiểm chứng 3 trục — Lý thuyết: kiến trúc Multi-Provider LLM Gateway, thuật toán Weighted/Priority Routing, Circuit Breaker và Semantic Caching; Thực tiễn: kết hợp nhiều API miễn phí/chi phí 0đ phổ biến (Groq LPU, OpenRouter :free pool, Cloudflare Workers AI 10k Neurons/day, Google Gemini/Gemma, GitHub Models / Ollama), đọc header X-RateLimit-Remaining để chuyển hướng chủ động trước khi dính 429; Người dùng: sinh viên CLB hỏi đáp hoặc hệ thống tự cào ban đêm không bị gián đoạn dịch vụ. Phương pháp: nghiên cứu hạn mức cập nhật 2026 của từng provider, xây dựng lớp AI Gateway thống nhất cho cả Silver v2 và RAG Service, tích hợp Semantic/Exact Cache và kiểm thử chịu tải giả lập sập/hết quota provider chính. Tiêu chí chấp nhận: tách cấu hình xoay vòng provider cho cả Silver Extraction và RAG; giả lập lỗi 429/503 tự động chuyển luồng mượt với tỷ lệ thành công >= 99%. Phụ thuộc: sau TASK-CLD-06 và TASK-BE-01; hoàn thành trước TASK-USR-01.",
+      "research_questions": [
+        "Tổ hợp Free-Tier LLM & Embedding Providers nào cho độ ổn định và thông lượng tốt nhất khi kết hợp Silver Batch Extraction và Interactive RAG?"
+      ],
+      "acceptance_criteria": [
+        "Xây dựng AI Gateway đa nhà cung cấp miễn phí (Groq, OpenRouter :free, Cloudflare Workers AI, Gemini/Gemma, GitHub Models/Ollama) dùng chung cho Silver Extraction và /copilot RAG.",
+        "Hỗ trợ quota-aware routing (theo dõi header rate-limit/cooldown), circuit breaker và cache bền vững.",
+        "Kiểm thử fault-injection (giả lập 429/timeout) chứng minh tỷ lệ phục vụ thành công >= 99%."
+      ],
+      "deliverables": [
+        "src/acdp/v2",
+        "src/acdp/api/services/rag_service.py",
+        "docs/deliverables/TASK-AI-01-multi-provider-free-ai-gateway.md"
+      ],
+      "notes": "Mở rộng TASK-CLD-06 và TASK-BE-01 cho quy mô KLTN theo DIR-023; mở khóa TASK-USR-01.",
+      "updated_at": "2026-11-25"
+    },
+    {
+      "id": "TASK-FE-02",
+      "title": "Nghiên cứu UI/UX Rules, Agent Design Skills, System Color & Xây dựng FE Hoàn chỉnh Chuẩn Production (KLTN)",
+      "cycle": "Cycle 09",
+      "scope": "KLTN (Phase 2)",
+      "layer": "Serving & Web",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "medium",
+      "problem_statement": "Vấn đề: Bản FE ở TLCN (TASK-FE-01) chỉ dừng ở mức tối giản dễ demo; khi mở rộng cho cộng đồng sinh viên CLB sử dụng thực tế trên đa thiết bị ở KLTN, cần một Design System chuẩn mực, trực quan, tiếp cận tốt và tối ưu Core Web Vitals. Kiểm chứng 3 trục — Lý thuyết: WCAG 2.2 AA Accessibility, Color Theory & Semantic Design Tokens, Mobile-First Responsive Grid và Core Web Vitals (LCP/CLS/INP); Thực tiễn: nghiên cứu và vận dụng bài bản các UI/UX rule, hệ thống thiết kế chuẩn ngành (Mobbin/Tailwind v4 tokens) và các agent design/performance skills (ui-ux-pro-max, frontend-designer, a11y-debugging, react-best-practices); Người dùng: sinh viên dùng điện thoại hoặc laptop từ link CLB có trải nghiệm mượt mà, dễ đọc thể lệ, dễ lọc và tạo đội nhanh chóng. Phương pháp: nghiên cứu hệ màu (System Color Palette), typography, micro-interaction, nâng cấp SPEC-0005 và triển khai lại toàn bộ UI production kèm audit bằng Chrome DevTools / Lighthouse / a11y checks. Tiêu chí chấp nhận: SPEC-0005 cập nhật đầy đủ Design Tokens WCAG 2.2 AA; điểm Lighthouse Performance & Accessibility >= 90 trên desktop và mobile. Phụ thuộc: sau TASK-FE-01; hoàn thành trước TASK-USR-01.",
+      "research_questions": [
+        "Hệ màu (System Color), quy tắc UI/UX và cấu trúc bố cục Mobile-First nào giúp giảm tối đa tỷ lệ thoát khi sinh viên mở ACDP từ liên kết CLB trên điện thoại?"
+      ],
+      "acceptance_criteria": [
+        "Hoàn thiện báo cáo nghiên cứu UI/UX Rules, System Color Tokens (Light/Dark WCAG 2.2 AA) và cập nhật SPEC-0005.",
+        "Nâng cấp toàn bộ giao diện Next.js 16 đạt responsive đa màn hình, zero a11y critical issues và điểm Lighthouse Performance/Accessibility >= 90."
+      ],
+      "deliverables": [
+        "apps/web",
+        "docs/specs/0005-frontend-design-system-and-ux-spec.md",
+        "docs/deliverables/TASK-FE-02-kltn-production-design-system-and-fe.md"
+      ],
+      "notes": "Nâng cấp từ TASK-FE-01 cho giai đoạn KLTN ready-for-prod theo DIR-023; bắt buộc xong trước TASK-USR-01.",
+      "updated_at": "2026-11-25"
+    },
+    {
+      "id": "TASK-USR-01",
+      "title": "Triển khai Thực tế cho Cộng đồng / CLB Sinh viên & Khảo sát Định lượng Người dùng (Form SUS & Đánh giá Sản phẩm)",
+      "cycle": "Cycle 10",
+      "scope": "KLTN (Phase 2)",
+      "layer": "Discovery",
+      "task_type": "Research & Theory",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "medium",
+      "problem_statement": "Vấn đề: Khi sản phẩm KLTN đã hoàn thiện ở mức ready-for-prod, cần kiểm chứng giá trị thực tiễn bằng người dùng thật trong môi trường cộng đồng/CLB học thuật (nội dung đã được chuyển từ TLCN sang theo DIR-023). Kiểm chứng 3 trục — Lý thuyết: phương pháp điều tra khảo sát khoa học, thang đo khả dụng chuẩn hóa SUS (System Usability Scale) và đánh giá mức độ hữu ích/tin cậy của hệ thống gợi ý & RAG; Thực tiễn: tổ chức chiến dịch ra mắt thực tế (soft launch) qua các kênh CLB sinh viên CNTT để vừa giới thiệu đồ án vừa thu thập feedback định lượng và log hành vi; Người dùng: đo trực tiếp tỷ lệ sinh viên tìm được cuộc thi phù hợp, tạo đội thành công và hài lòng với độ chính xác trích dẫn của AI Copilot. Phương pháp: chuẩn hóa bộ biểu mẫu khảo sát (SUS 10 câu + câu hỏi đánh giá chất lượng dữ liệu/RAG/UI), phát hành qua cộng đồng/CLB để thu >= 30–50 phản hồi hợp lệ và thống kê kết quả kèm phân tích định tính để cải tiến sản phẩm. Tiêu chí chấp nhận: đạt >= 30 phản hồi hợp lệ từ sinh viên/thành viên CLB; tính toán điểm SUS trung bình, tỷ lệ hài lòng theo từng tính năng và danh sách cải tiến thực tế. Phụ thuộc: sau TASK-AI-01, TASK-FE-02, TASK-OPS-03 và phối hợp TASK-OPS-01/02; đầu vào thực nghiệm quan trọng cho TASK-DOC-02 và TASK-KLT-01.",
+      "research_questions": [
+        "Điểm khả dụng SUS thực tế từ cộng đồng CLB đạt bao nhiêu, và người dùng đánh giá yếu tố nào của dữ liệu cuộc thi hoặc RAG là hữu ích/cần sửa nhất?"
+      ],
+      "acceptance_criteria": [
+        "Triển khai biểu mẫu khảo sát thực tế cho cộng đồng/CLB sinh viên sau khi sản phẩm ready-for-prod và thu thập >= 30 phản hồi hợp lệ.",
+        "Thống kê điểm SUS, tỷ lệ hài lòng các luồng (Tìm cuộc thi, Tạo đội, RAG Copilot) và danh mục điều chỉnh sau phản hồi.",
+        "Tổng hợp dữ liệu phục vụ Chương 4 (Thực nghiệm & Đánh giá) của Luận văn KLTN."
+      ],
+      "deliverables": [
+        "docs/deliverables/TASK-USR-01-club-community-rollout-and-survey.md"
+      ],
+      "notes": "Tiếp nhận phần khảo sát người dùng thật từ TASK-QA-03 sang KLTN theo DIR-023; phối hợp kênh truyền thông TASK-OPS-01 và feedback TASK-OPS-02.",
+      "updated_at": "2026-11-25"
+    },
+    {
+      "id": "TASK-DOC-02",
+      "title": "Mở rộng Bộ Sơ đồ Kiến trúc Quy mô Production & Tối ưu Toàn diện Báo cáo Luận văn KLTN",
+      "cycle": "Cycle 10",
+      "scope": "KLTN (Phase 2)",
+      "layer": "Academic & Ops",
+      "task_type": "Academic",
+      "is_no_code": false,
+      "owner": "Hung & Duy",
+      "status": "todo",
+      "priority": "medium",
+      "problem_statement": "Vấn đề: Khi bước sang KLTN (100–500 cuộc thi, chạy định kỳ, Multi-Provider AI Gateway, SCD Type 2, Observability và triển khai CLB thực tế), hệ thống sơ đồ của TLCN (TASK-DOC-01) cần được mở rộng đồng bộ để phản ánh đúng kiến trúc production và kết quả thực nghiệm quy mô lớn. Kiểm chứng 3 trục — Lý thuyết: chuẩn mô hình hóa kiến trúc phần mềm & dữ liệu doanh nghiệp (C4, UML, Kimball SCD Type 2, DataOps Observability) và quy chuẩn luận văn FIT-HCMUTE (DIR-009, DIR-010); Thực tiễn: tài liệu hóa kiến trúc vận hành thực tế gồm luồng fallback AI, orchestration/backfill, bảo mật Turnstile/Rate-Limit và phân tích số liệu khảo sát SUS cộng đồng; Người dùng & Hội đồng KLTN: trình bày mạch lạc sự tiến hóa kỹ thuật giữa giai đoạn TLCN và KLTN. Phương pháp: kế thừa và nâng cấp 5 nhóm sơ đồ từ TASK-DOC-01, bổ sung các sơ đồ chuyên sâu của KLTN (Orchestration & Backfill DAG, SCD Type 2 & CDC Mail Alert, Multi-Provider AI Router State Diagram, Data Observability & Security Architecture, biểu đồ kết quả SUS/Ragas KLTN) và biên tập hoàn chỉnh toàn văn Luận văn. Tiêu chí chấp nhận: bộ sơ đồ khớp 100% kiến trúc KLTN thực tế, tích hợp trọn vẹn vào KhoaLuan_TotNghiep_KTDL.md. Phụ thuộc: sau TASK-DOC-01, TASK-QA-15, TASK-EVL-01 và TASK-USR-01; đầu vào trực tiếp cho TASK-KLT-01.",
+      "research_questions": [
+        "Những sơ đồ kiến trúc và biểu đồ thực nghiệm nào thể hiện rõ nhất bước nhảy vọt từ TLCN MVP sang KLTN Production?"
+      ],
+      "acceptance_criteria": [
+        "Mở rộng đủ 5 nhóm sơ đồ BA/CNPM/System/BE/FE/Data Pipeline sang phiên bản KLTN Production (bao gồm Orchestration DAG, SCD Type 2/CDC, Multi-Provider AI Gateway, Observability & Security).",
+        "Tích hợp đầy đủ kết quả Ragas KLTN (TASK-EVL-01), LLM Drift (TASK-DQ-14) và khảo sát SUS CLB (TASK-USR-01) vào KhoaLuan_TotNghiep_KTDL.md."
+      ],
+      "deliverables": [
+        "docs/academic/KhoaLuan_TotNghiep_KTDL.md",
+        "docs/deliverables/TASK-DOC-02-kltn-architecture-diagrams-and-thesis-polish.md"
+      ],
+      "notes": "Kế thừa TASK-DOC-01 cho KLTN; đầu vào bắt buộc cho TASK-KLT-01.",
+      "updated_at": "2026-11-25"
+    },
+    {
+      "id": "TASK-HF-01",
+      "title": "Hotfix: Dọn sạch thuật ngữ kỹ thuật nội bộ trên FE, Nâng cấp UX theo Use-Case & Đồng bộ Root Docs",
+      "cycle": "Cycle 08",
+      "scope": "TLCN (Phase 1)",
+      "layer": "Serving & Web",
+      "task_type": "Engineering",
+      "is_no_code": false,
+      "owner": "Hung",
+      "status": "done",
+      "priority": "high",
+      "problem_statement": "Vấn đề: Giao diện người dùng cuối trên apps/web/ để lộ tên bảng DB, tên công nghệ nội bộ (Medallion Lakehouse, DuckDB Star Schema, PostgreSQL 18, saved_competitions, mart_competition_explorer, Qdrant Filter, OWASP LLM10:2025, DIR-004, Gate G5/G6, số 17 hardcode) và thiếu các luồng UX thực tế cho sinh viên (tìm kiếm tức thì ở trang chủ, lọc status/sort, challenge_overview, deep-link hỏi thể lệ theo cuộc thi). Đồng thời README.md, openapi.json, .env.example/.env.dev và docker-compose.yml ở root bị lệch so với codebase v2 và RBAC Admin. Giải pháp: xóa sạch thông tin nội bộ khỏi UI người dùng, nâng cấp UX theo best practice cổng cuộc thi (Devpost/Unstop/Kaggle), đồng bộ toàn bộ root files và bổ sung test tự động + deliverable + HTML dossier.",
+      "research_questions": [
+        "Những nội dung nội bộ nào đang rò rỉ trên FE người dùng cuối và luồng use-case nào giúp sinh viên tìm cuộc thi và tra cứu thể lệ nhanh nhất?"
+      ],
+      "acceptance_criteria": [
+        "Xóa sạch tên công nghệ/DB/chỉ thị nội bộ trên toàn bộ 20 tệp public UI trong apps/web/ và sửa nút Swagger trên /admin.",
+        "Nâng cấp UX: thanh tìm kiếm + chip lọc nhanh + cuộc thi nổi bật trên trang chủ, bộ lọc status/sort + active chips ở /competitions, hiển thị target_audience/challenge_overview + deep-link /copilot?domain= trên chi tiết cuộc thi, scope động trên /copilot.",
+        "Đồng bộ README.md, openapi.json, .env.example, .env.dev, docker-compose.yml và bổ sung test tự động tests/test_frontend_ux_and_root_sync.py."
+      ],
+      "deliverables": [
+        "apps/web",
+        "README.md",
+        "openapi.json",
+        "tests/test_frontend_ux_and_root_sync.py",
+        "docs/deliverables/TASK-HF-01-fe-ux-cleanup-and-root-sync.md",
+        "docs/deliverables/TASK-HF-01-fe-ux-cleanup-and-root-sync-visual-dossier.html"
+      ],
+      "notes": "Hotfix Cycle 08 thực hiện trước TASK-FE-01 và TASK-TST-01; tất cả kiểm thử pytest, tsc, next build và audit_doc_drift đều pass.",
+      "updated_at": "2026-11-25"
+    },
+    {
+      "id": "TASK-OPS-04",
+      "title": "Nghiên cứu & Tự cài đặt Bộ Tool/MCP Hỗ trợ Dev (Excalidraw CLI/MCP, Repo Tree/Graph Visualizer, Repomix, Playwright/DB MCP)",
+      "cycle": "Cycle 08",
+      "scope": "TLCN -> KLTN",
+      "layer": "Academic & Ops",
+      "task_type": "No-Code / External Integration",
+      "is_no_code": true,
+      "owner": "Hung",
+      "status": "todo",
+      "priority": "low",
+      "problem_statement": "Bổ sung các công cụ và MCP server cá nhân giúp tăng tốc vẽ sơ đồ kiến trúc (Excalidraw CLI/MCP), trực quan hóa cây thư mục/dependency graph (GitDiagram, Repo Visualizer, Repomix), và kiểm thử E2E/truy vấn nhanh (Playwright MCP, DuckDB/PostgreSQL MCP) trong quá trình phát triển TLCN -> KLTN.",
+      "research_questions": [
+        "Tổ hợp MCP server và CLI nào nhẹ, dễ tích hợp vào Antigravity/IDE để hỗ trợ vẽ sơ đồ báo cáo và debug nhanh?"
+      ],
+      "acceptance_criteria": [
+        "Thử nghiệm Excalidraw CLI/MCP (`@excalidraw/cli` hoặc `yctimlin/mcp_excalidraw`) để xuất sơ đồ kiến trúc.",
+        "Thử nghiệm công cụ vẽ cây thư mục / đồ thị repo (`GitDiagram`, `repo-visualizer` hoặc `Repomix`) phục vụ tổng quan codebase.",
+        "Đánh giá và cấu hình thêm các MCP hữu ích cho stack ACDP (Playwright MCP cho E2E UI, DuckDB/PostgreSQL MCP, GitHub MCP)."
+      ],
+      "deliverables": [
+        "docs/tasks/task-registry.md"
+      ],
+      "notes": "Task tự vọc & nâng cao năng suất dev cá nhân (không ảnh hưởng luồng code chính).",
+      "updated_at": "2026-11-25"
     }
   ]
 }

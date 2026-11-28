@@ -46,7 +46,7 @@ export function BookmarkButton({
           }),
         });
         setSaved(true);
-        setFeedback("Đã lưu vào PostgreSQL 18.");
+        setFeedback("Đã lưu vào danh sách theo dõi.");
       }
     } catch {
       setFeedback("Không thể cập nhật trạng thái lưu.");

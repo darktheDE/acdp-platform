@@ -41,7 +41,7 @@ def test_docker_compose_version_pinning_and_profiles() -> None:
     assert core_mem_mb <= 2048, f"Core profile memory budget exceeded: {core_mem_mb} MB > 2048 MB"
     assert services["postgres"]["image"] == "postgres:18.7-alpine3.23"
     assert "postgres_data:/var/lib/postgresql" in services["postgres"]["volumes"]
-    assert services["qdrant"]["image"] == "qdrant/qdrant:v1.13.4"
+    assert services["qdrant"]["image"] == "qdrant/qdrant:v1.20.2"
     assert services["qdrant"]["profiles"] == ["local-backup"]
     assert "qdrant" not in services["api"].get("depends_on", {})
     assert "3001:3000" in services["metabase"]["ports"]
@@ -138,9 +138,15 @@ def test_supabase_oltp_pooler_and_duckdb_r2_config(monkeypatch) -> None:
     for key in (
         "POSTGRES_MODE",
         "SUPABASE_DATABASE_URL",
+        "SUPABASE_DIRECT_URL",
         "DATABASE_URL",
         "POSTGRES_POOL_MODE",
         "POSTGRES_SSL_MODE",
+        "POSTGRES_USER",
+        "POSTGRES_PASSWORD",
+        "POSTGRES_DB",
+        "POSTGRES_HOST",
+        "POSTGRES_PORT",
     ):
         monkeypatch.delenv(key, raising=False)
 
@@ -186,3 +192,78 @@ def test_supabase_oltp_pooler_and_duckdb_r2_config(monkeypatch) -> None:
     assert local_cfg.get_asyncpg_connect_args() == {}
     local_engine = build_async_engine(local_cfg)
     assert isinstance(local_engine.pool, AsyncAdaptedQueuePool)
+
+
+def test_keep_alive_workflow_pg_dump_url_and_backup(tmp_path: Path) -> None:
+    """Verify .github/workflows/keep-alive.yml, IPv4 Session Pooler pg_dump URI, and R2 backup pruning (TASK-CLD-06)."""
+    import subprocess
+    from datetime import UTC, datetime, timedelta
+    from unittest.mock import MagicMock
+
+    from acdp.v2 import cloud_ops
+
+    wf_path = ROOT / ".github" / "workflows" / "keep-alive.yml"
+    assert wf_path.exists(), "Missing .github/workflows/keep-alive.yml"
+    wf = yaml.safe_load(wf_path.read_text(encoding="utf-8"))
+    # PyYAML parses bare `on:` key as boolean True
+    on_block = wf.get("on") or wf.get(True)
+    assert "schedule" in on_block
+    crons = [item["cron"] for item in on_block["schedule"]]
+    assert "15 2 * * *" in crons
+    assert "30 2 * * 0" in crons
+    assert "workflow_dispatch" in on_block
+    assert "keep-alive-and-dq-audit" in wf["jobs"]
+    assert "weekly-oltp-pg-dump-backup" in wf["jobs"]
+
+    # Verify Transaction Pooler :6543 converts cleanly to IPv4 Session Pooler :5432 for pg_dump
+    tx_cfg = AppConfig(
+        _env_file=None,
+        postgres_mode="auto",
+        supabase_database_url="postgresql+asyncpg://postgres.projref:secret@aws-1-ap-southeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true",
+        aws_endpoint_url="https://acc123.r2.cloudflarestorage.com",
+        aws_access_key_id="r2-key",
+        aws_secret_access_key="r2-secret",
+        bucket_name="acdp-lakehouse",
+        oltp_backup_retention_days=30,
+    )
+    dump_url = tx_cfg.get_pg_dump_database_url()
+    assert dump_url.startswith("postgresql://")
+    assert ":5432/" in dump_url
+    assert ":6543" not in dump_url
+    assert "pgbouncer=" not in dump_url
+    assert "sslmode=require" in dump_url
+
+    # Verify pg_dump backup creation, R2 upload, and 30-day retention pruning
+    def fake_pg_dump_runner(cmd: list[str]) -> subprocess.CompletedProcess[str]:
+        file_arg = next(a for a in cmd if a.startswith("--file="))
+        out_path = Path(file_arg.split("=", 1)[1])
+        out_path.write_bytes(b"PGDMP-MOCK-BINARY-SNAPSHOT")
+        return subprocess.CompletedProcess(cmd, 0, stdout="", stderr="")
+
+    old_date = datetime.now(UTC) - timedelta(days=45)
+    fresh_date = datetime.now(UTC) - timedelta(days=5)
+    mock_r2 = MagicMock()
+    mock_paginator = MagicMock()
+    mock_paginator.paginate.return_value = [
+        {
+            "Contents": [
+                {"Key": "backups/oltp/acdp_oltp_old.dump", "LastModified": old_date},
+                {"Key": "backups/oltp/acdp_oltp_recent.dump", "LastModified": fresh_date},
+            ]
+        }
+    ]
+    mock_r2.get_paginator.return_value = mock_paginator
+
+    res = cloud_ops.run_oltp_pg_dump_backup(
+        output_dir=tmp_path,
+        cfg=tx_cfg,
+        upload_r2=True,
+        prune_old=True,
+        runner=fake_pg_dump_runner,
+        r2_client=mock_r2,
+    )
+    assert res["status"] == "ok"
+    assert res["size_bytes"] == len(b"PGDMP-MOCK-BINARY-SNAPSHOT")
+    assert len(res["uploaded_r2_keys"]) == 2
+    assert res["pruned_r2_keys"] == ["backups/oltp/acdp_oltp_old.dump"]
+    mock_r2.delete_object.assert_called_once_with(Bucket="acdp-lakehouse", Key="backups/oltp/acdp_oltp_old.dump")

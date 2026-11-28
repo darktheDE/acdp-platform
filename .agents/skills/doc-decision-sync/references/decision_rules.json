@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15",
+  "last_updated": "2026-11-26",
   "directive_source": "docs/frameworks/TEAM_DIRECTIVES.md",
   "agent_contract_files": [
     "AGENTS.md",
@@ -20,7 +20,9 @@
     "DIR-019",
     "DIR-020",
     "DIR-021",
-    "DIR-022"
+    "DIR-022",
+    "DIR-023",
+    "DIR-024"
   ],
   "scoped_directives": [
     "DIR-001",

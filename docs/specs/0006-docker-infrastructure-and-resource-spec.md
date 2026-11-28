@@ -26,7 +26,7 @@ Bốn mục tiêu bắt buộc của đặc tả hạ tầng gồm:
 | Dịch vụ | Trạng thái hiện tại (`docker-compose.yml`) | Thẻ khóa phiên bản chuẩn (`SPEC-0006`) | Vai trò & Lý do chọn |
 | :--- | :--- | :--- | :--- |
 | `postgres` | Chưa có | `postgres:18.7-alpine3.23` | OLTP App DB; biến thể Alpine giảm ~65% kích thước so với Debian |
-| `qdrant` | `qdrant/qdrant:latest` | `qdrant/qdrant:v1.13.4` | Vector Store cho RAG; khóa minor cố định tương thích `qdrant-client>=1.20` |
+| `qdrant` | `qdrant/qdrant:latest` | `qdrant/qdrant:v1.20.2` | Vector Store dự phòng (`local-backup`); đồng bộ minor `v1.20.x` với `qdrant-client>=1.20.0` (`RFC-0001`) |
 | `api` (Runtime) | Chưa có | `python:3.13-slim-bookworm` | Thực thi FastAPI & DuckDB `1.5.x`; dùng `ghcr.io/astral-sh/uv:0.6` ở stage build |
 | `web` (Runtime) | Chưa có | `node:22.14-alpine3.21` | Chạy Next.js 16 `output: "standalone"` tối giản dung lượng RAM & ổ đĩa |
 | `metabase` | `ghcr.io/motherduckdb/metabase-duckdb:latest` | `ghcr.io/motherduckdb/metabase-duckdb:0.63.17-duckdb1.5.6.0` | Khớp phiên bản DuckDB `>=1.5.6` trong `pyproject.toml`, bật theo profile `bi` |
@@ -46,47 +46,9 @@ Bốn mục tiêu bắt buộc của đặc tả hạ tầng gồm:
 
 ### 2.3. Kiến trúc Docker Multi-Stage & Non-Root
 
-#### `Dockerfile.api` (FastAPI + DuckDB Read-Only + RAG Client)
+#### `Dockerfile.api` (FastAPI + DuckDB `httpfs` + RAG Client)
 
-```dockerfile
-# syntax=docker/dockerfile:1
-FROM python:3.13-slim-bookworm AS builder
-
-COPY --from=ghcr.io/astral-sh/uv:0.6 /uv /uvx /bin/
-WORKDIR /app
-
-ENV UV_COMPILE_BYTECODE=1 \
-    UV_LINK_MODE=copy
-
-RUN --mount=type=cache,target=/root/.cache/uv \
-    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
-    --mount=type=bind,source=uv.lock,target=uv.lock \
-    uv sync --frozen --no-dev --no-install-project
-
-COPY src /app/src
-COPY pyproject.toml uv.lock /app/
-
-RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --frozen --no-dev
-
-FROM python:3.13-slim-bookworm AS runtime
-WORKDIR /app
-
-RUN groupadd --gid 10001 appgroup && \
-    useradd --uid 10001 --gid appgroup --shell /usr/sbin/nologin --no-create-home appuser
-
-COPY --from=builder --chown=appuser:appgroup /app/.venv /app/.venv
-COPY --from=builder --chown=appuser:appgroup /app/src /app/src
-
-ENV PATH="/app/.venv/bin:$PATH" \
-    PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
-
-USER appuser
-EXPOSE 8000
-
-CMD ["uvicorn", "src.acdp.api.main:app", "--host", "0.0.0.0", "--port", "8000"]
-```
+Xem tệp triển khai chuẩn tại [`Dockerfile.api`](../../Dockerfile.api): chạy non-root `UID 1000` (`appuser`), cài sẵn DuckDB `httpfs` extension ở build/runtime (`DUCKDB_EXTENSION_DIRECTORY=/app/.duckdb`), khóa `DUCKDB_MEMORY_LIMIT=256MB`, `DUCKDB_THREADS=2`, bật `GOLD_MART_CACHE_ENABLED=true`, và hỗ trợ động `PORT=${PORT:-7860}` cho HF Spaces / Koyeb / Render / Docker local (`8000`).
 
 #### `apps/web/Dockerfile` (Next.js 16 `output: "standalone"`)
 
@@ -146,169 +108,26 @@ apps/web/.next
 *.parquet
 ```
 
-### 2.4. Bản thiết kế `docker-compose.yml` Mục tiêu (Sprint 02 Implementation Blueprint)
+### 2.4. Cấu trúc `docker-compose.yml` Chuẩn hóa (Đồng bộ theo `DIR-021`, `ADR-0002`, `RFC-0001`)
 
-```yaml
-services:
-  postgres:
-    image: postgres:18.7-alpine3.23
-    container_name: acdp-postgres
-    profiles: ["core"]
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER:-acdp}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-acdp_local_dev_only}
-      POSTGRES_DB: ${POSTGRES_DB:-acdp_app}
-    command:
-      - "postgres"
-      - "-c"
-      - "shared_buffers=128MB"
-      - "-c"
-      - "work_mem=4MB"
-      - "-c"
-      - "maintenance_work_mem=32MB"
-      - "-c"
-      - "max_connections=40"
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-acdp} -d ${POSTGRES_DB:-acdp_app}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    deploy:
-      resources:
-        limits:
-          memory: 256M
-          cpus: "0.50"
+Cấu hình chuẩn tại [`docker-compose.yml`](../../docker-compose.yml) phân tách thành 4 profile (`core`, `local-backup`, `bi`, `pipeline`) và loại bỏ hoàn toàn mount đĩa `./data/lakehouse`:
 
-  qdrant:
-    image: qdrant/qdrant:v1.13.4
-    container_name: acdp-qdrant
-    profiles: ["core"]
-    restart: unless-stopped
-    environment:
-      QDRANT__STORAGE__PERFORMANCE__MAX_SEARCH_THREADS: "2"
-    ports:
-      - "6333:6333"
-      - "6334:6334"
-    volumes:
-      - qdrant_data:/qdrant/storage
-    healthcheck:
-      test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/127.0.0.1/6333 && printf \"GET /healthz HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n\" >&3 && grep -q \"200 OK\" <&3'"]
-      interval: 15s
-      timeout: 5s
-      retries: 5
-    deploy:
-      resources:
-        limits:
-          memory: 512M
-          cpus: "0.75"
-
-  api:
-    build:
-      context: .
-      dockerfile: Dockerfile.api
-    container_name: acdp-api
-    profiles: ["core"]
-    restart: unless-stopped
-    depends_on:
-      postgres:
-        condition: service_healthy
-      qdrant:
-        condition: service_healthy
-    environment:
-      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-acdp}:${POSTGRES_PASSWORD:-acdp_local_dev_only}@postgres:5432/${POSTGRES_DB:-acdp_app}
-      DUCKDB_DATABASE_PATH: /app/data/lakehouse/acdp.duckdb
-      QDRANT_URL: http://qdrant:6333
-      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
-    ports:
-      - "8000:8000"
-    volumes:
-      - ./data/lakehouse:/app/data/lakehouse:ro
-    healthcheck:
-      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/health')\""]
-      interval: 15s
-      timeout: 5s
-      retries: 5
-    deploy:
-      resources:
-        limits:
-          memory: 640M
-          cpus: "1.00"
-
-  web:
-    build:
-      context: ./apps/web
-      dockerfile: Dockerfile
-    container_name: acdp-web
-    profiles: ["core"]
-    restart: unless-stopped
-    depends_on:
-      api:
-        condition: service_healthy
-    environment:
-      INTERNAL_API_URL: http://api:8000
-      NEXT_PUBLIC_API_URL: http://localhost:8000
-      NODE_OPTIONS: "--max-old-space-size=384"
-    ports:
-      - "3000:3000"
-    deploy:
-      resources:
-        limits:
-          memory: 512M
-          cpus: "0.75"
-
-  metabase:
-    image: ghcr.io/motherduckdb/metabase-duckdb:0.63.17-duckdb1.5.6.0
-    container_name: acdp-metabase
-    profiles: ["bi"]
-    restart: unless-stopped
-    environment:
-      JAVA_TOOL_OPTIONS: "-Xmx768m -Xms256m"
-      MB_DB_FILE: /metabase-data/metabase.db
-    ports:
-      - "3001:3000"
-    volumes:
-      - ./data/lakehouse:/data/lakehouse:ro
-      - metabase_data:/metabase-data
-    deploy:
-      resources:
-        limits:
-          memory: 1024M
-          cpus: "1.00"
-
-  prefect-server:
-    image: prefecthq/prefect:3-python3.11
-    container_name: acdp-prefect
-    profiles: ["pipeline"]
-    command: prefect server start --host 0.0.0.0
-    ports:
-      - "4200:4200"
-    volumes:
-      - prefect_data:/root/.prefect
-    deploy:
-      resources:
-        limits:
-          memory: 512M
-          cpus: "0.50"
-
-volumes:
-  postgres_data:
-  qdrant_data:
-  metabase_data:
-  prefect_data:
-```
+| Dịch vụ | Profile | Image / Build | Giới hạn RAM | Kết nối & Ghi chú kiến trúc |
+| :--- | :---: | :--- | :---: | :--- |
+| `postgres` | `core` | `postgres:18.7-alpine3.23` | `256M` | OLTP local dự phòng (hoặc dùng Supabase Cloud qua `POSTGRES_MODE=auto`) |
+| `api` | `core` | `Dockerfile.api` | `640M` | Đọc Gold Parquet trực tiếp từ Cloudflare R2 qua `httpfs` (`BUCKET_NAME`, `AWS_*`); không phụ thuộc container `qdrant` local |
+| `web` | `core` | `apps/web/Dockerfile` | `512M` | Next.js 16 standalone (`NODE_OPTIONS="--max-old-space-size=384"`) |
+| `qdrant` | `local-backup` | `qdrant/qdrant:v1.20.2` | `512M` | Vector backup local khi `QDRANT_MODE=local`; mặc định dùng Qdrant Cloud Free |
+| `metabase` | `bi` | `ghcr.io/motherduckdb/metabase-duckdb:0.63.17-duckdb1.5.6.0` | `1024M` | Kết nối trực tiếp Cloudflare R2 qua biến môi trường S3/R2 (port `3001:3000`) |
+| `prefect-server` | `pipeline` | `prefecthq/prefect:3-python3.11` | `512M` | Tắt mặc định; chỉ bật khi kiểm thử điều phối batch cục bộ |
 
 ---
 
 ## 3. Core Processing Logic & Algorithms
 
-### 3.1. Cơ chế Gắn Volume Read-Only cho Lakehouse
+### 3.1. Truy vấn Lakehouse R2 Không Ghi Đĩa Cục Bộ (`DIR-021`, `RFC-0001`)
 
-Container `api` và `metabase` gắn thư mục `./data/lakehouse` với cờ `:ro` (`read-only`). Thiết kế này bảo đảm không một lỗ hổng hoặc lỗi truy vấn nào ở tầng Web API hoặc BI có thể ghi đè hoặc làm hỏng tệp dữ liệu Vàng (`acdp.duckdb` và `gold/*.parquet`). Quyền ghi dữ liệu Lakehouse chỉ thuộc về tiến trình ETL chạy ở máy chủ host hoặc container worker thuộc profile `pipeline`.
+Theo `DIR-021` và `ADR-0002`, container `api` và `metabase` không gắn volume `./data/lakehouse` mà đọc trực tiếp Gold Parquet (`s3://{BUCKET_NAME}/gold/*.parquet`) trên Cloudflare R2 thông qua DuckDB `httpfs` và biến môi trường R2 (`AWS_ENDPOINT_URL`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`). Tầng ứng dụng chỉ đọc ở mức HTTP/S3 read-only với tài khoản R2 phân quyền tối thiểu.
 
 ### 3.2. Phân giải Cổng (Port Allocation) Tránh Xung đột
 
@@ -340,4 +159,4 @@ Do Next.js 16 giữ cổng mặc định `3000` ở chế độ `core`, dịch v
 1. **Kiểm tra cú pháp Compose (`docker compose config`):** Lệnh `docker compose --profile core config` hoàn thành với mã thoát `0`, không còn bất kỳ thẻ `:latest` nào trong danh sách image đã phân giải.
 2. **Định mức Build Context & Image Footprint:** Build thành công `Dockerfile.api` và `apps/web/Dockerfile`; ngữ cảnh truyền lên Docker daemon `< 5 MB` (kiểm chứng qua `.dockerignore`).
 3. **Kiểm định Trần Bộ nhớ thực tế (`docker stats`):** Khi bật toàn bộ 4 container của profile `core` (`postgres`, `qdrant`, `api`, `web`) và thực thi tải truy vấn `/dashboard`, tổng RAM đo được qua `docker stats --no-stream` không vượt quá `2.0 GB`.
-4. **Kiểm định Tính bất biến Lakehouse:** Thực thi thử lệnh ghi tệp từ bên trong container `api` vào `/app/data/lakehouse/test_write` phải bị từ chối với lỗi `Read-only file system`.
+4. **Kiểm định Không Lưu Lakehouse Cục bộ (`DIR-021`):** Kiểm tra `docker compose --profile core config` xác nhận container `api` không gắn volume `./data/lakehouse` và cấu hình đầy đủ biến môi trường R2 (`BUCKET_NAME`, `AWS_ENDPOINT_URL`).

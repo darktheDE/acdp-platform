@@ -39,7 +39,7 @@ export default function LoginPage() {
         body: JSON.stringify({ email: email.trim(), password }),
       });
       setSession(token);
-      router.push("/competitions");
+      router.push(mode === "register" ? "/profile?welcome=1" : "/competitions");
     } catch (err) {
       if (err instanceof ApiError) {
         setErrorMsg(err.detail);
@@ -92,7 +92,7 @@ export default function LoginPage() {
         {mode === "login" ? "Đăng nhập ACDP Portal" : "Tạo tài khoản Sinh viên HCM-UTE"}
       </h1>
       <p className="mt-1 text-xs text-[var(--color-text-muted)]">
-        Lưu cuộc thi theo dõi và lịch sử hỏi đáp thể lệ RAG vào PostgreSQL 18
+        Lưu danh sách cuộc thi theo dõi, ghi chú lập đội và lịch sử hỏi đáp thể lệ cá nhân
       </p>
 
       <form onSubmit={(e) => void handleSubmit(e)} className="mt-5 space-y-4">

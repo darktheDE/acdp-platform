@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { ReactNode } from "react";
 import { LogoMonochrome } from "@/components/brand/AcdpLogo";
 import { TopNav } from "@/components/layout/TopNav";
@@ -19,9 +20,19 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-3 px-4 text-xs text-[var(--color-text-muted)] sm:flex-row sm:items-center sm:px-6 lg:px-8">
           <div className="flex items-center gap-2">
             <LogoMonochrome size={20} />
-            <span>ACDP — Nền tảng Khám phá Cuộc thi Học thuật (Kỹ thuật Dữ liệu, FIT — HCM-UTE)</span>
+            <span>ACDP — Nền tảng Khám phá Cuộc thi Học thuật · Khoa CNTT, HCM-UTE</span>
           </div>
-          <span className="font-mono">Medallion Lakehouse · DuckDB + PostgreSQL 18 + Qdrant</span>
+          <nav aria-label="Liên kết nhanh" className="flex flex-wrap items-center gap-4">
+            <Link href="/competitions" className="hover:text-[var(--color-text-primary)] hover:underline">
+              Khám phá
+            </Link>
+            <Link href="/dashboard" className="hover:text-[var(--color-text-primary)] hover:underline">
+              Thống kê
+            </Link>
+            <Link href="/copilot" className="hover:text-[var(--color-text-primary)] hover:underline">
+              Trợ lý Thể lệ
+            </Link>
+          </nav>
         </div>
       </footer>
     </div>

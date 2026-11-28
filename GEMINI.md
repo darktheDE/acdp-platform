@@ -32,6 +32,7 @@ All agents operating in this workspace must strictly abide by the rules and adap
    - Ollama Orchestration: `.agents/skills/ollama-bridge/SKILL.md`
    - Decision Sync & Doc Governance: `.agents/skills/doc-decision-sync/SKILL.md`
    - In-Repo Task Management: `.agents/skills/repo-task-manager/SKILL.md`
+   - Standard Delivery & Demo Gate: `.agents/skills/standard-delivery-gate/SKILL.md`
 
 3. **In-Repo Task Synchronization (`DIR-018`)**: Record deliverables in `docs/deliverables/` and maintain `docs/tasks/tasks-data.json`, `docs/tasks/task-registry.md`, and `docs/tasks/index.html`.
 4. **Skill Engineering Specification**: When creating or upgrading any skill, strictly adhere to [`docs/frameworks/AGENT_SKILL_ENGINEERING_SPEC.md`](./docs/frameworks/AGENT_SKILL_ENGINEERING_SPEC.md). Never create cosmetic or prompt-only skills; always provide structured frontmatter with negative triggers, deterministic scripts (`scripts/`), deep references (`references/`), and verification suites.
@@ -89,6 +90,12 @@ All agents operating in this workspace must strictly abide by the rules and adap
     - Strictly target **IT/AI/Data/Security/Programming competitions for university students** within **current year ± 1** (`2025–2027`).
     - Resolve media-partner/aggregator posts to the **official competition website** and drop competitions lacking an official website at Silver; `.pdf`/`.docx` rules remain optional.
     - Implement Cycle 06 pipeline upgrades under `src/acdp/v2/`.
+24. **TLCN vs KLTN Tiering, Club Survey, Multi-Provider Free AI & Complete Report Diagrams (DIR-023)**:
+    - Validate TLCN via Personas, competitor fields, and GVHD consultation; run real student-club rollout & SUS survey in KLTN (`TASK-USR-01`).
+    - Keep TLCN FE demo-ready and minimal (`TASK-FE-01`); implement full Design System/System Color/WCAG 2.2 AA FE in KLTN (`TASK-FE-02`). Optimize FastAPI/DuckDB/RAG (`TASK-BE-01`) and Multi-Provider Free AI Gateway (`TASK-AI-01`).
+    - Maintain dedicated CI/CD Data Validation Gate separate from `keep-alive.yml`, and require full BA, CNPM/System, BE, FE, and Data/AI Pipeline diagrams in reports (`TASK-DOC-01`, `TASK-DOC-02`).
+25. **7-Pillar Standard Delivery & Demo-Ready Gate (DIR-024)**:
+    - Every finalized task deliverable package must pass `check_delivery_package.py` across 7 pillars: `.md` deliverable + registry sync, measured benchmark table, `*-visual-dossier.html`, verified Search Provenance URLs, automated `pytest` tests, step-by-step manual test & CLI demo runbook with captured real outputs, and zero-drift/anti-slop checks.
 
 
 
