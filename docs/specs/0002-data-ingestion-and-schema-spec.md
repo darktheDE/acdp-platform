@@ -45,7 +45,7 @@ flowchart LR
     ```text
     s3://{BUCKET_NAME}/bronze/{domain_name}/year={YYYY}/month={MM}/day={DD}/{timestamp}.html
     ```
-    with `ContentType="text/html; charset=utf-8"` and metadata `{"source": domain_name, "layer": "bronze"}`.
+    with `ContentType="text/html; charset=utf-8"`, `IfNoneMatch="*"` conditional write enforcement (`412 PreconditionFailed` overwrite guard), `ChecksumAlgorithm="SHA256"`, idempotent re-crawl skip when `content_hash` matches the latest snapshot, and 10 provenance metadata fields (`source`, `source_url`, `layer`, `format`, `page_count`, `content_hash`, `content_bytes`, `crawled_at`, `http_status`, `crawl_mode`) validated via `src/acdp/v2/bronze_validate.py` (`TASK-DQ-01`).
   - **Tabular Silver Contract (`Competition` v2)**:
     Standardized Pydantic v2 data contracts (`G1–G7`) are defined in [`src/acdp/v2/schemas.py`](../../src/acdp/v2/schemas.py), storing canonical normalized URLs, ISO 8601 `date` fields, `required_skills`, `PrizeTier` currency/quantity details, and SHA-256 `competition_key`.
 
@@ -73,6 +73,8 @@ The `Competition` and `CompetitionExtractionResult` Pydantic v2 models transform
 1. **Input**: Reads Raw Rendered HTML (`bronze/.../*.html`) from Cloudflare R2 and converts it in RAM via Crawl4AI `DefaultMarkdownGenerator()` (`0 ms` browser overhead), uploading Clean Markdown for accepted competitions to `silver/markdown/` (`TASK-SLV-03`).
 2. **Hybrid Deterministic Sandwich & Scope Gate (`DIR-022`)**: Runs deterministic extractors (`JSON-LD`, `og:*`, canonical official URL resolution, `.pdf`/`.docx` optional links, regex hints) and filters strictly for IT/AI/Data/Security/Programming student competitions (`2025–2027`) with official websites before calling bounded `instructor` LLM (`response_model=CompetitionExtractionResult`).
 3. **Output Persistence**: Writes Silver JSON (`silver/extractions/`), batch manifests (`silver/batches/`), and explicit PyArrow Parquet (`silver/competitions.parquet`, `silver/prizes.parquet`, `silver/timeline_stages.parquet` via `v2/gold_star_schema.py`) directly on Cloudflare R2 for DuckDB `httpfs` querying.
+4. **Automated Data Contracts & WAP Quality Gate (`TASK-DQ-03`)**: Governed by the ODCS v3.2.0 contract [`docs/contracts/acdp-silver-competition.odcs.yaml`](../contracts/acdp-silver-competition.odcs.yaml) and enforced via [`src/acdp/v2/data_contracts.py`](../../src/acdp/v2/data_contracts.py) across 19 rules (`C01–C14` `CRITICAL` fail-fast circuit breaker + `W01–W05` `WARNING` soft SLAs) before writing Silver or Gold Parquet files.
+5. **Entity Resolution, Natural Keys & Multi-Season Deduplication (`TASK-DQ-04`)**: Implemented in [`src/acdp/v2/entity_resolution.py`](../../src/acdp/v2/entity_resolution.py) and [`src/acdp/v2/schemas.py`](../../src/acdp/v2/schemas.py) using a 5-stage pipeline (RFC 3986 URL normalization + Vietnamese NFKD folding $\rightarrow$ Temporal Blocking by `season_year` $\rightarrow$ 3-zone Fellegi-Sunter matching Rules 0–4 $\rightarrow$ Season-consistent Union-Find $\rightarrow$ Authority-first Data Fusion). Composite natural keys follow `core_name|primary_org|season_year|official_domain`, while `competition_key` scopes evergreen domains by `#season={year}` before SHA-256 hashing so multi-source duplicates collapse onto the official site (`DIR-022`) and distinct seasons (`2025` vs `2026`) stay separated.
 
 ---
 

@@ -35,7 +35,14 @@ from crawl4ai.markdown_generation_strategy import DefaultMarkdownGenerator
 from dotenv import find_dotenv, load_dotenv
 
 from acdp.config import settings
-from acdp.v2.schemas import Competition, CompetitionExtractionResult
+from acdp.v2.data_contracts import (
+    DataContractViolationError,
+    _build_gate_report,
+    validate_bronze_to_silver_handoff,
+    validate_silver_records_pydantic,
+)
+from acdp.v2.entity_resolution import resolve_competition_entities
+from acdp.v2.schemas import Competition, CompetitionExtractionResult, extract_season_year
 
 if sys.stdout and hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
@@ -539,10 +546,15 @@ def _score_official_link(
         bare_host == agg or bare_host.endswith(f".{agg}") for agg in AGGREGATOR_HOSTS
     ):
         return -100
-    # Ignore generic university/gov sibling portals (tuyensinh.*, alumni.*, khcn.*)
-    if any(bare_host.startswith(prefix) for prefix in ("tuyensinh.", "alumni.", "khcn.", "daotao.", "ctsv.")):
+    # Ignore generic university/gov sibling portals and non-competition subdomains/paths
+    if any(
+        bare_host.startswith(prefix)
+        for prefix in ("tuyensinh.", "alumni.", "khcn.", "daotao.", "ctsv.", "tracuu.", "jst-", "vieclam.", "portal.")
+    ):
         return -100
     path_lower = parsed.path.lower()
+    if any(tok in path_lower for tok in ("/admissions", "/msc-programmes", "/graduate-studies", "/tuyen-dung")):
+        return -100
     if any(path_lower.endswith(ext) for ext in (".png", ".jpg", ".jpeg", ".svg", ".css", ".js", ".pdf", ".docx")):
         return -50
 
@@ -559,16 +571,80 @@ def _score_official_link(
     return score
 
 
+RULES_PAGE_KEYWORDS = (
+    "thể lệ",
+    "the le",
+    "regulations",
+    "rules & regulations",
+    "rules of ",
+    "official rules",
+    "handbook",
+)
+RULES_URL_MARKERS = ("/the-le", "/regulations", "/rules", "the-le", "rules-of-")
+NON_RULES_BLACKLIST = (
+    "quy chế dân chủ",
+    "nội quy cơ quan",
+    "bảo đảm an toàn thông tin",
+    "chính sách bảo mật",
+    "điều khoản sử dụng",
+    "privacy",
+    "terms of service",
+    "nq_hdt",
+    "noi_quy",
+)
+NOISY_CONTAINER_MARKERS = (
+    "rpa__media",
+    "slick-slide",
+    "sidebar",
+    "navbar",
+    "footer",
+    "related-posts",
+    "breadcrumb",
+)
+
+
+def _prune_layout_noise(soup: BeautifulSoup) -> BeautifulSoup:
+    """Return a cloned BeautifulSoup with nav/header/footer/aside/ad-banners removed."""
+    cloned = BeautifulSoup(str(soup), "html.parser")
+    for tag in cloned.find_all(["nav", "header", "footer", "aside"]):
+        tag.decompose()
+    for elem in list(cloned.find_all(class_=True)):
+        if getattr(elem, "attrs", None) is None:
+            continue
+        cls_text = " ".join(str(c) for c in (elem.get("class") or [])).lower()
+        if any(marker in cls_text for marker in NOISY_CONTAINER_MARKERS):
+            elem.decompose()
+    return cloned
+
+
+def _is_competition_rules_link(abs_url: str, anchor_text: str) -> bool:
+    """Identify dedicated rulebook PDFs or official rules/handbook pages while rejecting unrelated policies."""
+    path_lower = urlparse(abs_url).path.lower()
+    text_lower = anchor_text.lower().strip()
+    combined = f"{text_lower} {path_lower}"
+    if any(bad in combined for bad in NON_RULES_BLACKLIST):
+        return False
+    if path_lower.endswith((".pdf", ".docx", ".doc")):
+        return True
+    if any(kw in text_lower for kw in RULES_PAGE_KEYWORDS) or any(m in path_lower for m in RULES_URL_MARKERS):
+        return urlparse(abs_url).netloc.lower() not in SOCIAL_OR_FORM_HOSTS
+    return False
+
+
 def _extract_links_from_soup(
     soup: BeautifulSoup,
     base_url: str,
     source_domain: str,
 ) -> tuple[list[str], list[str]]:
-    """Extract candidate official website URLs and optional .pdf/.docx rulebook URLs."""
+    """Extract candidate official website URLs (main content only) and official rules URLs."""
     scored_official: list[tuple[int, str]] = []
     rulebook_urls: list[str] = []
 
-    for a in soup.find_all("a", href=True):
+    main_soup = _prune_layout_noise(soup)
+    # Fallback to full soup only if document has no non-landmark links (e.g. minimal HTML fixtures)
+    scan_soup = main_soup if main_soup.find("a", href=True) else soup
+
+    for a in scan_soup.find_all("a", href=True):
         raw_href = str(a["href"]).strip()
         if not raw_href or raw_href.startswith(("#", "mailto:", "tel:", "javascript:")):
             continue
@@ -579,13 +655,28 @@ def _extract_links_from_soup(
         anchor_text = a.get_text(" ", strip=True)
 
         if path_lower.endswith((".pdf", ".docx", ".doc")):
-            if abs_url not in rulebook_urls:
+            if _is_competition_rules_link(abs_url, anchor_text) and abs_url not in rulebook_urls:
                 rulebook_urls.append(abs_url)
             continue
 
         score = _score_official_link(abs_url, anchor_text, source_domain)
         if score > 0:
             scored_official.append((score, abs_url))
+
+    # Dedicated rules links (/the-le, /regulations, Handbook) may live in top nav or body
+    for a in soup.find_all("a", href=True):
+        raw_href = str(a["href"]).strip()
+        if not raw_href or raw_href.startswith(("#", "mailto:", "tel:", "javascript:")):
+            continue
+        abs_url = normalize_url(urljoin(base_url, raw_href))
+        if not abs_url:
+            continue
+        path_lower = urlparse(abs_url).path.lower()
+        if path_lower.endswith((".pdf", ".docx", ".doc")):
+            continue
+        anchor_text = a.get_text(" ", strip=True)
+        if _is_competition_rules_link(abs_url, anchor_text) and abs_url not in rulebook_urls:
+            rulebook_urls.append(abs_url)
 
     scored_official.sort(key=lambda item: item[0], reverse=True)
     dedup_official: list[str] = []
@@ -673,6 +764,7 @@ def extract_deterministic_signals(
     if is_html:
         all_official_candidates: list[str] = []
         all_rules: list[str] = []
+        is_primary_aggregator = is_media_or_aggregator_url(primary_url)
         for idx, (page_url, page_html) in enumerate(pages):
             soup = BeautifulSoup(page_html, "html.parser")
             if idx == 0:
@@ -706,6 +798,11 @@ def extract_deterministic_signals(
             for k, v in ld_data.items():
                 signals.json_ld.setdefault(k, v)
 
+            # For aggregators/media news posts, only scan the primary article page (idx == 0)
+            # so adaptive-crawled feed/sidebar pages cannot pollute official link candidates.
+            if is_primary_aggregator and idx > 0:
+                continue
+
             cand_official, cand_rules = _extract_links_from_soup(soup, page_url, source_domain)
             for u in cand_official:
                 if u not in all_official_candidates:
@@ -719,6 +816,8 @@ def extract_deterministic_signals(
 
     base_source = signals.canonical_url or signals.source_url
     signals.is_media_or_aggregator = is_media_or_aggregator_url(base_source)
+    base_host = _canonical_domain(base_source) if base_source else ""
+    is_third_party_aggregator = base_host in AGGREGATOR_HOSTS
 
     if signals.is_media_or_aggregator:
         ld_url = normalize_url(str(signals.json_ld.get("url") or ""))
@@ -728,6 +827,10 @@ def extract_deterministic_signals(
         elif signals.candidate_official_urls:
             signals.canonical_official_url = signals.candidate_official_urls[0]
             signals.has_official_website = True
+        elif not is_third_party_aggregator and (base_host.endswith(".edu.vn") or base_host.endswith(".gov.vn")):
+            # Official university/government announcement without a separate microsite serves as its own official URL
+            signals.canonical_official_url = base_source
+            signals.has_official_website = bool(base_source)
         else:
             signals.canonical_official_url = ""
             signals.has_official_website = False
@@ -766,8 +869,9 @@ def evaluate_pre_llm_scope(
     clean_md: str,
     known_official_domains: set[str] | None = None,
     reference_year: int = DEFAULT_REFERENCE_YEAR,
+    known_official_season_keys: set[tuple[str, int | None]] | None = None,
 ) -> ScopeDecision:
-    """Stage 2 Deterministic Gate enforcing DIR-022 scope and media-partner deduplication."""
+    """Stage 2 Deterministic Gate enforcing DIR-022 scope and season-aware media-partner deduplication."""
     if not clean_md or len(clean_md.strip()) < 200:
         return ScopeDecision(accepted=False, reason="empty_or_too_short")
 
@@ -789,13 +893,33 @@ def evaluate_pre_llm_scope(
     if any(marker in lower for marker in NOT_FOUND_MARKERS) and len(clean_md) < 1500:
         return ScopeDecision(accepted=False, reason="http_error_or_404_page")
 
-    # 1. Official website requirement & Media-partner resolution (DIR-022)
+    # 1. Official website requirement & Season-aware Media-partner resolution (DIR-022 + TASK-DQ-04)
     if not signals.has_official_website or not signals.canonical_official_url:
         return ScopeDecision(accepted=False, reason="no_official_website")
 
-    if signals.is_media_or_aggregator and known_official_domains:
+    if signals.is_media_or_aggregator:
         resolved_domain = _canonical_domain(signals.canonical_official_url)
-        if resolved_domain in known_official_domains:
+        if known_official_season_keys is not None:
+            cand_year = extract_season_year(
+                signals.og_title or signals.title or signals.h1_title or "",
+                signals.canonical_official_url,
+                tagline=signals.og_description,
+            )
+            if cand_year is None and len(set(signals.detected_years)) == 1:
+                cand_year = signals.detected_years[0]
+            same_season_match = (
+                (resolved_domain, cand_year) in known_official_season_keys
+                or (resolved_domain, None) in known_official_season_keys
+                or (cand_year is None and any(dom == resolved_domain for dom, _ in known_official_season_keys))
+            )
+            if same_season_match:
+                return ScopeDecision(
+                    accepted=False,
+                    reason="media_partner_merged_to_official",
+                    canonical_official_url=signals.canonical_official_url,
+                    merged_into_official_key=resolved_domain,
+                )
+        elif known_official_domains and resolved_domain in known_official_domains:
             return ScopeDecision(
                 accepted=False,
                 reason="media_partner_merged_to_official",
@@ -1078,6 +1202,7 @@ def run_silver_transform(
     dry_run: bool = False,
     max_items: int = 0,
     reference_year: int = DEFAULT_REFERENCE_YEAR,
+    strict_gate: bool = False,
 ) -> dict[str, Any]:
     """Execute Hybrid Deterministic Sandwich Silver transformation over R2 Bronze."""
     if not settings.bucket_name:
@@ -1102,6 +1227,7 @@ def run_silver_transform(
     # Pre-pass 1: Deterministic extraction & Clean Markdown in RAM for all snapshots
     prepared: list[dict[str, Any]] = []
     known_official_domains: set[str] = set()
+    known_official_season_keys: set[tuple[str, int | None]] = set()
     for snap in snapshots:
         if snap["is_html"]:
             clean_md = html_to_clean_markdown(snap["pages"], md_generator=md_generator)
@@ -1115,28 +1241,52 @@ def run_silver_transform(
             is_html=snap["is_html"],
         )
         if not signals.is_media_or_aggregator and signals.canonical_official_url:
-            known_official_domains.add(_canonical_domain(signals.canonical_official_url))
+            official_dom = _canonical_domain(signals.canonical_official_url)
+            known_official_domains.add(official_dom)
+            snap_year = extract_season_year(
+                signals.og_title or signals.title or signals.h1_title or "",
+                signals.canonical_official_url,
+                tagline=signals.og_description,
+            )
+            if snap_year is None and len(set(signals.detected_years)) == 1:
+                snap_year = signals.detected_years[0]
+            known_official_season_keys.add((official_dom, snap_year))
 
         prepared.append({"snap": snap, "clean_md": clean_md, "signals": signals})
 
     client = _create_instructor_client() if (run_llm and not dry_run) else None
     accepted_records: list[dict[str, Any]] = []
-    seen_canonical_urls: set[str] = set()
+    extracted_stage_items: list[dict[str, Any]] = []
     audit_entries: list[dict[str, Any]] = []
     drop_counts: dict[str, int] = defaultdict(int)
     uploaded_md_keys: list[str] = []
     uploaded_json_keys: list[str] = []
+    contract_gate_failures = 0
+    er_summary_dict: dict[str, Any] | None = None
 
     for item in prepared:
         snap = item["snap"]
         clean_md: str = item["clean_md"]
         signals: DeterministicSignals = item["signals"]
 
+        handoff_rule = validate_bronze_to_silver_handoff(snap["key"], snap["source_url"], clean_md)
+        if strict_gate and handoff_rule.status == "FAIL":
+            handoff_report = _build_gate_report(
+                gate_name="Bronze-to-Silver Handoff Gate",
+                source_label=snap["key"],
+                reference_year=reference_year,
+                record_counts={"snapshots": 1},
+                rules=[handoff_rule],
+                elapsed_ms=handoff_rule.duration_ms,
+            )
+            raise DataContractViolationError(handoff_report)
+
         decision = evaluate_pre_llm_scope(
             signals=signals,
             clean_md=clean_md,
             known_official_domains=known_official_domains,
             reference_year=reference_year,
+            known_official_season_keys=known_official_season_keys,
         )
         if not decision.accepted:
             drop_counts[decision.reason] += 1
@@ -1171,24 +1321,96 @@ def run_silver_transform(
                 print(f">> [DROP:post_llm_scope] {snap['source_url']}")
                 continue
 
-            unique_comps: list[Competition] = []
             for comp in guarded.competitions:
-                canon = normalize_url(comp.url) or decision.canonical_official_url
-                if canon in seen_canonical_urls:
-                    continue
-                seen_canonical_urls.add(canon)
-                unique_comps.append(comp)
+                enriched_comp = comp.model_copy(
+                    update={
+                        "url": comp.url or decision.canonical_official_url,
+                        "source_url": comp.source_url or snap["source_url"],
+                        "bronze_key": comp.bronze_key or snap["key"],
+                    }
+                )
+                extracted_stage_items.append(
+                    {
+                        "comp": enriched_comp,
+                        "snap": snap,
+                        "clean_md": clean_md,
+                        "signals": signals,
+                        "decision": decision,
+                        "reasoning": guarded.reasoning,
+                    }
+                )
+        else:
+            audit_entries.append(
+                {
+                    "domain": snap["domain"],
+                    "source_url": snap["source_url"],
+                    "canonical_official_url": decision.canonical_official_url,
+                    "bronze_key": snap["key"],
+                    "status": "ready_for_llm",
+                    "raw_chars": len(snap["raw_text"]),
+                    "clean_md_chars": len(clean_md),
+                    "json_ld_present": bool(signals.json_ld),
+                    "rules_urls_count": len(signals.official_rules_urls),
+                }
+            )
+            print(
+                f">> [READY] {snap['domain']} ({len(snap['raw_text']):,} -> {len(clean_md):,} chars) "
+                f"| official={decision.canonical_official_url}"
+            )
 
-            if not unique_comps:
-                drop_counts["canonical_url_duplicate"] += 1
-                continue
+    if run_llm and client is not None and extracted_stage_items:
+        raw_batch_comps = [entry["comp"] for entry in extracted_stage_items]
+        resolved_comps, er_report = resolve_competition_entities(
+            raw_batch_comps,
+            source_label=f"silver_transform:{chosen_date}",
+            drop_without_official_site=False,
+        )
+        er_summary_dict = er_report.model_dump(mode="json")
+        if er_report.merged_duplicates_count > 0:
+            drop_counts["entity_resolution_merged"] += er_report.merged_duplicates_count
 
-            final_result = guarded.model_copy(update={"competitions": unique_comps})
+        ctx_by_bronze_key: dict[str, dict[str, Any]] = {}
+        for entry in extracted_stage_items:
+            ctx_by_bronze_key.setdefault(entry["snap"]["key"], entry)
+
+        row_rules = validate_silver_records_pydantic(resolved_comps, reference_year=reference_year)
+        failed_row_rules = [r for r in row_rules if r.status == "FAIL"]
+        if failed_row_rules:
+            contract_gate_failures += 1
+            if strict_gate:
+                row_report = _build_gate_report(
+                    gate_name="Silver Extraction Row Contract Gate",
+                    source_label=f"silver_transform:{chosen_date}",
+                    reference_year=reference_year,
+                    record_counts={"competitions": len(resolved_comps)},
+                    rules=row_rules,
+                    elapsed_ms=sum(r.duration_ms for r in row_rules),
+                )
+                raise DataContractViolationError(row_report)
+
+        comps_by_snap: dict[str, list[Competition]] = defaultdict(list)
+        for comp in resolved_comps:
+            bkey = comp.bronze_key or ""
+            if bkey not in ctx_by_bronze_key:
+                bkey = extracted_stage_items[0]["snap"]["key"]
+            comps_by_snap[bkey].append(comp)
+
+        for bkey, snap_comps in comps_by_snap.items():
+            ctx = ctx_by_bronze_key[bkey]
+            snap = ctx["snap"]
+            clean_md = ctx["clean_md"]
+            signals = ctx["signals"]
+            decision = ctx["decision"]
+            final_result = CompetitionExtractionResult(
+                is_competition=True,
+                reasoning=ctx["reasoning"],
+                competitions=snap_comps,
+            )
             record = {
                 "_metadata": {
                     "source_domain": snap["domain"],
                     "source_url": snap["source_url"],
-                    "canonical_official_url": unique_comps[0].url,
+                    "canonical_official_url": snap_comps[0].url,
                     "source_key": snap["key"],
                     "crawl_date": snap["date"],
                     "crawl_timestamp": snap["timestamp"],
@@ -1210,7 +1432,7 @@ def run_silver_transform(
                 crawl_date=snap["date"],
                 timestamp=snap["timestamp"],
                 source_url=snap["source_url"],
-                canonical_url=unique_comps[0].url or decision.canonical_official_url,
+                canonical_url=snap_comps[0].url or decision.canonical_official_url,
                 bronze_key=snap["key"],
             )
             json_key = _upload_silver_extraction(
@@ -1227,33 +1449,15 @@ def run_silver_transform(
                 {
                     "domain": snap["domain"],
                     "source_url": snap["source_url"],
-                    "canonical_official_url": unique_comps[0].url,
+                    "canonical_official_url": snap_comps[0].url,
                     "bronze_key": snap["key"],
                     "silver_md_key": md_key,
                     "silver_json_key": json_key,
                     "status": "extracted",
-                    "competitions_count": len(unique_comps),
+                    "competitions_count": len(snap_comps),
                 }
             )
-            print(f">> [OK] {snap['domain']} -> {len(unique_comps)} comp(s) | md={md_key}")
-        else:
-            audit_entries.append(
-                {
-                    "domain": snap["domain"],
-                    "source_url": snap["source_url"],
-                    "canonical_official_url": decision.canonical_official_url,
-                    "bronze_key": snap["key"],
-                    "status": "ready_for_llm",
-                    "raw_chars": len(snap["raw_text"]),
-                    "clean_md_chars": len(clean_md),
-                    "json_ld_present": bool(signals.json_ld),
-                    "rules_urls_count": len(signals.official_rules_urls),
-                }
-            )
-            print(
-                f">> [READY] {snap['domain']} ({len(snap['raw_text']):,} -> {len(clean_md):,} chars) "
-                f"| official={decision.canonical_official_url}"
-            )
+            print(f">> [OK] {snap['domain']} -> {len(snap_comps)} comp(s) | md={md_key}")
 
     ts_now = int(datetime.now(UTC).timestamp())
     if accepted_records and not dry_run:
@@ -1284,6 +1488,8 @@ def run_silver_transform(
         "drop_breakdown": dict(drop_counts),
         "uploaded_markdown_count": len(uploaded_md_keys),
         "uploaded_json_count": len(uploaded_json_keys),
+        "contract_gate_failures": contract_gate_failures,
+        "entity_resolution": er_summary_dict,
         "entries": audit_entries,
     }
     if not dry_run and (accepted_records or run_llm):
@@ -1315,6 +1521,7 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--dry-run", action="store_true", help="Run deterministic stages without calling LLM or writing R2")
     parser.add_argument("--max-items", type=int, default=0, help="Optional cap on snapshots to process")
     parser.add_argument("--reference-year", type=int, default=DEFAULT_REFERENCE_YEAR, help="Anchor year for [year-1, year+1] scope")
+    parser.add_argument("--strict-gate", action="store_true", help="Fail-fast on Bronze-to-Silver or Silver row contract violations")
     return parser.parse_args(argv)
 
 
@@ -1328,6 +1535,7 @@ def main(argv: list[str] | None = None) -> None:
         dry_run=args.dry_run,
         max_items=args.max_items,
         reference_year=args.reference_year,
+        strict_gate=args.strict_gate,
     )
 
 

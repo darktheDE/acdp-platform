@@ -1,0 +1,167 @@
+{
+  "fixture_name": "invalid_silver_batch",
+  "reference_year": 2026,
+  "competitions": [
+    {
+      "competition_key": "invalid-short-key",
+      "name": "",
+      "url": "",
+      "summary": "N/A",
+      "category": ["Artificial Intelligence"],
+      "mode": "online",
+      "registration_status": "open",
+      "eligibility_level": "all_students",
+      "total_prize_vnd": 0
+    },
+    {
+      "name": "MARKETING ARENA 2026",
+      "url": "https://ybox.vn/su-kien/marketing-arena-2026",
+      "summary": "Cuộc thi Marketing và truyền thông thương hiệu toàn quốc dành cho sinh viên kinh tế.",
+      "category": ["Marketing"],
+      "target_audience": "Sinh viên kinh tế",
+      "mode": "offline",
+      "registration_status": "open",
+      "eligibility_level": "all_students",
+      "total_prize_vnd": 23000000
+    },
+    {
+      "name": "Social Only AI Contest 2026",
+      "url": "https://www.facebook.com/events/1234567890",
+      "summary": "Cuộc thi Trí tuệ Nhân tạo sinh viên chỉ đăng tải qua fanpage Facebook.",
+      "category": ["Artificial Intelligence"],
+      "target_audience": "Sinh viên đại học",
+      "mode": "online",
+      "registration_status": "open",
+      "eligibility_level": "all_students",
+      "total_prize_vnd": 10000000
+    },
+    {
+      "name": "Datathon 2026 Banner Noise",
+      "url": "https://www.ntu.edu.sg/business/admissions/graduate-studies/msc-programmes",
+      "summary": "Cuộc thi Khoa học Dữ liệu DATATHON 2026 bị dính link banner tuyển sinh đại học.",
+      "category": ["Data Science"],
+      "target_audience": "Sinh viên đại học",
+      "mode": "hybrid",
+      "registration_status": "closed",
+      "eligibility_level": "all_students",
+      "total_prize_vnd": 50000000
+    },
+    {
+      "name": "UIT Portal Noise & Ministry Root",
+      "url": "https://tracuu.citd.edu.vn",
+      "summary": "Cuộc thi Khoa học Dữ liệu sinh viên bị dính subdomain tra cứu trường đại học.",
+      "category": ["Data Science"],
+      "target_audience": "Sinh viên CNTT",
+      "mode": "unknown",
+      "registration_status": "open",
+      "eligibility_level": "unknown",
+      "total_prize_vnd": 50000000
+    },
+    {
+      "name": "Ministry Root Only Contest",
+      "url": "https://mic.gov.vn/",
+      "summary": "Cuộc thi Trí tuệ Nhân tạo nhưng trỏ về trang chủ chung của Bộ TT&TT.",
+      "category": ["Artificial Intelligence"],
+      "target_audience": "Sinh viên đại học",
+      "mode": "online",
+      "registration_status": "open",
+      "eligibility_level": "unknown",
+      "total_prize_vnd": 0
+    },
+    {
+      "name": "Broken Bounds, Enums & Dates Hackathon",
+      "url": "https://broken-hack.edu.vn",
+      "summary": "Cuộc thi Hackathon AI sinh viên có hàng loạt sai lệch enum, ngày ngoài 2025-2027, và số đội nghịch đảo.",
+      "category": ["Artificial Intelligence"],
+      "target_audience": "Sinh viên đại học",
+      "mode": "metaverse",
+      "registration_status": "paused",
+      "eligibility_level": "phd_only",
+      "registration_start_date": "2023-05-01",
+      "registration_deadline_date": "2023-04-01",
+      "event_start_date": "2029-10-15",
+      "event_end_date": "2029-10-01",
+      "team_size_min": 6,
+      "team_size_max": 3,
+      "total_prize_vnd": -1000,
+      "prizes": [
+        {
+          "tier_rank": 1,
+          "tier": "Quán quân",
+          "reward": "-500.000 BTC",
+          "quantity": 0,
+          "currency": "BTC",
+          "prize_type": "crypto",
+          "estimated_value_vnd": -500000,
+          "is_scholarship": false
+        }
+      ],
+      "timeline_stages": [
+        {
+          "stage_order": 1,
+          "stage_name": "Vòng 1",
+          "start_date_iso": "2026-11-20",
+          "end_date_iso": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "name": "Hội thi Tin học trẻ THPT 2026",
+      "url": "https://tinhoctre-thpt.edu.vn",
+      "summary": "Hội thi Tin học trẻ lập trình dành riêng cho học sinh tiểu học, THCS và THPT.",
+      "category": ["Competitive Programming"],
+      "target_audience": "Học sinh THPT và THCS",
+      "mode": "offline",
+      "registration_status": "open",
+      "eligibility_level": "open",
+      "total_prize_vnd": 10000000
+    },
+    {
+      "competition_key": "1111111111111111111111111111111111111111111111111111111111111111",
+      "name": "Duplicate Key Contest A",
+      "url": "https://dup-contest.edu.vn",
+      "summary": "Bản ghi trùng khóa tự nhiên lần 1 cho cuộc thi AI sinh viên.",
+      "category": ["Artificial Intelligence"],
+      "target_audience": "Sinh viên đại học",
+      "mode": "online",
+      "registration_status": "open",
+      "eligibility_level": "all_students",
+      "total_prize_vnd": 20000000
+    },
+    {
+      "competition_key": "1111111111111111111111111111111111111111111111111111111111111111",
+      "name": "Duplicate Key Contest B",
+      "url": "https://dup-contest.edu.vn",
+      "summary": "Bản ghi trùng khóa tự nhiên lần 2 cho cuộc thi AI sinh viên.",
+      "category": ["Artificial Intelligence"],
+      "target_audience": "Sinh viên đại học",
+      "mode": "online",
+      "registration_status": "open",
+      "eligibility_level": "all_students",
+      "total_prize_vnd": 20000000
+    }
+  ],
+  "extra_orphan_prizes": [
+    {
+      "competition_key": "9999999999999999999999999999999999999999999999999999999999999999",
+      "competition_name": "Ghost Competition",
+      "tier_rank": 1,
+      "tier": "Orphan Prize",
+      "reward": "10.000.000 VND",
+      "quantity": 1,
+      "currency": "VND",
+      "prize_type": "cash",
+      "estimated_value_vnd": 10000000
+    }
+  ],
+  "extra_orphan_stages": [
+    {
+      "competition_key": "9999999999999999999999999999999999999999999999999999999999999999",
+      "competition_name": "Ghost Competition",
+      "stage_order": 1,
+      "stage_name": "Orphan Stage",
+      "start_date_iso": "2026-10-01",
+      "end_date_iso": "2026-10-15"
+    }
+  ]
+}

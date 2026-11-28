@@ -13,6 +13,8 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import base64
+import hashlib
 import html
 import json
 import os
@@ -20,10 +22,12 @@ import random
 import re
 import sys
 from collections.abc import Sequence
+from dataclasses import dataclass
 from datetime import UTC, datetime
-from typing import Any
-from urllib.parse import urlparse
+from typing import Any, Literal
+from urllib.parse import quote, urlparse
 
+from botocore.exceptions import ClientError
 from crawl4ai import (
     AdaptiveConfig,
     AdaptiveCrawler,
@@ -44,6 +48,37 @@ if sys.stdout and hasattr(sys.stdout, "reconfigure"):
 load_dotenv(find_dotenv(usecwd=True))
 
 PAGE_BOUNDARY_PATTERN = re.compile(r"<!--\s*ACDP_PAGE_BOUNDARY\s+url=\"[^\"]*\"\s*-->")
+BRONZE_HTML_KEY_RE = re.compile(
+    r"^bronze/([^/]+)/year=(\d{4})/month=(\d{2})/day=(\d{2})/(\d+)\.html$"
+)
+REQUIRED_PROVENANCE_KEYS: tuple[str, ...] = (
+    "content_hash",
+    "source_url",
+    "crawled_at",
+    "http_status",
+    "source",
+    "layer",
+    "format",
+    "page_count",
+    "content_bytes",
+    "crawl_mode",
+)
+
+
+@dataclass(frozen=True)
+class BronzeUploadResult:
+    """Structured outcome for an immutable, idempotent Bronze upload attempt."""
+
+    status: Literal["uploaded", "skipped_empty", "skipped_unchanged"]
+    bronze_key: str | None
+    existing_key: str | None
+    content_hash: str | None
+    source_url: str
+    crawled_at: str | None
+    http_status: str
+    content_bytes: int
+    page_count: int
+    immutable_conflict_retries: int = 0
 
 DEFAULT_URLS: list[str] = [
     "https://codetour.org/",
@@ -107,54 +142,264 @@ def package_bronze_html(
     return "\n\n".join(sections), len(sections)
 
 
-def upload_to_bronze(
+def compute_content_sha256(html_content: str) -> tuple[bytes, str, str]:
+    """Encode text as strict UTF-8 bytes and return (bytes, hex_sha256, b64_sha256)."""
+    utf8_bytes = html_content.encode("utf-8")
+    digest = hashlib.sha256(utf8_bytes).digest()
+    return utf8_bytes, digest.hex(), base64.b64encode(digest).decode("ascii")
+
+
+def sanitize_s3_meta_value(value: str, max_len: int = 512) -> str:
+    """Return an ASCII-safe S3 user-metadata header value within length bounds."""
+    cleaned = value.strip()
+    try:
+        cleaned.encode("ascii")
+        ascii_val = cleaned
+    except UnicodeEncodeError:
+        ascii_val = quote(cleaned, safe=":/?&=#%+-_.~")
+    return ascii_val[:max_len]
+
+
+def extract_primary_http_status(knowledge_base: Sequence[Any]) -> int | None:
+    """Extract the first valid HTTP status code from Crawl4AI CrawlResult records."""
+    for record in knowledge_base:
+        if getattr(record, "success", True) is False:
+            continue
+        raw_html = getattr(record, "html", None)
+        if not isinstance(raw_html, str) or not raw_html.strip():
+            continue
+        for attr in ("status_code", "redirected_status_code"):
+            val = getattr(record, attr, None)
+            if isinstance(val, int) and val > 0:
+                return val
+            if isinstance(val, str) and val.isdigit():
+                return int(val)
+    return None
+
+
+def _normalize_url_for_compare(url: str) -> str:
+    return url.strip().rstrip("/").lower()
+
+
+def find_latest_bronze_snapshot(
+    s3_client: Any,
+    bucket_name: str,
+    domain: str,
+    source_url: str | None = None,
+) -> dict[str, Any] | None:
+    """Locate the latest immutable v2 `.html` Bronze snapshot for a domain/source_url."""
+    prefix = f"bronze/{domain}/"
+    candidates: list[tuple[int, str, dict[str, Any]]] = []
+    continuation_token: str | None = None
+
+    while True:
+        list_kwargs: dict[str, Any] = {"Bucket": bucket_name, "Prefix": prefix}
+        if continuation_token:
+            list_kwargs["ContinuationToken"] = continuation_token
+        resp = s3_client.list_objects_v2(**list_kwargs)
+        if not isinstance(resp, dict):
+            break
+        contents = resp.get("Contents")
+        if not isinstance(contents, list):
+            break
+        for obj in contents:
+            if not isinstance(obj, dict):
+                continue
+            key = obj.get("Key", "")
+            match = BRONZE_HTML_KEY_RE.match(key)
+            if not match:
+                continue
+            ts = int(match.group(5))
+            candidates.append((ts, key, obj))
+        if not resp.get("IsTruncated"):
+            break
+        continuation_token = resp.get("NextContinuationToken")
+        if not continuation_token:
+            break
+
+    if not candidates:
+        return None
+
+    candidates.sort(key=lambda item: (item[0], item[1]), reverse=True)
+    target_norm = _normalize_url_for_compare(source_url) if source_url else ""
+    fallback_snapshot: dict[str, Any] | None = None
+
+    for ts, key, obj in candidates[:20]:
+        head = s3_client.head_object(Bucket=bucket_name, Key=key)
+        meta = (head.get("Metadata") or {}) if isinstance(head, dict) else {}
+        snap = {
+            "key": key,
+            "timestamp": ts,
+            "metadata": meta,
+            "etag": head.get("ETag") if isinstance(head, dict) else obj.get("ETag"),
+            "size": obj.get("Size", 0),
+        }
+        if fallback_snapshot is None:
+            fallback_snapshot = snap
+        meta_url = str(meta.get("source_url") or "")
+        if not target_norm or not meta_url:
+            return snap
+        if _normalize_url_for_compare(meta_url) == target_norm:
+            return snap
+
+    return fallback_snapshot
+
+
+def upload_to_bronze_with_result(
     html_content: str,
     dm_name: str,
     page_count: int | None = None,
-) -> str | None:
-    """Upload Raw Rendered HTML to Cloudflare R2 Bronze layer (`*.html`).
-
-    Blocks 0-byte or whitespace-only uploads when crawl fails or is blocked.
-    Returns the uploaded R2 object key, or None if skipped.
-    """
+    *,
+    http_status: int | str | None = None,
+    crawl_mode: str = "adaptive",
+    crawled_at: datetime | None = None,
+    skip_if_unchanged: bool = True,
+    enforce_immutable: bool = True,
+    s3_client: Any | None = None,
+) -> BronzeUploadResult:
+    """Upload Raw Rendered HTML to R2 Bronze with provenance, immutability, and idempotency."""
     domain = urlparse(dm_name).netloc or dm_name
+    resolved_http_status = str(http_status) if http_status is not None else "unknown"
+
     if not html_content or not html_content.strip():
         print(
             f"[SKIP] {domain}: Nội dung HTML rỗng sau crawl (anti-bot hoặc lỗi fetch). Bỏ qua upload Bronze."
         )
-        return None
+        return BronzeUploadResult(
+            status="skipped_empty",
+            bronze_key=None,
+            existing_key=None,
+            content_hash=None,
+            source_url=dm_name,
+            crawled_at=None,
+            http_status=resolved_http_status,
+            content_bytes=0,
+            page_count=0,
+        )
 
-    now = datetime.now(UTC)
-    ts = int(now.timestamp())
+    now = (crawled_at or datetime.now(UTC)).astimezone(UTC)
+    crawled_at_iso = now.strftime("%Y-%m-%dT%H:%M:%SZ")
+    utf8_bytes, sha256_hex, sha256_b64 = compute_content_sha256(html_content)
     resolved_pages = (
         page_count
         if page_count is not None
         else max(1, len(PAGE_BOUNDARY_PATTERN.findall(html_content)))
     )
 
-    bronze_key = (
-        f"bronze/{domain}"
-        f"/year={now.year}/month={now.strftime('%m')}/day={now.strftime('%d')}/"
-        f"{ts}.html"
-    )
-    s3_client = settings.create_r2_client()
-    s3_client.put_object(
-        Bucket=settings.bucket_name,
-        Key=bronze_key,
-        Body=html_content.encode("utf-8"),
-        ContentType="text/html; charset=utf-8",
-        Metadata={
-            "source": domain,
-            "layer": "bronze",
-            "format": "raw_html",
-            "page_count": str(resolved_pages),
-        },
-    )
-    print(
-        f"Upload {domain} raw HTML to bronze layer successfully! "
-        f"({len(html_content):,} chars, {resolved_pages} page(s) -> {bronze_key})"
-    )
-    return bronze_key
+    client = s3_client or settings.create_r2_client()
+    if skip_if_unchanged:
+        latest = find_latest_bronze_snapshot(
+            client,
+            settings.bucket_name,
+            domain,
+            source_url=dm_name,
+        )
+        if latest and (latest.get("metadata") or {}).get("content_hash") == sha256_hex:
+            print(
+                f"[IDEMPOTENT-SKIP] {domain}: Nội dung không đổi (sha256={sha256_hex[:12]}...), "
+                f"giữ nguyên snapshot {latest['key']}."
+            )
+            return BronzeUploadResult(
+                status="skipped_unchanged",
+                bronze_key=None,
+                existing_key=latest["key"],
+                content_hash=sha256_hex,
+                source_url=dm_name,
+                crawled_at=crawled_at_iso,
+                http_status=resolved_http_status,
+                content_bytes=len(utf8_bytes),
+                page_count=resolved_pages,
+            )
+
+    metadata = {
+        "source": sanitize_s3_meta_value(domain),
+        "source_url": sanitize_s3_meta_value(dm_name),
+        "layer": "bronze",
+        "format": "raw_html",
+        "page_count": str(resolved_pages),
+        "content_hash": sha256_hex,
+        "content_bytes": str(len(utf8_bytes)),
+        "crawled_at": crawled_at_iso,
+        "http_status": sanitize_s3_meta_value(resolved_http_status, max_len=32),
+        "crawl_mode": sanitize_s3_meta_value(crawl_mode, max_len=64),
+    }
+
+    base_ts = int(now.timestamp())
+    conflict_retries = 0
+    for attempt in range(4):
+        ts = base_ts + attempt
+        bronze_key = (
+            f"bronze/{domain}"
+            f"/year={now.year}/month={now.strftime('%m')}/day={now.strftime('%d')}/"
+            f"{ts}.html"
+        )
+        put_kwargs: dict[str, Any] = {
+            "Bucket": settings.bucket_name,
+            "Key": bronze_key,
+            "Body": utf8_bytes,
+            "ContentType": "text/html; charset=utf-8",
+            "Metadata": metadata,
+            "ChecksumAlgorithm": "SHA256",
+            "ChecksumSHA256": sha256_b64,
+        }
+        if enforce_immutable:
+            put_kwargs["IfNoneMatch"] = "*"
+
+        try:
+            client.put_object(**put_kwargs)
+        except ClientError as exc:
+            err = exc.response.get("Error", {}) if isinstance(exc.response, dict) else {}
+            code = str(err.get("Code", ""))
+            http_code = (
+                exc.response.get("ResponseMetadata", {}).get("HTTPStatusCode")
+                if isinstance(exc.response, dict)
+                else None
+            )
+            if code in {"PreconditionFailed", "412", "ConditionalRequestConflict"} or http_code == 412:
+                if attempt < 3:
+                    conflict_retries += 1
+                    continue
+                raise
+            if code in {"NotImplemented", "InvalidArgument"} and "ChecksumAlgorithm" in put_kwargs:
+                put_kwargs.pop("ChecksumAlgorithm", None)
+                put_kwargs.pop("ChecksumSHA256", None)
+                client.put_object(**put_kwargs)
+            else:
+                raise
+
+        print(
+            f"Upload {domain} raw HTML to bronze layer successfully! "
+            f"({len(html_content):,} chars, {resolved_pages} page(s), sha256={sha256_hex[:12]} -> {bronze_key})"
+        )
+        return BronzeUploadResult(
+            status="uploaded",
+            bronze_key=bronze_key,
+            existing_key=None,
+            content_hash=sha256_hex,
+            source_url=dm_name,
+            crawled_at=crawled_at_iso,
+            http_status=resolved_http_status,
+            content_bytes=len(utf8_bytes),
+            page_count=resolved_pages,
+            immutable_conflict_retries=conflict_retries,
+        )
+
+    raise RuntimeError(f"Exhausted immutable key retries for {domain}")
+
+
+def upload_to_bronze(
+    html_content: str,
+    dm_name: str,
+    page_count: int | None = None,
+    **kwargs: Any,
+) -> str | None:
+    """Backward-compatible wrapper returning uploaded R2 object key or None if skipped."""
+    return upload_to_bronze_with_result(
+        html_content,
+        dm_name,
+        page_count=page_count,
+        **kwargs,
+    ).bronze_key
 
 
 def _extract_query_list(raw_content: str) -> list[str]:
@@ -260,7 +505,7 @@ def _attach_crawler_patches(
         strategy.map_query_semantic_space = _resilient_map_query_semantic_space
 
 
-async def _single_page_fallback(crawler: AsyncWebCrawler, url: str) -> tuple[str, int]:
+async def _single_page_fallback(crawler: AsyncWebCrawler, url: str) -> tuple[str, int, int | None]:
     """Fallback to single-page Playwright fetch if AdaptiveCrawler fails or yields 0 pages."""
     fallback_cfg = CrawlerRunConfig(
         delay_before_return_html=5.0,
@@ -270,7 +515,9 @@ async def _single_page_fallback(crawler: AsyncWebCrawler, url: str) -> tuple[str
     single_res = await crawler.arun(url=url, config=fallback_cfg)
     if hasattr(single_res, "_results") and single_res._results:
         single_res = single_res._results[0]
-    return package_bronze_html([single_res], fallback_url=url)
+    packaged_html, count = package_bronze_html([single_res], fallback_url=url)
+    http_status = extract_primary_http_status([single_res])
+    return packaged_html, count, http_status
 
 
 def _load_urls_from_r2_discovery() -> list[str]:
@@ -394,6 +641,7 @@ async def crawl_urls_to_bronze(urls: list[str]) -> list[str]:
             domain = urlparse(url).netloc or url
             html_content = ""
             page_count = 0
+            http_status: int | None = None
             crawl_mode = "adaptive"
             error_msg = ""
 
@@ -408,6 +656,7 @@ async def crawl_urls_to_bronze(urls: list[str]) -> list[str]:
                 html_content, page_count = package_bronze_html(
                     result.knowledge_base, fallback_url=url
                 )
+                http_status = extract_primary_http_status(result.knowledge_base)
             except Exception as exc:  # noqa: BLE001 - Fall back to single-page fetch on AdaptiveCrawler failure
                 error_msg = str(exc)
                 print(f"[WARN] AdaptiveCrawler lỗi tại {url}: {exc}. Chuyển sang fallback 1 trang...")
@@ -415,7 +664,7 @@ async def crawl_urls_to_bronze(urls: list[str]) -> list[str]:
             if not html_content:
                 crawl_mode = "fallback_single_page"
                 try:
-                    html_content, page_count = await _single_page_fallback(crawler, url)
+                    html_content, page_count, http_status = await _single_page_fallback(crawler, url)
                 except Exception as fallback_exc:  # noqa: BLE001
                     elapsed_s = round(time.perf_counter() - url_start, 2)
                     err_detail = f"{error_msg} | fallback: {fallback_exc}" if error_msg else str(fallback_exc)
@@ -430,18 +679,30 @@ async def crawl_urls_to_bronze(urls: list[str]) -> list[str]:
                             "page_count": 0,
                             "raw_html_chars": 0,
                             "raw_html_bytes": 0,
+                            "http_status": http_status,
+                            "content_hash": None,
+                            "crawled_at": None,
                             "r2_key": None,
                             "error": err_detail[:300],
                         }
                     )
                     continue
 
-            uploaded_key = upload_to_bronze(html_content, url, page_count=page_count)
+            upload_res = upload_to_bronze_with_result(
+                html_content,
+                url,
+                page_count=page_count,
+                http_status=http_status,
+                crawl_mode=crawl_mode,
+            )
+            uploaded_key = upload_res.bronze_key
             elapsed_s = round(time.perf_counter() - url_start, 2)
-            raw_bytes = len(html_content.encode("utf-8")) if html_content else 0
-            if uploaded_key:
+            raw_bytes = upload_res.content_bytes
+            if upload_res.status == "uploaded" and uploaded_key:
                 uploaded_keys.append(uploaded_key)
                 status = f"ok_{crawl_mode}"
+            elif upload_res.status == "skipped_unchanged":
+                status = "skipped_unchanged"
             else:
                 status = "skipped_empty"
 
@@ -455,13 +716,17 @@ async def crawl_urls_to_bronze(urls: list[str]) -> list[str]:
                     "page_count": page_count,
                     "raw_html_chars": len(html_content),
                     "raw_html_bytes": raw_bytes,
-                    "r2_key": uploaded_key,
+                    "http_status": upload_res.http_status,
+                    "content_hash": upload_res.content_hash,
+                    "crawled_at": upload_res.crawled_at,
+                    "r2_key": uploaded_key or upload_res.existing_key,
                     "error": error_msg[:300] if error_msg else None,
                 }
             )
 
     total_elapsed_s = round(time.perf_counter() - batch_start, 2)
-    succeeded = [m for m in per_url_metrics if m["r2_key"]]
+    succeeded = [m for m in per_url_metrics if m["status"].startswith("ok_")]
+    unchanged = [m for m in per_url_metrics if m["status"] == "skipped_unchanged"]
     total_bytes = sum(m["raw_html_bytes"] for m in succeeded)
     total_pages = sum(m["page_count"] for m in succeeded)
 
@@ -469,9 +734,10 @@ async def crawl_urls_to_bronze(urls: list[str]) -> list[str]:
         "timestamp_utc": datetime.now(UTC).isoformat(),
         "total_urls": len(urls),
         "succeeded_urls": len(succeeded),
+        "unchanged_idempotent_urls": len(unchanged),
         "adaptive_succeeded": sum(1 for m in succeeded if m["mode"] == "adaptive"),
         "fallback_succeeded": sum(1 for m in succeeded if m["mode"] == "fallback_single_page"),
-        "failed_or_skipped": len(urls) - len(succeeded),
+        "failed_or_skipped": len(urls) - len(succeeded) - len(unchanged),
         "total_pages_captured": total_pages,
         "total_raw_html_bytes": total_bytes,
         "total_raw_html_mb": round(total_bytes / (1024 * 1024), 3),
